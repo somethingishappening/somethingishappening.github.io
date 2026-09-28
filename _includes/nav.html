@@ -10,8 +10,23 @@
   {% if page.collection == "design" %}{% assign design_current = true %}{% endif %}
   {% if page.collection == "artistic" %}{% assign artistic_current = true %}{% endif %}
 
+  {% assign research_default_open = false %}
+  {% assign design_default_open = false %}
+  {% assign artistic_default_open = false %}
+
+  {% if page.layout == "about" %}
+    {% if page.about_nav_open_research == true %}{% assign research_default_open = true %}{% endif %}
+    {% if page.about_nav_open_design == true %}{% assign design_default_open = true %}{% endif %}
+    {% if page.about_nav_open_artistic == true %}{% assign artistic_default_open = true %}{% endif %}
+  {% endif %}
+
   {% assign research_desktop_open = research_current %}
-  {% if page.layout == "about" %}{% assign research_desktop_open = true %}{% endif %}
+  {% assign design_desktop_open = design_current %}
+  {% assign artistic_desktop_open = artistic_current %}
+
+  {% if research_default_open %}{% assign research_desktop_open = true %}{% endif %}
+  {% if design_default_open %}{% assign design_desktop_open = true %}{% endif %}
+  {% if artistic_default_open %}{% assign artistic_desktop_open = true %}{% endif %}
 
   {% if page.collection == "design" or page.collection == "artistic" or page.layout == "harrilanpuisto" %}
   <div class="mobile-topbar">
@@ -40,6 +55,7 @@
             class="group-head"
             data-nav-key="research"
             data-current="{% if research_current %}true{% else %}false{% endif %}"
+            data-default-open="{% if research_default_open %}true{% else %}false{% endif %}"
             data-desktop-open="{% if research_desktop_open %}true{% else %}false{% endif %}"
             type="button"
             aria-expanded="{% if research_desktop_open %}true{% else %}false{% endif %}">
@@ -60,13 +76,14 @@
             class="group-head"
             data-nav-key="design"
             data-current="{% if design_current %}true{% else %}false{% endif %}"
-            data-desktop-open="{% if design_current %}true{% else %}false{% endif %}"
+            data-default-open="{% if design_default_open %}true{% else %}false{% endif %}"
+            data-desktop-open="{% if design_desktop_open %}true{% else %}false{% endif %}"
             type="button"
-            aria-expanded="{% if design_current %}true{% else %}false{% endif %}">
+            aria-expanded="{% if design_desktop_open %}true{% else %}false{% endif %}">
             <span>{{ site.data.site.design_work_label | default: "Design Work" }}</span>
-            <span class="group-toggle">{% if design_current %}−{% else %}+{% endif %}</span>
+            <span class="group-toggle">{% if design_desktop_open %}−{% else %}+{% endif %}</span>
           </button>
-          <div class="project-links{% unless design_current %} collapsed{% endunless %}">
+          <div class="project-links{% unless design_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in design_projects %}
                 <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.title }}</a>
@@ -80,13 +97,14 @@
             class="group-head"
             data-nav-key="artistic"
             data-current="{% if artistic_current %}true{% else %}false{% endif %}"
-            data-desktop-open="{% if artistic_current %}true{% else %}false{% endif %}"
+            data-default-open="{% if artistic_default_open %}true{% else %}false{% endif %}"
+            data-desktop-open="{% if artistic_desktop_open %}true{% else %}false{% endif %}"
             type="button"
-            aria-expanded="{% if artistic_current %}true{% else %}false{% endif %}">
+            aria-expanded="{% if artistic_desktop_open %}true{% else %}false{% endif %}">
             <span>{{ site.data.site.artistic_work_label | default: "Artistic Work" }}</span>
-            <span class="group-toggle">{% if artistic_current %}−{% else %}+{% endif %}</span>
+            <span class="group-toggle">{% if artistic_desktop_open %}−{% else %}+{% endif %}</span>
           </button>
-          <div class="project-links{% unless artistic_current %} collapsed{% endunless %}">
+          <div class="project-links{% unless artistic_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in artistic_projects %}
                 <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.title }}</a>
@@ -365,7 +383,7 @@
   root.dataset.controllerReady = "true";
 
   const breakpoint = 900;
-  const storageKey = "harri.mobileNavOpenGroups.v7";
+  const storageKey = "harri.mobileNavOpenGroups.v8";
   const menuButton = root.querySelector(".mobile-menu-button");
   const menuPanel = root.querySelector(".main-menu-panel");
   const menuInner = root.querySelector(".main-menu-panel-inner");
@@ -487,14 +505,22 @@
     const memory = readMemory();
 
     groupButtons.forEach(function(button){
+      const key = button.dataset.navKey;
       const current = button.dataset.current === "true";
-      const remembered = memory[button.dataset.navKey] === true;
+      const defaultOpen = button.dataset.defaultOpen === "true";
+      const hasRememberedChoice =
+        Object.prototype.hasOwnProperty.call(memory, key);
+
+      const remembered = hasRememberedChoice
+        ? memory[key] === true
+        : defaultOpen;
+
       const open = current || remembered;
 
       setGroup(button, open, false, false);
 
       if(current){
-        memory[button.dataset.navKey] = true;
+        memory[key] = true;
       }
     });
 
