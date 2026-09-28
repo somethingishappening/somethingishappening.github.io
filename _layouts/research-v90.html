@@ -1,0 +1,3712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ page.title }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+
+    :root{
+      --page-pad: 18px;
+      --left-w: 220px;
+      --paper-w: 650px;
+      --gap: 28px;
+      --text: #0b0b0b;
+      --muted: #646464;
+      --accent: #ff6c68;
+      --line: #111;
+      --bg: #fff;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family: "Geist", Arial, Helvetica, sans-serif;
+      font-size:16px;
+      line-height:1.18;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button{font:inherit;color:inherit}
+
+    .layout{
+      min-height:100vh;
+      display:grid;
+
+      /*
+       * Reference desktop artboard proportions:
+       * left navigation ≈ 220
+       * paper           ≈ 650
+       * figure rail     ≈ 701
+       *
+       * Using fr units preserves those proportions relative to the
+       * available browser width in Safari, Chrome, Firefox, etc.
+       */
+      grid-template-columns:
+        220px
+        minmax(0,745fr)
+        minmax(0,660fr);
+
+      gap:var(--gap);
+      padding:32px var(--page-pad) 26px;
+      width:100%;
+      align-items:start;
+    }
+
+    /* LEFT NAV */
+    .left{
+      position:sticky;
+      top:28px;
+      height:calc(100vh - 56px);
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+    }
+
+    .brand{
+      font-size:27px;
+      line-height:1;
+      margin-bottom:0;
+      letter-spacing:-0.02em;
+    }
+
+    .welcome-zone{
+      position:relative;
+      flex:0 0 148px;
+      height:148px;
+      min-height:148px;
+      overflow:hidden;
+    }
+
+    .welcome{
+      position:absolute;
+      left:0;
+      top:0;
+      margin:0;
+      font-size:28px;
+      line-height:1;
+      white-space:nowrap;
+      opacity:1;
+      transition:opacity .18s ease;
+      will-change:left, top, opacity;
+    }
+
+    .welcome.changing{
+      opacity:0;
+    }
+
+    .nav-group{margin-bottom:5px}
+    .nav-group:has(.group-head[aria-expanded="true"]){margin-bottom:18px}
+
+    .group-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border:0;
+      padding:0;
+      width:100%;
+      background:transparent;
+      cursor:pointer;
+      font-size:20px;
+      line-height:1.05;
+      text-align:left;
+    }
+
+    .group-head[aria-expanded="true"]{
+      font-weight:700;
+    }
+
+    .group-toggle{
+      width:22px;
+      flex:0 0 22px;
+      text-align:center;
+      font-size:20px;
+    }
+
+    .nav-group{
+      transition:none;
+    }
+
+    .project-links{
+      display:grid;
+      grid-template-rows:1fr;
+      margin-top:8px;
+      opacity:1;
+      transform:translateY(0);
+      transition:
+        grid-template-rows .32s cubic-bezier(.22,.61,.36,1),
+        margin-top .32s cubic-bezier(.22,.61,.36,1),
+        opacity .20s ease,
+        transform .32s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .project-links-inner{
+      min-height:0;
+      overflow:hidden;
+      display:grid;
+      gap:3px;
+    }
+
+    .project-links.collapsed{
+      grid-template-rows:0fr;
+      margin-top:0;
+      opacity:0;
+      transform:translateY(-4px);
+      pointer-events:none;
+    }
+    .project-links a{
+      font-size:17px;
+      line-height:1.1;
+    }
+
+    .project-links a.active{font-weight:700}
+    .project-links a:hover{text-decoration:underline}
+
+    .left-footer{
+      margin-top:auto;
+      font-size:13px;
+      line-height:1.15;
+    }
+
+    .main-menu-panel,
+    .main-menu-panel-inner{
+      display:contents;
+    }
+
+
+    /* PAPER */
+    .paper{min-width:0}
+    .project-title{
+      font-size:27px;
+      line-height:1;
+      margin:0 0 24px;
+      letter-spacing:-0.02em;
+    }
+
+    .paper h1{
+      font-size:54px;
+      line-height:.95;
+      letter-spacing:-0.035em;
+      margin:0 0 18px;
+      max-width:680px;
+    }
+
+    .paper h1 .title-line{
+      display:block;
+      white-space:nowrap;
+    }
+
+    .paper h1.chapter-heading{
+      margin-top:42px;
+    }
+
+    .paper h2{
+      font-size:24px;
+      line-height:1.05;
+      margin:26px 0 12px;
+      letter-spacing:-0.015em;
+    }
+
+    .paper p{
+      margin:0 0 14px;
+      font-size:18px;
+      line-height:1.15;
+      max-width:700px;
+    }
+
+    .figure-ref{
+      display:inline-block;
+      color:var(--accent);
+      font-size:.76em;
+      line-height:1;
+      font-weight:700;
+      cursor:default;
+      padding:0 2px;
+      vertical-align:baseline;
+      position:relative;
+      top:-.02em;
+    }
+
+    .figure-ref::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:-2px;
+      height:1px;
+      background:currentColor;
+      transform:scaleX(0);
+      transform-origin:left;
+      transition:transform .16s ease;
+    }
+
+    .figure-ref:hover::after,
+    .figure-ref:focus::after{
+      transform:scaleX(1);
+    }
+
+    /* RIGHT / TOC + FIGURE */
+    .right{
+      min-width:0;
+      position:sticky;
+      top:28px;
+      height:calc(100vh - 56px);
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:26px;
+    }
+
+    .toc{
+      width:min(320px,48%);
+      min-width:290px;
+      justify-self:end;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:34px;
+      font-size:13px;
+      line-height:1.04;
+      margin-right:20%;
+      margin-top:0;
+    }
+
+    .toc-col{min-width:0}
+    .toc-title{
+      font-weight:700;
+      margin-bottom:4px;
+    }
+
+    .toc-col:first-child a:first-of-type{
+      font-weight:700;
+    }
+
+    .toc a{
+      display:block;
+      position:relative;
+      padding:1px 0;
+    }
+
+    .toc-col:first-child a:first-of-type,
+    .toc-col:nth-child(2) .toc-title{
+      line-height:1.04;
+    }
+
+    /* Match the second column's Header 1 baseline to the first Header 1,
+       which appears one navigation row below "Project Overview". */
+    .toc-col:nth-child(2) .toc-title{
+      margin-top:17px;
+    }
+
+    .toc a:hover{text-decoration:underline}
+
+    .toc-col:first-child{
+      position:relative;
+    }
+
+    .toc-arrow,
+    .mobile-toc-arrow{
+      position:absolute;
+      width:14px;
+      height:1em;
+      line-height:1em;
+      pointer-events:none;
+      opacity:1;
+      will-change:top;
+      transition:top .34s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .toc-arrow{
+      left:-20px;
+      top:0;
+    }
+
+    .toc .sub{
+      padding-left:0;
+      font-weight:400;
+    }
+
+    .figure-stage{
+      /*
+       * Fixed desktop hanging line taken from the supplied reference:
+       * every figure's TOP EDGE sits on the same horizontal line,
+       * independent of caption height or TOC height.
+       */
+      position:absolute;
+      top:43.5vh;
+      right:3.5%;
+      width:94%;
+      max-width:700px;
+      margin:0;
+      opacity:1;
+      pointer-events:auto;
+      transform:none;
+    }
+
+    .figure-stage.visible{
+      opacity:1;
+      transform:none;
+    }
+
+    .figure-box{
+      width:100%;
+      aspect-ratio:3.26/1;
+      border:1.5px solid var(--line);
+      position:relative;
+      overflow:hidden;
+      background:#FFFFFF;
+    }
+
+    .figure-box::before,
+    .figure-box::after{
+      content:"";
+      position:absolute;
+      left:-10%;
+      width:120%;
+      top:50%;
+      height:1px;
+      background:var(--line);
+      transform-origin:center;
+    }
+
+    .figure-box::before{transform:rotate(16.8deg)}
+    .figure-box::after{transform:rotate(-16.8deg)}
+
+    .figure-box img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:none;
+    }
+
+    .figure-caption{
+      width:190px;
+      margin-top:9px;
+      font-size:12px;
+      line-height:1.05;
+    }
+
+    .figure-caption strong{
+      display:block;
+      width:max-content;
+      font-weight:400;
+      text-decoration:underline;
+      text-underline-offset:2px;
+      margin:0 0 2px;
+    }
+
+    .figure-caption #figureText{
+      display:block;
+    }
+
+    /* anchors */
+    .anchor-target{scroll-margin-top:35px}
+
+
+    @media (min-width: 901px){
+      html,
+      body{
+        height:100%;
+        overflow:hidden;
+      }
+
+      .layout{
+        height:100vh;
+        min-height:0;
+        grid-template-rows:minmax(0, 1fr);
+        overflow:hidden;
+      }
+
+      .left,
+      .right{
+        position:relative;
+        top:auto;
+        height:100%;
+        min-height:0;
+      }
+
+      /*
+       * LEFT RAIL
+       * Harri.la and Tervetuloa stay fixed.
+       * Only the actual project-navigation area can scroll, and only
+       * when its content is taller than the available space.
+       */
+      .left{
+        overflow:hidden;
+      }
+
+      .left .brand,
+      .left .welcome-zone{
+        flex:0 0 auto;
+      }
+
+      .left .main-menu-panel{
+        display:flex;
+        flex:1 1 auto;
+        min-height:0;
+        overflow:hidden;
+      }
+
+      .left .main-menu-panel-inner{
+        display:flex;
+        flex:1 1 auto;
+        min-height:0;
+        flex-direction:column;
+        overflow:hidden;
+      }
+
+      .left nav{
+        flex:1 1 auto;
+        min-height:0;
+        overflow-y:auto;
+        overflow-x:hidden;
+        overscroll-behavior:contain;
+        scrollbar-width:thin;
+        padding-right:4px;
+      }
+
+      .left .left-footer{
+        flex:0 0 auto;
+        margin-top:18px;
+      }
+
+      .paper{
+        height:100%;
+        min-height:0;
+        overflow-y:auto;
+        overflow-x:hidden;
+        scroll-behavior:smooth;
+        overscroll-behavior:contain;
+        scrollbar-width:none;
+        scrollbar-gutter:stable;
+        padding-right:4px;
+      }
+
+      .paper:hover{
+        scrollbar-width:thin;
+      }
+
+      /* Safari / Chrome */
+      .paper::-webkit-scrollbar{
+        width:0;
+        height:0;
+      }
+
+      .paper:hover::-webkit-scrollbar{
+        width:8px;
+      }
+
+      .paper::-webkit-scrollbar-track{
+        background:transparent;
+      }
+
+      .paper::-webkit-scrollbar-thumb{
+        background:rgba(0,0,0,.35);
+        border-radius:8px;
+      }
+
+      .paper::-webkit-scrollbar-thumb:hover{
+        background:rgba(0,0,0,.55);
+      }
+
+      .anchor-target{
+        scroll-margin-top:8px;
+      }
+    }
+
+
+    @media (min-width: 901px){
+      .left,
+      .paper,
+      .right{
+        min-width:0;
+      }
+
+      .paper{
+        width:100%;
+      }
+
+      .right{
+        width:100%;
+      }
+
+      .figure-stage{
+        width:94%;
+        max-width:700px;
+      }
+    }
+
+
+    @media (min-width:901px){
+      .group-head{
+        font-size:20px;
+        line-height:21px;
+      }
+
+      .project-links a{
+        font-size:17px;
+        line-height:18.7px;
+      }
+
+      .project-links-inner{
+        gap:3px;
+      }
+
+      .nav-group{
+        margin-bottom:5px;
+      }
+
+      .nav-group:has(.group-head[aria-expanded="true"]){
+        margin-bottom:18px;
+      }
+    }
+
+
+    @media (min-width:901px){
+      .group-head > span:first-child,
+      .project-links a{
+        white-space:nowrap;
+      }
+
+      .left nav{
+        /* Always reserve enough room for the hover scrollbar so its
+           appearance cannot reflow the menu text. */
+        padding-right:12px;
+        scrollbar-width:none;
+      }
+
+      .left nav:hover{
+        scrollbar-width:thin;
+      }
+
+      .left nav::-webkit-scrollbar{
+        width:0;
+        height:0;
+      }
+
+      .left nav:hover::-webkit-scrollbar{
+        width:8px;
+      }
+
+      .left nav::-webkit-scrollbar-track{
+        background:transparent;
+      }
+
+      .left nav::-webkit-scrollbar-thumb{
+        background:rgba(0,0,0,.35);
+        border-radius:8px;
+      }
+
+      .left nav::-webkit-scrollbar-thumb:hover{
+        background:rgba(0,0,0,.55);
+      }
+
+      .project-links-inner{
+        width:max-content;
+        min-width:100%;
+        max-width:100%;
+      }
+    }
+
+
+    @media (min-width:901px){
+      /* Keep group-to-group leading constant. The extra open spacing lives
+         inside the animated panel so it collapses smoothly rather than jumping. */
+      .nav-group,
+      .nav-group:has(.group-head[aria-expanded="true"]){
+        margin-bottom:5px;
+      }
+
+      .project-links{
+        display:block;
+        grid-template-rows:none;
+        height:auto;
+        margin-top:8px;
+        overflow:hidden;
+        opacity:1;
+        transform:translateY(0);
+        transition:
+          height .34s cubic-bezier(.22,.61,.36,1),
+          margin-top .34s cubic-bezier(.22,.61,.36,1),
+          opacity .22s ease,
+          transform .34s cubic-bezier(.22,.61,.36,1);
+        will-change:height;
+      }
+
+      .project-links-inner{
+        display:grid;
+        min-height:0;
+        overflow:hidden;
+        gap:3px;
+        padding-bottom:13px;
+      }
+
+      .project-links.collapsed{
+        height:0;
+        margin-top:0;
+        opacity:0;
+        transform:translateY(-3px);
+        pointer-events:none;
+      }
+    }
+
+    @media (max-width: 1180px) and (min-width: 901px){
+      :root{
+        --gap:22px;
+      }
+
+      .layout{
+        grid-template-columns:
+          220px
+          minmax(0,635fr)
+          minmax(0,500fr);
+      }
+
+      .paper h1{font-size:46px}
+      .paper p{font-size:17px}
+      .toc{
+        width:min(300px,52%);
+        min-width:260px;
+        margin-right:14%;
+        margin-top:0;
+        gap:18px;
+      }
+      .figure-stage{
+        top:43.5vh;
+        right:3.5%;
+        width:94%;
+        max-width:650px;
+        margin:0;
+      }
+    }
+
+    @media (max-width: 900px){
+      .layout{
+        display:block;
+        padding:18px;
+      }
+
+      .left{
+        position:relative;
+        top:auto;
+        height:auto;
+        display:block;
+        margin-bottom:32px;
+      }
+
+      .brand{margin-bottom:18px}
+      .welcome-zone{
+        display:none;
+      }
+      .welcome{
+        display:none;
+      }
+
+      .left-footer{margin-top:28px}
+
+      .project-title{margin-top:12px}
+      .paper h1{font-size:44px}
+      .paper p{max-width:none}
+
+      .right{
+        position:relative;
+        top:auto;
+        height:auto;
+        margin-top:38px;
+        display:block;
+      }
+
+      .toc{
+        width:100%;
+        max-width:520px;
+        justify-self:auto;
+        margin:0 0 30px;
+      }
+
+      .figure-stage{
+        position:relative;
+        top:auto;
+        right:auto;
+        width:100%;
+        max-width:none;
+        opacity:1;
+        transform:none;
+        margin:0;
+      }
+    }
+  
+    /* MOBILE-SPECIFIC STRUCTURE */
+    .mobile-toc{
+      display:none;
+    }
+
+    .project-header-shell{
+      display:contents;
+    }
+
+    .project-title-row{
+      display:block;
+    }
+
+    .mobile-project-toc-toggle{
+      display:none;
+    }
+
+    .mobile-inline-figure{
+      display:none;
+    }
+
+    .mobile-menu-button{
+      display:none;
+    }
+
+    @media (max-width: 900px){
+      body{
+        font-size:16px;
+      }
+
+      .layout{
+        display:block;
+        padding:14px 16px 32px;
+      }
+
+      /* Top bar: Harri.la left, hamburger right */
+      .left{
+        position:sticky;
+        top:0;
+        z-index:50;
+        height:auto;
+        margin:0;
+        padding:4px 0 0;
+        display:block;
+        background:var(--bg);
+      }
+
+      .brand{
+        margin:0;
+        font-size:21px;
+        line-height:34px;
+        min-height:34px;
+      }
+
+      .left::before{
+        content:"";
+        display:block;
+      }
+
+      .mobile-menu-button{
+        display:grid;
+        position:absolute;
+        top:4px;
+        right:0;
+        transform:none;
+        width:34px;
+        height:34px;
+        padding:0;
+        border:0;
+        background:transparent;
+        cursor:pointer;
+        place-items:center;
+        z-index:60;
+      }
+
+      .mobile-menu-button .hamburger-glyph{
+        display:block;
+        width:auto;
+        height:auto;
+        background:none;
+        font-size:28px;
+        line-height:1;
+        font-family:"Geist", Arial, Helvetica, sans-serif;
+        font-weight:400;
+        transform:translateY(-1px);
+      }
+
+      /* Rotating welcome message is desktop-only */
+      .welcome-zone{
+        display:none;
+      }
+
+      .welcome{
+        display:none;
+      }
+
+      /* Main portfolio navigation becomes one smoothly collapsing panel. */
+      .main-menu-panel{
+        display:grid;
+        grid-template-rows:0fr;
+        margin-top:0;
+        opacity:0;
+        visibility:hidden;
+        pointer-events:none;
+        transform:translateY(-5px);
+        transition:
+          grid-template-rows .38s cubic-bezier(.22,.61,.36,1),
+          margin-top .38s cubic-bezier(.22,.61,.36,1),
+          opacity .20s ease,
+          transform .38s cubic-bezier(.22,.61,.36,1),
+          visibility 0s linear .38s;
+      }
+
+      .main-menu-panel-inner{
+        display:block;
+        min-height:0;
+        overflow:hidden;
+        padding-top:0;
+        padding-bottom:0;
+        border-top:1px solid transparent;
+        border-bottom:1px solid transparent;
+        transition:
+          padding-top .38s cubic-bezier(.22,.61,.36,1),
+          padding-bottom .38s cubic-bezier(.22,.61,.36,1),
+          border-color .20s ease;
+      }
+
+      .left.menu-open .main-menu-panel{
+        grid-template-rows:1fr;
+        margin-top:7px;
+        opacity:1;
+        visibility:visible;
+        pointer-events:auto;
+        transform:translateY(0);
+        transition:
+          grid-template-rows .38s cubic-bezier(.22,.61,.36,1),
+          margin-top .38s cubic-bezier(.22,.61,.36,1),
+          opacity .20s ease .04s,
+          transform .38s cubic-bezier(.22,.61,.36,1),
+          visibility 0s;
+      }
+
+      .left.menu-open .main-menu-panel-inner{
+        padding-top:10px;
+        padding-bottom:11px;
+        border-top-color:#111;
+        border-bottom-color:#111;
+      }
+
+      .left nav{
+        margin:0;
+        padding:0;
+      }
+
+      .left-footer{
+        display:block;
+        margin-top:20px;
+      }
+
+      .nav-group{
+        margin-bottom:4px;
+      }
+
+      .nav-group:has(.group-head[aria-expanded="true"]){
+        margin-bottom:13px;
+      }
+
+      .group-head{
+        font-size:19px;
+      }
+
+      .project-links a{
+        font-size:16px;
+      }
+
+      /* Middle paper becomes full-width */
+      .paper{
+        width:100%;
+        padding-top:0;
+        margin-top:0;
+      }
+
+      .project-header-shell{
+        display:block;
+        position:sticky;
+        top:34px;
+        z-index:40;
+        margin:0 0 18px;
+        background:var(--bg);
+      }
+
+      .project-title-row{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:16px;
+        min-height:29px;
+      }
+
+      .project-title{
+        position:static;
+        flex:1 1 auto;
+        font-size:25px;
+        margin:0;
+        padding:0 0 2px;
+        background:transparent;
+      }
+
+      .mobile-project-toc-toggle{
+        display:grid;
+        flex:0 0 30px;
+        width:30px;
+        height:30px;
+        place-items:center;
+        padding:0;
+        border:0;
+        background:transparent;
+        cursor:pointer;
+        font-size:25px;
+        line-height:1;
+      }
+
+      .mobile-project-toc-toggle span{
+        display:block;
+        transform-origin:center;
+        transition:transform .28s cubic-bezier(.22,.61,.36,1);
+      }
+
+      .project-header-shell.toc-open .mobile-project-toc-toggle span{
+        transform:rotate(45deg);
+      }
+
+      /* Text navigation now lives immediately below Tahriir Project */
+      .mobile-toc{
+        display:block;
+        position:relative;
+        max-height:0;
+        margin:0;
+        padding:0;
+        overflow:hidden;
+        opacity:0;
+        visibility:hidden;
+        pointer-events:none;
+        transform:translateY(-6px);
+        font-size:13px;
+        line-height:1.08;
+        transition:
+          max-height .34s cubic-bezier(.22,.61,.36,1),
+          padding-bottom .34s cubic-bezier(.22,.61,.36,1),
+          opacity .20s ease,
+          transform .34s cubic-bezier(.22,.61,.36,1),
+          visibility 0s linear .34s;
+      }
+
+      .project-header-shell.toc-open .mobile-toc{
+        max-height:260px;
+        padding-bottom:16px;
+        opacity:1;
+        visibility:visible;
+        pointer-events:auto;
+        transform:translateY(0);
+        transition:
+          max-height .34s cubic-bezier(.22,.61,.36,1),
+          padding-bottom .34s cubic-bezier(.22,.61,.36,1),
+          opacity .20s ease .05s,
+          transform .34s cubic-bezier(.22,.61,.36,1),
+          visibility 0s;
+      }
+
+      .mobile-toc .toc-title{
+        font-weight:700;
+        margin-bottom:5px;
+      }
+
+      .mobile-toc a{
+        display:block;
+        width:max-content;
+        max-width:100%;
+        padding:1px 0;
+        position:relative;
+      }
+
+      .mobile-toc-arrow{
+        left:-16px;
+        top:0;
+      }
+
+      .anchor-target{
+        scroll-margin-top:74px;
+      }
+
+      .paper h1{
+        font-size:42px;
+        line-height:.96;
+        margin-bottom:20px;
+      }
+
+      .paper h2{
+        font-size:23px;
+        margin-top:30px;
+      }
+
+      .paper p{
+        max-width:none;
+        font-size:17px;
+        line-height:1.16;
+      }
+
+      /* No hover-only figure behaviour on touch/mobile */
+      .figure-ref{
+        color:var(--accent);
+      }
+
+      /* Figures sit directly under the paragraph that refers to them */
+      .mobile-inline-figure{
+        display:block;
+        margin:12px 0 28px;
+        width:100%;
+      }
+
+      .mobile-inline-figure .figure-box{
+        width:100%;
+        aspect-ratio:3.26/1;
+      }
+
+      .mobile-inline-figure figcaption{
+        width:100%;
+        max-width:none;
+        margin-top:8px;
+        font-size:12px;
+        line-height:1.06;
+      }
+
+      .mobile-inline-figure figcaption strong{
+        display:inline;
+        font-weight:400;
+        text-decoration:underline;
+        text-underline-offset:2px;
+        margin:0;
+      }
+
+      .mobile-inline-figure .caption-separator{
+        text-decoration:none;
+      }
+
+      /* Desktop right rail disappears completely on mobile */
+      .right{
+        display:none;
+      }
+    }
+
+  
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      .project-links,
+      .main-menu-panel,
+      .main-menu-panel-inner,
+      .mobile-toc,
+      .mobile-project-toc-toggle span,
+      .toc-arrow,
+      .mobile-toc-arrow{
+        transition:none !important;
+      }
+    }
+  
+    /* FULLSCREEN FIGURE LIGHTBOX */
+    .figure-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:999;
+      display:grid;
+      place-items:center;
+      padding:28px;
+      background:rgba(255,255,255,.96);
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transition:opacity .22s ease, visibility 0s linear .22s;
+    }
+
+    .figure-lightbox.open{
+      opacity:1;
+      visibility:visible;
+      pointer-events:auto;
+      transition:opacity .22s ease, visibility 0s;
+    }
+
+    .figure-lightbox-inner{
+      width:min(94vw, 1500px);
+      height:min(90vh, 1000px);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:10px;
+      position:relative;
+    }
+
+    .figure-lightbox-image-wrap{
+      flex:1 1 auto;
+      min-height:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .figure-lightbox img{
+      display:block;
+      max-width:100%;
+      max-height:100%;
+      width:auto;
+      height:auto;
+      object-fit:contain;
+    }
+
+    .figure-lightbox-placeholder{
+      width:min(90vw, 1400px);
+      aspect-ratio:3.26/1;
+      border:1.5px solid var(--line);
+      position:relative;
+      background:#FFFFFF;
+    }
+
+    .figure-lightbox-placeholder::before,
+    .figure-lightbox-placeholder::after{
+      content:"";
+      position:absolute;
+      left:-5%;
+      width:110%;
+      top:50%;
+      height:1px;
+      background:var(--line);
+      transform-origin:center;
+    }
+
+    .figure-lightbox-placeholder::before{transform:rotate(16.8deg)}
+    .figure-lightbox-placeholder::after{transform:rotate(-16.8deg)}
+
+    .figure-lightbox-caption{
+      width:min(760px,100%);
+      font-size:13px;
+      line-height:1.08;
+    }
+
+    .figure-lightbox-caption strong{
+      font-weight:400;
+      text-decoration:underline;
+      text-underline-offset:2px;
+    }
+
+    .figure-lightbox-close{
+      position:absolute;
+      top:-4px;
+      right:0;
+      width:38px;
+      height:38px;
+      border:0;
+      padding:0;
+      background:transparent;
+      font-size:36px;
+      line-height:1;
+      cursor:pointer;
+      z-index:2;
+    }
+
+    .figure-box{
+      cursor:zoom-in;
+      pointer-events:auto;
+    }
+
+    body.lightbox-open{
+      overflow:hidden !important;
+    }
+
+    @media (max-width: 900px){
+      .figure-lightbox{
+        padding:16px;
+      }
+
+      .figure-lightbox-inner{
+        width:100%;
+        height:94vh;
+      }
+
+      .figure-lightbox-close{
+        top:0;
+        right:0;
+      }
+
+      .figure-lightbox-caption{
+        font-size:12px;
+      }
+    }
+
+  
+
+/* MOBILE RESEARCH NAV STACK — main nav + project nav stay attached */
+@media (max-width:900px){
+  :root{
+    --mobile-main-nav-height:38px;
+  }
+
+  .left{
+    background:var(--bg) !important;
+  }
+
+  .project-header-shell{
+    top:var(--mobile-main-nav-height) !important;
+    margin:0 0 18px !important;
+    background:var(--bg) !important;
+    z-index:40 !important;
+  }
+
+  /* No seam between the two sticky bars. */
+  .project-title-row{
+    background:var(--bg) !important;
+  }
+
+  .anchor-target{
+    scroll-margin-top:calc(var(--mobile-main-nav-height) + 40px) !important;
+  }
+}
+
+
+/* MOBILE RESEARCH PROJECT NAV REFINEMENTS */
+@media (max-width:900px){
+  /* "Project Overview" is redundant in the mobile project navigation. */
+  .mobile-toc > .toc-title{
+    display:none !important;
+  }
+
+  /* Give Tahriir Project breathing room while keeping both sticky bars
+     visually connected with the same solid background. */
+  .layout:not(:has(.left.menu-open)) .project-title-row{
+    padding-top:7px !important;
+    padding-bottom:7px !important;
+  }
+
+  /* When the main menu is expanded, keep Tahriir Project directly beneath it. */
+  .layout:has(.left.menu-open) .project-title-row{
+    padding-top:0 !important;
+    padding-bottom:2px !important;
+  }
+
+  .project-header-shell,
+  .project-title-row{
+    background:var(--bg) !important;
+  }
+}
+
+
+/* MOBILE RESEARCH — spacing below main menu line */
+@media (max-width:900px){
+  /* Match the breathing room used inside the opened main navigation. */
+  .project-title-row{
+    padding-top:10px !important;
+    padding-bottom:7px !important;
+  }
+
+  /* Keep the same spacing when the main menu itself is expanded. */
+  .layout:has(.left.menu-open) .project-title-row{
+    padding-top:10px !important;
+    padding-bottom:7px !important;
+  }
+}
+
+
+/* FIGURES — preserve source proportions while resizing */
+.figure-box img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+}
+.figure-lightbox img{
+  max-width:100% !important;
+  max-height:100% !important;
+  width:auto !important;
+  height:auto !important;
+  object-fit:contain !important;
+}
+
+
+/* UNIVERSAL LIGHTBOX CLOSE POSITION */
+.figure-lightbox-close{
+  position:fixed !important;
+  top:20px !important;
+  right:20px !important;
+  width:38px !important;
+  height:38px !important;
+  padding:0 !important;
+  z-index:1003 !important;
+}
+
+@media (max-width:900px){
+  .figure-lightbox-close{
+    top:12px !important;
+    right:12px !important;
+  }
+}
+
+
+/* RESEARCH FIGURES — natural proportions, no artificial frame */
+.figure-box{
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  aspect-ratio:auto !important;
+  border:0 !important;
+  background:transparent !important;
+  overflow:visible !important;
+}
+
+.figure-box::before,
+.figure-box::after{
+  display:none !important;
+  content:none !important;
+}
+
+.figure-box img{
+  position:static !important;
+  inset:auto !important;
+  display:none;
+  width:auto !important;
+  height:auto !important;
+  max-width:100% !important;
+  max-height:42vh !important;
+  margin:0 auto !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  border:0 !important;
+  outline:0 !important;
+}
+
+/* An empty figure has no fake rectangle: once a real image source is added,
+   its own intrinsic width/height becomes the visual proportion. */
+.figure-box:not(:has(img[src])){
+  height:0 !important;
+}
+
+@media (max-width:900px){
+  .mobile-inline-figure .figure-box{
+    width:100% !important;
+    height:auto !important;
+    aspect-ratio:auto !important;
+  }
+
+  .mobile-inline-figure .figure-box img{
+    width:100% !important;
+    height:auto !important;
+    max-width:100% !important;
+    max-height:none !important;
+    margin:0 !important;
+  }
+}
+
+
+/* RESEARCH FIGURES — align image edges to the figure column */
+.figure-stage .figure-box{
+  width:100% !important;
+}
+
+.figure-stage .figure-box img{
+  display:block;
+  width:100% !important;
+  height:auto !important;
+  max-width:none !important;
+  max-height:none !important;
+  margin:0 !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+}
+
+/* Mobile inline research figures follow the same full-column alignment. */
+@media (max-width:900px){
+  .mobile-inline-figure .figure-box,
+  .mobile-inline-figure .figure-box img{
+    width:100% !important;
+  }
+
+  .mobile-inline-figure .figure-box img{
+    height:auto !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+  }
+}
+
+
+/* RESEARCH DESKTOP FIGURE — keep image + caption inside the viewport */
+@media (min-width:901px){
+  .figure-stage{
+    box-sizing:border-box !important;
+  }
+
+  .figure-stage .figure-box{
+    display:flex !important;
+    justify-content:flex-start !important;
+    align-items:flex-start !important;
+    width:100% !important;
+    height:auto !important;
+  }
+
+  .figure-stage .figure-box img{
+    display:block;
+    flex:0 0 auto !important;
+    object-fit:contain !important;
+    object-position:left top !important;
+  }
+
+  .figure-stage .figure-caption{
+    box-sizing:border-box !important;
+  }
+}
+
+
+
+/* RESEARCH FIGURE PREVIEW — smooth crossfade without positional jumping */
+@media (min-width:901px){
+  .figure-stage .figure-box img,
+  .figure-stage .figure-caption{
+    opacity:1;
+    transition:opacity .24s ease;
+  }
+
+  .figure-stage.figure-changing .figure-box img,
+  .figure-stage.figure-changing .figure-caption{
+    opacity:0;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .figure-stage .figure-box img,
+  .figure-stage .figure-caption{
+    transition:none !important;
+  }
+}
+
+
+  
+/* RESEARCH PROJECT OVERVIEW — repeatable titles and subtitles */
+.toc{
+  grid-template-columns:1fr 1fr !important;
+}
+
+.toc-col{
+  min-width:0;
+  align-content:start;
+}
+
+.toc-group{
+  position:relative;
+  margin:0 0 12px;
+}
+
+.toc-group:last-child{
+  margin-bottom:0;
+}
+
+.toc-group-title{
+  display:block;
+  width:max-content;
+  max-width:100%;
+  padding:1px 0;
+  font-weight:700;
+  line-height:1.04;
+}
+
+
+.mobile-toc-group{
+  margin:0 0 10px;
+}
+
+.mobile-toc-group:last-child{
+  margin-bottom:0;
+}
+
+.mobile-toc .toc-group-title{
+  font-weight:700;
+  margin-bottom:2px;
+}
+
+@media (max-width:900px){
+  .project-header-shell.toc-open .mobile-toc{
+    max-height:min(62vh, 520px) !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain;
+  }
+}
+
+
+/* PROJECT OVERVIEW SEMANTICS */
+.project-overview-label{
+  pointer-events:none !important;
+  cursor:default !important;
+  text-decoration:none !important;
+}
+
+.toc-group-title,
+.mobile-toc .toc-group-title{
+  font-weight:700 !important;
+  line-height:1.04 !important;
+}
+
+.toc-group > a:not(.toc-group-title),
+.mobile-toc-group > a:not(.toc-group-title){
+  font-weight:400 !important;
+}
+
+
+/* PROJECT OVERVIEW CURRENT-SELECTION ARROW */
+@media (min-width:901px){
+  .toc-arrow{
+    position:fixed !important;
+    transition:
+      top .34s cubic-bezier(.22,.61,.36,1),
+      left .34s cubic-bezier(.22,.61,.36,1) !important;
+  }
+}
+
+@media (max-width:900px){
+  .mobile-toc-arrow{
+    transition:top .34s cubic-bezier(.22,.61,.36,1) !important;
+  }
+}
+
+
+
+/* RESEARCH FIGURE CAPTION — reference-style leading */
+.figure-caption{
+  line-height:1.22 !important;
+}
+
+@media (max-width:900px){
+  .mobile-inline-figure figcaption{
+    line-height:1.22 !important;
+  }
+}
+
+
+/* TOP-LEVEL HARRILANPUISTO NAV LINK */
+.standalone-nav-link{
+  display:block;
+  width:max-content;
+  max-width:100%;
+  margin:0 0 5px;
+  font-size:20px;
+  line-height:21px;
+}
+.standalone-nav-link:hover{
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+
+
+/* DESIGN RESEARCH FIGURE FIT RULE — desktop
+   Start at the established left figure edge and use all available width
+   to the website's right content edge. If image + caption would extend
+   below the page margin, reduce the image proportionally until both fit. */
+@media (min-width:901px){
+  .figure-stage{
+    /* Restored Design Research figure left edge from the previous version. */
+    left:0 !important;
+    right:0 !important;
+    width:auto !important;
+    max-width:none !important;
+  }
+
+  .figure-stage .figure-box{
+    display:block !important;
+    width:var(--research-figure-fit-width, 100%) !important;
+    height:auto !important;
+    max-width:none !important;
+    margin:0 !important;
+  }
+
+  .figure-stage .figure-box img{
+    display:block;
+    position:static !important;
+    inset:auto !important;
+    width:100% !important;
+    height:auto !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+    object-fit:contain !important;
+    object-position:left top !important;
+  }
+}
+
+
+/* DESKTOP NAVIGATION LABEL SIZE
+   Main section labels match the project-name size. */
+@media (min-width:901px){
+  .group-head,
+  .harrilanpuisto-link,
+  .harrilanpuisto-demo-link,
+  .standalone-nav-link{
+    font-size:17px !important;
+    line-height:18.7px !important;
+  }
+}
+
+
+/* Arabic welcome uses Baloo Bhaijaan 2 only. Everything else stays Geist. */
+.welcome.is-arabic-welcome{
+  font-family:"IBM Plex Sans Arabic" !important;
+  direction:rtl;
+}
+
+
+/* Harri.la is always a link back to About. */
+.brand a{
+  color:inherit;
+  text-decoration:none;
+}
+.brand a:hover,
+.brand a:focus{
+  text-decoration:none;
+}
+
+
+/* MOBILE RESEARCH — keep Harri.la/main navigation and the project bar
+   visually attached while scrolling. The 2px overlap prevents the
+   subpixel seam that can appear on mobile browsers between sticky layers. */
+@media (max-width:900px){
+  :root{
+    --mobile-main-nav-height:38px;
+  }
+
+  .left{
+    background:var(--bg) !important;
+  }
+
+  .project-header-shell{
+    top:calc(var(--mobile-main-nav-height) - 2px) !important;
+    background:var(--bg) !important;
+    box-shadow:0 -3px 0 var(--bg) !important;
+  }
+
+  .project-title-row,
+  .mobile-toc{
+    background:var(--bg) !important;
+  }
+}
+
+
+/* MOBILE RESEARCH — Harri.la matches the project-name size. */
+@media (max-width:900px){
+  .brand{
+    font-size:25px !important;
+  }
+}
+
+
+/* MOBILE BRAND SIZE — sitewide */
+@media (max-width:900px){
+  .brand{
+    font-size:25px !important;
+  }
+}
+
+
+/* MOBILE HAMBURGER — tighter spacing between the three lines */
+@media (max-width:900px){
+  .mobile-menu-button[aria-expanded="false"] .hamburger-glyph{
+    transform:translateY(-1px) scaleY(.72) !important;
+    transform-origin:center center !important;
+  }
+
+  .mobile-menu-button[aria-expanded="true"] .hamburger-glyph{
+    transform:translateY(-1px) scaleY(1) !important;
+  }
+}
+
+
+/* ============================================================
+   MOBILE HEADER — ONE SHARED HARRI.LA ROW + ONE SHARED ICON
+   ============================================================ */
+@media (max-width:900px){
+  /* Normalize the Harri.la row itself on every page/template. */
+  .left{
+    padding-top:4px !important;
+  }
+
+  .brand{
+    margin-top:0 !important;
+    margin-bottom:0 !important;
+    min-height:34px !important;
+    height:34px !important;
+    line-height:34px !important;
+  }
+
+  /* Work/Harrilanpuisto wrappers must not create a second coordinate system. */
+  .mobile-topbar{
+    display:contents !important;
+  }
+
+  /* The button occupies the exact same 34px-high row as Harri.la:
+     Harri.la row = y 4..38, hamburger row = y 4..38. */
+  .mobile-menu-button{
+    display:block !important;
+    position:absolute !important;
+    top:4px !important;
+    right:0 !important;
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    min-height:34px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    color:var(--text, #0b0b0b) !important;
+    font-size:0 !important;
+    line-height:0 !important;
+    transform:none !important;
+    overflow:visible !important;
+    cursor:pointer !important;
+  }
+
+  /* Completely suppress the old font glyph on every template. */
+  .mobile-menu-button .hamburger-glyph{
+    display:none !important;
+  }
+
+  /* CLOSED ICON
+     Three identical bars. No font rendering is involved, so the icon is
+     literally identical on About / Research / Work / Artistic / Harrilanpuisto.
+     It is centered at y=21px, exactly the center of the Harri.la 4..38 row. */
+  .mobile-menu-button::before{
+    content:"" !important;
+    position:absolute !important;
+    left:50% !important;
+    top:50% !important;
+    width:22px !important;
+    height:2.5px !important;
+    background:currentColor !important;
+    box-shadow:
+      0 -7px 0 currentColor,
+      0  7px 0 currentColor !important;
+    transform:translate(-50%,-50%) !important;
+    transform-origin:center center !important;
+    opacity:1 !important;
+    pointer-events:none !important;
+  }
+
+  .mobile-menu-button::after{
+    content:"" !important;
+    position:absolute !important;
+    left:50% !important;
+    top:50% !important;
+    width:22px !important;
+    height:2.5px !important;
+    background:currentColor !important;
+    transform:translate(-50%,-50%) rotate(-45deg) !important;
+    transform-origin:center center !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+
+  /* OPEN ICON — same dimensions and center, converted into an ×. */
+  .mobile-menu-button[aria-expanded="true"]::before{
+    box-shadow:none !important;
+    transform:translate(-50%,-50%) rotate(45deg) !important;
+  }
+
+  .mobile-menu-button[aria-expanded="true"]::after{
+    opacity:1 !important;
+  }
+}
+
+
+/* MOBILE ACCORDION — animate the group spacing together with the measured-height panel. */
+@media (max-width:900px){
+  .nav-group{
+    transition:margin-bottom .34s cubic-bezier(.22,.61,.36,1);
+  }
+}
+
+
+/* MOBILE RESEARCH PROJECT MENU — slower measured-height animation + desktop-style columns */
+@media (max-width:900px){
+  .mobile-toc{
+    height:0;
+    max-height:none !important;
+    overflow:hidden !important;
+    transition:
+      height .52s cubic-bezier(.22,.61,.36,1),
+      padding-bottom .52s cubic-bezier(.22,.61,.36,1),
+      opacity .26s ease,
+      transform .52s cubic-bezier(.22,.61,.36,1),
+      visibility 0s linear .52s !important;
+  }
+
+  .project-header-shell.toc-open .mobile-toc{
+    max-height:none !important;
+    overflow:hidden !important;
+    transition:
+      height .52s cubic-bezier(.22,.61,.36,1),
+      padding-bottom .52s cubic-bezier(.22,.61,.36,1),
+      opacity .26s ease .06s,
+      transform .52s cubic-bezier(.22,.61,.36,1),
+      visibility 0s !important;
+  }
+
+  .mobile-toc.toc-scrollable{
+    overflow-y:auto !important;
+  }
+
+  .mobile-toc-columns{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:24px;
+    min-width:0;
+  }
+
+  .mobile-toc-col{
+    min-width:0;
+  }
+
+  .mobile-toc-group{
+    break-inside:avoid;
+  }
+
+  .mobile-project-toc-toggle span{
+    transition:transform .42s cubic-bezier(.22,.61,.36,1) !important;
+  }
+}
+
+
+
+/* MOBILE MAIN MENU — one measured-height animation, independent of inner accordions. */
+@media (max-width:900px){
+  .main-menu-panel{
+    display:block !important;
+    height:0;
+    grid-template-rows:none !important;
+    overflow:hidden !important;
+    margin-top:0 !important;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transform:translateY(-5px);
+    transition:
+      height .42s cubic-bezier(.22,.61,.36,1),
+      margin-top .42s cubic-bezier(.22,.61,.36,1),
+      opacity .20s ease,
+      transform .42s cubic-bezier(.22,.61,.36,1),
+      visibility 0s linear .42s !important;
+  }
+  .main-menu-panel-inner{
+    display:block !important;
+    min-height:0;
+    overflow:hidden !important;
+  }
+  .left.menu-open .main-menu-panel{
+    margin-top:5px !important;
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transform:translateY(0);
+    transition:
+      height .42s cubic-bezier(.22,.61,.36,1),
+      margin-top .42s cubic-bezier(.22,.61,.36,1),
+      opacity .20s ease .04s,
+      transform .42s cubic-bezier(.22,.61,.36,1),
+      visibility 0s !important;
+  }
+}
+
+@media (max-width:900px){
+  .left.menu-open .main-menu-panel{ margin-top:7px !important; }
+}
+
+
+/* MOBILE AUTO-HIDING MAIN HEADER
+   Harri.la + hamburger slide away while scrolling down and return on scroll up. */
+@media (max-width:900px){
+  .left{
+    transition:transform .28s cubic-bezier(.22,.61,.36,1) !important;
+    will-change:transform;
+  }
+
+  .left.mobile-scroll-hidden:not(.menu-open){
+    transform:translateY(calc(-100% - 2px)) !important;
+  }
+
+  /* When the main header is hidden, let the project-specific sticky heading
+     occupy the top edge instead of leaving an empty header-sized gap. */
+  .project-type,
+  .project-header-shell{
+    transition:top .28s cubic-bezier(.22,.61,.36,1) !important;
+  }
+
+  .layout:has(.left.mobile-scroll-hidden:not(.menu-open)) .project-type,
+  .layout:has(.left.mobile-scroll-hidden:not(.menu-open)) .project-header-shell{
+    top:0 !important;
+  }
+}
+
+
+/* MOBILE RESEARCH HEADER AUTO-HIDE
+   The sticky research project title/menu follows the same scroll-direction
+   behaviour as the Harri.la mobile header. */
+@media (max-width:900px){
+  .project-header-shell{
+    transition:
+      top .28s cubic-bezier(.22,.61,.36,1),
+      transform .28s cubic-bezier(.22,.61,.36,1) !important;
+    will-change:transform;
+  }
+
+  .project-header-shell.mobile-scroll-hidden:not(.toc-open){
+    transform:translateY(calc(-100% - 2px)) !important;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="layout">
+  {% include nav.html %}
+
+  <main class="paper" id="paper">
+    <div class="project-header-shell">
+      <div class="project-title-row">
+        <div class="project-title">{{ page.title }}</div>
+        <button class="mobile-project-toc-toggle" type="button" aria-label="Open text navigation" aria-expanded="false">
+          <span aria-hidden="true">+</span>
+        </button>
+      </div>
+
+      <nav class="mobile-toc" aria-label="Article navigation">
+        <span class="mobile-toc-arrow" aria-hidden="true">→</span>
+
+        {% if page.toc_columns and page.toc_columns.size > 0 %}
+          <div class="mobile-toc-columns">
+            {% for column in page.toc_columns %}
+              <div class="mobile-toc-col">
+                {% for group in column.groups %}
+                  <div class="mobile-toc-group">
+                    <a class="toc-group-title" href="#{{ group.title.section_id }}" data-mobile-section="{{ group.title.section_id }}">{{ group.title.label }}</a>
+
+                    {% for item in group.links %}
+                      <a href="#{{ item.section_id }}" data-mobile-section="{{ item.section_id }}">{{ item.label }}</a>
+                    {% endfor %}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="mobile-toc-columns">
+            <div class="mobile-toc-col">
+              {% for section in page.sections %}
+                {% assign section_id = section.id | default: section.nav_label | slugify %}
+                <a href="#{{ section_id }}" data-mobile-section="{{ section_id }}">{{ section.nav_label | default: section.heading | default: "Section" }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </nav>
+    </div>
+
+    {% for section in page.sections %}
+      {% assign section_id = section.id | default: section.nav_label | slugify %}
+      {% assign is_chapter_target = false %}
+
+      {% if page.toc_columns and page.toc_columns.size > 0 %}
+        {% for column in page.toc_columns %}
+          {% for group in column.groups %}
+            {% if group.title.section_id == section_id %}
+              {% assign is_chapter_target = true %}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
+
+      <section id="{{ section_id }}" class="anchor-target">
+        {% if forloop.first %}
+          <h1>
+            <span class="title-line">{{ page.headline_line_1 }}</span>
+            <span class="title-line">{{ page.headline_line_2 }}</span>
+          </h1>
+        {% elsif is_chapter_target and section.heading %}
+          <h1 class="chapter-heading">{{ section.heading }}</h1>
+        {% elsif section.heading %}
+          <h2>{{ section.heading }}</h2>
+        {% endif %}
+        <div class="research-copy">{{ section.body | markdownify }}</div>
+      </section>
+    {% endfor %}
+  </main>
+
+  <aside class="right" aria-label="Article navigation and figure preview">
+    <nav class="toc" aria-label="Table of contents">
+      {% if page.toc_columns and page.toc_columns.size > 0 %}
+        {% for column in page.toc_columns %}
+          <div class="toc-col">
+            {% if forloop.first %}
+              <span class="toc-arrow" aria-hidden="true">→</span>
+              
+            {% endif %}
+
+            {% for group in column.groups %}
+              <div class="toc-group">
+                <a class="toc-group-title" href="#{{ group.title.section_id }}" data-section="{{ group.title.section_id }}">{{ group.title.label }}</a>
+
+                {% for item in group.links %}
+                  <a href="#{{ item.section_id }}" data-section="{{ item.section_id }}">{{ item.label }}</a>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="toc-col">
+          <span class="toc-arrow" aria-hidden="true">→</span>
+          
+          {% for section in page.sections %}
+            {% assign section_id = section.id | default: section.nav_label | slugify %}
+            <a href="#{{ section_id }}" data-section="{{ section_id }}">{{ section.nav_label | default: section.heading | default: "Section" }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </nav>
+
+    <figure class="figure-stage" id="figureStage" aria-live="polite">
+      <div class="figure-box" id="figureBox">
+        <img id="figureImage" alt="" />
+      </div>
+      <figcaption class="figure-caption">
+        <strong id="figureLabel"></strong>
+        <span id="figureText"></span>
+      </figcaption>
+    </figure>
+  </aside>
+</div>
+
+<div class="figure-lightbox" id="figureLightbox" aria-hidden="true">
+  <div class="figure-lightbox-inner" role="dialog" aria-modal="true" aria-label="Expanded figure">
+    <button class="figure-lightbox-close" type="button" aria-label="Close expanded figure">×</button>
+    <div class="figure-lightbox-image-wrap">
+      <img id="lightboxImage" alt="" />
+      <div class="figure-lightbox-placeholder" id="lightboxPlaceholder" hidden></div>
+    </div>
+    <div class="figure-lightbox-caption">
+      <strong id="lightboxLabel"></strong><span id="lightboxCaption"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ------------------------------------------------------------
+  // DESKTOP ROTATING WELCOME
+  // ------------------------------------------------------------
+  const welcomeZone = document.querySelector(".welcome-zone");
+  const welcomeWord = document.querySelector(".welcome");
+  const welcomeMessages = {{ site.data.site.welcome_messages | jsonify }};
+
+  let currentWelcomeIndex = -1;
+
+  function randomWelcomeIndex(){
+    if(welcomeMessages.length <= 1) return 0;
+
+    let next;
+    do{
+      next = Math.floor(Math.random() * welcomeMessages.length);
+    }while(next === currentWelcomeIndex);
+
+    return next;
+  }
+
+  function placeWelcomeRandomly(){
+    if(!welcomeZone || !welcomeWord || window.innerWidth <= 900) return;
+
+    const zoneWidth = welcomeZone.clientWidth;
+    const zoneHeight = welcomeZone.clientHeight;
+    const wordWidth = welcomeWord.offsetWidth;
+    const wordHeight = welcomeWord.offsetHeight;
+
+    // Small safety inset keeps the type from touching the edges.
+    const insetX = 2;
+    const insetY = 4;
+
+    const maxX = Math.max(insetX, zoneWidth - wordWidth - insetX);
+    const maxY = Math.max(insetY, zoneHeight - wordHeight - insetY);
+
+    const x = insetX + Math.random() * Math.max(0, maxX - insetX);
+    const y = insetY + Math.random() * Math.max(0, maxY - insetY);
+
+    welcomeWord.style.left = `${Math.round(x)}px`;
+    welcomeWord.style.top = `${Math.round(y)}px`;
+  }
+
+  function changeWelcome({animate = true} = {}){
+    if(!welcomeZone || !welcomeWord || window.innerWidth <= 900) return;
+
+    const applyChange = () => {
+      currentWelcomeIndex = randomWelcomeIndex();
+      welcomeWord.textContent = welcomeMessages[currentWelcomeIndex];
+      welcomeWord.classList.toggle(
+        "is-arabic-welcome",
+        welcomeMessages[currentWelcomeIndex] === "يا هلا!"
+      );
+
+      // Wait for the new word width to be laid out before positioning it.
+      requestAnimationFrame(() => {
+        placeWelcomeRandomly();
+        welcomeWord.classList.remove("changing");
+      });
+    };
+
+    if(animate){
+      welcomeWord.classList.add("changing");
+      window.setTimeout(applyChange, 180);
+    }else{
+      applyChange();
+    }
+  }
+
+  // Random greeting + position on every desktop page load.
+  changeWelcome({animate:false});
+
+  // Then change both the language and its placement every 30 seconds.
+  window.setInterval(() => {
+    changeWelcome({animate:true});
+  }, 30000);
+
+  // Browser resizing does not alter the greeting or its position.
+  // It only changes on page load and at the one-minute interval.
+
+
+  // ------------------------------------------------------------
+  // 1) LEFT NAV ACCORDIONS
+  // ------------------------------------------------------------
+  const accordionButtons = [...document.querySelectorAll(".group-head")];
+
+  function setAccordionState(button, open, animate = true){
+    const links = button.nextElementSibling;
+    const toggle = button.querySelector(".group-toggle");
+
+    button.setAttribute("aria-expanded", String(open));
+    if(toggle) toggle.textContent = open ? "−" : "+";
+
+    if(!animate){
+      links.classList.toggle("collapsed", !open);
+
+      if(open){
+        // Measure the complete open panel, including its internal bottom spacing.
+        links.style.height = "auto";
+        const target = links.scrollHeight;
+        links.style.height = `${target}px`;
+      }else{
+        links.style.height = "0px";
+      }
+      return;
+    }
+
+    if(open){
+      // Start from the exact closed height, then animate to the measured content.
+      links.style.height = "0px";
+      links.classList.remove("collapsed");
+
+      // Force Safari to commit the closed state before the opening frame.
+      void links.offsetHeight;
+
+      const target = links.scrollHeight;
+      links.style.height = `${target}px`;
+    }else{
+      // Freeze the current rendered height before collapsing. This prevents
+      // Safari from snapping from auto/content height straight to zero.
+      const startHeight = links.getBoundingClientRect().height;
+      links.style.height = `${startHeight}px`;
+
+      void links.offsetHeight;
+
+      links.classList.add("collapsed");
+      links.style.height = "0px";
+    }
+  }
+
+  accordionButtons.forEach((button) => {
+    const initiallyOpen = button.getAttribute("aria-expanded") === "true";
+    setAccordionState(button, initiallyOpen, false);
+
+    button.addEventListener("click", () => {
+      const isOpen = button.getAttribute("aria-expanded") === "true";
+      setAccordionState(button, !isOpen, true);
+    });
+  });
+
+  // Resizing must never animate or change the menu's leading. We only
+  // normalize the current panels for the active desktop/mobile layout.
+  let accordionViewportMode = window.innerWidth <= 900 ? "mobile" : "desktop";
+
+  window.addEventListener("resize", () => {
+    const nextMode = window.innerWidth <= 900 ? "mobile" : "desktop";
+    if(nextMode === accordionViewportMode) return;
+
+    accordionViewportMode = nextMode;
+
+    accordionButtons.forEach((button) => {
+      const open = button.getAttribute("aria-expanded") === "true";
+      setAccordionState(button, open, false);
+    });
+  });
+
+  // ------------------------------------------------------------
+  // 2) FIGURE DATA
+  // Replace `src` with your real image paths, e.g.
+  // src: "images/tahriir-figure-01.jpg"
+  // Leave src empty to keep the crossed placeholder.
+  // ------------------------------------------------------------
+  const rawFigures = {{ page.figures | jsonify }};
+  const figures = {};
+
+  function cmsAssetPath(path){
+    if(!path) return "";
+    if(/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
+    const base = {{ site.baseurl | jsonify }};
+    const clean = path.startsWith("/") ? path : "/" + path;
+    return base + clean;
+  }
+
+  (rawFigures || []).forEach((fig, index) => {
+    const number = index + 1;
+    figures[`fig${number}`] = {
+      label: `Fig. ${number}`,
+      src: cmsAssetPath(fig.image || ""),
+      alt: fig.alt || `Figure ${number}`,
+      caption: fig.caption || ""
+    };
+  });
+
+  /* [fig:3] in the CMS becomes the interactive (Fig. 3) reference. */
+  document.querySelectorAll(".research-copy").forEach(container => {
+    container.innerHTML = container.innerHTML.replace(
+      /\[fig:(\d+)\]/gi,
+      (_, number) => `<span class="figure-ref" tabindex="0" data-figure="fig${number}">(Fig. ${number})</span>`
+    );
+  });
+
+  /* Build mobile inline figures automatically from those same records. */
+  document.querySelectorAll(".research-copy p").forEach(paragraph => {
+    const refs = [...paragraph.querySelectorAll(".figure-ref")];
+    if(!refs.length) return;
+
+    let insertionPoint = paragraph;
+    const seen = new Set();
+
+    refs.forEach(ref => {
+      const key = ref.dataset.figure;
+      if(seen.has(key) || !figures[key]) return;
+      seen.add(key);
+
+      const fig = figures[key];
+      const number = key.replace(/\D/g, "");
+      const inline = document.createElement("figure");
+      inline.className = "mobile-inline-figure";
+      inline.innerHTML = `
+        <div class="figure-box">
+          <img data-mobile-image="${key}" alt="${fig.alt || ""}">
+        </div>
+        <figcaption>
+          <strong>Fig. ${number}</strong><span class="caption-separator">, </span>${fig.caption || ""}
+        </figcaption>
+      `;
+      insertionPoint.insertAdjacentElement("afterend", inline);
+      insertionPoint = inline;
+    });
+  });
+
+  const stage = document.getElementById("figureStage");
+  const image = document.getElementById("figureImage");
+  const label = document.getElementById("figureLabel");
+  const caption = document.getElementById("figureText");
+
+  let figureSwitchToken = 0;
+
+  function applyFigureImmediately(key, fig){
+    label.textContent = fig.label;
+    caption.textContent = fig.caption;
+
+    if(fig.src){
+      image.src = fig.src;
+      image.alt = fig.alt || fig.label;
+      image.style.display = "block";
+    }else{
+      image.removeAttribute("src");
+      image.alt = "";
+      image.style.display = "none";
+    }
+
+    stage.dataset.currentFigure = key;
+    stage.classList.add("visible");
+    stage.classList.remove("figure-changing");
+
+    if(typeof window.fitDesktopResearchFigureNow === "function"){
+      window.fitDesktopResearchFigureNow();
+    }
+  }
+
+  function showFigure(key){
+    const fig = figures[key];
+    if(!fig) return;
+
+    const previousKey = stage.dataset.currentFigure || "";
+    if(previousKey === key){
+      stage.classList.add("visible");
+      return;
+    }
+
+    /* Mobile uses the inline figures and does not need the desktop preview transition. */
+    if(window.innerWidth <= 900 || !fig.src){
+      applyFigureImmediately(key, fig);
+      return;
+    }
+
+    const token = ++figureSwitchToken;
+    const preload = new Image();
+
+    preload.onload = () => {
+      if(token !== figureSwitchToken) return;
+
+      const hasPreviousFigure = Boolean(previousKey);
+
+      /* Fade the existing figure out first. Keeping its current dimensions
+         during this phase prevents the preview from snapping. */
+      if(hasPreviousFigure){
+        stage.classList.add("figure-changing");
+      }
+
+      const swap = () => {
+        if(token !== figureSwitchToken) return;
+
+        label.textContent = fig.label;
+        caption.textContent = fig.caption;
+        image.src = fig.src;
+        image.alt = fig.alt || fig.label;
+        image.style.display = "block";
+        stage.dataset.currentFigure = key;
+        stage.classList.add("visible");
+
+        /* Resize the new image while it is invisible, then fade it in.
+           This avoids showing the aspect-ratio change as a jump. */
+        requestAnimationFrame(() => {
+          if(typeof window.fitDesktopResearchFigureNow === "function"){
+            window.fitDesktopResearchFigureNow();
+          }
+
+          requestAnimationFrame(() => {
+            if(token === figureSwitchToken){
+              stage.classList.remove("figure-changing");
+            }
+          });
+        });
+      };
+
+      if(hasPreviousFigure){
+        window.setTimeout(swap, 150);
+      }else{
+        stage.classList.add("figure-changing");
+        swap();
+      }
+    };
+
+    preload.onerror = () => {
+      if(token !== figureSwitchToken) return;
+      applyFigureImmediately(key, fig);
+      stage.classList.remove("figure-changing");
+    };
+
+    preload.src = fig.src;
+  }
+
+  function hideFigure(){
+    stage.classList.remove("visible");
+  }
+
+  const paperScroller = document.querySelector(".paper");
+  const figureRefs = [...document.querySelectorAll(".figure-ref")];
+  let automaticFigureKey = figureRefs[0]?.dataset.figure || null;
+  let hoveredFigureKey = null;
+
+  function updateAutomaticFigure(){
+    // Mobile uses inline figures, so the right-hand preview logic is desktop-only.
+    if(window.innerWidth <= 900) return;
+    if(!figureRefs.length) return;
+
+    const paperRect = paperScroller.getBoundingClientRect();
+    const readingLine = paperRect.top + paperScroller.clientHeight * 0.42;
+
+    /*
+      Desktop Research figure rule:
+      If more than one figure reference is currently visible in the reading
+      area, the FIRST one mentioned in the text has priority.
+
+      As soon as that earlier reference leaves the visible reading area, the
+      next visible reference can take over. If no figure reference is visible,
+      fall back to the established scroll-driven reading-line behavior.
+    */
+    const visibleRefs = figureRefs.filter(ref => {
+      const rect = ref.getBoundingClientRect();
+      return rect.bottom >= paperRect.top && rect.top <= paperRect.bottom;
+    });
+
+    let currentKey = visibleRefs.length
+      ? visibleRefs[0].dataset.figure
+      : figureRefs[0].dataset.figure;
+
+    if(!visibleRefs.length){
+      for(const ref of figureRefs){
+        const top = ref.getBoundingClientRect().top;
+        if(top <= readingLine){
+          currentKey = ref.dataset.figure;
+        }else{
+          break;
+        }
+      }
+    }
+
+    automaticFigureKey = currentKey;
+
+    // Do not interrupt a deliberate hover/focus preview.
+    if(!hoveredFigureKey){
+      showFigure(automaticFigureKey);
+    }
+  }
+
+  figureRefs.forEach((ref) => {
+    ref.addEventListener("mouseenter", () => {
+      if(window.innerWidth <= 900) return;
+      hoveredFigureKey = ref.dataset.figure;
+      showFigure(hoveredFigureKey);
+    });
+
+    ref.addEventListener("focus", () => {
+      if(window.innerWidth <= 900) return;
+      hoveredFigureKey = ref.dataset.figure;
+      showFigure(hoveredFigureKey);
+    });
+
+    ref.addEventListener("mouseleave", () => {
+      if(window.innerWidth <= 900) return;
+      // Keep showing the figure the reader deliberately hovered.
+      // It will return to the scroll-driven figure only once they scroll again.
+    });
+
+    ref.addEventListener("blur", () => {
+      if(window.innerWidth <= 900) return;
+      // Same behaviour for keyboard focus: keep the selected figure visible
+      // until the reader resumes scrolling.
+    });
+  });
+
+  let figureScrollTicking = false;
+
+  function handleFigureReadingScroll(){
+    if(window.innerWidth <= 900) return;
+
+    // Scrolling the article ends any manual hover/focus override and hands
+    // control back to the figure appropriate to the current reading position.
+    hoveredFigureKey = null;
+
+    if(!figureScrollTicking){
+      window.requestAnimationFrame(() => {
+        updateAutomaticFigure();
+        figureScrollTicking = false;
+      });
+      figureScrollTicking = true;
+    }
+  }
+
+  paperScroller.addEventListener("scroll", handleFigureReadingScroll, {passive:true});
+
+  window.addEventListener("resize", () => {
+    if(window.innerWidth > 900){
+      updateAutomaticFigure();
+    }
+  });
+
+  // Always show the first referenced figure when the desktop page opens.
+  if(window.innerWidth > 900 && automaticFigureKey){
+    showFigure(automaticFigureKey);
+    requestAnimationFrame(updateAutomaticFigure);
+  }
+
+  // ------------------------------------------------------------
+  // 3) TEXT NAVIGATION: keep the arrow on the section currently being read
+  // ------------------------------------------------------------
+  const sections = [...document.querySelectorAll(".paper section[id]")];
+  const tocLinks = [...document.querySelectorAll(".toc a[data-section]")];
+  const mobileTocLinks = [...document.querySelectorAll(".mobile-toc a[data-mobile-section]")];
+  const desktopTocArrow = document.querySelector(".toc-arrow");
+  const mobileTocArrow = document.querySelector(".mobile-toc-arrow");
+  const mobileToc = document.querySelector(".mobile-toc");
+
+  let clickedDesktopLink = null;
+  let clickedMobileLink = null;
+
+  function currentSectionId(){
+    if(!sections.length) return "";
+
+    const paperRect = paperScroller.getBoundingClientRect();
+    const readingLine = window.innerWidth <= 900
+      ? 145
+      : paperRect.top + 72;
+
+    let current = sections[0].id;
+
+    for(const section of sections){
+      const heading = section.querySelector("h1, h2");
+      const marker = heading || section;
+      const top = marker.getBoundingClientRect().top;
+
+      if(top <= readingLine){
+        current = section.id;
+      }else{
+        break;
+      }
+    }
+
+    return current;
+  }
+
+  function firstDesktopLinkFor(id){
+    return tocLinks.find(link => link.dataset.section === id) || null;
+  }
+
+  function firstMobileLinkFor(id){
+    return mobileTocLinks.find(link => link.dataset.mobileSection === id) || null;
+  }
+
+  function moveDesktopArrow(link){
+    if(!desktopTocArrow || !link || window.innerWidth <= 900) return;
+
+    const rect = link.getBoundingClientRect();
+    desktopTocArrow.style.position = "fixed";
+    desktopTocArrow.style.left = `${Math.round(rect.left - 20)}px`;
+    desktopTocArrow.style.top = `${Math.round(rect.top + 1)}px`;
+  }
+
+  function moveMobileArrow(link){
+    if(!mobileTocArrow || !mobileToc || !link) return;
+
+    const navRect = mobileToc.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+
+    mobileTocArrow.style.position = "absolute";
+    mobileTocArrow.style.left =
+      `${Math.round((linkRect.left - navRect.left) + mobileToc.scrollLeft - 16)}px`;
+    mobileTocArrow.style.top =
+      `${Math.round((linkRect.top - navRect.top) + mobileToc.scrollTop + 1)}px`;
+  }
+
+  function setActiveNavigationForSection(id){
+    // If the page begins with introductory text that is not itself listed
+    // in the navigation, keep the arrow on the first clickable title.
+    let desktopActive = firstDesktopLinkFor(id) || tocLinks[0] || null;
+    let mobileActive = firstMobileLinkFor(id) || mobileTocLinks[0] || null;
+
+    if(clickedDesktopLink && clickedDesktopLink.dataset.section === id){
+      desktopActive = clickedDesktopLink;
+    }else{
+      clickedDesktopLink = null;
+    }
+
+    if(clickedMobileLink && clickedMobileLink.dataset.mobileSection === id){
+      mobileActive = clickedMobileLink;
+    }else{
+      clickedMobileLink = null;
+    }
+
+    tocLinks.forEach(link => {
+      link.classList.toggle("active", link === desktopActive);
+    });
+
+    mobileTocLinks.forEach(link => {
+      link.classList.toggle("active", link === mobileActive);
+    });
+
+    moveDesktopArrow(desktopActive);
+    moveMobileArrow(mobileActive);
+  }
+
+  function updateTextNavigation(){
+    setActiveNavigationForSection(currentSectionId());
+  }
+
+  function positionNavigationArrows(){
+    const id = currentSectionId();
+    const desktopActive = tocLinks.find(link => link.classList.contains("active"))
+      || firstDesktopLinkFor(id)
+      || tocLinks[0]
+      || null;
+    const mobileActive = mobileTocLinks.find(link => link.classList.contains("active"))
+      || firstMobileLinkFor(id)
+      || mobileTocLinks[0]
+      || null;
+
+    moveDesktopArrow(desktopActive);
+    moveMobileArrow(mobileActive);
+  }
+
+  tocLinks.forEach(link => {
+    link.addEventListener("click", () => {
+      clickedDesktopLink = link;
+      tocLinks.forEach(item => item.classList.toggle("active", item === link));
+      moveDesktopArrow(link);
+    });
+  });
+
+  mobileTocLinks.forEach(link => {
+    link.addEventListener("click", () => {
+      clickedMobileLink = link;
+      mobileTocLinks.forEach(item => item.classList.toggle("active", item === link));
+      moveMobileArrow(link);
+    });
+  });
+
+  let scrollTicking = false;
+
+  function handleTextNavigationScroll(){
+    if(scrollTicking) return;
+
+    scrollTicking = true;
+    requestAnimationFrame(() => {
+      updateTextNavigation();
+      scrollTicking = false;
+    });
+  }
+
+  paperScroller.addEventListener("scroll", handleTextNavigationScroll, {passive:true});
+
+  window.addEventListener("scroll", () => {
+    if(window.innerWidth <= 900){
+      handleTextNavigationScroll();
+    }
+  }, {passive:true});
+
+  if(mobileToc){
+    mobileToc.addEventListener("scroll", () => {
+      if(window.innerWidth <= 900){
+        positionNavigationArrows();
+      }
+    }, {passive:true});
+  }
+
+  window.addEventListener("resize", () => {
+    updateTextNavigation();
+    if(
+      window.innerWidth <= 900 &&
+      mobileToc &&
+      projectHeaderShell &&
+      projectHeaderShell.classList.contains("toc-open")
+    ){
+      const targetHeight = mobileProjectTocTargetHeight();
+      mobileToc.style.height = `${targetHeight}px`;
+      mobileToc.classList.toggle("toc-scrollable", mobileProjectTocFullHeight() > targetHeight + 1);
+    }
+    requestAnimationFrame(positionNavigationArrows);
+  });
+
+  updateTextNavigation();
+  requestAnimationFrame(positionNavigationArrows);
+
+  // ------------------------------------------------------------
+  // 4) MOBILE MENU
+  // ------------------------------------------------------------
+  const leftNav = document.querySelector(".left");
+  const mobileMenuButton = document.querySelector(".mobile-menu-button");
+
+  mobileMenuButton.addEventListener("click", () => {
+    const open = leftNav.classList.toggle("menu-open");
+    mobileMenuButton.setAttribute("aria-expanded", String(open));
+    mobileMenuButton.setAttribute("aria-label", open ? "Close project menu" : "Open project menu");
+
+    const glyph = mobileMenuButton.querySelector(".hamburger-glyph");
+    if(glyph) glyph.textContent = open ? "×" : "☰";
+  });
+
+  // Close the portfolio menu after choosing a project on mobile.
+  document.querySelectorAll(".left nav a").forEach(link => {
+    link.addEventListener("click", () => {
+      if(window.innerWidth <= 900){
+        leftNav.classList.remove("menu-open");
+        mobileMenuButton.setAttribute("aria-expanded", "false");
+        mobileMenuButton.setAttribute("aria-label", "Open project menu");
+        const glyph = mobileMenuButton.querySelector(".hamburger-glyph");
+        if(glyph) glyph.textContent = "☰";
+      }
+    });
+  });
+
+  // ------------------------------------------------------------
+  // 5) MOBILE PROJECT TEXT NAVIGATION
+  // ------------------------------------------------------------
+  const projectHeaderShell = document.querySelector(".project-header-shell");
+  const projectTocToggle = document.querySelector(".mobile-project-toc-toggle");
+
+
+  function mobileProjectTocFullHeight(){
+    if(!mobileToc) return 0;
+    const currentPadding = parseFloat(getComputedStyle(mobileToc).paddingBottom) || 0;
+    return Math.max(0, mobileToc.scrollHeight - currentPadding + 16);
+  }
+
+  function mobileProjectTocTargetHeight(){
+    const fullHeight = mobileProjectTocFullHeight();
+    const cap = Math.min(window.innerHeight * 0.62, 520);
+    return Math.min(fullHeight, cap);
+  }
+
+  function openMobileProjectToc(){
+    if(!mobileToc || !projectHeaderShell) return;
+    mobileToc.classList.remove("toc-scrollable");
+    mobileToc.style.height = "0px";
+    projectHeaderShell.classList.add("toc-open");
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const targetHeight = mobileProjectTocTargetHeight();
+        mobileToc.style.height = `${targetHeight}px`;
+      });
+    });
+  }
+
+  function closeMobileProjectToc(){
+    if(!mobileToc || !projectHeaderShell) return;
+    const currentHeight = mobileToc.getBoundingClientRect().height;
+    mobileToc.classList.remove("toc-scrollable");
+    mobileToc.style.height = `${currentHeight}px`;
+    void mobileToc.offsetHeight;
+    projectHeaderShell.classList.remove("toc-open");
+
+    requestAnimationFrame(() => {
+      mobileToc.style.height = "0px";
+    });
+  }
+
+  if(mobileToc){
+    mobileToc.addEventListener("transitionend", (event) => {
+      if(event.target !== mobileToc || event.propertyName !== "height") return;
+
+      if(projectHeaderShell && projectHeaderShell.classList.contains("toc-open")){
+        const fullHeight = mobileProjectTocFullHeight();
+        const cap = Math.min(window.innerHeight * 0.62, 520);
+        if(fullHeight > cap + 1){
+          mobileToc.style.height = `${cap}px`;
+          mobileToc.classList.add("toc-scrollable");
+        }else{
+          mobileToc.style.height = "auto";
+        }
+      }
+    });
+  }
+
+
+  if(projectHeaderShell && projectTocToggle){
+    projectTocToggle.addEventListener("click", () => {
+      const open = !projectHeaderShell.classList.contains("toc-open");
+
+      if(open){
+        openMobileProjectToc();
+      }else{
+        closeMobileProjectToc();
+      }
+
+      projectTocToggle.setAttribute("aria-expanded", String(open));
+      projectTocToggle.setAttribute(
+        "aria-label",
+        open ? "Close text navigation" : "Open text navigation"
+      );
+
+      if(open){
+        requestAnimationFrame(() => {
+          requestAnimationFrame(positionNavigationArrows);
+        });
+      }
+    });
+
+    // Selecting a section closes the mobile text navigation and then places
+    // the selected heading inside the actual visible reading area. We measure
+    // the closed project-title bar instead of relying on a fixed pixel offset,
+    // so long/wrapped project names cannot cover the heading.
+    mobileTocLinks.forEach(link => {
+      link.addEventListener("click", (event) => {
+        if(window.innerWidth > 900) return;
+
+        event.preventDefault();
+
+        const sectionId = link.dataset.mobileSection;
+        const targetSection = sectionId
+          ? document.getElementById(sectionId)
+          : null;
+
+        closeMobileProjectToc();
+        projectTocToggle.setAttribute("aria-expanded", "false");
+        projectTocToggle.setAttribute("aria-label", "Open text navigation");
+
+        let positioned = false;
+
+        const positionTargetBelowClosedHeader = () => {
+          if(positioned || !targetSection) return;
+          positioned = true;
+
+          requestAnimationFrame(() => {
+            const targetHeading =
+              targetSection.querySelector("h1, h2") || targetSection;
+            const titleRow =
+              projectHeaderShell.querySelector(".project-title-row");
+
+            const occupiedBottom = titleRow
+              ? titleRow.getBoundingClientRect().bottom
+              : 0;
+
+            const readingGap = 12;
+            const targetTop =
+              window.scrollY +
+              targetHeading.getBoundingClientRect().top -
+              occupiedBottom -
+              readingGap;
+
+            window.scrollTo({
+              top: Math.max(0,targetTop),
+              behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+                ? "auto"
+                : "smooth"
+            });
+
+            // Keep a useful section hash without letting the browser perform
+            // its own anchor jump underneath the sticky navigation.
+            try{
+              history.replaceState(null,"",`#${sectionId}`);
+            }catch(e){}
+
+            requestAnimationFrame(() => {
+              updateTextNavigation();
+              positionNavigationArrows();
+            });
+          });
+        };
+
+        // The menu closes with a max-height transition. Position only after
+        // that collapse finishes so the target cannot shift back underneath
+        // the sticky project-name bar. The timeout is a fallback for browsers
+        // that do not emit transitionend or when reduced motion is enabled.
+        const onCloseTransitionEnd = (transitionEvent) => {
+          if(
+            transitionEvent.target === mobileToc &&
+            transitionEvent.propertyName === "height"
+          ){
+            mobileToc.removeEventListener(
+              "transitionend",
+              onCloseTransitionEnd
+            );
+            positionTargetBelowClosedHeader();
+          }
+        };
+
+        if(mobileToc){
+          mobileToc.addEventListener(
+            "transitionend",
+            onCloseTransitionEnd
+          );
+        }
+
+        setTimeout(() => {
+          if(mobileToc){
+            mobileToc.removeEventListener(
+              "transitionend",
+              onCloseTransitionEnd
+            );
+          }
+          positionTargetBelowClosedHeader();
+        },580);
+      });
+    });
+  }
+
+  // ------------------------------------------------------------
+  // 6) MOBILE INLINE FIGURE IMAGES
+  // Uses the same `figures` object as the desktop hover previews.
+  // ------------------------------------------------------------
+  document.querySelectorAll("[data-mobile-image]").forEach(img => {
+    const key = img.dataset.mobileImage;
+    const fig = figures[key];
+
+    if(fig && fig.src){
+      img.loading = "lazy";
+      img.decoding = "async";
+      if("fetchPriority" in img) img.fetchPriority = "low";
+      img.src = fig.src;
+      img.alt = fig.alt || fig.label;
+      img.style.display = "block";
+    }else{
+      img.style.display = "none";
+    }
+  });
+
+
+  // ------------------------------------------------------------
+  // 7) FULLSCREEN FIGURE LIGHTBOX
+  // ------------------------------------------------------------
+  const figureLightbox = document.getElementById("figureLightbox");
+  const lightboxImage = document.getElementById("lightboxImage");
+  const lightboxPlaceholder = document.getElementById("lightboxPlaceholder");
+  const lightboxLabel = document.getElementById("lightboxLabel");
+  const lightboxCaption = document.getElementById("lightboxCaption");
+  const lightboxClose = document.querySelector(".figure-lightbox-close");
+  const lightboxFigureKeys = Object.keys(figures);
+
+  function openFigureLightbox(key){
+    const fig = figures[key];
+    if(!fig) return;
+
+    lightboxLabel.textContent = fig.label || "";
+    lightboxCaption.textContent = fig.caption ? `, ${fig.caption}` : "";
+
+    if(fig.src){
+      lightboxImage.src = fig.src;
+      lightboxImage.alt = fig.alt || fig.label || "";
+      lightboxImage.style.display = "block";
+      lightboxPlaceholder.hidden = true;
+    }else{
+      lightboxImage.removeAttribute("src");
+      lightboxImage.alt = "";
+      lightboxImage.style.display = "none";
+      lightboxPlaceholder.hidden = false;
+    }
+
+    figureLightbox.classList.add("open");
+    figureLightbox.setAttribute("aria-hidden", "false");
+    document.body.classList.add("lightbox-open");
+    lightboxClose.focus();
+  }
+
+  function closeFigureLightbox(){
+    figureLightbox.classList.remove("open");
+    figureLightbox.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("lightbox-open");
+  }
+
+  // Desktop preview figure.
+  const desktopFigureBox = document.getElementById("figureBox");
+  if(desktopFigureBox){
+    desktopFigureBox.addEventListener("click", () => {
+      const key = hoveredFigureKey || automaticFigureKey;
+      if(key) openFigureLightbox(key);
+    });
+  }
+
+  // Mobile inline figures. Delegated handling means any figure added later
+  // with a data-mobile-image key automatically inherits the lightbox.
+  document.addEventListener("click", (event) => {
+    const box = event.target.closest(".mobile-inline-figure .figure-box");
+    if(!box) return;
+
+    const img = box.querySelector("[data-mobile-image]");
+    const key = img?.dataset.mobileImage;
+    if(key) openFigureLightbox(key);
+  });
+
+  if(lightboxClose){
+    lightboxClose.addEventListener("click", closeFigureLightbox);
+  }
+
+  if(figureLightbox){
+    figureLightbox.addEventListener("click", (event) => {
+      if(event.target === figureLightbox){
+        closeFigureLightbox();
+      }
+    });
+  }
+
+
+  // Swipe left/right through figures on touch devices.
+  let figureSwipeStartX = null;
+  let figureSwipeStartY = null;
+
+  function currentFigureLightboxIndex(){
+    const currentLabel = lightboxLabel.textContent;
+    let index = lightboxFigureKeys.findIndex(
+      key => figures[key] && figures[key].label === currentLabel
+    );
+    return index < 0 ? 0 : index;
+  }
+
+  function showAdjacentFigure(direction){
+    if(!lightboxFigureKeys.length) return;
+
+    const currentIndex = currentFigureLightboxIndex();
+    const nextIndex =
+      (currentIndex + direction + lightboxFigureKeys.length) %
+      lightboxFigureKeys.length;
+
+    openFigureLightbox(lightboxFigureKeys[nextIndex]);
+  }
+
+  figureLightbox.addEventListener("touchstart", (event) => {
+    if(!figureLightbox.classList.contains("open")) return;
+    if(event.touches.length !== 1) return;
+
+    figureSwipeStartX = event.touches[0].clientX;
+    figureSwipeStartY = event.touches[0].clientY;
+  }, {passive:true});
+
+  figureLightbox.addEventListener("touchend", (event) => {
+    if(!figureLightbox.classList.contains("open")) return;
+    if(figureSwipeStartX === null || figureSwipeStartY === null) return;
+    if(!event.changedTouches.length) return;
+
+    const endX = event.changedTouches[0].clientX;
+    const endY = event.changedTouches[0].clientY;
+    const dx = endX - figureSwipeStartX;
+    const dy = endY - figureSwipeStartY;
+
+    figureSwipeStartX = null;
+    figureSwipeStartY = null;
+
+    const horizontal = Math.abs(dx);
+    const vertical = Math.abs(dy);
+
+    if(horizontal < 45 || horizontal <= vertical * 1.15) return;
+
+    // Swipe left = next. Swipe right = previous.
+    showAdjacentFigure(dx < 0 ? 1 : -1);
+  }, {passive:true});
+
+  document.addEventListener("keydown", (event) => {
+    if(!figureLightbox.classList.contains("open")) return;
+
+    if(event.key === "Escape"){
+      closeFigureLightbox();
+      return;
+    }
+
+    const currentLabel = lightboxLabel.textContent;
+    let currentIndex = lightboxFigureKeys.findIndex(
+      key => figures[key] && figures[key].label === currentLabel
+    );
+    if(currentIndex < 0) currentIndex = 0;
+
+    if(event.key === "ArrowRight"){
+      event.preventDefault();
+      const nextIndex = (currentIndex + 1) % lightboxFigureKeys.length;
+      openFigureLightbox(lightboxFigureKeys[nextIndex]);
+      return;
+    }
+
+    if(event.key === "ArrowLeft"){
+      event.preventDefault();
+      const previousIndex =
+        (currentIndex - 1 + lightboxFigureKeys.length) % lightboxFigureKeys.length;
+      openFigureLightbox(lightboxFigureKeys[previousIndex]);
+    }
+  });
+
+
+
+
+
+
+(function () {
+  const paper = document.querySelector(".paper");
+
+  function goToSection(id) {
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    if (window.innerWidth > 900 && paper) {
+      const paperRect = paper.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const destination = paper.scrollTop + (targetRect.top - paperRect.top);
+
+      paper.scrollTo({
+        top: destination,
+        behavior: "smooth"
+      });
+    } else {
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+  }
+
+  document.querySelectorAll('.toc a[href^="#"], .mobile-toc a[href^="#"]').forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      const href = link.getAttribute("href");
+      if (!href || href.length < 2) return;
+
+      event.preventDefault();
+      const id = href.slice(1);
+
+      goToSection(id);
+    });
+  });
+})();
+
+
+(function(){
+  const mainNav = document.querySelector(".left");
+  if(!mainNav) return;
+
+  /* Only the fixed Harri.la/hamburger row defines the sticky offset.
+     The expanded main menu is already in normal flow and must not be
+     counted a second time. */
+  function syncMobileNavStack(){
+    if(window.innerWidth <= 900){
+      const brand = mainNav.querySelector(".brand");
+      const navStyle = getComputedStyle(mainNav);
+      const paddingTop = parseFloat(navStyle.paddingTop) || 0;
+      const rowHeight = brand
+        ? brand.getBoundingClientRect().height
+        : 34;
+
+      document.documentElement.style.setProperty(
+        "--mobile-main-nav-height",
+        Math.ceil(rowHeight + paddingTop) + "px"
+      );
+    }else{
+      document.documentElement.style.removeProperty("--mobile-main-nav-height");
+    }
+  }
+
+  syncMobileNavStack();
+
+  if("ResizeObserver" in window){
+    const brand = mainNav.querySelector(".brand");
+    if(brand){
+      const ro = new ResizeObserver(syncMobileNavStack);
+      ro.observe(brand);
+    }
+  }
+
+  window.addEventListener("resize", syncMobileNavStack, {passive:true});
+  window.addEventListener("orientationchange", syncMobileNavStack, {passive:true});
+})();
+
+
+
+/* DESIGN RESEARCH FIGURE FIT RULE
+   Full width is always attempted first. The image is reduced only when
+   its natural aspect ratio plus the caption would exceed the available
+   vertical space above the website's bottom margin. No crop, no stretch. */
+(function(){
+  const stage = document.getElementById("figureStage");
+  const box = document.getElementById("figureBox");
+  const img = document.getElementById("figureImage");
+  const caption = stage ? stage.querySelector(".figure-caption") : null;
+
+  if(!stage || !box || !img || !caption) return;
+
+  let resizeRaf = 0;
+  const bottomPageMargin = 26;
+
+  function clearDesktopFit(){
+    stage.style.removeProperty("--research-figure-fit-width");
+  }
+
+  function fitDesktopResearchFigure(){
+    if(window.innerWidth <= 900){
+      clearDesktopFit();
+      return;
+    }
+
+    if(!img.src || img.style.display === "none" || !img.naturalWidth || !img.naturalHeight){
+      clearDesktopFit();
+      return;
+    }
+
+    const stageRect = stage.getBoundingClientRect();
+    const fullFigureWidth = stage.clientWidth;
+    if(fullFigureWidth <= 0) return;
+
+    const captionStyles = getComputedStyle(caption);
+    const captionMarginTop = parseFloat(captionStyles.marginTop) || 0;
+    const captionHeight = caption.getBoundingClientRect().height + captionMarginTop;
+
+    const availableTotalHeight = Math.max(
+      0,
+      window.innerHeight - stageRect.top - bottomPageMargin
+    );
+
+    const availableImageHeight = Math.max(
+      0,
+      availableTotalHeight - captionHeight
+    );
+
+    const naturalRatio = img.naturalWidth / img.naturalHeight;
+    const fullWidthImageHeight = fullFigureWidth / naturalRatio;
+
+    let fittedWidth = fullFigureWidth;
+
+    if(fullWidthImageHeight > availableImageHeight){
+      fittedWidth = Math.min(
+        fullFigureWidth,
+        availableImageHeight * naturalRatio
+      );
+    }
+
+    /* A whole-pixel floor gives a small safety buffer against subpixel
+       overflow while preserving the source aspect ratio. */
+    fittedWidth = Math.max(1, Math.floor(fittedWidth));
+
+    stage.style.setProperty(
+      "--research-figure-fit-width",
+      fittedWidth + "px"
+    );
+  }
+
+  window.fitDesktopResearchFigureNow = fitDesktopResearchFigure;
+
+  function scheduleFit(){
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(fitDesktopResearchFigure);
+  }
+
+  img.addEventListener("load", scheduleFit);
+  window.addEventListener("resize", scheduleFit, {passive:true});
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(scheduleFit).catch(() => {});
+  }
+
+  scheduleFit();
+})();
+</script>
+
+<script>
+/* RESET PAGE POSITION ON EVERY RETURN
+   Browsing away and returning starts the page from its original content
+   position. Navigation accordion choices are intentionally not changed. */
+(function(){
+  if("scrollRestoration" in history){
+    history.scrollRestoration = "manual";
+  }
+
+  function resetPageVisitPosition(){
+    window.scrollTo(0,0);
+    document.documentElement.scrollTop = 0;
+    if(document.body) document.body.scrollTop = 0;
+
+    document.querySelectorAll(".paper, .cv-column, .media-column").forEach(function(el){
+      el.scrollTop = 0;
+      el.scrollLeft = 0;
+    });
+
+    document.querySelectorAll(".lightbox, .figure-lightbox").forEach(function(box){
+      box.classList.remove("open");
+      box.setAttribute("aria-hidden","true");
+    });
+
+    if(document.body){
+      document.body.classList.remove("lightbox-open");
+    }
+
+    document.querySelectorAll("video").forEach(function(video){
+      try{
+        video.pause();
+        video.currentTime = 0;
+      }catch(e){}
+    });
+
+    const surprise = document.querySelector(".cv-surprise");
+    if(surprise){
+      surprise.classList.remove("revealed");
+      surprise.setAttribute("aria-hidden","true");
+    }
+
+    if(document.activeElement && typeof document.activeElement.blur === "function"){
+      document.activeElement.blur();
+    }
+
+    if(typeof window.HarriResearchReset === "function"){
+      window.HarriResearchReset();
+    }else{
+      const paper = document.querySelector(".paper");
+      if(paper){
+        paper.dispatchEvent(new Event("scroll"));
+      }
+      window.dispatchEvent(new Event("scroll"));
+    }
+  }
+
+  /* pageshow also runs when the browser restores a page from its back/forward
+     cache, which is the case that normally preserves an old scroll position. */
+  window.addEventListener("pageshow", function(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(resetPageVisitPosition);
+    });
+  });
+})();
+
+  // ------------------------------------------------------------
+  // FRESH-VISIT RESET
+  // Used when this Research page is revisited after another page.
+  // This resets both visible positions and the internal figure/TOC state.
+  // ------------------------------------------------------------
+  window.HarriResearchReset = function(){
+    /* Cancel any pending asynchronous figure swap from the previous visit. */
+    figureSwitchToken += 1;
+    figureScrollTicking = false;
+    scrollTicking = false;
+
+    hoveredFigureKey = null;
+    automaticFigureKey = figureRefs[0]?.dataset.figure || null;
+    clickedDesktopLink = null;
+    clickedMobileLink = null;
+
+    if(paperScroller){
+      paperScroller.scrollTop = 0;
+      paperScroller.scrollLeft = 0;
+    }
+
+    window.scrollTo(0,0);
+    document.documentElement.scrollTop = 0;
+    if(document.body) document.body.scrollTop = 0;
+
+    /* Restore the first referenced figure immediately, rather than relying
+       on a scroll event / animation frame that may have been suspended while
+       the iframe or bfcache page was hidden. */
+    if(automaticFigureKey && figures[automaticFigureKey]){
+      applyFigureImmediately(
+        automaticFigureKey,
+        figures[automaticFigureKey]
+      );
+      stage.classList.remove("figure-changing");
+    }
+
+    /* Restore the reading navigation to the first section. */
+    updateTextNavigation();
+    positionNavigationArrows();
+
+    /* Close the mobile project TOC if it had been left open. */
+    if(projectHeaderShell){
+      projectHeaderShell.classList.remove("toc-open");
+    }
+    if(projectTocToggle){
+      projectTocToggle.setAttribute("aria-expanded","false");
+      projectTocToggle.setAttribute("aria-label","Open text navigation");
+    }
+
+    /* Close any figure lightbox. */
+    if(figureLightbox){
+      figureLightbox.classList.remove("open");
+      figureLightbox.setAttribute("aria-hidden","true");
+    }
+    document.body.classList.remove("lightbox-open");
+
+    /* Recalculate the figure dimensions from the restored first figure. */
+    requestAnimationFrame(function(){
+      if(typeof window.fitDesktopResearchFigureNow === "function"){
+        window.fitDesktopResearchFigureNow();
+      }
+      updateTextNavigation();
+      positionNavigationArrows();
+    });
+  };
+
+</script>
+
+
+<script>
+
+/* Stable measured-height controller for the top-level mobile menu. */
+(function(){
+  const leftNav = document.querySelector('.left');
+  const menuButton = document.querySelector('.mobile-menu-button');
+  const panel = document.querySelector('.main-menu-panel');
+  if(!leftNav || !menuButton || !panel) return;
+
+  const glyph = menuButton.querySelector('.hamburger-glyph');
+  let cleanupTimer = 0;
+
+  function setButton(open){
+    menuButton.setAttribute('aria-expanded', String(open));
+    menuButton.setAttribute('aria-label', open ? 'Close project menu' : 'Open project menu');
+    if(glyph) glyph.textContent = open ? '×' : '☰';
+    else menuButton.textContent = open ? '×' : '☰';
+  }
+
+  function setMenu(open, animate=true){
+    clearTimeout(cleanupTimer);
+    if(window.innerWidth > 900){
+      leftNav.classList.remove('menu-open');
+      panel.style.removeProperty('height');
+      setButton(false);
+      return;
+    }
+
+    if(!animate){
+      leftNav.classList.toggle('menu-open', open);
+      panel.style.height = open ? 'auto' : '0px';
+      setButton(open);
+      return;
+    }
+
+    if(open){
+      panel.style.height = '0px';
+      leftNav.classList.add('menu-open');
+      setButton(true);
+      requestAnimationFrame(() => {
+        const target = panel.scrollHeight;
+        requestAnimationFrame(() => { panel.style.height = target + 'px'; });
+      });
+      cleanupTimer = setTimeout(() => {
+        if(leftNav.classList.contains('menu-open')) panel.style.height = 'auto';
+      }, 470);
+    }else{
+      const start = panel.getBoundingClientRect().height;
+      panel.style.height = start + 'px';
+      void panel.offsetHeight;
+      leftNav.classList.remove('menu-open');
+      setButton(false);
+      requestAnimationFrame(() => { panel.style.height = '0px'; });
+    }
+  }
+
+  /* Capture phase prevents older page-specific click handlers from also toggling the menu. */
+  menuButton.addEventListener('click', function(event){
+    if(window.innerWidth > 900) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    setMenu(!leftNav.classList.contains('menu-open'), true);
+  }, true);
+
+  document.querySelectorAll('.left nav a').forEach(function(link){
+    link.addEventListener('click', function(){
+      if(window.innerWidth <= 900 && leftNav.classList.contains('menu-open')) setMenu(false, true);
+    }, true);
+  });
+
+  /* If an inner section is changed during the outer menu's opening
+     transition, retarget that single measured height. Once height:auto is
+     reached, no extra controller is involved. */
+  document.querySelectorAll('.left .group-head').forEach(function(groupButton){
+    groupButton.addEventListener('click', function(){
+      if(
+        window.innerWidth <= 900 &&
+        leftNav.classList.contains('menu-open') &&
+        panel.style.height !== 'auto'
+      ){
+        requestAnimationFrame(function(){
+          panel.style.height = panel.scrollHeight + 'px';
+        });
+      }
+    });
+  });
+
+  window.addEventListener('resize', function(){
+    if(window.innerWidth > 900){
+      setMenu(false, false);
+    }else if(leftNav.classList.contains('menu-open')){
+      panel.style.height = 'auto';
+    }
+  });
+})();
+
+</script>
+
+<script>
+(function(){
+  const header = document.querySelector(".left");
+  if(!header) return;
+
+  const mobileBreakpoint = 900;
+  const topRevealPoint = 18;
+  const hideTravel = 9;
+  const showTravel = 4;
+
+  let lastY = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+  let direction = 0;
+  let travelled = 0;
+  let ticking = false;
+
+  function currentY(){
+    const raw = window.scrollY || document.documentElement.scrollTop || 0;
+    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    return Math.max(0, Math.min(raw, maxY));
+  }
+
+  function showHeader(){
+    header.classList.remove("mobile-scroll-hidden");
+  }
+
+  function updateHeader(){
+    const y = currentY();
+
+    if(window.innerWidth > mobileBreakpoint){
+      showHeader();
+      lastY = y;
+      direction = 0;
+      travelled = 0;
+      ticking = false;
+      return;
+    }
+
+    /* Never hide it at the top or while the hamburger menu is open. */
+    if(y <= topRevealPoint || header.classList.contains("menu-open")){
+      showHeader();
+      lastY = y;
+      direction = 0;
+      travelled = 0;
+      ticking = false;
+      return;
+    }
+
+    const delta = y - lastY;
+    lastY = y;
+
+    if(Math.abs(delta) < 0.5){
+      ticking = false;
+      return;
+    }
+
+    const newDirection = delta > 0 ? 1 : -1;
+
+    if(newDirection !== direction){
+      direction = newDirection;
+      travelled = 0;
+    }
+
+    travelled += Math.abs(delta);
+
+    if(direction > 0 && travelled >= hideTravel){
+      header.classList.add("mobile-scroll-hidden");
+      travelled = 0;
+    }else if(direction < 0 && travelled >= showTravel){
+      showHeader();
+      travelled = 0;
+    }
+
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", function(){
+    if(!ticking){
+      ticking = true;
+      requestAnimationFrame(updateHeader);
+    }
+  }, {passive:true});
+
+  window.addEventListener("resize", function(){
+    if(window.innerWidth > mobileBreakpoint){
+      showHeader();
+    }
+    lastY = currentY();
+    direction = 0;
+    travelled = 0;
+  });
+
+  const menuButton = document.querySelector(".mobile-menu-button");
+  if(menuButton){
+    menuButton.addEventListener("click", showHeader, true);
+  }
+
+  showHeader();
+})();
+</script>
+
+
+<script>
+(function(){
+  const researchHeader = document.querySelector(".project-header-shell");
+  if(!researchHeader) return;
+
+  const mobileBreakpoint = 900;
+  const topRevealPoint = 18;
+  const hideTravel = 9;
+  const showTravel = 4;
+
+  let lastY = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+  let direction = 0;
+  let travelled = 0;
+  let ticking = false;
+
+  function currentY(){
+    const raw = window.scrollY || document.documentElement.scrollTop || 0;
+    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    return Math.max(0, Math.min(raw, maxY));
+  }
+
+  function showResearchHeader(){
+    researchHeader.classList.remove("mobile-scroll-hidden");
+  }
+
+  function updateResearchHeader(){
+    const y = currentY();
+
+    if(window.innerWidth > mobileBreakpoint){
+      showResearchHeader();
+      lastY = y;
+      direction = 0;
+      travelled = 0;
+      ticking = false;
+      return;
+    }
+
+    /* Keep the research menu visible at the top and whenever its TOC is open. */
+    if(y <= topRevealPoint || researchHeader.classList.contains("toc-open")){
+      showResearchHeader();
+      lastY = y;
+      direction = 0;
+      travelled = 0;
+      ticking = false;
+      return;
+    }
+
+    const delta = y - lastY;
+    lastY = y;
+
+    if(Math.abs(delta) < 0.5){
+      ticking = false;
+      return;
+    }
+
+    const newDirection = delta > 0 ? 1 : -1;
+
+    if(newDirection !== direction){
+      direction = newDirection;
+      travelled = 0;
+    }
+
+    travelled += Math.abs(delta);
+
+    if(direction > 0 && travelled >= hideTravel){
+      researchHeader.classList.add("mobile-scroll-hidden");
+      travelled = 0;
+    }else if(direction < 0 && travelled >= showTravel){
+      showResearchHeader();
+      travelled = 0;
+    }
+
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", function(){
+    if(!ticking){
+      ticking = true;
+      requestAnimationFrame(updateResearchHeader);
+    }
+  }, {passive:true});
+
+  window.addEventListener("resize", function(){
+    if(window.innerWidth > mobileBreakpoint){
+      showResearchHeader();
+    }
+    lastY = currentY();
+    direction = 0;
+    travelled = 0;
+  });
+
+  const tocToggle = document.querySelector(".mobile-project-toc-toggle");
+  if(tocToggle){
+    tocToggle.addEventListener("click", showResearchHeader, true);
+  }
+
+  showResearchHeader();
+})();
+</script>
+
+</body>
+</html>
