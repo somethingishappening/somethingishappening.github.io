@@ -24,7 +24,7 @@
         {% assign artistic_projects = site.artistic | sort: "nav_order" %}
 
         <section class="nav-group">
-          <button class="group-head" type="button" aria-expanded="{% if page.collection == 'research' %}true{% else %}false{% endif %}">
+          <button class="group-head" data-nav-key="research" type="button" aria-expanded="{% if page.collection == 'research' %}true{% else %}false{% endif %}">
             <span>{{ site.data.site.design_research_label | default: "Design Research" }}</span>
             <span class="group-toggle">{% if page.collection == 'research' %}−{% else %}+{% endif %}</span>
           </button>
@@ -38,7 +38,7 @@
         </section>
 
         <section class="nav-group">
-          <button class="group-head" type="button" aria-expanded="{% if page.collection == 'design' %}true{% else %}false{% endif %}">
+          <button class="group-head" data-nav-key="design" type="button" aria-expanded="{% if page.collection == 'design' %}true{% else %}false{% endif %}">
             <span>{{ site.data.site.design_work_label | default: "Design Work" }}</span>
             <span class="group-toggle">{% if page.collection == 'design' %}−{% else %}+{% endif %}</span>
           </button>
@@ -52,7 +52,7 @@
         </section>
 
         <section class="nav-group">
-          <button class="group-head" type="button" aria-expanded="{% if page.collection == 'artistic' %}true{% else %}false{% endif %}">
+          <button class="group-head" data-nav-key="artistic" type="button" aria-expanded="{% if page.collection == 'artistic' %}true{% else %}false{% endif %}">
             <span>{{ site.data.site.artistic_work_label | default: "Artistic Work" }}</span>
             <span class="group-toggle">{% if page.collection == 'artistic' %}−{% else %}+{% endif %}</span>
           </button>
@@ -88,3 +88,86 @@
     </div>
   </div>
 </aside>
+
+
+<script>
+/* MOBILE MAIN-NAV ACCORDION MEMORY
+   Keep the user's open Design Research / Design Work / Artistic Work groups
+   when navigating between project pages during the current browser session. */
+(function(){
+  const mobileBreakpoint = 900;
+  const storageKey = "harri.mobileNavGroups.v1";
+  const buttons = [...document.querySelectorAll(".left .group-head[data-nav-key]")];
+  if(!buttons.length) return;
+
+  /* The current page's own collection should always remain open. */
+  const pageDefaults = {};
+  buttons.forEach(function(button){
+    pageDefaults[button.dataset.navKey] =
+      button.getAttribute("aria-expanded") === "true";
+  });
+
+  function readState(){
+    try{
+      return JSON.parse(sessionStorage.getItem(storageKey) || "{}") || {};
+    }catch(error){
+      return {};
+    }
+  }
+
+  function writeState(){
+    if(window.innerWidth > mobileBreakpoint) return;
+
+    const state = {};
+    buttons.forEach(function(button){
+      state[button.dataset.navKey] =
+        button.getAttribute("aria-expanded") === "true";
+    });
+
+    try{
+      sessionStorage.setItem(storageKey, JSON.stringify(state));
+    }catch(error){}
+  }
+
+  function applyState(){
+    if(window.innerWidth > mobileBreakpoint) return;
+
+    const saved = readState();
+
+    buttons.forEach(function(button){
+      const key = button.dataset.navKey;
+      const panel = button.nextElementSibling;
+      const toggle = button.querySelector(".group-toggle");
+
+      /* Preserve previously open groups, while also opening the current page's
+         section even if there is no saved state yet. */
+      const open = pageDefaults[key] || saved[key] === true;
+
+      button.setAttribute("aria-expanded", String(open));
+      if(toggle) toggle.textContent = open ? "−" : "+";
+
+      if(panel){
+        panel.classList.toggle("collapsed", !open);
+        panel.style.height = open ? "auto" : "0px";
+      }
+    });
+  }
+
+  applyState();
+
+  /* Page-specific accordion handlers run later. Save after they have toggled. */
+  buttons.forEach(function(button){
+    button.addEventListener("click", function(){
+      setTimeout(writeState, 0);
+    });
+  });
+
+  /* Preserve the final state before following a project link. */
+  document.querySelectorAll(".left nav a").forEach(function(link){
+    link.addEventListener("click", writeState, true);
+  });
+
+  window.addEventListener("pagehide", writeState);
+})();
+</script>
+
