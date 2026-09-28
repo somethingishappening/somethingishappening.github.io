@@ -2178,81 +2178,6 @@
 
 
   // ------------------------------------------------------------
-  // 1) LEFT NAV ACCORDIONS
-  // ------------------------------------------------------------
-  const accordionButtons = [...document.querySelectorAll(".group-head")];
-
-  function setAccordionState(button, open, animate = true){
-    const links = button.nextElementSibling;
-    const toggle = button.querySelector(".group-toggle");
-
-    button.setAttribute("aria-expanded", String(open));
-    if(toggle) toggle.textContent = open ? "−" : "+";
-
-    if(!animate){
-      links.classList.toggle("collapsed", !open);
-
-      if(open){
-        // Measure the complete open panel, including its internal bottom spacing.
-        links.style.height = "auto";
-        const target = links.scrollHeight;
-        links.style.height = `${target}px`;
-      }else{
-        links.style.height = "0px";
-      }
-      return;
-    }
-
-    if(open){
-      // Start from the exact closed height, then animate to the measured content.
-      links.style.height = "0px";
-      links.classList.remove("collapsed");
-
-      // Force Safari to commit the closed state before the opening frame.
-      void links.offsetHeight;
-
-      const target = links.scrollHeight;
-      links.style.height = `${target}px`;
-    }else{
-      // Freeze the current rendered height before collapsing. This prevents
-      // Safari from snapping from auto/content height straight to zero.
-      const startHeight = links.getBoundingClientRect().height;
-      links.style.height = `${startHeight}px`;
-
-      void links.offsetHeight;
-
-      links.classList.add("collapsed");
-      links.style.height = "0px";
-    }
-  }
-
-  accordionButtons.forEach((button) => {
-    const initiallyOpen = button.getAttribute("aria-expanded") === "true";
-    setAccordionState(button, initiallyOpen, false);
-
-    button.addEventListener("click", () => {
-      const isOpen = button.getAttribute("aria-expanded") === "true";
-      setAccordionState(button, !isOpen, true);
-    });
-  });
-
-  // Resizing must never animate or change the menu's leading. We only
-  // normalize the current panels for the active desktop/mobile layout.
-  let accordionViewportMode = window.innerWidth <= 900 ? "mobile" : "desktop";
-
-  window.addEventListener("resize", () => {
-    const nextMode = window.innerWidth <= 900 ? "mobile" : "desktop";
-    if(nextMode === accordionViewportMode) return;
-
-    accordionViewportMode = nextMode;
-
-    accordionButtons.forEach((button) => {
-      const open = button.getAttribute("aria-expanded") === "true";
-      setAccordionState(button, open, false);
-    });
-  });
-
-  // ------------------------------------------------------------
   // 2) FIGURE DATA
   // Replace `src` with your real image paths, e.g.
   // src: "images/tahriir-figure-01.jpg"
@@ -2712,34 +2637,6 @@
   requestAnimationFrame(positionNavigationArrows);
 
   // ------------------------------------------------------------
-  // 4) MOBILE MENU
-  // ------------------------------------------------------------
-  const leftNav = document.querySelector(".left");
-  const mobileMenuButton = document.querySelector(".mobile-menu-button");
-
-  mobileMenuButton.addEventListener("click", () => {
-    const open = leftNav.classList.toggle("menu-open");
-    mobileMenuButton.setAttribute("aria-expanded", String(open));
-    mobileMenuButton.setAttribute("aria-label", open ? "Close project menu" : "Open project menu");
-
-    const glyph = mobileMenuButton.querySelector(".hamburger-glyph");
-    if(glyph) glyph.textContent = open ? "×" : "☰";
-  });
-
-  // Close the portfolio menu after choosing a project on mobile.
-  document.querySelectorAll(".left nav a").forEach(link => {
-    link.addEventListener("click", () => {
-      if(window.innerWidth <= 900){
-        leftNav.classList.remove("menu-open");
-        mobileMenuButton.setAttribute("aria-expanded", "false");
-        mobileMenuButton.setAttribute("aria-label", "Open project menu");
-        const glyph = mobileMenuButton.querySelector(".hamburger-glyph");
-        if(glyph) glyph.textContent = "☰";
-      }
-    });
-  });
-
-  // ------------------------------------------------------------
   // 5) MOBILE PROJECT TEXT NAVIGATION
   // ------------------------------------------------------------
   const projectHeaderShell = document.querySelector(".project-header-shell");
@@ -3150,10 +3047,22 @@
   const mainNav = document.querySelector(".left");
   if(!mainNav) return;
 
+  /* Only the fixed Harri.la/hamburger row defines the sticky offset.
+     The expanded main menu is already in normal flow and must not be
+     counted a second time. */
   function syncMobileNavStack(){
     if(window.innerWidth <= 900){
-      const h = Math.ceil(mainNav.getBoundingClientRect().height);
-      document.documentElement.style.setProperty("--mobile-main-nav-height", h + "px");
+      const brand = mainNav.querySelector(".brand");
+      const navStyle = getComputedStyle(mainNav);
+      const paddingTop = parseFloat(navStyle.paddingTop) || 0;
+      const rowHeight = brand
+        ? brand.getBoundingClientRect().height
+        : 34;
+
+      document.documentElement.style.setProperty(
+        "--mobile-main-nav-height",
+        Math.ceil(rowHeight + paddingTop) + "px"
+      );
     }else{
       document.documentElement.style.removeProperty("--mobile-main-nav-height");
     }
@@ -3162,20 +3071,15 @@
   syncMobileNavStack();
 
   if("ResizeObserver" in window){
-    const ro = new ResizeObserver(syncMobileNavStack);
-    ro.observe(mainNav);
+    const brand = mainNav.querySelector(".brand");
+    if(brand){
+      const ro = new ResizeObserver(syncMobileNavStack);
+      ro.observe(brand);
+    }
   }
 
   window.addEventListener("resize", syncMobileNavStack, {passive:true});
   window.addEventListener("orientationchange", syncMobileNavStack, {passive:true});
-
-  /* Run after menu/accordion clicks too, including the animation frames. */
-  mainNav.addEventListener("click", function(){
-    requestAnimationFrame(syncMobileNavStack);
-    setTimeout(syncMobileNavStack, 80);
-    setTimeout(syncMobileNavStack, 180);
-    setTimeout(syncMobileNavStack, 420);
-  });
 })();
 
 
@@ -3402,86 +3306,6 @@
 </script>
 
 
-<script>
-
-/* Stable measured-height controller for the top-level mobile menu. */
-(function(){
-  const leftNav = document.querySelector('.left');
-  const menuButton = document.querySelector('.mobile-menu-button');
-  const panel = document.querySelector('.main-menu-panel');
-  if(!leftNav || !menuButton || !panel) return;
-
-  const glyph = menuButton.querySelector('.hamburger-glyph');
-  let cleanupTimer = 0;
-
-  function setButton(open){
-    menuButton.setAttribute('aria-expanded', String(open));
-    menuButton.setAttribute('aria-label', open ? 'Close project menu' : 'Open project menu');
-    if(glyph) glyph.textContent = open ? '×' : '☰';
-    else menuButton.textContent = open ? '×' : '☰';
-  }
-
-  function setMenu(open, animate=true){
-    clearTimeout(cleanupTimer);
-    if(window.innerWidth > 900){
-      leftNav.classList.remove('menu-open');
-      panel.style.removeProperty('height');
-      setButton(false);
-      return;
-    }
-
-    if(!animate){
-      leftNav.classList.toggle('menu-open', open);
-      panel.style.height = open ? 'auto' : '0px';
-      setButton(open);
-      return;
-    }
-
-    if(open){
-      panel.style.height = '0px';
-      leftNav.classList.add('menu-open');
-      setButton(true);
-      requestAnimationFrame(() => {
-        const target = panel.scrollHeight;
-        requestAnimationFrame(() => { panel.style.height = target + 'px'; });
-      });
-      cleanupTimer = setTimeout(() => {
-        if(leftNav.classList.contains('menu-open')) panel.style.height = 'auto';
-      }, 470);
-    }else{
-      const start = panel.getBoundingClientRect().height;
-      panel.style.height = start + 'px';
-      void panel.offsetHeight;
-      leftNav.classList.remove('menu-open');
-      setButton(false);
-      requestAnimationFrame(() => { panel.style.height = '0px'; });
-    }
-  }
-
-  /* Capture phase prevents older page-specific click handlers from also toggling the menu. */
-  menuButton.addEventListener('click', function(event){
-    if(window.innerWidth > 900) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    setMenu(!leftNav.classList.contains('menu-open'), true);
-  }, true);
-
-  document.querySelectorAll('.left nav a').forEach(function(link){
-    link.addEventListener('click', function(){
-      if(window.innerWidth <= 900 && leftNav.classList.contains('menu-open')) setMenu(false, true);
-    }, true);
-  });
-
-  window.addEventListener('resize', function(){
-    if(window.innerWidth > 900){
-      setMenu(false, false);
-    }else if(leftNav.classList.contains('menu-open')){
-      panel.style.height = 'auto';
-    }
-  });
-})();
-
-</script>
 
 <script>
 (function(){

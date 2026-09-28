@@ -1453,51 +1453,6 @@ function changeWelcome(animate=true){
 changeWelcome(false);
 setInterval(() => changeWelcome(true),30000);
 
-/* measured-height desktop accordions */
-const accordionButtons = [...document.querySelectorAll(".group-head")];
-
-function setAccordionState(button,open,animate=true){
-  const panel = button.nextElementSibling;
-  const toggle = button.querySelector(".group-toggle");
-  button.setAttribute("aria-expanded",String(open));
-  if(toggle) toggle.textContent = open ? "−" : "+";
-
-  if(!animate){
-    panel.classList.toggle("collapsed",!open);
-    panel.style.height = open ? `${panel.scrollHeight}px` : "0px";
-    return;
-  }
-
-  if(open){
-    panel.style.height="0px";
-    panel.classList.remove("collapsed");
-    void panel.offsetHeight;
-    panel.style.height=`${panel.scrollHeight}px`;
-  }else{
-    panel.style.height=`${panel.getBoundingClientRect().height}px`;
-    void panel.offsetHeight;
-    panel.classList.add("collapsed");
-    panel.style.height="0px";
-  }
-}
-accordionButtons.forEach(button=>{
-  setAccordionState(button,button.getAttribute("aria-expanded")==="true",false);
-  button.addEventListener("click",()=>{
-    const open=button.getAttribute("aria-expanded")==="true";
-    setAccordionState(button,!open,true);
-  });
-});
-
-let mode = window.innerWidth <= 900 ? "mobile" : "desktop";
-window.addEventListener("resize",()=>{
-  const next = window.innerWidth <= 900 ? "mobile" : "desktop";
-  if(next===mode) return;
-  mode=next;
-  accordionButtons.forEach(button=>{
-    setAccordionState(button,button.getAttribute("aria-expanded")==="true",false);
-  });
-});
-
 /* project media stack */
 const rawGallery = {{ page.gallery | jsonify }};
 
@@ -1688,45 +1643,6 @@ lightbox.addEventListener("touchend", e=>{
 }, {passive:true});
 
 
-/* FINAL MOBILE MAIN NAV CONTROLLER */
-(function(){
-  const leftNav = document.querySelector(".left");
-  const menuButton = document.querySelector(".mobile-menu-button");
-
-  if(!leftNav || !menuButton) return;
-
-  const glyph = menuButton.querySelector(".hamburger-glyph");
-
-  function setMenu(open){
-    leftNav.classList.toggle("menu-open", open);
-    menuButton.setAttribute("aria-expanded", String(open));
-    menuButton.setAttribute(
-      "aria-label",
-      open ? "Close project menu" : "Open project menu"
-    );
-    if(glyph) glyph.textContent = open ? "×" : "☰";
-  }
-
-  menuButton.addEventListener("click", function(event){
-    event.preventDefault();
-    event.stopPropagation();
-    setMenu(!leftNav.classList.contains("menu-open"));
-  });
-
-  document.querySelectorAll(".left nav a").forEach(function(link){
-    link.addEventListener("click", function(){
-      if(window.innerWidth <= 900){
-        setMenu(false);
-      }
-    });
-  });
-
-  window.addEventListener("resize", function(){
-    if(window.innerWidth > 900){
-      setMenu(false);
-    }
-  });
-})();
 </script>
 
 <script>
@@ -1793,86 +1709,6 @@ lightbox.addEventListener("touchend", e=>{
 </script>
 
 
-<script>
-
-/* Stable measured-height controller for the top-level mobile menu. */
-(function(){
-  const leftNav = document.querySelector('.left');
-  const menuButton = document.querySelector('.mobile-menu-button');
-  const panel = document.querySelector('.main-menu-panel');
-  if(!leftNav || !menuButton || !panel) return;
-
-  const glyph = menuButton.querySelector('.hamburger-glyph');
-  let cleanupTimer = 0;
-
-  function setButton(open){
-    menuButton.setAttribute('aria-expanded', String(open));
-    menuButton.setAttribute('aria-label', open ? 'Close project menu' : 'Open project menu');
-    if(glyph) glyph.textContent = open ? '×' : '☰';
-    else menuButton.textContent = open ? '×' : '☰';
-  }
-
-  function setMenu(open, animate=true){
-    clearTimeout(cleanupTimer);
-    if(window.innerWidth > 900){
-      leftNav.classList.remove('menu-open');
-      panel.style.removeProperty('height');
-      setButton(false);
-      return;
-    }
-
-    if(!animate){
-      leftNav.classList.toggle('menu-open', open);
-      panel.style.height = open ? 'auto' : '0px';
-      setButton(open);
-      return;
-    }
-
-    if(open){
-      panel.style.height = '0px';
-      leftNav.classList.add('menu-open');
-      setButton(true);
-      requestAnimationFrame(() => {
-        const target = panel.scrollHeight;
-        requestAnimationFrame(() => { panel.style.height = target + 'px'; });
-      });
-      cleanupTimer = setTimeout(() => {
-        if(leftNav.classList.contains('menu-open')) panel.style.height = 'auto';
-      }, 470);
-    }else{
-      const start = panel.getBoundingClientRect().height;
-      panel.style.height = start + 'px';
-      void panel.offsetHeight;
-      leftNav.classList.remove('menu-open');
-      setButton(false);
-      requestAnimationFrame(() => { panel.style.height = '0px'; });
-    }
-  }
-
-  /* Capture phase prevents older page-specific click handlers from also toggling the menu. */
-  menuButton.addEventListener('click', function(event){
-    if(window.innerWidth > 900) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    setMenu(!leftNav.classList.contains('menu-open'), true);
-  }, true);
-
-  document.querySelectorAll('.left nav a').forEach(function(link){
-    link.addEventListener('click', function(){
-      if(window.innerWidth <= 900 && leftNav.classList.contains('menu-open')) setMenu(false, true);
-    }, true);
-  });
-
-  window.addEventListener('resize', function(){
-    if(window.innerWidth > 900){
-      setMenu(false, false);
-    }else if(leftNav.classList.contains('menu-open')){
-      panel.style.height = 'auto';
-    }
-  });
-})();
-
-</script>
 
 <script>
 (function(){
