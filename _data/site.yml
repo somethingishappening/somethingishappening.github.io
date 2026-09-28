@@ -1,0 +1,25 @@
+brand: Harri.la
+email: marhaba@harri.la
+instagram: ''
+design_research_label: Design Research
+design_work_label: Design Work
+artistic_work_label: Artistic Work
+harrilanpuisto_label: Harrilanpuisto
+welcome_messages:
+- Tervetuloa!
+- Bienvenue!
+- Välkommen!
+- Welcome!
+- يا هلا!
+footer_item_visible: true
+footer_item_text: marhaba@harri.la
+footer_item_link_type: email
+footer_item_link: marhaba@harri.la
+footer_slot_1_visible: true
+footer_slot_1_text: Instagram
+footer_slot_1_link_type: external
+footer_slot_1_link: ''
+footer_slot_2_visible: true
+footer_slot_2_text: marhaba@harri.la
+footer_slot_2_link_type: email
+footer_slot_2_link: marhaba@harri.la

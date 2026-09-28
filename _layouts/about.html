@@ -1,0 +1,1685 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ page.title | default: "About" }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page-pad-x:18px;
+  --page-pad-top:31px;
+  --page-pad-bottom:25px;
+  --left-w:220px;
+  --right-w:300px;
+  --gap:28px;
+  --text:#0b0b0b;
+  --bg:#fff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
+body{font-family:"Geist",Arial,Helvetica,sans-serif;font-size:16px;line-height:1.15}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+
+.about-layout{
+  width:100%;
+  height:100vh;
+  display:grid;
+  grid-template-columns:var(--left-w) minmax(0,1fr) var(--right-w);
+  gap:var(--gap);
+  padding:var(--page-pad-top) var(--page-pad-x) var(--page-pad-bottom);
+  overflow:hidden;
+}
+
+/* LEFT NAV */
+.left{
+  min-width:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.brand{
+  font-size:27px;
+  line-height:1;
+  letter-spacing:-.025em;
+}
+.left nav{
+  margin-top:148px;
+  flex:0 0 auto;
+}
+.nav-group{margin-bottom:5px}
+.group-head{
+  display:flex;
+  width:100%;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border:0;
+  padding:0;
+  background:transparent;
+  cursor:pointer;
+  font-size:20px;
+  line-height:21px;
+  text-align:left;
+}
+.group-head[aria-expanded="true"]{font-weight:700}
+.group-toggle{width:22px;flex:0 0 22px;text-align:center;font-size:20px;font-weight:400}
+.project-links{height:0;overflow:hidden;opacity:0;transition:height .34s cubic-bezier(.22,.61,.36,1),margin-top .34s cubic-bezier(.22,.61,.36,1),opacity .2s ease}
+.project-links.open{opacity:1;margin-top:7px}
+.project-links-inner{display:grid;gap:3px;padding-bottom:13px}
+.project-links a{display:block;width:max-content;max-width:100%;font-size:17px;line-height:18.7px;white-space:nowrap}
+.project-links a:hover,.harrilanpuisto-link:hover,.left-footer a:hover{text-decoration:underline;text-underline-offset:2px}
+.project-links a.active{font-weight:700}
+.harrilanpuisto-link{display:block;width:max-content;max-width:100%;font-size:20px;line-height:1.05;margin:0 0 5px}
+.left-footer{margin-top:auto;font-size:13px;line-height:1.15}
+.left-footer .active{font-weight:700}
+
+/* CENTER ABOUT INTRO */
+.center{
+  min-width:0;
+  height:100%;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.greeting-zone{
+  position:absolute;
+  left:0;
+  right:0;
+  top:145px;
+  height:275px;
+  overflow:hidden;
+  pointer-events:none;
+}
+.about-greeting{
+  position:absolute;
+  left:0;
+  top:0;
+  margin:0;
+  font-size:54px;
+  line-height:.95;
+  letter-spacing:-.035em;
+  font-weight:700;
+  white-space:nowrap;
+  opacity:1;
+  transition:opacity .18s ease;
+  will-change:left,top,opacity;
+}
+.about-greeting.changing{opacity:0}
+.about-copy{
+  margin:auto 0 0;
+  width:100%;
+  padding:0;
+  text-align:left;
+  font-size:40px;
+  line-height:1.18;
+  letter-spacing:-.025em;
+  font-weight:400;
+}
+
+/* MINI CV — the only independently scrollable page column */
+.cv-column{
+  min-width:0;
+  height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  scrollbar-width:none;
+  padding:8px 0 18px;
+}
+.cv-column::-webkit-scrollbar{width:0;height:0}
+.cv-column::-webkit-scrollbar-track{background:transparent}
+.cv-column::-webkit-scrollbar-thumb{background:transparent;border-radius:8px}
+.cv-title{font-size:27px;line-height:1;font-weight:750;letter-spacing:-.025em;margin:0 0 28px}
+.cv-section{margin:0 0 26px}
+.cv-section h2{font-size:23px;line-height:1.02;font-weight:750;letter-spacing:-.025em;margin:0 0 14px}
+.cv-item{font-size:14px;line-height:17.12px;margin:0 0 10px}
+.cv-item:last-child{margin-bottom:0}
+
+.cv-surprise{
+  width:100%;
+  margin:34px 0 0;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(8px);
+  transition:
+    opacity .12s ease-out,
+    transform .12s ease-out,
+    visibility 0s linear .12s;
+}
+.cv-surprise.revealed{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+  transition:
+    opacity .12s ease-out,
+    transform .12s ease-out,
+    visibility 0s;
+}
+.cv-surprise img{
+  display:block;
+  width:100%;
+  height:auto;
+  margin:0;
+}
+
+
+/* MOBILE / TABLET */
+.mobile-menu-button{display:none}
+@media (max-width:1100px) and (min-width:901px){
+  :root{--gap:22px;--right-w:270px}
+  .about-copy{font-size:32px}
+  .about-greeting{font-size:46px}
+  .cv-title{font-size:25px}
+  .cv-section h2{font-size:21px}
+}
+@media (max-width:900px){
+  html,body{overflow:auto;height:auto;min-height:100%}
+  .about-layout{display:block;height:auto;min-height:100vh;padding:14px 16px 28px;overflow:visible}
+  .left{height:auto;overflow:visible;position:sticky;top:0;z-index:30;background:#FFFFFF;padding:4px 0 0}
+  .brand{font-size:21px;line-height:34px;min-height:34px}
+  .mobile-menu-button{display:grid;place-items:center;position:absolute;right:0;top:4px;width:34px;height:34px;border:0;padding:0;background:transparent;cursor:pointer;font-size:28px;line-height:1;z-index:40}
+
+  /* Smooth mobile main-menu opening AND closing, matching the project pages. */
+  .left nav{
+    display:block;
+    max-height:0;
+    overflow:hidden;
+    margin:0;
+    padding:0;
+    border-top:1px solid transparent;
+    border-bottom:1px solid transparent;
+    opacity:0;
+    transform:translateY(-5px);
+    pointer-events:none;
+    transition:
+      max-height .38s cubic-bezier(.22,.61,.36,1),
+      margin-top .38s cubic-bezier(.22,.61,.36,1),
+      padding .38s cubic-bezier(.22,.61,.36,1),
+      border-color .20s ease,
+      opacity .20s ease,
+      transform .38s cubic-bezier(.22,.61,.36,1);
+  }
+  .left-footer{
+    display:block;
+    max-height:0;
+    overflow:hidden;
+    margin-top:0;
+    padding:0;
+    border-bottom:1px solid transparent;
+    opacity:0;
+    transform:translateY(-5px);
+    pointer-events:none;
+    transition:
+      max-height .38s cubic-bezier(.22,.61,.36,1),
+      margin-top .38s cubic-bezier(.22,.61,.36,1),
+      padding .38s cubic-bezier(.22,.61,.36,1),
+      border-color .20s ease,
+      opacity .20s ease,
+      transform .38s cubic-bezier(.22,.61,.36,1);
+  }
+  .left.menu-open nav{
+    max-height:900px;
+    margin-top:7px;
+    padding:10px 0;
+    border-top-color:#111;
+    border-bottom-color:transparent;
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+    transition:
+      max-height .38s cubic-bezier(.22,.61,.36,1),
+      margin-top .38s cubic-bezier(.22,.61,.36,1),
+      padding .38s cubic-bezier(.22,.61,.36,1),
+      border-color .20s ease,
+      opacity .20s ease .04s,
+      transform .38s cubic-bezier(.22,.61,.36,1);
+  }
+  .left.menu-open .left-footer{
+    max-height:140px;
+    margin-top:18px;
+    padding-bottom:11px;
+    border-bottom-color:#111;
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+    transition:
+      max-height .38s cubic-bezier(.22,.61,.36,1),
+      margin-top .38s cubic-bezier(.22,.61,.36,1),
+      padding .38s cubic-bezier(.22,.61,.36,1),
+      border-color .20s ease,
+      opacity .20s ease .04s,
+      transform .38s cubic-bezier(.22,.61,.36,1);
+  }
+
+  /* First About screen: the biography sits at the bottom, while the greeting
+     owns only the flexible space above it, so the two can never overlap. */
+  .center{
+    height:calc(100vh - 52px);
+    height:calc(100dvh - 52px);
+    min-height:0;
+    overflow:hidden;
+    padding-top:18px;
+    display:flex;
+    flex-direction:column;
+  }
+  .greeting-zone{
+    position:relative;
+    top:auto;
+    left:auto;
+    right:auto;
+    height:auto;
+    min-height:58px;
+    flex:1 1 auto;
+    overflow:hidden;
+  }
+  .about-greeting{font-size:94.5px;line-height:.92}
+  .about-copy{
+    flex:0 0 auto;
+    margin:18px 0 0;
+    padding:0 0 18px;
+    font-size:clamp(18px,4.8vw,24px);
+    line-height:1.16;
+    text-align:left;
+  }
+  .cv-column{height:auto;overflow:visible;padding:24px 0 30px;border-top:1px solid #111}
+  .cv-title{font-size:26px}
+  .cv-item{
+    font-size:16px;
+    line-height:20.24px;
+    margin-bottom:12px;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .about-greeting,.project-links,.left nav,.left-footer{transition:none!important}
+}
+
+/* MOBILE FOOTER — slightly more leading between About / Instagram / email */
+@media (max-width:900px){
+  .left-footer{
+    line-height:1.38 !important;
+  }
+}
+
+
+@media (max-width:900px){
+  .cv-surprise{
+    width:50%;
+    margin-left:0;
+    margin-right:auto;
+  }
+  .cv-surprise img{
+    width:100%;
+    height:auto;
+    margin-left:0;
+    margin-right:auto;
+  }
+}
+
+
+/* MINI-CV COPY — ordinary copy wraps only from the column width.
+   Intentional Enter/newlines should be stored by the CMS as <br>. */
+.cv-item{
+  white-space:normal;
+}
+
+
+/* MOBILE MINI-CV — preserve the same readable text measure as the CV column */
+@media (max-width:900px){
+  .cv-column > .cv-title,
+  .cv-column > .cv-section{
+    width:min(100%, var(--right-w));
+    max-width:var(--right-w);
+  }
+
+  .cv-item{
+    width:100%;
+    max-width:100%;
+    white-space:normal;
+  }
+}
+
+
+/* NAVIGATION — never underline clickable navigation items on hover/focus */
+.left a:hover,
+.left a:focus,
+.left-footer a:hover,
+.left-footer a:focus,
+nav a:hover,
+nav a:focus,
+.toc a:hover,
+.toc a:focus,
+.mobile-toc a:hover,
+.mobile-toc a:focus,
+.harrilanpuisto-demo-link:hover,
+.harrilanpuisto-demo-link:focus,
+.project-link:hover,
+.project-link:focus,
+.group-head:hover,
+.group-head:focus,
+.mobile-menu-button:hover,
+.mobile-menu-button:focus,
+.mobile-project-toc-toggle:hover,
+.mobile-project-toc-toggle:focus{
+  text-decoration:none !important;
+}
+
+
+/* DESKTOP ABOUT — align Mini-CV top with Harri.la */
+@media (min-width:901px){
+  .cv-column{
+    padding-top:0 !important;
+  }
+  .cv-title{
+    margin-top:0 !important;
+    line-height:1 !important;
+  }
+}
+
+
+/* DESKTOP NAV STATE SYNC — state changes between pages must never animate */
+html.nav-state-syncing .project-links,
+html.nav-state-syncing .project-links *,
+html.nav-state-syncing .nav-group,
+html.nav-state-syncing .nav-group *{
+  transition:none !important;
+  animation:none !important;
+}
+
+
+/* MINI-CV INLINE LINKS */
+.cv-item p{
+  margin:0;
+}
+.cv-item a{
+  color:inherit;
+  text-decoration:none;
+  cursor:pointer;
+}
+.cv-item a:hover,
+.cv-item a:focus{
+  text-decoration:none;
+}
+
+
+/* FOOTER BASELINE
+   The footer block remains bottom-anchored. Therefore its last visible row
+   always sits on the same baseline. If both configurable items are hidden,
+   About becomes that last row and occupies the former email baseline. */
+.left-footer{
+  margin-top:auto;
+}
+
+
+/* DESKTOP NAVIGATION LABEL SIZE
+   Main section labels match the project-name size. */
+@media (min-width:901px){
+  .group-head,
+  .harrilanpuisto-link,
+  .harrilanpuisto-demo-link,
+  .standalone-nav-link{
+    font-size:17px !important;
+    line-height:18.7px !important;
+  }
+}
+
+
+/* About Arabic greetings only */
+.about-greeting.is-arabic-greeting{
+  font-family:"IBM Plex Sans Arabic" !important;
+  direction:rtl;
+}
+
+
+/* Harri.la is always a link back to About. */
+.brand a{
+  color:inherit;
+  text-decoration:none;
+}
+.brand a:hover,
+.brand a:focus{
+  text-decoration:none;
+}
+
+
+/* MOBILE ABOUT GREETING — 25% smaller than the previous 94.5px size. */
+@media (max-width:900px){
+  .about-greeting{
+    font-size:70.875px !important;
+  }
+}
+
+
+/* ABOUT GREETING SECRET GAME */
+.about-greeting{
+  pointer-events:auto;
+  cursor:pointer;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:manipulation;
+}
+.about-greeting:focus-visible{
+  outline:1px solid currentColor;
+  outline-offset:4px;
+}
+
+/* Tenth-activation easter egg: break out of the normal greeting
+   playground and sit above the entire website on desktop and mobile. */
+.about-greeting.game-fullscreen{
+  position:fixed !important;
+  left:50% !important;
+  top:50% !important;
+  z-index:100000 !important;
+  transform:translate(-50%,-50%) !important;
+  max-width:none !important;
+  white-space:nowrap !important;
+  pointer-events:auto !important;
+}
+
+
+/* MOBILE BRAND SIZE — sitewide */
+@media (max-width:900px){
+  .brand{
+    font-size:25px !important;
+  }
+}
+
+
+/* MOBILE HAMBURGER — tighter spacing between the three lines */
+@media (max-width:900px){
+  .mobile-menu-button[aria-expanded="false"] .hamburger-glyph{
+    transform:translateY(-1px) scaleY(.72) !important;
+    transform-origin:center center !important;
+  }
+
+  .mobile-menu-button[aria-expanded="true"] .hamburger-glyph{
+    transform:translateY(-1px) scaleY(1) !important;
+  }
+}
+
+
+/* ============================================================
+   MOBILE HEADER — ONE SHARED HARRI.LA ROW + ONE SHARED ICON
+   ============================================================ */
+@media (max-width:900px){
+  /* Normalize the Harri.la row itself on every page/template. */
+  .left{
+    padding-top:4px !important;
+  }
+
+  .brand{
+    margin-top:0 !important;
+    margin-bottom:0 !important;
+    min-height:34px !important;
+    height:34px !important;
+    line-height:34px !important;
+  }
+
+  /* Work/Harrilanpuisto wrappers must not create a second coordinate system. */
+  .mobile-topbar{
+    display:contents !important;
+  }
+
+  /* The button occupies the exact same 34px-high row as Harri.la:
+     Harri.la row = y 4..38, hamburger row = y 4..38. */
+  .mobile-menu-button{
+    display:block !important;
+    position:absolute !important;
+    top:4px !important;
+    right:0 !important;
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    min-height:34px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    color:var(--text, #0b0b0b) !important;
+    font-size:0 !important;
+    line-height:0 !important;
+    transform:none !important;
+    overflow:visible !important;
+    cursor:pointer !important;
+  }
+
+  /* Completely suppress the old font glyph on every template. */
+  .mobile-menu-button .hamburger-glyph{
+    display:none !important;
+  }
+
+  /* CLOSED ICON
+     Three identical bars. No font rendering is involved, so the icon is
+     literally identical on About / Research / Work / Artistic / Harrilanpuisto.
+     It is centered at y=21px, exactly the center of the Harri.la 4..38 row. */
+  .mobile-menu-button::before{
+    content:"" !important;
+    position:absolute !important;
+    left:50% !important;
+    top:50% !important;
+    width:22px !important;
+    height:2.5px !important;
+    background:currentColor !important;
+    box-shadow:
+      0 -7px 0 currentColor,
+      0  7px 0 currentColor !important;
+    transform:translate(-50%,-50%) !important;
+    transform-origin:center center !important;
+    opacity:1 !important;
+    pointer-events:none !important;
+  }
+
+  .mobile-menu-button::after{
+    content:"" !important;
+    position:absolute !important;
+    left:50% !important;
+    top:50% !important;
+    width:22px !important;
+    height:2.5px !important;
+    background:currentColor !important;
+    transform:translate(-50%,-50%) rotate(-45deg) !important;
+    transform-origin:center center !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+
+  /* OPEN ICON — same dimensions and center, converted into an ×. */
+  .mobile-menu-button[aria-expanded="true"]::before{
+    box-shadow:none !important;
+    transform:translate(-50%,-50%) rotate(45deg) !important;
+  }
+
+  .mobile-menu-button[aria-expanded="true"]::after{
+    opacity:1 !important;
+  }
+}
+
+
+
+/* MOBILE MAIN MENU — measured heights for About navigation and footer. */
+@media (max-width:900px){
+  .left nav{
+    height:0;
+    max-height:none !important;
+    overflow:hidden !important;
+    margin-top:0 !important;
+    padding:10px 0 !important;
+    border-top:1px solid #111 !important;
+    border-bottom:1px solid transparent !important;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transform:translateY(-5px);
+    transition:
+      height .42s cubic-bezier(.22,.61,.36,1),
+      margin-top .42s cubic-bezier(.22,.61,.36,1),
+      opacity .20s ease,
+      transform .42s cubic-bezier(.22,.61,.36,1),
+      visibility 0s linear .42s !important;
+  }
+  .left-footer{
+    height:0;
+    max-height:none !important;
+    overflow:hidden !important;
+    margin-top:0 !important;
+    padding:0 0 11px !important;
+    border-bottom:1px solid #111 !important;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transform:translateY(-5px);
+    transition:
+      height .42s cubic-bezier(.22,.61,.36,1),
+      margin-top .42s cubic-bezier(.22,.61,.36,1),
+      opacity .20s ease,
+      transform .42s cubic-bezier(.22,.61,.36,1),
+      visibility 0s linear .42s !important;
+  }
+  .left.menu-open nav{
+    max-height:none !important;
+    margin-top:7px !important;
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transform:translateY(0);
+    transition:
+      height .42s cubic-bezier(.22,.61,.36,1),
+      margin-top .42s cubic-bezier(.22,.61,.36,1),
+      opacity .20s ease .04s,
+      transform .42s cubic-bezier(.22,.61,.36,1),
+      visibility 0s !important;
+  }
+  .left.menu-open .left-footer{
+    max-height:none !important;
+    margin-top:18px !important;
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transform:translateY(0);
+    transition:
+      height .42s cubic-bezier(.22,.61,.36,1),
+      margin-top .42s cubic-bezier(.22,.61,.36,1),
+      opacity .20s ease .04s,
+      transform .42s cubic-bezier(.22,.61,.36,1),
+      visibility 0s !important;
+  }
+}
+
+
+/* MOBILE AUTO-HIDING MAIN HEADER
+   Harri.la + hamburger slide away while scrolling down and return on scroll up. */
+@media (max-width:900px){
+  .left{
+    transition:transform .28s cubic-bezier(.22,.61,.36,1) !important;
+    will-change:transform;
+  }
+
+  .left.mobile-scroll-hidden:not(.menu-open){
+    transform:translateY(calc(-100% - 2px)) !important;
+  }
+
+  /* When the main header is hidden, let the project-specific sticky heading
+     occupy the top edge instead of leaving an empty header-sized gap. */
+  .project-type,
+  .project-header-shell{
+    transition:top .28s cubic-bezier(.22,.61,.36,1) !important;
+  }
+
+  .layout:has(.left.mobile-scroll-hidden:not(.menu-open)) .project-type,
+  .layout:has(.left.mobile-scroll-hidden:not(.menu-open)) .project-header-shell{
+    top:0 !important;
+  }
+}
+
+
+/* Fullscreen ASCII easter egg: scale to the largest size that still fits. */
+.about-greeting.game-fullscreen{
+  max-width:calc(100vw - 24px) !important;
+  max-height:calc(100vh - 28px) !important;
+  line-height:1 !important;
+  letter-spacing:-.045em !important;
+  text-align:center !important;
+  overflow:visible !important;
+}
+
+
+/* Fullscreen ASCII easter egg styling */
+.about-greeting.game-fullscreen{
+  color:var(--ascii-color,#FF0000) !important;
+  font-family:"Geist",Arial,Helvetica,sans-serif !important;
+}
+
+</style>
+</head>
+<body>
+<div class="about-layout">
+  <aside class="left" aria-label="Project navigation">
+    <div class="brand"><a href="{{ '/about/' | relative_url }}">{{ site.data.site.brand | default: "Harri.la" }}</a></div>
+    <button class="mobile-menu-button" type="button" aria-label="Open project menu" aria-expanded="false">
+      <span class="hamburger-glyph" aria-hidden="true"></span>
+    </button>
+
+    {% assign research_projects = site.research | sort: "nav_order" %}
+    {% assign design_projects = site.design | sort: "nav_order" %}
+    {% assign artistic_projects = site.artistic | sort: "nav_order" %}
+
+    <nav>
+      <section class="nav-group">
+        <button class="group-head" type="button" aria-expanded="true">
+          <span>{{ site.data.site.design_research_label | default: "Design Research" }}</span><span class="group-toggle">−</span>
+        </button>
+        <div class="project-links open"><div class="project-links-inner">
+          {% for project in research_projects %}
+            <a href="{{ project.url | relative_url }}">{{ project.title }}</a>
+          {% endfor %}
+        </div></div>
+      </section>
+
+      <section class="nav-group">
+        <button class="group-head" type="button" aria-expanded="false">
+          <span>{{ site.data.site.design_work_label | default: "Design Work" }}</span><span class="group-toggle">+</span>
+        </button>
+        <div class="project-links"><div class="project-links-inner">
+          {% for project in design_projects %}
+            <a href="{{ project.url | relative_url }}">{{ project.title }}</a>
+          {% endfor %}
+        </div></div>
+      </section>
+
+      <section class="nav-group">
+        <button class="group-head" type="button" aria-expanded="false">
+          <span>{{ site.data.site.artistic_work_label | default: "Artistic Work" }}</span><span class="group-toggle">+</span>
+        </button>
+        <div class="project-links"><div class="project-links-inner">
+          {% for project in artistic_projects %}
+            <a href="{{ project.url | relative_url }}">{{ project.title }}</a>
+          {% endfor %}
+        </div></div>
+      </section>
+
+      {% assign harrilanpuisto_media_count = site.data.harrilanpuisto.media | size %}
+      {% if site.data.harrilanpuisto.enabled and harrilanpuisto_media_count > 0 %}
+        <a class="harrilanpuisto-link" href="{{ '/harrilanpuisto/' | relative_url }}">{{ site.data.site.harrilanpuisto_label | default: "Harrilanpuisto" }}</a>
+      {% endif %}
+    </nav>
+
+    <div class="left-footer">
+      <div><a class="active" href="{{ '/about/' | relative_url }}">About</a></div>
+      {% include footer-configurable-item.html
+        visible=site.data.site.footer_slot_1_visible
+        text=site.data.site.footer_slot_1_text
+        type=site.data.site.footer_slot_1_link_type
+        link=site.data.site.footer_slot_1_link
+      %}
+      {% include footer-configurable-item.html
+        visible=site.data.site.footer_slot_2_visible
+        text=site.data.site.footer_slot_2_text
+        type=site.data.site.footer_slot_2_link_type
+        link=site.data.site.footer_slot_2_link
+      %}
+    </div>
+  </aside>
+
+  <main class="center" aria-label="About Harri">
+    <div class="greeting-zone" id="greetingZone" aria-live="polite">
+      <div class="about-greeting" id="aboutGreeting"></div>
+    </div>
+
+    <p class="about-copy">{{ page.bio | escape | newline_to_br }}</p>
+  </main>
+
+  <aside class="cv-column" aria-label="Mini CV">
+{% for section in page.mini_cv_sections %}
+      <section class="cv-section">
+        <h2>{{ section.title }}</h2>
+        {% for entry in section.entries %}
+          <div class="cv-item">{{ entry.text | markdownify }}</div>
+        {% endfor %}
+      </section>
+    {% endfor %}
+
+    {% if page.surprise_images and page.surprise_images.size > 0 %}
+      {% assign first_surprise = page.surprise_images | first %}
+      <figure class="cv-surprise" id="cvSurprise" aria-hidden="true">
+        <img
+          id="cvSurpriseImage"
+          src="{{ first_surprise.image | relative_url }}"
+          alt="{{ first_surprise.alt | default: '' | escape }}"
+          loading="lazy"
+          decoding="async"
+        />
+        <div id="cvSurprisePool" hidden aria-hidden="true">
+          {% for item in page.surprise_images %}
+            {% if item.image %}
+              <span
+                data-surprise-src="{{ item.image | relative_url }}"
+                data-surprise-alt="{{ item.alt | default: '' | escape }}"
+              ></span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </figure>
+    {% elsif page.surprise_image %}
+      <figure class="cv-surprise" id="cvSurprise" aria-hidden="true">
+        <img
+          id="cvSurpriseImage"
+          src="{{ page.surprise_image | relative_url }}"
+          alt="{{ page.surprise_alt | default: '' | escape }}"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+    {% endif %}
+  </aside>
+</div>
+
+<script>
+(function(){
+  const greeting = document.getElementById('aboutGreeting');
+  const zone = document.getElementById('greetingZone');
+  const configuredMessages = {{ page.greeting_messages | jsonify }};
+  const configuredMorningMessages = {{ page.morning_greeting_messages | jsonify }};
+  const configuredAsciiMessages = {{ page.ascii_messages | jsonify }};
+
+  const regularMessages =
+    Array.isArray(configuredMessages) && configuredMessages.length
+      ? configuredMessages
+      : ['No terve!','Tjena!','Ben salut!','Hi there!','مرحبا!'];
+
+  const morningOnlyMessages =
+    Array.isArray(configuredMorningMessages)
+      ? configuredMorningMessages
+      : ['صباحو!'];
+
+  let currentMessage = '';
+
+  const fallbackAsciiMessages = [
+    {text:'(╯°□°）╯︵ ┻━┻', color:'#FF0000'},
+    {text:'(；一_一)', color:'#FF0000'},
+    {text:'(¬_¬)', color:'#FF0000'},
+    {text:'ರ_ರ', color:'#FF0000'},
+    {text:'¯\\_(ツ)_/¯', color:'#FF0000'},
+    {text:'(-_-)', color:'#FF0000'}
+  ];
+
+  function normalizedAsciiMessages(){
+    const source =
+      Array.isArray(configuredAsciiMessages) && configuredAsciiMessages.length
+        ? configuredAsciiMessages
+        : fallbackAsciiMessages;
+
+    const cleaned = source
+      .map((item) => {
+        const text =
+          item && typeof item.text === 'string'
+            ? item.text.trim()
+            : '';
+
+        const color =
+          item && typeof item.color === 'string' &&
+          /^#[0-9A-Fa-f]{6}$/.test(item.color.trim())
+            ? item.color.trim()
+            : '#FF0000';
+
+        return {text,color};
+      })
+      .filter((item) => item.text);
+
+    return cleaned.length ? cleaned : fallbackAsciiMessages.slice();
+  }
+
+  const fullscreenAsciiMessages = normalizedAsciiMessages();
+  let fullscreenAsciiBag = [];
+  let lastFullscreenAsciiIndex = -1;
+
+  function refillFullscreenAsciiBag(){
+    fullscreenAsciiBag = fullscreenAsciiMessages.map((_,index) => index);
+
+    for(let i=fullscreenAsciiBag.length-1; i>0; i-=1){
+      const j = Math.floor(Math.random() * (i+1));
+      [fullscreenAsciiBag[i],fullscreenAsciiBag[j]] =
+        [fullscreenAsciiBag[j],fullscreenAsciiBag[i]];
+    }
+
+    // Prevent the last face from the previous shuffle from immediately
+    // repeating as the first face of the new shuffle.
+    if(
+      fullscreenAsciiBag.length > 1 &&
+      fullscreenAsciiBag[fullscreenAsciiBag.length-1] === lastFullscreenAsciiIndex
+    ){
+      const last = fullscreenAsciiBag.length - 1;
+      [fullscreenAsciiBag[last],fullscreenAsciiBag[last-1]] =
+        [fullscreenAsciiBag[last-1],fullscreenAsciiBag[last]];
+    }
+  }
+
+  function nextFullscreenAscii(){
+    if(!fullscreenAsciiBag.length){
+      refillFullscreenAsciiBag();
+    }
+
+    const index = fullscreenAsciiBag.pop();
+    lastFullscreenAsciiIndex = index;
+    return fullscreenAsciiMessages[index];
+  }
+
+  function availableGreetingMessages(){
+    const hour = new Date().getHours();
+    const isMorning = hour >= 0 && hour < 12;
+
+    return isMorning
+      ? regularMessages.concat(morningOnlyMessages)
+      : regularMessages.slice();
+  }
+
+  function nextMessage(){
+    const available = availableGreetingMessages();
+
+    if(!available.length) return '';
+    if(available.length === 1) return available[0];
+
+    let next;
+    do{
+      next = available[Math.floor(Math.random() * available.length)];
+    }while(next === currentMessage);
+
+    return next;
+  }
+
+  const center = document.querySelector('.center');
+  const aboutCopy = document.querySelector('.about-copy');
+
+  function sizeGreetingZone(){
+    if(!greeting || !zone || !center || !aboutCopy) return;
+
+    if(window.innerWidth <= 900){
+      zone.style.removeProperty('top');
+      zone.style.removeProperty('height');
+      return;
+    }
+
+    const centerRect = center.getBoundingClientRect();
+    const copyRect = aboutCopy.getBoundingClientRect();
+    const gapAboveCopy = 28;
+    const safeBottom = Math.max(0,copyRect.top - centerRect.top - gapAboveCopy);
+
+    // Desktop playground starts at the same vertical level as Harri.la
+    // but remains entirely inside the center-column white space.
+    zone.style.top = '0px';
+    zone.style.height = Math.round(safeBottom) + 'px';
+  }
+
+  function placeGreeting(forceDifferent=false){
+    if(!greeting || !zone) return;
+
+    sizeGreetingZone();
+
+    const zw = zone.clientWidth;
+    const zh = zone.clientHeight;
+    const gw = greeting.offsetWidth;
+    const gh = greeting.offsetHeight;
+    const insetX = 0;
+    const insetY = window.innerWidth <= 900 ? 4 : 0;
+    const maxX = Math.max(insetX,zw - gw - 6);
+    const maxY = Math.max(insetY,zh - gh - 6);
+
+    const oldX = parseFloat(greeting.style.left);
+    const oldY = parseFloat(greeting.style.top);
+    const hasOldPosition = Number.isFinite(oldX) && Number.isFinite(oldY);
+    const minimumMove = Math.min(90,Math.max(34,Math.hypot(zw,zh) * .12));
+
+    let x = insetX;
+    let y = insetY;
+
+    for(let attempt=0; attempt<12; attempt += 1){
+      x = insetX + Math.random()*Math.max(0,maxX-insetX);
+      y = insetY + Math.random()*Math.max(0,maxY-insetY);
+
+      if(!forceDifferent || !hasOldPosition) break;
+      if(Math.hypot(x-oldX,y-oldY) >= minimumMove) break;
+    }
+
+    greeting.style.left = Math.round(x) + 'px';
+    greeting.style.top = Math.round(y) + 'px';
+  }
+
+  let lastGameSize = null;
+  let greetingChangeSerial = 0;
+  let desktopGameClickCount = 0;
+  let desktopGreetingFullscreen = false;
+  let desktopFullscreenTimeout = null;
+
+  function baseGreetingSize(){
+    return window.innerWidth <= 900 ? 70.875 : 54;
+  }
+
+  function randomGameSize(){
+    const base = baseGreetingSize();
+    const minimum = window.innerWidth <= 900 ? 44 : 34;
+    const maximum = window.innerWidth <= 900 ? 70.875 : 182.4;
+    const minimumDifference = window.innerWidth <= 900 ? 5 : 6;
+
+    let next = minimum + Math.random()*Math.max(1,maximum-minimum);
+
+    if(Number.isFinite(lastGameSize)){
+      for(let attempt=0; attempt<12 && Math.abs(next-lastGameSize) < minimumDifference; attempt += 1){
+        next = minimum + Math.random()*Math.max(1,maximum-minimum);
+      }
+    }else if(Math.abs(next-base) < minimumDifference){
+      next = minimum;
+    }
+
+    lastGameSize = next;
+    return next;
+  }
+
+  function fitGreetingSizeToZone(sizePx){
+    greeting.style.setProperty('font-size',`${sizePx}px`,'important');
+
+    // Recalculate the safe playground before checking the new size.
+    sizeGreetingZone();
+
+    const availableWidth = Math.max(1,zone.clientWidth - 6);
+    const availableHeight = Math.max(1,zone.clientHeight - 6);
+    const measuredWidth = Math.max(1,greeting.offsetWidth);
+    const measuredHeight = Math.max(1,greeting.offsetHeight);
+
+    const widthScale = availableWidth / measuredWidth;
+    const heightScale = availableHeight / measuredHeight;
+    const scale = Math.min(1,widthScale,heightScale);
+
+    if(scale < 1){
+      const fitted = Math.max(28,sizePx * scale);
+      greeting.style.setProperty('font-size',`${fitted}px`,'important');
+      lastGameSize = fitted;
+    }
+  }
+
+  function fitFullscreenGreetingToViewport(){
+    if(!desktopGreetingFullscreen) return;
+
+    const horizontalPadding = window.innerWidth <= 900 ? 12 : 24;
+    const verticalPadding = window.innerWidth <= 900 ? 18 : 28;
+    const availableWidth = Math.max(1,window.innerWidth - horizontalPadding * 2);
+    const availableHeight = Math.max(1,window.innerHeight - verticalPadding * 2);
+
+    let low = 18;
+    let high = Math.max(window.innerWidth,window.innerHeight) * 2;
+
+    for(let i=0;i<18;i+=1){
+      const mid = (low + high) / 2;
+      greeting.style.setProperty('font-size',`${mid}px`,'important');
+
+      const fits =
+        greeting.scrollWidth <= availableWidth &&
+        greeting.scrollHeight <= availableHeight;
+
+      if(fits){
+        low = mid;
+      }else{
+        high = mid;
+      }
+    }
+
+    greeting.style.setProperty(
+      'font-size',
+      `${Math.max(18,Math.floor(low))}px`,
+      'important'
+    );
+  }
+
+  function enterFullscreenGreeting(){
+    desktopGreetingFullscreen = true;
+
+    document.body.appendChild(greeting);
+    greeting.classList.add('game-fullscreen');
+    greeting.style.left = '50%';
+    greeting.style.top = '50%';
+
+    requestAnimationFrame(fitFullscreenGreetingToViewport);
+  }
+
+  function exitFullscreenGreeting(){
+    if(!desktopGreetingFullscreen) return;
+
+    desktopGreetingFullscreen = false;
+    greeting.classList.remove('game-fullscreen');
+    zone.appendChild(greeting);
+    greeting.style.removeProperty('position');
+    greeting.style.removeProperty('z-index');
+    greeting.style.removeProperty('transform');
+    greeting.style.removeProperty('left');
+    greeting.style.removeProperty('top');
+    greeting.style.removeProperty('max-width');
+  }
+
+  function showFullscreenGreeting(){
+    const serial = ++greetingChangeSerial;
+
+    const apply = () => {
+      if(serial !== greetingChangeSerial) return;
+
+      const ascii = nextFullscreenAscii();
+      greeting.textContent = ascii.text;
+      greeting.style.setProperty('--ascii-color',ascii.color);
+      greeting.classList.remove('is-arabic-greeting');
+
+      enterFullscreenGreeting();
+      requestAnimationFrame(() => greeting.classList.remove('changing'));
+    };
+
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+      greeting.classList.add('changing');
+      setTimeout(apply,180);
+    }else{
+      apply();
+    }
+  }
+
+  function activateGreetingGame(){
+    // While the giant state is visible, extra clicks do not interrupt its
+    // fixed five-second duration.
+    if(desktopGreetingFullscreen){
+      return;
+    }
+
+    desktopGameClickCount += 1;
+
+    if(desktopGameClickCount === 10){
+      showFullscreenGreeting();
+
+      if(desktopFullscreenTimeout){
+        clearTimeout(desktopFullscreenTimeout);
+      }
+
+      desktopFullscreenTimeout = setTimeout(() => {
+        desktopFullscreenTimeout = null;
+
+        if(!desktopGreetingFullscreen) return;
+
+        greeting.classList.add('changing');
+
+        setTimeout(() => {
+          exitFullscreenGreeting();
+          desktopGameClickCount = 0;
+          lastGameSize = null;
+          changeGreeting(false,true);
+        },180);
+      },5000);
+
+      return;
+    }
+
+    changeGreeting(true,true);
+  }
+
+  function changeGreeting(animate=true,gameMove=false){
+    const serial = ++greetingChangeSerial;
+
+    const apply = () => {
+      if(serial !== greetingChangeSerial) return;
+
+      currentMessage = nextMessage();
+      greeting.textContent = currentMessage;
+      greeting.classList.toggle(
+        'is-arabic-greeting',
+        currentMessage === 'مرحبا!' || currentMessage === 'صباحو!'
+      );
+
+      if(gameMove){
+        fitGreetingSizeToZone(randomGameSize());
+      }
+
+      requestAnimationFrame(() => {
+        placeGreeting(gameMove);
+        greeting.classList.remove('changing');
+      });
+    };
+
+    if(animate && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+      greeting.classList.add('changing');
+      setTimeout(apply,180);
+    }else{
+      apply();
+    }
+  }
+
+  changeGreeting(false);
+
+  // Secret game: normal activations randomize phrase, position and size.
+  // Activation #10 shows the next fullscreen ASCII face for five seconds.
+  greeting.addEventListener('click',activateGreetingGame);
+  greeting.addEventListener('keydown',(event) => {
+    if(event.key === 'Enter' || event.key === ' '){
+      event.preventDefault();
+      activateGreetingGame();
+    }
+  });
+
+  // Automatic rotation pauses during the five-second fullscreen ASCII state.
+  setInterval(() => {
+    if(desktopGreetingFullscreen) return;
+    changeGreeting(true,false);
+  },30000);
+
+  window.addEventListener('resize',() => {
+    if(desktopGreetingFullscreen){
+      fitFullscreenGreetingToViewport();
+      return;
+    }
+
+    sizeGreetingZone();
+
+    const left = parseFloat(greeting.style.left)||0;
+    const top = parseFloat(greeting.style.top)||0;
+    const maxX = Math.max(0,zone.clientWidth-greeting.offsetWidth-6);
+    const maxY = Math.max(0,zone.clientHeight-greeting.offsetHeight-6);
+
+    greeting.style.left = Math.min(left,maxX)+'px';
+    greeting.style.top = Math.min(top,maxY)+'px';
+  });
+
+  // Returning to About starts a fresh desktop click sequence.
+  window.HarriAboutReset = function(){
+    greetingChangeSerial += 1;
+    desktopGameClickCount = 0;
+
+    if(desktopFullscreenTimeout){
+      clearTimeout(desktopFullscreenTimeout);
+      desktopFullscreenTimeout = null;
+    }
+
+    if(desktopGreetingFullscreen){
+      exitFullscreenGreeting();
+    }
+
+    lastGameSize = null;
+    greeting.classList.remove('changing','game-fullscreen');
+    greeting.style.removeProperty('font-size');
+    sizeGreetingZone();
+    requestAnimationFrame(() => placeGreeting(false));
+  };
+
+  // Mini-CV surprise.
+  const cvColumn = document.querySelector('.cv-column');
+  const cvSurprise = document.getElementById('cvSurprise');
+  const cvSurpriseImage = document.getElementById('cvSurpriseImage');
+  const cvSurpriseChoices = cvSurprise
+    ? Array.from(cvSurprise.querySelectorAll('[data-surprise-src]'))
+        .map((node) => ({
+          src: node.getAttribute('data-surprise-src') || '',
+          alt: node.getAttribute('data-surprise-alt') || ''
+        }))
+        .filter((item) => item.src)
+    : [];
+
+  function chooseSurpriseImage(){
+    if(!cvSurpriseImage || !cvSurpriseChoices.length) return;
+
+    const choice =
+      cvSurpriseChoices.length === 1
+        ? cvSurpriseChoices[0]
+        : cvSurpriseChoices[Math.floor(Math.random() * cvSurpriseChoices.length)];
+
+    cvSurpriseImage.src = choice.src;
+    cvSurpriseImage.alt = choice.alt;
+  }
+
+  chooseSurpriseImage();
+
+  function updateCvSurprise(){
+    if(!cvColumn || !cvSurprise) return;
+
+    let atEnd = false;
+
+    if(window.innerWidth > 900){
+      atEnd =
+        cvColumn.scrollTop + cvColumn.clientHeight >=
+        cvColumn.scrollHeight - 3;
+    }else{
+      const rect = cvSurprise.getBoundingClientRect();
+      const pageBottom =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 3;
+
+      atEnd = pageBottom && rect.top < window.innerHeight;
+    }
+
+    cvSurprise.classList.toggle('revealed',atEnd);
+    cvSurprise.setAttribute('aria-hidden',String(!atEnd));
+  }
+
+  if(cvColumn){
+    cvColumn.addEventListener('scroll',updateCvSurprise,{passive:true});
+  }
+  window.addEventListener('scroll',updateCvSurprise,{passive:true});
+  window.addEventListener('resize',updateCvSurprise);
+  requestAnimationFrame(updateCvSurprise);
+
+  // Navigation accordion.
+  document.querySelectorAll('.group-head').forEach(button => {
+    const panel = button.nextElementSibling;
+    const toggle = button.querySelector('.group-toggle');
+
+    function set(open,animate){
+      button.setAttribute('aria-expanded',String(open));
+      if(toggle) toggle.textContent = open ? '−' : '+';
+      if(!panel) return;
+
+      if(!animate){
+        panel.classList.toggle('open',open);
+        panel.style.height = open ? panel.scrollHeight+'px' : '0px';
+        return;
+      }
+
+      const start = panel.getBoundingClientRect().height;
+      panel.style.height = start+'px';
+      void panel.offsetHeight;
+      panel.classList.toggle('open',open);
+      panel.style.height = open ? panel.scrollHeight+'px' : '0px';
+    }
+
+    // About on mobile starts with all navigation groups closed.
+    const initialOpen =
+      window.innerWidth <= 900
+        ? false
+        : button.getAttribute('aria-expanded') === 'true';
+
+    set(initialOpen,false);
+
+    button.addEventListener('click',() => {
+      set(button.getAttribute('aria-expanded') !== 'true',true);
+    });
+  });
+
+  // Mobile main menu.
+  const leftRail = document.querySelector('.left');
+  const mobileButton = document.querySelector('.mobile-menu-button');
+
+  if(mobileButton){
+    mobileButton.addEventListener('click',() => {
+      const open = !leftRail.classList.contains('menu-open');
+
+      leftRail.classList.toggle('menu-open',open);
+      mobileButton.setAttribute('aria-expanded',String(open));
+      mobileButton.setAttribute(
+        'aria-label',
+        open ? 'Close project menu' : 'Open project menu'
+      );
+
+      const glyph = mobileButton.querySelector('.hamburger-glyph');
+      if(glyph) glyph.textContent = open ? '×' : '☰';
+    });
+  }
+
+  // Always close the mobile menu when crossing into desktop.
+  let wasMobileViewport = window.innerWidth <= 900;
+
+  window.addEventListener('resize',() => {
+    const isMobileViewport = window.innerWidth <= 900;
+
+    if(wasMobileViewport && !isMobileViewport){
+      leftRail.classList.remove('menu-open');
+
+      if(mobileButton){
+        mobileButton.setAttribute('aria-expanded','false');
+        mobileButton.setAttribute('aria-label','Open project menu');
+
+        const glyph = mobileButton.querySelector('.hamburger-glyph');
+        if(glyph) glyph.textContent = '☰';
+      }
+    }
+
+    wasMobileViewport = isMobileViewport;
+  });
+
+  // Desktop About: wheel/trackpad scrolling anywhere controls Mini-CV.
+  function normalizeWheelDelta(event){
+    let delta = event.deltaY;
+
+    if(event.deltaMode === 1){
+      delta *= 16;
+    }else if(event.deltaMode === 2){
+      delta *= window.innerHeight;
+    }
+
+    return delta;
+  }
+
+  document.addEventListener('wheel',function(event){
+    if(window.innerWidth <= 900 || !cvColumn) return;
+
+    const delta = normalizeWheelDelta(event);
+    if(!delta) return;
+
+    event.preventDefault();
+    cvColumn.scrollTop += delta;
+  },{passive:false});
+})();
+</script>
+
+<script>
+/* RESET PAGE POSITION ON EVERY RETURN
+   Browsing away and returning starts the page from its original content
+   position. Navigation accordion choices are intentionally not changed. */
+(function(){
+  if("scrollRestoration" in history){
+    history.scrollRestoration = "manual";
+  }
+
+  function resetPageVisitPosition(){
+    window.scrollTo(0,0);
+    document.documentElement.scrollTop = 0;
+    if(document.body) document.body.scrollTop = 0;
+
+    document.querySelectorAll(".paper, .cv-column, .media-column").forEach(function(el){
+      el.scrollTop = 0;
+      el.scrollLeft = 0;
+    });
+
+    document.querySelectorAll(".lightbox, .figure-lightbox").forEach(function(box){
+      box.classList.remove("open");
+      box.setAttribute("aria-hidden","true");
+    });
+
+    if(document.body){
+      document.body.classList.remove("lightbox-open");
+    }
+
+    document.querySelectorAll("video").forEach(function(video){
+      try{
+        video.pause();
+        video.currentTime = 0;
+      }catch(e){}
+    });
+
+    const surprise = document.querySelector(".cv-surprise");
+    if(surprise){
+      surprise.classList.remove("revealed");
+      surprise.setAttribute("aria-hidden","true");
+    }
+
+    if(document.activeElement && typeof document.activeElement.blur === "function"){
+      document.activeElement.blur();
+    }
+
+    const paper = document.querySelector(".paper");
+    if(paper){
+      paper.dispatchEvent(new Event("scroll"));
+    }
+
+    window.dispatchEvent(new Event("scroll"));
+  }
+
+  /* pageshow also runs when the browser restores a page from its back/forward
+     cache, which is the case that normally preserves an old scroll position. */
+  window.addEventListener("pageshow", function(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(resetPageVisitPosition);
+    });
+  });
+})();
+</script>
+
+
+<script>
+
+/* Stable measured-height controller for About's mobile main menu. */
+(function(){
+  const leftNav = document.querySelector('.left');
+  const menuButton = document.querySelector('.mobile-menu-button');
+  const nav = leftNav ? leftNav.querySelector('nav') : null;
+  const footer = leftNav ? leftNav.querySelector('.left-footer') : null;
+  if(!leftNav || !menuButton || !nav || !footer) return;
+  let cleanupTimer = 0;
+
+  function setButton(open){
+    menuButton.setAttribute('aria-expanded', String(open));
+    menuButton.setAttribute('aria-label', open ? 'Close project menu' : 'Open project menu');
+    const glyph = menuButton.querySelector('.hamburger-glyph');
+    if(glyph) glyph.textContent = open ? '×' : '☰';
+    else menuButton.textContent = open ? '×' : '☰';
+  }
+
+  function setMenu(open, animate=true){
+    clearTimeout(cleanupTimer);
+    if(window.innerWidth > 900){
+      leftNav.classList.remove('menu-open');
+      nav.style.removeProperty('height');
+      footer.style.removeProperty('height');
+      setButton(false);
+      return;
+    }
+
+    if(!animate){
+      leftNav.classList.toggle('menu-open', open);
+      nav.style.height = open ? 'auto' : '0px';
+      footer.style.height = open ? 'auto' : '0px';
+      setButton(open);
+      return;
+    }
+
+    if(open){
+      nav.style.height = '0px';
+      footer.style.height = '0px';
+      leftNav.classList.add('menu-open');
+      setButton(true);
+      requestAnimationFrame(() => {
+        const navTarget = nav.scrollHeight;
+        const footerTarget = footer.scrollHeight;
+        requestAnimationFrame(() => {
+          nav.style.height = navTarget + 'px';
+          footer.style.height = footerTarget + 'px';
+        });
+      });
+      cleanupTimer = setTimeout(() => {
+        if(leftNav.classList.contains('menu-open')){
+          nav.style.height = 'auto';
+          footer.style.height = 'auto';
+        }
+      }, 470);
+    }else{
+      nav.style.height = nav.getBoundingClientRect().height + 'px';
+      footer.style.height = footer.getBoundingClientRect().height + 'px';
+      void nav.offsetHeight;
+      leftNav.classList.remove('menu-open');
+      setButton(false);
+      requestAnimationFrame(() => {
+        nav.style.height = '0px';
+        footer.style.height = '0px';
+      });
+    }
+  }
+
+  menuButton.addEventListener('click', function(event){
+    if(window.innerWidth > 900) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    setMenu(!leftNav.classList.contains('menu-open'), true);
+  }, true);
+
+  document.querySelectorAll('.left nav a').forEach(function(link){
+    link.addEventListener('click', function(){
+      if(window.innerWidth <= 900 && leftNav.classList.contains('menu-open')) setMenu(false, true);
+    }, true);
+  });
+
+  window.addEventListener('resize', function(){
+    if(window.innerWidth > 900) setMenu(false, false);
+    else if(leftNav.classList.contains('menu-open')){
+      nav.style.height = 'auto';
+      footer.style.height = 'auto';
+    }
+  });
+})();
+
+</script>
+
+<script>
+(function(){
+  const header = document.querySelector(".left");
+  if(!header) return;
+
+  const mobileBreakpoint = 900;
+  const topRevealPoint = 18;
+  const hideTravel = 9;
+  const showTravel = 4;
+
+  let lastY = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+  let direction = 0;
+  let travelled = 0;
+  let ticking = false;
+
+  function currentY(){
+    const raw = window.scrollY || document.documentElement.scrollTop || 0;
+    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    return Math.max(0, Math.min(raw, maxY));
+  }
+
+  function showHeader(){
+    header.classList.remove("mobile-scroll-hidden");
+  }
+
+  function updateHeader(){
+    const y = currentY();
+
+    if(window.innerWidth > mobileBreakpoint){
+      showHeader();
+      lastY = y;
+      direction = 0;
+      travelled = 0;
+      ticking = false;
+      return;
+    }
+
+    /* Never hide it at the top or while the hamburger menu is open. */
+    if(y <= topRevealPoint || header.classList.contains("menu-open")){
+      showHeader();
+      lastY = y;
+      direction = 0;
+      travelled = 0;
+      ticking = false;
+      return;
+    }
+
+    const delta = y - lastY;
+    lastY = y;
+
+    if(Math.abs(delta) < 0.5){
+      ticking = false;
+      return;
+    }
+
+    const newDirection = delta > 0 ? 1 : -1;
+
+    if(newDirection !== direction){
+      direction = newDirection;
+      travelled = 0;
+    }
+
+    travelled += Math.abs(delta);
+
+    if(direction > 0 && travelled >= hideTravel){
+      header.classList.add("mobile-scroll-hidden");
+      travelled = 0;
+    }else if(direction < 0 && travelled >= showTravel){
+      showHeader();
+      travelled = 0;
+    }
+
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", function(){
+    if(!ticking){
+      ticking = true;
+      requestAnimationFrame(updateHeader);
+    }
+  }, {passive:true});
+
+  window.addEventListener("resize", function(){
+    if(window.innerWidth > mobileBreakpoint){
+      showHeader();
+    }
+    lastY = currentY();
+    direction = 0;
+    travelled = 0;
+  });
+
+  const menuButton = document.querySelector(".mobile-menu-button");
+  if(menuButton){
+    menuButton.addEventListener("click", showHeader, true);
+  }
+
+  showHeader();
+})();
+</script>
+
+</body>
+</html>

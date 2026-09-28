@@ -1,0 +1,33 @@
+title: Harri.la
+url: ''
+baseurl: ''
+collections:
+  research:
+    output: true
+    permalink: /research/:name/
+  design:
+    output: true
+    permalink: /design/:name/
+  artistic:
+    output: true
+    permalink: /artistic/:name/
+defaults:
+- scope:
+    path: ''
+    type: research
+  values:
+    layout: research
+- scope:
+    path: ''
+    type: design
+  values:
+    layout: work
+- scope:
+    path: ''
+    type: artistic
+  values:
+    layout: work
+exclude:
+- README_SETUP.md
+- GITHUB_PUBLISHING_MANUAL.md
+- START_HERE_GITHUB.md

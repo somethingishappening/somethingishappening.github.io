@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ page.title }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+
+
+:root{
+  --page-pad:18px;
+  --left-w:220px;
+  --gap:28px;
+  --text:#0b0b0b;
+  --line:#111;
+  --bg:#fff;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text)}
+html{height:100%}
+body{
+  min-height:100%;
+  font-family:"Geist", Arial, Helvetica, sans-serif;
+  font-size:16px;
+  line-height:1.18;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+
+.layout{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:220px minmax(0,745fr) minmax(0,660fr);
+  gap:var(--gap);
+  padding:32px var(--page-pad) 26px;
+  align-items:start;
+}
+
+/* LEFT NAVIGATION */
+.left{
+  position:sticky;
+  top:32px;
+  height:calc(100vh - 58px);
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.brand{
+  flex:0 0 auto;
+  font-size:27px;
+  line-height:1;
+  letter-spacing:-.02em;
+}
+.welcome-zone{
+  position:relative;
+  flex:0 0 148px;
+  height:148px;
+  min-height:148px;
+  overflow:hidden;
+}
+.welcome{
+  position:absolute;
+  left:0;
+  top:0;
+  margin:0;
+  font-size:28px;
+  line-height:1;
+  white-space:nowrap;
+  opacity:1;
+  transition:opacity .18s ease;
+}
+.welcome.changing{opacity:0}
+
+.main-menu-panel{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  overflow:hidden;
+}
+.main-menu-panel-inner{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.left nav{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding-right:12px;
+  scrollbar-width:none;
+}
+.left nav:hover{scrollbar-width:thin}
+.left nav::-webkit-scrollbar{width:0}
+.left nav:hover::-webkit-scrollbar{width:8px}
+.left nav::-webkit-scrollbar-track{background:transparent}
+.left nav::-webkit-scrollbar-thumb{background:rgba(0,0,0,.35);border-radius:8px}
+
+.nav-group,
+.nav-group:has(.group-head[aria-expanded="true"]){
+  margin-bottom:5px;
+}
+.group-head{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  text-align:left;
+  font-size:20px;
+  line-height:21px;
+}
+.group-head > span:first-child,
+.project-links a{white-space:nowrap}
+.group-head[aria-expanded="true"]{font-weight:700}
+.group-toggle{
+  width:22px;
+  flex:0 0 22px;
+  text-align:center;
+  font-size:20px;
+}
+
+.project-links{
+  height:auto;
+  margin-top:8px;
+  overflow:hidden;
+  opacity:1;
+  transform:translateY(0);
+  transition:
+    height .34s cubic-bezier(.22,.61,.36,1),
+    margin-top .34s cubic-bezier(.22,.61,.36,1),
+    opacity .22s ease,
+    transform .34s cubic-bezier(.22,.61,.36,1);
+}
+.project-links-inner{
+  display:grid;
+  gap:3px;
+  padding-bottom:13px;
+}
+.project-links a{
+  display:block;
+  font-size:17px;
+  line-height:18.7px;
+}
+.project-links a.active{font-weight:700}
+.project-links a:hover{text-decoration:underline}
+.project-links.collapsed{
+  height:0;
+  margin-top:0;
+  opacity:0;
+  transform:translateY(-3px);
+  pointer-events:none;
+}
+
+.left-footer{
+  flex:0 0 auto;
+  margin-top:18px;
+  font-size:13px;
+  line-height:1.15;
+}
+
+/* CENTER PROJECT INFORMATION */
+.project-info{
+  position:sticky;
+  top:32px;
+  min-width:0;
+  height:calc(100vh - 58px);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.project-type{
+  font-size:27px;
+  line-height:1;
+  letter-spacing:-.02em;
+  margin:0 0 24px;
+}
+.project-info h1{
+  margin:0;
+  font-size:54px;
+  line-height:.94;
+  letter-spacing:-.035em;
+  max-width:610px;
+}
+.project-info h1 .title-line{
+  display:block;
+  white-space:nowrap;
+}
+.project-description{
+  margin-top:auto;
+  margin-bottom:0;
+  max-width:660px;
+  font-size:18px;
+  line-height:1.13;
+}
+.project-description p{margin:0}
+
+/* RIGHT MEDIA COLUMN */
+.media-column{
+  min-width:0;
+  position:relative;
+}
+
+.media-stack{
+  display:grid;
+  gap:18px;
+  width:100%;
+}
+
+.media-item{
+  position:relative;
+  width:100%;
+  min-height:calc(100vh - 58px);
+  border:1.5px solid var(--line);
+  overflow:hidden;
+  background:#FFFFFF;
+  cursor:zoom-in;
+}
+
+.media-item::before,
+.media-item::after{
+  content:"";
+  position:absolute;
+  left:-25%;
+  top:50%;
+  width:150%;
+  height:1px;
+  background:var(--line);
+  transform-origin:center;
+  z-index:0;
+}
+
+.media-item::before{transform:rotate(55deg)}
+.media-item::after{transform:rotate(-55deg)}
+
+.media-item.has-image::before,
+.media-item.has-image::after{
+  display:none;
+}
+
+.media-item img{
+  cursor:zoom-in;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+  z-index:1;
+}
+
+/* FULLSCREEN MEDIA */
+.lightbox{
+  position:fixed;
+  inset:0;
+  z-index:999;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:rgba(255,255,255,.97);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .2s ease, visibility 0s linear .2s;
+}
+.lightbox.open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition:opacity .2s ease, visibility 0s;
+}
+.lightbox-inner{
+  position:relative;
+  width:min(94vw,1500px);
+  height:min(92vh,1000px);
+  display:grid;
+  place-items:center;
+}
+.lightbox-close{
+  position:absolute;
+  right:0;
+  top:0;
+  z-index:2;
+  border:0;
+  background:transparent;
+  font-size:36px;
+  line-height:1;
+  cursor:pointer;
+}
+.lightbox-placeholder{
+  width:min(88vw,1200px);
+  height:min(82vh,850px);
+  border:1.5px solid var(--line);
+  position:relative;
+  overflow:hidden;
+}
+.lightbox-placeholder::before,
+.lightbox-placeholder::after{
+  content:"";
+  position:absolute;
+  left:-25%;
+  top:50%;
+  width:150%;
+  height:1px;
+  background:var(--line);
+}
+.lightbox-placeholder::before{transform:rotate(38deg)}
+.lightbox-placeholder::after{transform:rotate(-38deg)}
+.lightbox img{
+  display:none;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+}
+
+/* MOBILE */
+.mobile-menu-button{display:none}
+
+@media (max-width:900px){
+  html,body{height:auto;overflow:auto}
+  .layout{
+    height:auto;
+    min-height:100vh;
+    display:block;
+    padding:14px 16px 32px;
+    overflow:visible;
+  }
+
+  .left{
+    position:sticky;
+    top:0;
+    z-index:50;
+    height:auto;
+    min-height:0;
+    padding:4px 0 0;
+    background:var(--bg);
+    overflow:visible;
+  }
+  .brand{
+    font-size:21px;
+    line-height:34px;
+    min-height:34px;
+  }
+  .welcome-zone{display:none}
+  .mobile-menu-button{
+    display:grid;
+    position:absolute;
+    top:4px;
+    right:0;
+    width:34px;
+    height:34px;
+    border:0;
+    padding:0;
+    background:transparent;
+    place-items:center;
+    cursor:pointer;
+    font-size:28px;
+    line-height:1;
+  }
+
+  .main-menu-panel{
+    display:grid;
+    grid-template-rows:0fr;
+    margin-top:0;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transform:translateY(-5px);
+    transition:
+      grid-template-rows .38s cubic-bezier(.22,.61,.36,1),
+      margin-top .38s cubic-bezier(.22,.61,.36,1),
+      opacity .2s ease,
+      transform .38s cubic-bezier(.22,.61,.36,1),
+      visibility 0s linear .38s;
+  }
+  .main-menu-panel-inner{
+    min-height:0;
+    overflow:hidden;
+    display:block;
+    padding-top:0;
+    padding-bottom:0;
+    border-top:1px solid transparent;
+    border-bottom:1px solid transparent;
+    transition:
+      padding-top .38s cubic-bezier(.22,.61,.36,1),
+      padding-bottom .38s cubic-bezier(.22,.61,.36,1),
+      border-color .2s ease;
+  }
+  .left.menu-open .main-menu-panel{
+    grid-template-rows:1fr;
+    margin-top:5px;
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transform:translateY(0);
+  }
+  .left.menu-open .main-menu-panel-inner{
+    padding-top:9px;
+    padding-bottom:10px;
+    border-top-color:var(--line);
+    border-bottom-color:var(--line);
+  }
+  .left nav{
+    overflow:visible;
+    padding-right:0;
+  }
+  .left-footer{margin-top:20px}
+
+  .nav-group{margin-bottom:4px}
+  .group-head{font-size:19px;line-height:1.05}
+  .project-links a{font-size:16px;line-height:1.1;white-space:normal}
+  .project-links-inner{padding-bottom:10px}
+
+  .project-info{
+    position:relative;
+    top:auto;
+    height:auto;
+    overflow:visible;
+    margin-top:0;
+  }
+  .project-type{
+    position:sticky;
+    top:34px;
+    z-index:40;
+    margin:0;
+    padding:0 0 4px;
+    background:var(--bg);
+    font-size:25px;
+  }
+  .project-info h1{
+    margin-top:20px;
+    font-size:42px;
+    line-height:.95;
+    max-width:none;
+  }
+  .project-info h1 .title-line{white-space:normal}
+  .project-description{
+    margin:34px 0 20px;
+    max-width:none;
+    font-size:17px;
+    line-height:1.16;
+  }
+  .media-column{
+    height:auto;
+    margin-top:8px;
+  }
+
+  .media-stack{
+    gap:14px;
+  }
+
+  .media-item{
+    min-height:0;
+    aspect-ratio:4/5;
+  }
+}
+
+
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    scroll-behavior:auto !important;
+    transition:none !important;
+  }
+}
+
+
+/* FINAL MOBILE MAIN NAV */
+@media (max-width:900px){
+  .left{
+    position:sticky !important;
+    top:0 !important;
+    z-index:50 !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:34px !important;
+    margin:0 !important;
+    padding:4px 0 0 !important;
+    display:block !important;
+    overflow:visible !important;
+    background:var(--bg) !important;
+  }
+
+  .brand{
+    margin:0 !important;
+    font-size:21px !important;
+    line-height:34px !important;
+    min-height:34px !important;
+  }
+
+  .welcome-zone,
+  .welcome{
+    display:none !important;
+  }
+
+  .mobile-menu-button{
+    display:grid !important;
+    position:absolute !important;
+    top:4px !important;
+    right:0 !important;
+    width:34px !important;
+    height:34px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    place-items:center !important;
+    z-index:70 !important;
+    cursor:pointer !important;
+  }
+
+  .mobile-menu-button .hamburger-glyph{
+    display:block !important;
+    width:auto !important;
+    height:auto !important;
+    font-size:28px !important;
+    line-height:1 !important;
+    font-family:"Geist", Arial, Helvetica, sans-serif !important;
+    font-weight:400 !important;
+    transform:translateY(-1px) !important;
+    pointer-events:none !important;
+  }
+
+  .main-menu-panel{
+    display:grid !important;
+    width:100% !important;
+    grid-template-rows:0fr !important;
+    margin-top:0 !important;
+    opacity:0 !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+    transform:translateY(-5px) !important;
+    overflow:hidden !important;
+    transition:
+      grid-template-rows .38s cubic-bezier(.22,.61,.36,1),
+      margin-top .38s cubic-bezier(.22,.61,.36,1),
+      opacity .20s ease,
+      transform .38s cubic-bezier(.22,.61,.36,1),
+      visibility 0s linear .38s !important;
+  }
+
+  .main-menu-panel-inner{
+    display:block !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+    border-top:1px solid transparent !important;
+    border-bottom:1px solid transparent !important;
+    transition:
+      padding-top .38s cubic-bezier(.22,.61,.36,1),
+      padding-bottom .38s cubic-bezier(.22,.61,.36,1),
+      border-color .20s ease !important;
+  }
+
+  .left.menu-open .main-menu-panel{
+    grid-template-rows:1fr !important;
+    margin-top:7px !important;
+    opacity:1 !important;
+    visibility:visible !important;
+    pointer-events:auto !important;
+    transform:translateY(0) !important;
+    transition:
+      grid-template-rows .38s cubic-bezier(.22,.61,.36,1),
+      margin-top .38s cubic-bezier(.22,.61,.36,1),
+      opacity .20s ease .04s,
+      transform .38s cubic-bezier(.22,.61,.36,1),
+      visibility 0s !important;
+  }
+
+  .left.menu-open .main-menu-panel-inner{
+    padding-top:10px !important;
+    padding-bottom:11px !important;
+    border-top-color:#111 !important;
+    border-bottom-color:#111 !important;
+  }
+
+  .left nav{
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+  }
+
+  .left-footer{
+    display:block !important;
+    margin-top:20px !important;
+  }
+
+  .nav-group{
+    margin-bottom:4px !important;
+  }
+
+  .nav-group:has(.group-head[aria-expanded="true"]){
+    margin-bottom:13px !important;
+  }
+
+  .group-head{
+    font-size:19px !important;
+    line-height:1.05 !important;
+  }
+
+  .project-links a{
+    font-size:16px !important;
+    line-height:1.1 !important;
+    white-space:normal !important;
+  }
+
+  /* Four times the previous 4px mobile gallery spacing. */
+  .media-stack{
+    gap:16px !important;
+  }
+
+  .media-item{
+    margin:0 !important;
+  }
+}
+
+
+
+
+
+/* MOBILE NAV — whole open menu stays sticky, like Design Research */
+@media (max-width:900px){
+  html,
+  body{
+    height:auto !important;
+    min-height:100% !important;
+    overflow:visible !important;
+  }
+
+  .layout{
+    overflow:visible !important;
+  }
+
+  /* Keep Harri.la, hamburger, and the opened navigation as ONE sticky block. */
+  .left{
+    position:sticky !important;
+    top:0 !important;
+    left:auto !important;
+    right:auto !important;
+    z-index:600 !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:38px !important;
+    margin:0 !important;
+    padding:4px 0 0 !important;
+    display:block !important;
+    overflow:visible !important;
+    background:var(--bg) !important;
+    align-self:start !important;
+  }
+
+  /* Undo the separate fixed header used in the previous version. */
+  .mobile-topbar{
+    display:contents !important;
+    position:static !important;
+    inset:auto !important;
+    width:auto !important;
+    height:auto !important;
+    background:transparent !important;
+  }
+
+  .brand{
+    position:relative !important;
+    margin:0 !important;
+    font-size:21px !important;
+    line-height:34px !important;
+    min-height:34px !important;
+  }
+
+  .mobile-menu-button{
+    display:grid !important;
+    position:absolute !important;
+    top:4px !important;
+    right:0 !important;
+    width:34px !important;
+    height:34px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    place-items:center !important;
+    z-index:610 !important;
+    cursor:pointer !important;
+  }
+
+  .mobile-menu-button .hamburger-glyph{
+    pointer-events:none !important;
+  }
+
+  /* The menu remains in normal flow inside the sticky block.
+     Its expansion therefore pushes all project content downward. */
+  .main-menu-panel{
+    position:relative !important;
+    width:100% !important;
+  }
+
+  .left.menu-open{
+    max-height:100vh !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain;
+  }
+
+  .left.menu-open .main-menu-panel{
+    position:relative !important;
+  }
+
+  .left.menu-open .main-menu-panel-inner{
+    max-height:none !important;
+    overflow:visible !important;
+  }
+
+  .project-info{
+    margin-top:0 !important;
+  }
+
+  .project-type{
+    top:38px !important;
+  }
+
+  .media-stack{
+    gap:16px !important;
+  }
+}
+
+
+/* MOBILE PROJECT DESCRIPTION LABEL — never sticky */
+@media (max-width:900px){
+  .project-type{
+    position:static !important;
+    top:auto !important;
+    left:auto !important;
+    right:auto !important;
+    z-index:auto !important;
+  }
+}
+
+
+/* MOBILE WORK PAGES — spacing below main menu line */
+@media (max-width:900px){
+  .project-type{
+    position:static !important;
+    top:auto !important;
+    margin-top:10px !important;
+    margin-bottom:0 !important;
+    padding-top:0 !important;
+    padding-bottom:4px !important;
+  }
+}
+
+
+/* MOBILE WORK GALLERY — image spacing */
+@media (max-width:900px){
+  .media-stack{
+    gap:15px !important;
+    row-gap:15px !important;
+  }
+
+  .media-item{
+    margin:0 !important;
+  }
+}
+
+
+
+/* PROJECT IMAGES — preserve source proportions while resizing */
+.media-item img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+}
+.lightbox img{
+  max-width:100% !important;
+  max-height:100% !important;
+  width:auto !important;
+  height:auto !important;
+  object-fit:contain !important;
+}
+
+
+/* MOBILE WORK GALLERY — proportional resize with fixed spacing */
+@media (max-width:900px){
+  .media-column{
+    display:block !important;
+    height:auto !important;
+    min-height:0 !important;
+  }
+
+  .media-stack{
+    display:block !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+  }
+
+  .media-item{
+    display:block !important;
+    position:relative !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    aspect-ratio:4 / 5 !important;
+    margin:0 0 15px 0 !important;
+    flex:none !important;
+  }
+
+  .media-item:last-child{
+    margin-bottom:0 !important;
+  }
+
+  .media-item img{
+    position:absolute !important;
+    inset:0 !important;
+    width:100% !important;
+    height:100% !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+  }
+}
+
+
+/* PROJECT GALLERY — each image keeps its own proportion */
+.media-stack{
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+}
+
+.media-item{
+  display:block !important;
+  position:relative !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  aspect-ratio:var(--media-ratio, 4 / 5) !important;
+  margin:0 0 18px 0 !important;
+  overflow:hidden !important;
+}
+
+.media-item:last-child{
+  margin-bottom:0 !important;
+}
+
+.media-item img{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+}
+
+.media-placeholder-label{
+  position:absolute;
+  left:10px;
+  bottom:8px;
+  z-index:2;
+  font-size:11px;
+  line-height:1;
+  background:var(--bg);
+  padding:2px 4px;
+  pointer-events:none;
+}
+
+@media (max-width:900px){
+  .media-item{
+    margin-bottom:15px !important;
+  }
+}
+
+
+/* LIGHTBOX — always fit the current screen without cropping/overflow */
+.lightbox{
+  box-sizing:border-box !important;
+  padding:24px !important;
+  overflow:hidden !important;
+}
+
+.lightbox-inner{
+  box-sizing:border-box !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:none !important;
+  max-height:none !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+.lightbox img{
+  display:none;
+  width:auto !important;
+  height:auto !important;
+  max-width:calc(100vw - 48px) !important;
+  max-height:calc(100vh - 48px) !important;
+  max-height:calc(100dvh - 48px) !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  flex:0 1 auto !important;
+}
+
+/* A missing-image lightbox also stays inside the viewport. */
+.lightbox-placeholder{
+  box-sizing:border-box !important;
+  width:min(88vw, 1200px) !important;
+  height:auto !important;
+  max-width:calc(100vw - 48px) !important;
+  max-height:calc(100vh - 48px) !important;
+  max-height:calc(100dvh - 48px) !important;
+}
+
+/* Gallery container supplies the only border around a project image. */
+.media-item.has-image{
+  border:1.5px solid var(--line) !important;
+}
+.media-item.has-image img{
+  border:0 !important;
+  outline:0 !important;
+}
+
+@media (max-width:900px){
+  .lightbox{
+    padding:16px !important;
+  }
+
+  .lightbox img{
+    max-width:calc(100vw - 32px) !important;
+    max-height:calc(100vh - 32px) !important;
+    max-height:calc(100dvh - 32px) !important;
+  }
+
+  .lightbox-placeholder{
+    max-width:calc(100vw - 32px) !important;
+    max-height:calc(100vh - 32px) !important;
+    max-height:calc(100dvh - 32px) !important;
+  }
+}
+
+
+/* WORK PAGE TEXT — match Research body line length */
+.project-description{
+  width:100% !important;
+  max-width:700px !important;
+  font-size:18px !important;
+  line-height:1.15 !important;
+}
+
+/* UNIVERSAL LIGHTBOX CLOSE POSITION */
+.lightbox-close{
+  position:fixed !important;
+  top:20px !important;
+  right:20px !important;
+  width:38px !important;
+  height:38px !important;
+  padding:0 !important;
+  z-index:1003 !important;
+}
+
+@media (max-width:900px){
+  .project-description{
+    max-width:none !important;
+    font-size:17px !important;
+    line-height:1.16 !important;
+  }
+
+  .lightbox-close{
+    top:12px !important;
+    right:12px !important;
+  }
+}
+
+
+/* PROJECT IMAGES — no black border around actual images */
+.media-item.has-image{
+  border:0 !important;
+  background:transparent !important;
+}
+
+.media-item.has-image img{
+  border:0 !important;
+  outline:0 !important;
+}
+
+
+  
+/* TOP-LEVEL HARRILANPUISTO NAV LINK */
+.standalone-nav-link{
+  display:block;
+  width:max-content;
+  max-width:100%;
+  margin:0 0 5px;
+  font-size:20px;
+  line-height:21px;
+}
+.standalone-nav-link:hover{
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+
+
+/* MIXED IMAGE + VIDEO GALLERY */
+.media-item.has-video{
+  cursor:pointer !important;
+  background:#000 !important;
+}
+
+.media-item.has-video img{
+  object-fit:cover !important;
+}
+
+.media-play{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:4;
+  width:58px;
+  height:58px;
+  border:0;
+  border-radius:50%;
+  padding:0 0 0 4px;
+  background:rgba(255,255,255,.93);
+  color:#111;
+  font-size:25px;
+  line-height:58px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.media-play:hover{background:#FFFFFF}
+
+.lightbox video{
+  display:none;
+  width:auto !important;
+  height:auto !important;
+  max-width:calc(100vw - 48px) !important;
+  max-height:calc(100dvh - 48px) !important;
+  object-fit:contain !important;
+  background:#000;
+}
+
+@media(max-width:900px){
+  .media-play{
+    width:52px;
+    height:52px;
+    font-size:22px;
+    line-height:52px;
+  }
+
+  .lightbox video{
+    max-width:calc(100vw - 32px) !important;
+    max-height:calc(100dvh - 32px) !important;
+  }
+}
+
+
+/* UNIFIED DESKTOP MEDIA GRID
+   Design Work / Artistic Work / Work-template Research:
+   the media display starts on exactly the same vertical grid line as
+   Harrilanpuisto's second media column. */
+@media (min-width:901px){
+  .left{
+    grid-column:1;
+    grid-row:1;
+  }
+
+  .project-info{
+    grid-column:2;
+    grid-row:1;
+  }
+
+  .media-column{
+    grid-column:2 / -1;
+    grid-row:1;
+    margin-left:calc(50% + 9px);
+    min-width:0;
+  }
+}
+
+
+/* DESKTOP NAVIGATION LABEL SIZE
+   Main section labels match the project-name size. */
+@media (min-width:901px){
+  .group-head,
+  .harrilanpuisto-link,
+  .harrilanpuisto-demo-link,
+  .standalone-nav-link{
+    font-size:17px !important;
+    line-height:18.7px !important;
+  }
+}
+
+
+/* Arabic welcome uses Baloo Bhaijaan 2 only. Everything else stays Geist. */
+.welcome.is-arabic-welcome{
+  font-family:"IBM Plex Sans Arabic" !important;
+  direction:rtl;
+}
+
+
+/* Harri.la is always a link back to About. */
+.brand a{
+  color:inherit;
+  text-decoration:none;
+}
+.brand a:hover,
+.brand a:focus{
+  text-decoration:none;
+}
+
+
+/* MOBILE BRAND SIZE — sitewide */
+@media (max-width:900px){
+  .brand{
+    font-size:25px !important;
+  }
+}
+
+
+/* MOBILE HAMBURGER — tighter spacing between the three lines */
+@media (max-width:900px){
+  .mobile-menu-button[aria-expanded="false"] .hamburger-glyph{
+    transform:translateY(-1px) scaleY(.72) !important;
+    transform-origin:center center !important;
+  }
+
+  .mobile-menu-button[aria-expanded="true"] .hamburger-glyph{
+    transform:translateY(-1px) scaleY(1) !important;
+  }
+}
+
+
+/* ============================================================
+   MOBILE HEADER — ONE SHARED HARRI.LA ROW + ONE SHARED ICON
+   ============================================================ */
+@media (max-width:900px){
+  /* Normalize the Harri.la row itself on every page/template. */
+  .left{
+    padding-top:4px !important;
+  }
+
+  .brand{
+    margin-top:0 !important;
+    margin-bottom:0 !important;
+    min-height:34px !important;
+    height:34px !important;
+    line-height:34px !important;
+  }
+
+  /* Work/Harrilanpuisto wrappers must not create a second coordinate system. */
+  .mobile-topbar{
+    display:contents !important;
+  }
+
+  /* The button occupies the exact same 34px-high row as Harri.la:
+     Harri.la row = y 4..38, hamburger row = y 4..38. */
+  .mobile-menu-button{
+    display:block !important;
+    position:absolute !important;
+    top:4px !important;
+    right:0 !important;
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    min-height:34px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    color:var(--text, #0b0b0b) !important;
+    font-size:0 !important;
+    line-height:0 !important;
+    transform:none !important;
+    overflow:visible !important;
+    cursor:pointer !important;
+  }
+
+  /* Completely suppress the old font glyph on every template. */
+  .mobile-menu-button .hamburger-glyph{
+    display:none !important;
+  }
+
+  /* CLOSED ICON
+     Three identical bars. No font rendering is involved, so the icon is
+     literally identical on About / Research / Work / Artistic / Harrilanpuisto.
+     It is centered at y=21px, exactly the center of the Harri.la 4..38 row. */
+  .mobile-menu-button::before{
+    content:"" !important;
+    position:absolute !important;
+    left:50% !important;
+    top:50% !important;
+    width:22px !important;
+    height:2.5px !important;
+    background:currentColor !important;
+    box-shadow:
+      0 -7px 0 currentColor,
+      0  7px 0 currentColor !important;
+    transform:translate(-50%,-50%) !important;
+    transform-origin:center center !important;
+    opacity:1 !important;
+    pointer-events:none !important;
+  }
+
+  .mobile-menu-button::after{
+    content:"" !important;
+    position:absolute !important;
+    left:50% !important;
+    top:50% !important;
+    width:22px !important;
+    height:2.5px !important;
+    background:currentColor !important;
+    transform:translate(-50%,-50%) rotate(-45deg) !important;
+    transform-origin:center center !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+
+  /* OPEN ICON — same dimensions and center, converted into an ×. */
+  .mobile-menu-button[aria-expanded="true"]::before{
+    box-shadow:none !important;
+    transform:translate(-50%,-50%) rotate(45deg) !important;
+  }
+
+  .mobile-menu-button[aria-expanded="true"]::after{
+    opacity:1 !important;
+  }
+}
+
+
+/* MOBILE ACCORDION — animate the group spacing together with the measured-height panel. */
+@media (max-width:900px){
+  .nav-group{
+    transition:margin-bottom .34s cubic-bezier(.22,.61,.36,1);
+  }
+}
+
+
+
+/* MOBILE MAIN MENU — one measured-height animation, independent of inner accordions. */
+@media (max-width:900px){
+  .main-menu-panel{
+    display:block !important;
+    height:0;
+    grid-template-rows:none !important;
+    overflow:hidden !important;
+    margin-top:0 !important;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transform:translateY(-5px);
+    transition:
+      height .42s cubic-bezier(.22,.61,.36,1),
+      margin-top .42s cubic-bezier(.22,.61,.36,1),
+      opacity .20s ease,
+      transform .42s cubic-bezier(.22,.61,.36,1),
+      visibility 0s linear .42s !important;
+  }
+  .main-menu-panel-inner{
+    display:block !important;
+    min-height:0;
+    overflow:hidden !important;
+  }
+  .left.menu-open .main-menu-panel{
+    margin-top:5px !important;
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transform:translateY(0);
+    transition:
+      height .42s cubic-bezier(.22,.61,.36,1),
+      margin-top .42s cubic-bezier(.22,.61,.36,1),
+      opacity .20s ease .04s,
+      transform .42s cubic-bezier(.22,.61,.36,1),
+      visibility 0s !important;
+  }
+}
+
+
+/* MOBILE AUTO-HIDING MAIN HEADER
+   Harri.la + hamburger slide away while scrolling down and return on scroll up. */
+@media (max-width:900px){
+  .left{
+    transition:transform .28s cubic-bezier(.22,.61,.36,1) !important;
+    will-change:transform;
+  }
+
+  .left.mobile-scroll-hidden:not(.menu-open){
+    transform:translateY(calc(-100% - 2px)) !important;
+  }
+
+  /* When the main header is hidden, let the project-specific sticky heading
+     occupy the top edge instead of leaving an empty header-sized gap. */
+  .project-type,
+  .project-header-shell{
+    transition:top .28s cubic-bezier(.22,.61,.36,1) !important;
+  }
+
+  .layout:has(.left.mobile-scroll-hidden:not(.menu-open)) .project-type,
+  .layout:has(.left.mobile-scroll-hidden:not(.menu-open)) .project-header-shell{
+    top:0 !important;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="layout">
+  {% include nav.html %}
+
+  <main class="project-info">
+    <div class="project-type">{{ page.project_type }}</div>
+    <h1>
+      {% if page.title_line_1 or page.title_line_2 %}
+        <span class="title-line">{{ page.title_line_1 | default: page.title }}</span>
+        {% if page.title_line_2 %}<span class="title-line">{{ page.title_line_2 }}</span>{% endif %}
+      {% else %}
+        <span class="title-line">{{ page.title }}</span>
+      {% endif %}
+    </h1>
+
+    <div class="project-description">
+      {{ page.description | markdownify }}
+    </div>
+  </main>
+
+  <section class="media-column" aria-label="Project images">
+    <div class="media-stack" id="mediaStack"></div>
+  </section>
+</div>
+
+<div class="lightbox" aria-hidden="true">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" type="button" aria-label="Close image">×</button>
+    <img id="lightboxImage" alt="">
+    <video id="lightboxVideo" controls playsinline preload="none"></video>
+    <div class="lightbox-placeholder"></div>
+  </div>
+</div>
+
+<script>
+const welcomeZone = document.querySelector(".welcome-zone");
+const welcomeWord = document.querySelector(".welcome");
+const welcomeMessages = {{ site.data.site.welcome_messages | jsonify }};
+let welcomeIndex = -1;
+
+function chooseWelcome(){
+  let next;
+  do next = Math.floor(Math.random()*welcomeMessages.length);
+  while(next === welcomeIndex && welcomeMessages.length > 1);
+  welcomeIndex = next;
+  welcomeWord.textContent = welcomeMessages[next];
+  welcomeWord.classList.toggle(
+    "is-arabic-welcome",
+    welcomeMessages[next] === "يا هلا!"
+  );
+}
+function placeWelcome(){
+  if(!welcomeZone || !welcomeWord || window.innerWidth <= 900) return;
+  const maxX = Math.max(2, welcomeZone.clientWidth - welcomeWord.offsetWidth - 2);
+  const maxY = Math.max(4, welcomeZone.clientHeight - welcomeWord.offsetHeight - 4);
+  welcomeWord.style.left = `${Math.round(2 + Math.random()*Math.max(0,maxX-2))}px`;
+  welcomeWord.style.top = `${Math.round(4 + Math.random()*Math.max(0,maxY-4))}px`;
+}
+function changeWelcome(animate=true){
+  if(window.innerWidth <= 900) return;
+  const apply = () => {
+    chooseWelcome();
+    requestAnimationFrame(() => {
+      placeWelcome();
+      welcomeWord.classList.remove("changing");
+    });
+  };
+  if(animate){
+    welcomeWord.classList.add("changing");
+    setTimeout(apply,180);
+  }else apply();
+}
+changeWelcome(false);
+setInterval(() => changeWelcome(true),30000);
+
+/* measured-height desktop accordions */
+const accordionButtons = [...document.querySelectorAll(".group-head")];
+
+function setAccordionState(button,open,animate=true){
+  const panel = button.nextElementSibling;
+  const toggle = button.querySelector(".group-toggle");
+  button.setAttribute("aria-expanded",String(open));
+  if(toggle) toggle.textContent = open ? "−" : "+";
+
+  if(!animate){
+    panel.classList.toggle("collapsed",!open);
+    panel.style.height = open ? `${panel.scrollHeight}px` : "0px";
+    return;
+  }
+
+  if(open){
+    panel.style.height="0px";
+    panel.classList.remove("collapsed");
+    void panel.offsetHeight;
+    panel.style.height=`${panel.scrollHeight}px`;
+  }else{
+    panel.style.height=`${panel.getBoundingClientRect().height}px`;
+    void panel.offsetHeight;
+    panel.classList.add("collapsed");
+    panel.style.height="0px";
+  }
+}
+accordionButtons.forEach(button=>{
+  setAccordionState(button,button.getAttribute("aria-expanded")==="true",false);
+  button.addEventListener("click",()=>{
+    const open=button.getAttribute("aria-expanded")==="true";
+    setAccordionState(button,!open,true);
+  });
+});
+
+let mode = window.innerWidth <= 900 ? "mobile" : "desktop";
+window.addEventListener("resize",()=>{
+  const next = window.innerWidth <= 900 ? "mobile" : "desktop";
+  if(next===mode) return;
+  mode=next;
+  accordionButtons.forEach(button=>{
+    setAccordionState(button,button.getAttribute("aria-expanded")==="true",false);
+  });
+});
+
+/* project media stack */
+const rawGallery = {{ page.gallery | jsonify }};
+
+function cmsAssetPath(path){
+  if(!path) return "";
+  if(/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
+  const base = {{ site.baseurl | jsonify }};
+  const clean = path.startsWith("/") ? path : "/" + path;
+  return base + clean;
+}
+
+const mediaSlides = (rawGallery || []).map((slide, index) => ({
+  type: slide.type || "image",
+  src: cmsAssetPath(slide.type === "video" ? (slide.video || "") : (slide.image || "")),
+  poster: cmsAssetPath(slide.poster || ""),
+  alt: slide.alt || `Project media ${index + 1}`
+}));
+
+const mediaStack = document.getElementById("mediaStack");
+let activeMediaIndex = 0;
+
+function buildMediaStack(){
+  mediaStack.innerHTML = "";
+
+  mediaSlides.forEach((slide,index)=>{
+    const item = document.createElement("div");
+    item.className = "media-item";
+    item.dataset.mediaIndex = index;
+
+    const fallbackRatio = slide.type === "video" ? "16 / 9" : "4 / 5";
+    item.style.setProperty("--media-ratio", fallbackRatio);
+
+    const img = document.createElement("img");
+    img.alt = slide.alt || "";
+    img.decoding = "async";
+    img.loading = index === 0 ? "eager" : "lazy";
+    if("fetchPriority" in img){
+      img.fetchPriority = index === 0 ? "high" : "low";
+    }
+
+    const previewSrc = slide.type === "video" ? slide.poster : slide.src;
+
+    if(previewSrc){
+      img.src = previewSrc;
+      img.addEventListener("load", ()=>{
+        if(img.naturalWidth && img.naturalHeight){
+          item.style.setProperty("--media-ratio", `${img.naturalWidth} / ${img.naturalHeight}`);
+        }
+      }, {once:true});
+      img.style.display = "block";
+      item.classList.add("has-image");
+    }
+
+    item.appendChild(img);
+
+    if(slide.type === "video"){
+      item.classList.add("has-video");
+      const play = document.createElement("button");
+      play.className = "media-play";
+      play.type = "button";
+      play.setAttribute("aria-label", "Play video");
+      play.textContent = "▶";
+      item.appendChild(play);
+    }
+
+    mediaStack.appendChild(item);
+  });
+}
+
+mediaStack.addEventListener("click", (event) => {
+  const item = event.target.closest(".media-item");
+  if(!item || !mediaStack.contains(item)) return;
+
+  const index = Number(item.dataset.mediaIndex);
+  if(Number.isNaN(index)) return;
+
+  activeMediaIndex = index;
+  openLightbox(index);
+});
+
+const lightbox = document.querySelector(".lightbox");
+const lightboxImg = document.getElementById("lightboxImage");
+const lightboxVideo = document.getElementById("lightboxVideo");
+const lightboxPlaceholder = document.querySelector(".lightbox-placeholder");
+
+function stopLightboxVideo(){
+  if(!lightboxVideo) return;
+  lightboxVideo.pause();
+  lightboxVideo.removeAttribute("src");
+  lightboxVideo.removeAttribute("poster");
+  lightboxVideo.load();
+  lightboxVideo.style.display = "none";
+}
+
+function openLightbox(index=activeMediaIndex){
+  activeMediaIndex = index;
+  const slide = mediaSlides[index];
+  if(!slide) return;
+
+  stopLightboxVideo();
+  lightboxImg.style.display = "none";
+  lightboxPlaceholder.style.display = "none";
+
+  if(slide.type === "video"){
+    lightboxImg.removeAttribute("src");
+    lightboxVideo.src = slide.src;
+    if(slide.poster) lightboxVideo.poster = slide.poster;
+    lightboxVideo.style.display = "block";
+    lightbox.classList.add("open");
+
+    const playPromise = lightboxVideo.play();
+    if(playPromise && typeof playPromise.catch === "function"){
+      playPromise.catch(()=>{});
+    }
+  }else if(slide.src){
+    lightboxImg.src = slide.src;
+    lightboxImg.alt = slide.alt || "";
+    lightboxImg.style.display = "block";
+    lightbox.classList.add("open");
+  }else{
+    lightboxPlaceholder.style.display = "block";
+    lightboxPlaceholder.style.aspectRatio = "4 / 5";
+    lightbox.classList.add("open");
+  }
+}
+
+function closeLightbox(){
+  stopLightboxVideo();
+  lightbox.classList.remove("open");
+}
+
+buildMediaStack();
+
+document.querySelector(".lightbox-close").addEventListener("click",closeLightbox);
+lightbox.addEventListener("click",e=>{if(e.target===lightbox)closeLightbox()});
+
+function normalizeMediaIndex(index){
+  const total = mediaSlides.length;
+  if(!total) return 0;
+  return ((index % total) + total) % total;
+}
+
+function showMediaAt(index){
+  if(!mediaSlides.length) return;
+  activeMediaIndex = normalizeMediaIndex(index);
+  openLightbox(activeMediaIndex);
+}
+
+function showNextMedia(){ showMediaAt(activeMediaIndex + 1); }
+function showPreviousMedia(){ showMediaAt(activeMediaIndex - 1); }
+
+document.addEventListener("keydown", e=>{
+  if(!lightbox.classList.contains("open")) return;
+
+  if(e.key === "Escape"){
+    e.preventDefault();
+    closeLightbox();
+  }else if(e.key === "ArrowRight"){
+    e.preventDefault();
+    showNextMedia();
+  }else if(e.key === "ArrowLeft"){
+    e.preventDefault();
+    showPreviousMedia();
+  }
+}, true);
+
+let gallerySwipeX = null;
+let gallerySwipeY = null;
+
+lightbox.addEventListener("touchstart", e=>{
+  if(!lightbox.classList.contains("open") || e.touches.length !== 1) return;
+  if(e.target === lightboxVideo) return;
+  gallerySwipeX = e.touches[0].clientX;
+  gallerySwipeY = e.touches[0].clientY;
+}, {passive:true});
+
+lightbox.addEventListener("touchend", e=>{
+  if(gallerySwipeX === null || gallerySwipeY === null || !e.changedTouches.length) return;
+
+  const dx = e.changedTouches[0].clientX - gallerySwipeX;
+  const dy = e.changedTouches[0].clientY - gallerySwipeY;
+  gallerySwipeX = null;
+  gallerySwipeY = null;
+
+  if(Math.abs(dx) < 40 || Math.abs(dx) <= Math.abs(dy)) return;
+  if(dx < 0) showNextMedia();
+  else showPreviousMedia();
+}, {passive:true});
+
+
+/* FINAL MOBILE MAIN NAV CONTROLLER */
+(function(){
+  const leftNav = document.querySelector(".left");
+  const menuButton = document.querySelector(".mobile-menu-button");
+
+  if(!leftNav || !menuButton) return;
+
+  const glyph = menuButton.querySelector(".hamburger-glyph");
+
+  function setMenu(open){
+    leftNav.classList.toggle("menu-open", open);
+    menuButton.setAttribute("aria-expanded", String(open));
+    menuButton.setAttribute(
+      "aria-label",
+      open ? "Close project menu" : "Open project menu"
+    );
+    if(glyph) glyph.textContent = open ? "×" : "☰";
+  }
+
+  menuButton.addEventListener("click", function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    setMenu(!leftNav.classList.contains("menu-open"));
+  });
+
+  document.querySelectorAll(".left nav a").forEach(function(link){
+    link.addEventListener("click", function(){
+      if(window.innerWidth <= 900){
+        setMenu(false);
+      }
+    });
+  });
+
+  window.addEventListener("resize", function(){
+    if(window.innerWidth > 900){
+      setMenu(false);
+    }
+  });
+})();
+</script>
+
+<script>
+/* RESET PAGE POSITION ON EVERY RETURN
+   Browsing away and returning starts the page from its original content
+   position. Navigation accordion choices are intentionally not changed. */
+(function(){
+  if("scrollRestoration" in history){
+    history.scrollRestoration = "manual";
+  }
+
+  function resetPageVisitPosition(){
+    window.scrollTo(0,0);
+    document.documentElement.scrollTop = 0;
+    if(document.body) document.body.scrollTop = 0;
+
+    document.querySelectorAll(".paper, .cv-column, .media-column").forEach(function(el){
+      el.scrollTop = 0;
+      el.scrollLeft = 0;
+    });
+
+    document.querySelectorAll(".lightbox, .figure-lightbox").forEach(function(box){
+      box.classList.remove("open");
+      box.setAttribute("aria-hidden","true");
+    });
+
+    if(document.body){
+      document.body.classList.remove("lightbox-open");
+    }
+
+    document.querySelectorAll("video").forEach(function(video){
+      try{
+        video.pause();
+        video.currentTime = 0;
+      }catch(e){}
+    });
+
+    const surprise = document.querySelector(".cv-surprise");
+    if(surprise){
+      surprise.classList.remove("revealed");
+      surprise.setAttribute("aria-hidden","true");
+    }
+
+    if(document.activeElement && typeof document.activeElement.blur === "function"){
+      document.activeElement.blur();
+    }
+
+    const paper = document.querySelector(".paper");
+    if(paper){
+      paper.dispatchEvent(new Event("scroll"));
+    }
+
+    window.dispatchEvent(new Event("scroll"));
+  }
+
+  /* pageshow also runs when the browser restores a page from its back/forward
+     cache, which is the case that normally preserves an old scroll position. */
+  window.addEventListener("pageshow", function(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(resetPageVisitPosition);
+    });
+  });
+})();
+</script>
+
+
+<script>
+
+/* Stable measured-height controller for the top-level mobile menu. */
+(function(){
+  const leftNav = document.querySelector('.left');
+  const menuButton = document.querySelector('.mobile-menu-button');
+  const panel = document.querySelector('.main-menu-panel');
+  if(!leftNav || !menuButton || !panel) return;
+
+  const glyph = menuButton.querySelector('.hamburger-glyph');
+  let cleanupTimer = 0;
+
+  function setButton(open){
+    menuButton.setAttribute('aria-expanded', String(open));
+    menuButton.setAttribute('aria-label', open ? 'Close project menu' : 'Open project menu');
+    if(glyph) glyph.textContent = open ? '×' : '☰';
+    else menuButton.textContent = open ? '×' : '☰';
+  }
+
+  function setMenu(open, animate=true){
+    clearTimeout(cleanupTimer);
+    if(window.innerWidth > 900){
+      leftNav.classList.remove('menu-open');
+      panel.style.removeProperty('height');
+      setButton(false);
+      return;
+    }
+
+    if(!animate){
+      leftNav.classList.toggle('menu-open', open);
+      panel.style.height = open ? 'auto' : '0px';
+      setButton(open);
+      return;
+    }
+
+    if(open){
+      panel.style.height = '0px';
+      leftNav.classList.add('menu-open');
+      setButton(true);
+      requestAnimationFrame(() => {
+        const target = panel.scrollHeight;
+        requestAnimationFrame(() => { panel.style.height = target + 'px'; });
+      });
+      cleanupTimer = setTimeout(() => {
+        if(leftNav.classList.contains('menu-open')) panel.style.height = 'auto';
+      }, 470);
+    }else{
+      const start = panel.getBoundingClientRect().height;
+      panel.style.height = start + 'px';
+      void panel.offsetHeight;
+      leftNav.classList.remove('menu-open');
+      setButton(false);
+      requestAnimationFrame(() => { panel.style.height = '0px'; });
+    }
+  }
+
+  /* Capture phase prevents older page-specific click handlers from also toggling the menu. */
+  menuButton.addEventListener('click', function(event){
+    if(window.innerWidth > 900) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    setMenu(!leftNav.classList.contains('menu-open'), true);
+  }, true);
+
+  document.querySelectorAll('.left nav a').forEach(function(link){
+    link.addEventListener('click', function(){
+      if(window.innerWidth <= 900 && leftNav.classList.contains('menu-open')) setMenu(false, true);
+    }, true);
+  });
+
+  window.addEventListener('resize', function(){
+    if(window.innerWidth > 900){
+      setMenu(false, false);
+    }else if(leftNav.classList.contains('menu-open')){
+      panel.style.height = 'auto';
+    }
+  });
+})();
+
+</script>
+
+<script>
+(function(){
+  const header = document.querySelector(".left");
+  if(!header) return;
+
+  const mobileBreakpoint = 900;
+  const topRevealPoint = 18;
+  const hideTravel = 9;
+  const showTravel = 4;
+
+  let lastY = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+  let direction = 0;
+  let travelled = 0;
+  let ticking = false;
+
+  function currentY(){
+    const raw = window.scrollY || document.documentElement.scrollTop || 0;
+    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    return Math.max(0, Math.min(raw, maxY));
+  }
+
+  function showHeader(){
+    header.classList.remove("mobile-scroll-hidden");
+  }
+
+  function updateHeader(){
+    const y = currentY();
+
+    if(window.innerWidth > mobileBreakpoint){
+      showHeader();
+      lastY = y;
+      direction = 0;
+      travelled = 0;
+      ticking = false;
+      return;
+    }
+
+    /* Never hide it at the top or while the hamburger menu is open. */
+    if(y <= topRevealPoint || header.classList.contains("menu-open")){
+      showHeader();
+      lastY = y;
+      direction = 0;
+      travelled = 0;
+      ticking = false;
+      return;
+    }
+
+    const delta = y - lastY;
+    lastY = y;
+
+    if(Math.abs(delta) < 0.5){
+      ticking = false;
+      return;
+    }
+
+    const newDirection = delta > 0 ? 1 : -1;
+
+    if(newDirection !== direction){
+      direction = newDirection;
+      travelled = 0;
+    }
+
+    travelled += Math.abs(delta);
+
+    if(direction > 0 && travelled >= hideTravel){
+      header.classList.add("mobile-scroll-hidden");
+      travelled = 0;
+    }else if(direction < 0 && travelled >= showTravel){
+      showHeader();
+      travelled = 0;
+    }
+
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", function(){
+    if(!ticking){
+      ticking = true;
+      requestAnimationFrame(updateHeader);
+    }
+  }, {passive:true});
+
+  window.addEventListener("resize", function(){
+    if(window.innerWidth > mobileBreakpoint){
+      showHeader();
+    }
+    lastY = currentY();
+    direction = 0;
+    travelled = 0;
+  });
+
+  const menuButton = document.querySelector(".mobile-menu-button");
+  if(menuButton){
+    menuButton.addEventListener("click", showHeader, true);
+  }
+
+  showHeader();
+})();
+</script>
+
+</body>
+</html>
