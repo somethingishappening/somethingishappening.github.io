@@ -144,7 +144,8 @@
     overflow:hidden;
   }
 
-  .site-nav .nav-group{
+  .site-nav .nav-group,
+  .site-nav .nav-group:has(.group-head[aria-expanded="true"]){
     margin-bottom:5px !important;
   }
 
@@ -296,7 +297,8 @@
   }
 
   /* Restore the compact original navigation rhythm. */
-  .site-nav .nav-group{
+  .site-nav .nav-group,
+  .site-nav .nav-group:has(.group-head[aria-expanded="true"]){
     margin-bottom:4px !important;
   }
 
@@ -363,7 +365,7 @@
   root.dataset.controllerReady = "true";
 
   const breakpoint = 900;
-  const storageKey = "harri.mobileNavOpenGroups.v6";
+  const storageKey = "harri.mobileNavOpenGroups.v7";
   const menuButton = root.querySelector(".mobile-menu-button");
   const menuPanel = root.querySelector(".main-menu-panel");
   const menuInner = root.querySelector(".main-menu-panel-inner");
