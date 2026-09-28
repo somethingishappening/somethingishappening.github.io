@@ -606,6 +606,21 @@ content:
       type: string
       hidden: true
       readonly: true
+    - name: about_nav_open_research
+      label: Open Design Research by default
+      type: boolean
+      default: true
+      description: On a fresh visit to the About / landing page, start with Design Research expanded.
+    - name: about_nav_open_design
+      label: Open Design Work by default
+      type: boolean
+      default: false
+      description: On a fresh visit to the About / landing page, start with Design Work expanded.
+    - name: about_nav_open_artistic
+      label: Open Artistic Work by default
+      type: boolean
+      default: false
+      description: On a fresh visit to the About / landing page, start with Artistic Work expanded.
     - name: greeting_messages
       label: Greeting phrases
       type: string
