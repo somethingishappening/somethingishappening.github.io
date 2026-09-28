@@ -1322,6 +1322,60 @@ button{font:inherit;color:inherit}
   }
 }
 
+
+
+/* RESPONSIVE DESKTOP WORK LAYOUT
+   The Work page shares the same two-column content area as Harrilanpuisto.
+   Keep text entirely in the first half and media entirely in the second half,
+   with the same 18px gutter, so the two can never overlap while resizing. */
+@media (min-width:901px){
+  .project-info{
+    grid-column:2 / -1 !important;
+    grid-row:1 !important;
+    width:calc(50% - 9px) !important;
+    max-width:none !important;
+    min-width:0 !important;
+  }
+
+  .media-column{
+    grid-column:2 / -1 !important;
+    grid-row:1 !important;
+    width:auto !important;
+    margin-left:calc(50% + 9px) !important;
+    min-width:0 !important;
+  }
+
+  .project-description{
+    width:100% !important;
+    max-width:100% !important;
+    overflow-wrap:anywhere;
+  }
+}
+
+/* Narrow desktop / tablet landscape:
+   keep the desktop composition, but let large title lines wrap before they
+   can collide with the media column. Mobile still begins at 900px. */
+@media (min-width:901px) and (max-width:1250px){
+  .project-type{
+    font-size:clamp(21px,2.1vw,25px) !important;
+  }
+
+  .project-info h1{
+    max-width:100% !important;
+    font-size:clamp(38px,4.15vw,50px) !important;
+    line-height:.96 !important;
+  }
+
+  .project-info h1 .title-line{
+    white-space:normal !important;
+  }
+
+  .project-description{
+    font-size:16px !important;
+    line-height:1.15 !important;
+  }
+}
+
 </style>
 </head>
 <body>
