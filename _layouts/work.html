@@ -1378,13 +1378,18 @@ button{font:inherit;color:inherit}
 
 
 
-/* DESKTOP BOTTOM ALIGNMENT
-   Project paragraphs keep the Research-template 14px paragraph margin.
-   Match the left footer's visible bottom inset to that same 14px so the two
-   columns remain visually aligned while resizing. */
+
+
+/* DESKTOP BOTTOM ALIGNMENT — tight visual baseline.
+   Keep the Research-template 14px paragraph spacing, but cancel only the
+   final trailing paragraph space at the container edge. */
 @media (min-width:901px){
   .left-footer{
-    padding-bottom:14px !important;
+    padding-bottom:0 !important;
+  }
+
+  .project-description{
+    margin-bottom:-14px !important;
   }
 }
 
