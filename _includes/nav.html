@@ -122,9 +122,9 @@
 
 <style id="harri-shared-navigation">
 /*
-  HARRI.LA SHARED NAVIGATION — RESTORED RHYTHM
-  One controller. Slide-only motion. Original compact spacing.
-  Old per-template opacity/transform rules are explicitly neutralized here.
+  HARRI.LA SHARED NAVIGATION
+  One measured-height controller for hamburger + project accordions.
+  Slide only: no fade, translate, CSS-grid height tricks, or competing timers.
 */
 
 /* ---------- DESKTOP ---------- */
@@ -144,8 +144,7 @@
     overflow:hidden;
   }
 
-  .site-nav .nav-group,
-  .site-nav .nav-group:has(.group-head[aria-expanded="true"]){
+  .site-nav .nav-group{
     margin-bottom:5px !important;
   }
 
@@ -156,9 +155,7 @@
   }
 
   .site-nav .project-links{
-    display:grid !important;
-    grid-template-rows:1fr;
-    height:auto !important;
+    display:block !important;
     max-height:none !important;
     overflow:hidden !important;
     margin-top:8px !important;
@@ -167,13 +164,11 @@
     transform:none !important;
     pointer-events:auto;
     transition:
-      grid-template-rows .40s cubic-bezier(.22,.61,.36,1),
-      margin-top .40s cubic-bezier(.22,.61,.36,1) !important;
+      height .46s cubic-bezier(.22,.61,.36,1),
+      margin-top .46s cubic-bezier(.22,.61,.36,1) !important;
   }
 
   .site-nav .project-links-inner{
-    min-height:0 !important;
-    overflow:hidden !important;
     display:grid !important;
     gap:3px !important;
     padding-bottom:13px !important;
@@ -186,7 +181,6 @@
   }
 
   .site-nav .project-links.collapsed{
-    grid-template-rows:0fr;
     margin-top:0 !important;
     pointer-events:none;
   }
@@ -221,45 +215,45 @@
     overscroll-behavior:contain;
   }
 
+  /* Exact measured slide. Closed state is a literal 0px. */
   .site-nav .main-menu-panel{
-    display:grid !important;
-    grid-template-rows:0fr;
+    display:block !important;
     width:100% !important;
-    height:auto !important;
     min-height:0 !important;
     max-height:none !important;
     overflow:hidden !important;
     margin-top:0 !important;
+    opacity:1 !important;
+    transform:none !important;
     visibility:hidden;
     pointer-events:none;
     transition:
-      grid-template-rows .48s cubic-bezier(.22,.61,.36,1),
-      margin-top .48s cubic-bezier(.22,.61,.36,1),
-      visibility 0s linear .48s !important;
+      height .52s cubic-bezier(.22,.61,.36,1),
+      margin-top .52s cubic-bezier(.22,.61,.36,1),
+      visibility 0s linear .52s !important;
   }
 
   .site-nav.menu-open .main-menu-panel{
-    grid-template-rows:1fr;
     margin-top:5px !important;
     visibility:visible;
     pointer-events:auto;
     transition:
-      grid-template-rows .48s cubic-bezier(.22,.61,.36,1),
-      margin-top .48s cubic-bezier(.22,.61,.36,1),
+      height .52s cubic-bezier(.22,.61,.36,1),
+      margin-top .52s cubic-bezier(.22,.61,.36,1),
       visibility 0s !important;
   }
 
   .site-nav .main-menu-panel-inner{
+    display:block !important;
     min-height:0 !important;
     overflow:hidden !important;
-    display:block !important;
     padding-top:0 !important;
     padding-bottom:0 !important;
     border-top:1px solid transparent !important;
     border-bottom:1px solid transparent !important;
     transition:
-      padding-top .48s cubic-bezier(.22,.61,.36,1),
-      padding-bottom .48s cubic-bezier(.22,.61,.36,1),
+      padding-top .52s cubic-bezier(.22,.61,.36,1),
+      padding-bottom .52s cubic-bezier(.22,.61,.36,1),
       border-color .18s linear !important;
   }
 
@@ -270,6 +264,7 @@
     border-bottom-color:#111 !important;
   }
 
+  /* Neutralize every older per-template menu animation. */
   .site-nav .main-menu-panel nav{
     display:block !important;
     height:auto !important;
@@ -300,8 +295,8 @@
     transition:none !important;
   }
 
-  .site-nav .nav-group,
-  .site-nav .nav-group:has(.group-head[aria-expanded="true"]){
+  /* Restore the compact original navigation rhythm. */
+  .site-nav .nav-group{
     margin-bottom:4px !important;
   }
 
@@ -311,27 +306,23 @@
   }
 
   .site-nav .project-links{
-    display:grid !important;
-    grid-template-rows:1fr;
-    height:auto !important;
+    display:block !important;
     max-height:none !important;
     overflow:hidden !important;
-    margin-top:8px !important;
+    margin-top:7px !important;
     opacity:1 !important;
     visibility:visible !important;
     transform:none !important;
     pointer-events:auto;
     transition:
-      grid-template-rows .40s cubic-bezier(.22,.61,.36,1),
-      margin-top .40s cubic-bezier(.22,.61,.36,1) !important;
+      height .46s cubic-bezier(.22,.61,.36,1),
+      margin-top .46s cubic-bezier(.22,.61,.36,1) !important;
   }
 
   .site-nav .project-links-inner{
-    min-height:0 !important;
-    overflow:hidden !important;
     display:grid !important;
     gap:3px !important;
-    padding-bottom:10px !important;
+    padding-bottom:9px !important;
   }
 
   .site-nav .project-links a{
@@ -341,7 +332,6 @@
   }
 
   .site-nav .project-links.collapsed{
-    grid-template-rows:0fr;
     margin-top:0 !important;
     pointer-events:none;
   }
@@ -373,12 +363,19 @@
   root.dataset.controllerReady = "true";
 
   const breakpoint = 900;
-  const storageKey = "harri.mobileNavOpenGroups.v5";
+  const storageKey = "harri.mobileNavOpenGroups.v6";
   const menuButton = root.querySelector(".mobile-menu-button");
+  const menuPanel = root.querySelector(".main-menu-panel");
+  const menuInner = root.querySelector(".main-menu-panel-inner");
   const groupButtons = [...root.querySelectorAll(".group-head[data-nav-key]")];
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   function isMobile(){
     return window.innerWidth <= breakpoint;
+  }
+
+  function forceStyle(element, property, value){
+    if(element) element.style.setProperty(property, value, "important");
   }
 
   function readMemory(){
@@ -396,22 +393,92 @@
     }catch(error){}
   }
 
-  function setGroup(button, open, persist){
+  function finishHeight(element, open){
+    if(!element) return;
+
+    const onEnd = function(event){
+      if(event.target !== element || event.propertyName !== "height") return;
+      element.removeEventListener("transitionend", onEnd);
+      forceStyle(element, "height", open ? "auto" : "0px");
+    };
+
+    element.addEventListener("transitionend", onEnd);
+  }
+
+  function animatePanel(panel, inner, open, animate){
+    if(!panel || !inner) return;
+
+    if(!animate || reducedMotion.matches){
+      forceStyle(panel, "height", open ? "auto" : "0px");
+      return;
+    }
+
+    const currentHeight = panel.getBoundingClientRect().height;
+    forceStyle(panel, "height", currentHeight + "px");
+    panel.getBoundingClientRect();
+
+    if(open){
+      const targetHeight = inner.scrollHeight;
+      requestAnimationFrame(function(){
+        forceStyle(panel, "height", targetHeight + "px");
+        finishHeight(panel, true);
+      });
+    }else{
+      requestAnimationFrame(function(){
+        forceStyle(panel, "height", "0px");
+        finishHeight(panel, false);
+      });
+    }
+  }
+
+  function retargetOpenMenu(){
+    if(
+      !isMobile() ||
+      !root.classList.contains("menu-open") ||
+      !menuPanel ||
+      !menuInner ||
+      menuPanel.style.height === "auto"
+    ) return;
+
+    requestAnimationFrame(function(){
+      forceStyle(menuPanel, "height", menuInner.scrollHeight + "px");
+    });
+  }
+
+  function setGroup(button, open, persist, animate){
     const panel = button.nextElementSibling;
+    const inner = panel && panel.querySelector(".project-links-inner");
     const toggle = button.querySelector(".group-toggle");
+
+    if(panel){
+      if(open){
+        panel.classList.remove("collapsed");
+        panel.classList.add("open");
+      }
+
+      animatePanel(
+        panel,
+        inner,
+        open,
+        animate && root.classList.contains("nav-ready")
+      );
+
+      if(!open){
+        panel.classList.add("collapsed");
+        panel.classList.remove("open");
+      }
+    }
 
     button.setAttribute("aria-expanded", String(open));
     if(toggle) toggle.textContent = open ? "−" : "+";
-    if(panel){
-      panel.classList.toggle("collapsed", !open);
-      panel.classList.toggle("open", open);
-    }
 
     if(persist && isMobile()){
       const memory = readMemory();
       memory[button.dataset.navKey] = open;
       writeMemory(memory);
     }
+
+    retargetOpenMenu();
   }
 
   function applyMobileState(){
@@ -421,7 +488,8 @@
       const current = button.dataset.current === "true";
       const remembered = memory[button.dataset.navKey] === true;
       const open = current || remembered;
-      setGroup(button, open, false);
+
+      setGroup(button, open, false, false);
 
       if(current){
         memory[button.dataset.navKey] = true;
@@ -433,22 +501,66 @@
 
   function applyDesktopState(){
     groupButtons.forEach(function(button){
-      setGroup(button, button.dataset.desktopOpen === "true", false);
+      setGroup(
+        button,
+        button.dataset.desktopOpen === "true",
+        false,
+        false
+      );
     });
   }
 
-  function setMenu(open){
-    if(!menuButton) return;
-    root.classList.toggle("menu-open", open);
-    menuButton.setAttribute("aria-expanded", String(open));
-    menuButton.setAttribute(
-      "aria-label",
-      open ? "Close project menu" : "Open project menu"
-    );
+  function setMenu(open, animate){
+    if(!menuButton || !menuPanel || !menuInner) return;
+
+    const shouldAnimate =
+      animate &&
+      root.classList.contains("nav-ready") &&
+      !reducedMotion.matches;
+
+    if(open){
+      root.classList.add("menu-open");
+      menuButton.setAttribute("aria-expanded", "true");
+      menuButton.setAttribute("aria-label", "Close project menu");
+
+      if(!shouldAnimate){
+        forceStyle(menuPanel, "height", "auto");
+      }else{
+        forceStyle(menuPanel, "height", "0px");
+        menuPanel.getBoundingClientRect();
+
+        requestAnimationFrame(function(){
+          forceStyle(menuPanel, "height", menuInner.scrollHeight + "px");
+          finishHeight(menuPanel, true);
+        });
+      }
+    }else{
+      const currentHeight = menuPanel.getBoundingClientRect().height;
+      forceStyle(menuPanel, "height", currentHeight + "px");
+
+      root.classList.remove("menu-open");
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.setAttribute("aria-label", "Open project menu");
+
+      if(!shouldAnimate){
+        forceStyle(menuPanel, "height", "0px");
+      }else{
+        menuPanel.getBoundingClientRect();
+
+        requestAnimationFrame(function(){
+          forceStyle(menuPanel, "height", "0px");
+          finishHeight(menuPanel, false);
+        });
+      }
+    }
   }
 
-  if(isMobile()) applyMobileState();
-  else applyDesktopState();
+  if(isMobile()){
+    applyMobileState();
+    setMenu(false, false);
+  }else{
+    applyDesktopState();
+  }
 
   requestAnimationFrame(function(){
     root.classList.add("nav-ready");
@@ -457,35 +569,45 @@
   groupButtons.forEach(function(button){
     button.addEventListener("click", function(event){
       event.preventDefault();
-      const open = button.getAttribute("aria-expanded") !== "true";
-      setGroup(button, open, true);
+
+      setGroup(
+        button,
+        button.getAttribute("aria-expanded") !== "true",
+        true,
+        true
+      );
     });
   });
 
   if(menuButton){
     menuButton.addEventListener("click", function(event){
       if(!isMobile()) return;
+
       event.preventDefault();
-      setMenu(!root.classList.contains("menu-open"));
+      setMenu(!root.classList.contains("menu-open"), true);
     });
   }
 
   root.querySelectorAll("nav a").forEach(function(link){
     link.addEventListener("click", function(){
-      if(isMobile()) setMenu(false);
+      if(isMobile()) setMenu(false, true);
     });
   });
 
   let previousMode = isMobile() ? "mobile" : "desktop";
+
   window.addEventListener("resize", function(){
     const nextMode = isMobile() ? "mobile" : "desktop";
     if(nextMode === previousMode) return;
 
     previousMode = nextMode;
-    setMenu(false);
+    setMenu(false, false);
 
-    if(nextMode === "mobile") applyMobileState();
-    else applyDesktopState();
+    if(nextMode === "mobile"){
+      applyMobileState();
+    }else{
+      applyDesktopState();
+    }
   }, {passive:true});
 })();
 </script>
