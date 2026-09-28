@@ -122,15 +122,12 @@
 
 <style id="harri-shared-navigation">
 /*
-  SHARED NAVIGATION — GEOMETRY-PRESERVING VERSION
-  ------------------------------------------------
-  One shared controller remains in charge of state.
-  Desktop sizing/spacing stays owned by each original layout.
-  Only mobile animation mechanics are normalized here.
+  HARRI.LA SHARED NAVIGATION
+  One controller, one accordion system, one slide animation.
+  No opacity fades, transforms, measured heights, or pixel-to-auto handoffs.
 */
 
-/* Structural wrappers required by the shared include on desktop.
-   No typography or spacing is overridden here. */
+/* ---------- DESKTOP ---------- */
 @media (min-width:901px){
   .site-nav .main-menu-panel{
     flex:1 1 auto;
@@ -138,6 +135,7 @@
     display:flex;
     overflow:hidden;
   }
+
   .site-nav .main-menu-panel-inner{
     flex:1 1 auto;
     min-height:0;
@@ -145,21 +143,53 @@
     flex-direction:column;
     overflow:hidden;
   }
+
+  /* Shared accordion mechanics.
+     Layout files retain their own typography/column geometry. */
+  .site-nav .project-links{
+    display:grid !important;
+    grid-template-rows:1fr;
+    height:auto !important;
+    max-height:none !important;
+    overflow:hidden !important;
+    margin-top:8px !important;
+    transition:
+      grid-template-rows .34s cubic-bezier(.22,.61,.36,1),
+      margin-top .34s cubic-bezier(.22,.61,.36,1) !important;
+  }
+
+  .site-nav .project-links-inner{
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  .site-nav .project-links.collapsed{
+    grid-template-rows:0fr;
+    margin-top:0 !important;
+    pointer-events:none;
+  }
+
+  .site-nav .group-head{
+    cursor:pointer !important;
+  }
+
+  .site-nav:not(.nav-ready) .project-links{
+    transition:none !important;
+  }
 }
 
-/* MOBILE
-   Exact original header row = 4px top inset + 34px row = 38px total.
-   A closed menu is forced to that exact height so it cannot reserve
-   invisible vertical space above project content. */
+/* ---------- MOBILE ---------- */
 @media (max-width:900px){
   .site-nav{
     box-sizing:border-box !important;
   }
 
+  /* Closed header occupies only the Harri.la / hamburger row. */
   .site-nav:not(.menu-open){
     height:38px !important;
     min-height:38px !important;
     max-height:38px !important;
+    overflow:hidden !important;
   }
 
   .site-nav.menu-open{
@@ -170,7 +200,8 @@
     overscroll-behavior:contain;
   }
 
-  /* Main menu: CSS-grid interpolation only; no measured JS heights. */
+  /* Main hamburger menu:
+     smooth vertical reveal only — deliberately no fade or transform. */
   .site-nav .main-menu-panel{
     display:grid !important;
     grid-template-rows:0fr;
@@ -180,30 +211,22 @@
     max-height:none !important;
     overflow:hidden !important;
     margin-top:0 !important;
-    opacity:0;
     visibility:hidden;
     pointer-events:none;
-    transform:translateY(-5px);
     transition:
-      grid-template-rows .38s cubic-bezier(.22,.61,.36,1),
-      margin-top .38s cubic-bezier(.22,.61,.36,1),
-      opacity .20s ease,
-      transform .38s cubic-bezier(.22,.61,.36,1),
-      visibility 0s linear .38s !important;
+      grid-template-rows .42s cubic-bezier(.22,.61,.36,1),
+      margin-top .42s cubic-bezier(.22,.61,.36,1),
+      visibility 0s linear .42s !important;
   }
 
   .site-nav.menu-open .main-menu-panel{
     grid-template-rows:1fr;
     margin-top:7px !important;
-    opacity:1;
     visibility:visible;
     pointer-events:auto;
-    transform:translateY(0);
     transition:
-      grid-template-rows .38s cubic-bezier(.22,.61,.36,1),
-      margin-top .38s cubic-bezier(.22,.61,.36,1),
-      opacity .20s ease .04s,
-      transform .38s cubic-bezier(.22,.61,.36,1),
+      grid-template-rows .42s cubic-bezier(.22,.61,.36,1),
+      margin-top .42s cubic-bezier(.22,.61,.36,1),
       visibility 0s !important;
   }
 
@@ -216,9 +239,9 @@
     border-top:1px solid transparent !important;
     border-bottom:1px solid transparent !important;
     transition:
-      padding-top .38s cubic-bezier(.22,.61,.36,1),
-      padding-bottom .38s cubic-bezier(.22,.61,.36,1),
-      border-color .20s ease !important;
+      padding-top .42s cubic-bezier(.22,.61,.36,1),
+      padding-bottom .42s cubic-bezier(.22,.61,.36,1),
+      border-color .12s linear !important;
   }
 
   .site-nav.menu-open .main-menu-panel-inner{
@@ -228,7 +251,7 @@
     border-bottom-color:#111 !important;
   }
 
-  /* Inner project accordions: preserve the earlier visual spacing exactly. */
+  /* Project groups use the same slide-only motion. */
   .site-nav .project-links{
     display:grid !important;
     grid-template-rows:1fr;
@@ -236,13 +259,9 @@
     max-height:none !important;
     overflow:hidden !important;
     margin-top:8px !important;
-    opacity:1;
-    transform:translateY(0);
     transition:
       grid-template-rows .34s cubic-bezier(.22,.61,.36,1),
-      margin-top .34s cubic-bezier(.22,.61,.36,1),
-      opacity .22s ease,
-      transform .34s cubic-bezier(.22,.61,.36,1) !important;
+      margin-top .34s cubic-bezier(.22,.61,.36,1) !important;
   }
 
   .site-nav .project-links-inner{
@@ -256,11 +275,10 @@
   .site-nav .project-links.collapsed{
     grid-template-rows:0fr;
     margin-top:0 !important;
-    opacity:0;
-    transform:translateY(-3px);
     pointer-events:none;
   }
 
+  /* Restore the compact menu rhythm used before the refactor. */
   .site-nav .nav-group{
     margin-bottom:4px !important;
     transition:margin-bottom .34s cubic-bezier(.22,.61,.36,1);
@@ -301,11 +319,8 @@
     margin:0 !important;
     padding:0 !important;
     overflow:visible !important;
-    opacity:1 !important;
     visibility:visible !important;
     pointer-events:auto !important;
-    transform:none !important;
-    transition:none !important;
   }
 
   .site-nav .main-menu-panel .left-footer{
@@ -313,11 +328,8 @@
     height:auto !important;
     max-height:none !important;
     margin-top:20px !important;
-    opacity:1 !important;
     visibility:visible !important;
     pointer-events:auto !important;
-    transform:none !important;
-    transition:none !important;
   }
 
   .site-nav:not(.nav-ready) .main-menu-panel,
@@ -334,7 +346,7 @@
   root.dataset.controllerReady = "true";
 
   const breakpoint = 900;
-  const storageKey = "harri.mobileNavOpenGroups.v3";
+  const storageKey = "harri.mobileNavOpenGroups.v4";
   const menuButton = root.querySelector(".mobile-menu-button");
   const groupButtons = [...root.querySelectorAll(".group-head[data-nav-key]")];
 
