@@ -122,9 +122,9 @@
 
 <style id="harri-shared-navigation">
 /*
-  HARRI.LA SHARED NAVIGATION
-  One controller, one accordion system, one slide animation.
-  No opacity fades, transforms, measured heights, or pixel-to-auto handoffs.
+  HARRI.LA SHARED NAVIGATION — RESTORED RHYTHM
+  One controller. Slide-only motion. Original compact spacing.
+  Old per-template opacity/transform rules are explicitly neutralized here.
 */
 
 /* ---------- DESKTOP ---------- */
@@ -144,8 +144,17 @@
     overflow:hidden;
   }
 
-  /* Shared accordion mechanics.
-     Layout files retain their own typography/column geometry. */
+  .site-nav .nav-group,
+  .site-nav .nav-group:has(.group-head[aria-expanded="true"]){
+    margin-bottom:5px !important;
+  }
+
+  .site-nav .group-head{
+    font-size:20px !important;
+    line-height:21px !important;
+    cursor:pointer !important;
+  }
+
   .site-nav .project-links{
     display:grid !important;
     grid-template-rows:1fr;
@@ -153,14 +162,27 @@
     max-height:none !important;
     overflow:hidden !important;
     margin-top:8px !important;
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+    pointer-events:auto;
     transition:
-      grid-template-rows .34s cubic-bezier(.22,.61,.36,1),
-      margin-top .34s cubic-bezier(.22,.61,.36,1) !important;
+      grid-template-rows .40s cubic-bezier(.22,.61,.36,1),
+      margin-top .40s cubic-bezier(.22,.61,.36,1) !important;
   }
 
   .site-nav .project-links-inner{
     min-height:0 !important;
     overflow:hidden !important;
+    display:grid !important;
+    gap:3px !important;
+    padding-bottom:13px !important;
+  }
+
+  .site-nav .project-links a{
+    font-size:17px !important;
+    line-height:18.7px !important;
+    white-space:nowrap !important;
   }
 
   .site-nav .project-links.collapsed{
@@ -169,8 +191,13 @@
     pointer-events:none;
   }
 
-  .site-nav .group-head{
-    cursor:pointer !important;
+  .site-nav .standalone-nav-link{
+    display:block !important;
+    width:max-content !important;
+    max-width:100% !important;
+    font-size:20px !important;
+    line-height:1.05 !important;
+    margin:0 0 5px !important;
   }
 
   .site-nav:not(.nav-ready) .project-links{
@@ -182,26 +209,18 @@
 @media (max-width:900px){
   .site-nav{
     box-sizing:border-box !important;
-  }
-
-  /* Closed header occupies only the Harri.la / hamburger row. */
-  .site-nav:not(.menu-open){
-    height:38px !important;
+    height:auto !important;
     min-height:38px !important;
-    max-height:38px !important;
-    overflow:hidden !important;
+    max-height:none !important;
+    overflow:visible !important;
   }
 
   .site-nav.menu-open{
-    height:auto !important;
-    min-height:38px !important;
     max-height:100dvh !important;
     overflow-y:auto !important;
     overscroll-behavior:contain;
   }
 
-  /* Main hamburger menu:
-     smooth vertical reveal only — deliberately no fade or transform. */
   .site-nav .main-menu-panel{
     display:grid !important;
     grid-template-rows:0fr;
@@ -214,19 +233,19 @@
     visibility:hidden;
     pointer-events:none;
     transition:
-      grid-template-rows .42s cubic-bezier(.22,.61,.36,1),
-      margin-top .42s cubic-bezier(.22,.61,.36,1),
-      visibility 0s linear .42s !important;
+      grid-template-rows .48s cubic-bezier(.22,.61,.36,1),
+      margin-top .48s cubic-bezier(.22,.61,.36,1),
+      visibility 0s linear .48s !important;
   }
 
   .site-nav.menu-open .main-menu-panel{
     grid-template-rows:1fr;
-    margin-top:7px !important;
+    margin-top:5px !important;
     visibility:visible;
     pointer-events:auto;
     transition:
-      grid-template-rows .42s cubic-bezier(.22,.61,.36,1),
-      margin-top .42s cubic-bezier(.22,.61,.36,1),
+      grid-template-rows .48s cubic-bezier(.22,.61,.36,1),
+      margin-top .48s cubic-bezier(.22,.61,.36,1),
       visibility 0s !important;
   }
 
@@ -239,19 +258,58 @@
     border-top:1px solid transparent !important;
     border-bottom:1px solid transparent !important;
     transition:
-      padding-top .42s cubic-bezier(.22,.61,.36,1),
-      padding-bottom .42s cubic-bezier(.22,.61,.36,1),
-      border-color .12s linear !important;
+      padding-top .48s cubic-bezier(.22,.61,.36,1),
+      padding-bottom .48s cubic-bezier(.22,.61,.36,1),
+      border-color .18s linear !important;
   }
 
   .site-nav.menu-open .main-menu-panel-inner{
-    padding-top:10px !important;
-    padding-bottom:11px !important;
+    padding-top:9px !important;
+    padding-bottom:10px !important;
     border-top-color:#111 !important;
     border-bottom-color:#111 !important;
   }
 
-  /* Project groups use the same slide-only motion. */
+  .site-nav .main-menu-panel nav{
+    display:block !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+    pointer-events:auto !important;
+    transition:none !important;
+  }
+
+  .site-nav .main-menu-panel .left-footer{
+    display:block !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    margin-top:20px !important;
+    padding:0 !important;
+    border:0 !important;
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+    pointer-events:auto !important;
+    transition:none !important;
+  }
+
+  .site-nav .nav-group,
+  .site-nav .nav-group:has(.group-head[aria-expanded="true"]){
+    margin-bottom:4px !important;
+  }
+
+  .site-nav .group-head{
+    font-size:19px !important;
+    line-height:1.05 !important;
+  }
+
   .site-nav .project-links{
     display:grid !important;
     grid-template-rows:1fr;
@@ -259,9 +317,13 @@
     max-height:none !important;
     overflow:hidden !important;
     margin-top:8px !important;
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+    pointer-events:auto;
     transition:
-      grid-template-rows .34s cubic-bezier(.22,.61,.36,1),
-      margin-top .34s cubic-bezier(.22,.61,.36,1) !important;
+      grid-template-rows .40s cubic-bezier(.22,.61,.36,1),
+      margin-top .40s cubic-bezier(.22,.61,.36,1) !important;
   }
 
   .site-nav .project-links-inner{
@@ -272,31 +334,16 @@
     padding-bottom:10px !important;
   }
 
-  .site-nav .project-links.collapsed{
-    grid-template-rows:0fr;
-    margin-top:0 !important;
-    pointer-events:none;
-  }
-
-  /* Restore the compact menu rhythm used before the refactor. */
-  .site-nav .nav-group{
-    margin-bottom:4px !important;
-    transition:margin-bottom .34s cubic-bezier(.22,.61,.36,1);
-  }
-
-  .site-nav .nav-group:has(.group-head[aria-expanded="true"]){
-    margin-bottom:13px !important;
-  }
-
-  .site-nav .group-head{
-    font-size:19px !important;
-    line-height:1.05 !important;
-  }
-
   .site-nav .project-links a{
     font-size:16px !important;
     line-height:1.1 !important;
     white-space:normal !important;
+  }
+
+  .site-nav .project-links.collapsed{
+    grid-template-rows:0fr;
+    margin-top:0 !important;
+    pointer-events:none;
   }
 
   .site-nav .standalone-nav-link{
@@ -310,26 +357,6 @@
 
   .site-nav .standalone-nav-link.active{
     font-weight:700 !important;
-  }
-
-  .site-nav .main-menu-panel nav{
-    display:block !important;
-    height:auto !important;
-    max-height:none !important;
-    margin:0 !important;
-    padding:0 !important;
-    overflow:visible !important;
-    visibility:visible !important;
-    pointer-events:auto !important;
-  }
-
-  .site-nav .main-menu-panel .left-footer{
-    display:block !important;
-    height:auto !important;
-    max-height:none !important;
-    margin-top:20px !important;
-    visibility:visible !important;
-    pointer-events:auto !important;
   }
 
   .site-nav:not(.nav-ready) .main-menu-panel,
@@ -346,7 +373,7 @@
   root.dataset.controllerReady = "true";
 
   const breakpoint = 900;
-  const storageKey = "harri.mobileNavOpenGroups.v4";
+  const storageKey = "harri.mobileNavOpenGroups.v5";
   const menuButton = root.querySelector(".mobile-menu-button");
   const groupButtons = [...root.querySelectorAll(".group-head[data-nav-key]")];
 
@@ -375,7 +402,10 @@
 
     button.setAttribute("aria-expanded", String(open));
     if(toggle) toggle.textContent = open ? "−" : "+";
-    if(panel) panel.classList.toggle("collapsed", !open);
+    if(panel){
+      panel.classList.toggle("collapsed", !open);
+      panel.classList.toggle("open", open);
+    }
 
     if(persist && isMobile()){
       const memory = readMemory();
