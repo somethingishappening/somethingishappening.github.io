@@ -17,6 +17,8 @@ description: >-
   point using cardboard found around the university.
 
 
+
+
   Designed with Milja Komulainen in collaboration with Baldur Heraldson.
 gallery:
   - type: image
