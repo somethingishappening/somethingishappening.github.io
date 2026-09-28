@@ -1,0 +1,697 @@
+media:
+- name: images
+  label: Project images
+  input: assets/uploads
+  output: /assets/uploads
+  rename: safe
+  extensions:
+  - jpg
+  - jpeg
+  - png
+  - webp
+  - gif
+- name: videos
+  label: Project videos
+  input: assets/uploads/videos
+  output: /assets/uploads/videos
+  rename: safe
+  extensions:
+  - mp4
+  - webm
+  - mov
+  - m4v
+content:
+- name: research_group
+  label: Design Research
+  type: group
+  items:
+  - name: research
+    label: Research projects
+    type: collection
+    path: _research
+    format: yaml-frontmatter
+    filename:
+      template: '{primary}.md'
+      field: create
+    view:
+      primary: title
+      sort: nav_order
+      order: asc
+    fields:
+    - name: title
+      label: Navigation title
+      type: string
+      required: true
+      description: Shown in the main site navigation and in the mobile Research project-name bar. This can be different from the Article title below.
+    - name: nav_order
+      label: Navigation order
+      type: number
+      required: true
+    - name: layout
+      label: Project template
+      type: select
+      required: true
+      default: research
+      options:
+        values:
+        - name: research
+          label: Research template
+        - name: work
+          label: Work template
+      description: Choose Research template for the long article + Project Overview + figures layout, or Work template for the short description + image/video gallery layout. The project still stays under Design Research in the navigation.
+    - name: headline_line_1
+      label: Article title — line 1
+      type: string
+      description: First line of the large title inside the Research article. It is independent from the Navigation title above.
+    - name: headline_line_2
+      label: Article title — line 2
+      type: string
+      description: Optional second line of the large title inside the Research article. It is independent from the Navigation title above.
+    - name: toc_columns
+      label: Research template — Project Overview titles & subtitles
+      type: object
+      list:
+        min: 1
+        max: 2
+        collapsible:
+          collapsed: true
+          summary: Column {index}
+      description: Two desktop columns, like the reference layout. Inside each column you can add as many bold titles and subtitle links as you need.
+      fields:
+      - name: groups
+        label: Titles
+        type: object
+        list:
+          min: 1
+          collapsible:
+            collapsed: true
+            summary: '{title}'
+        fields:
+        - name: title
+          label: Chapter title
+          type: object
+          required: true
+          description: A normal navigation link like Header 2, but displayed in bold. Its linked Article Section is automatically displayed as a large Header 1 in the text.
+          fields:
+          - name: label
+            label: Title
+            type: string
+            required: true
+            description: 'For example: Header 1.'
+          - name: section_id
+            label: Linked Article Section ID
+            type: string
+            required: true
+            pattern: ^[a-z0-9-]+$
+            description: Same field used by Header 2 links. It must match the ID of the Article Section this title should scroll to.
+        - name: links
+          label: Subtitles
+          type: object
+          list:
+            collapsible:
+              collapsed: true
+              summary: '{label}'
+          fields:
+          - name: label
+            label: Subtitle
+            type: string
+            required: true
+            description: 'For example: Header 2.'
+          - name: section_id
+            label: Linked Article Section ID
+            type: string
+            required: true
+            description: This must match the ID of the Article Section that this subtitle should scroll to.
+    - name: sections
+      label: Research template — article sections
+      type: object
+      list:
+        min: 1
+        collapsible:
+          collapsed: true
+          summary: '{nav_label} ({index})'
+      fields:
+      - name: id
+        label: Section ID
+        type: string
+        description: Short lowercase ID such as overview, process, typography.
+        pattern: ^[a-z0-9-]+$
+        required: true
+      - name: nav_label
+        label: Navigation label
+        type: string
+        required: true
+      - name: heading
+        label: Section heading
+        type: string
+        description: Text heading for this section. Sections linked by a bold chapter title are automatically shown as large Header 1 headings; sections linked as subtitles are shown as Header 2. The first section uses the large project title above, so this can be blank there.
+      - name: body
+        label: Section text
+        type: rich-text
+        options:
+          format: markdown
+          switcher: false
+          media: false
+        description: Type [fig:1], [fig:2], etc. anywhere in the text. It is published as (Fig. 1), (Fig. 2), etc.
+    - name: figures
+      label: Research template — figures
+      type: object
+      list:
+        collapsible:
+          collapsed: true
+          summary: Figure {index}
+      fields:
+      - name: image
+        label: Image
+        type: image
+        options:
+          media: images
+          rename: safe
+      - name: caption
+        label: Caption
+        type: text
+      - name: alt
+        label: Alt text
+        type: text
+        description: Briefly describe the image for accessibility.
+    - name: project_type
+      label: Work template — project description / type
+      type: string
+      description: Used only when Project template is Work template.
+    - name: title_line_1
+      label: Work template — large title line 1
+      type: string
+      description: Used only when Project template is Work template.
+    - name: title_line_2
+      label: Work template — large title line 2
+      type: string
+      description: Used only when Project template is Work template.
+    - name: description
+      label: Work template — project description
+      type: rich-text
+      options:
+        format: markdown
+        switcher: false
+        media: false
+      description: Used only when Project template is Work template.
+    - name: gallery
+      label: Work template — gallery
+      type: block
+      list:
+        collapsible:
+          collapsed: true
+          summary: '{type} {index}'
+      blockKey: type
+      blocks:
+      - name: image
+        label: Image
+        fields:
+        - name: image
+          label: Image
+          type: image
+          required: true
+          options:
+            media: images
+            rename: safe
+        - name: alt
+          label: Alt text
+          type: text
+          description: Briefly describe the image for accessibility.
+      - name: video
+        label: Video
+        fields:
+        - name: video
+          label: Video file
+          type: file
+          required: true
+          options:
+            media: videos
+            categories:
+            - video
+            extensions:
+            - mp4
+            - webm
+            - mov
+            - m4v
+            rename: safe
+        - name: poster
+          label: Poster image
+          type: image
+          options:
+            media: images
+            rename: safe
+          description: Shown in the project column before the video is opened.
+        - name: alt
+          label: Accessibility label
+          type: text
+- name: design_group
+  label: Design Work
+  type: group
+  items:
+  - name: design
+    label: Design projects
+    type: collection
+    path: _design
+    format: yaml-frontmatter
+    filename:
+      template: '{primary}.md'
+      field: create
+    view:
+      primary: title
+      sort: nav_order
+      order: asc
+    fields:
+    - name: title
+      label: Navigation title
+      type: string
+      required: true
+    - name: nav_order
+      label: Navigation order
+      type: number
+      required: true
+    - name: project_type
+      label: Project description / type
+      type: string
+    - name: title_line_1
+      label: Large title — line 1
+      type: string
+    - name: title_line_2
+      label: Large title — line 2
+      type: string
+    - name: description
+      label: Project description
+      type: rich-text
+      options:
+        format: markdown
+        switcher: false
+        media: false
+    - name: gallery
+      label: Gallery
+      type: block
+      list:
+        collapsible:
+          collapsed: true
+          summary: '{type} {index}'
+      blockKey: type
+      blocks:
+      - name: image
+        label: Image
+        fields:
+        - name: image
+          label: Image
+          type: image
+          required: true
+          options:
+            media: images
+            rename: safe
+        - name: alt
+          label: Alt text
+          type: text
+          description: Briefly describe the image for accessibility.
+      - name: video
+        label: Video
+        fields:
+        - name: video
+          label: Video file
+          type: file
+          required: true
+          options:
+            media: videos
+            categories:
+            - video
+            extensions:
+            - mp4
+            - webm
+            - mov
+            - m4v
+            rename: safe
+        - name: poster
+          label: Poster image
+          type: image
+          options:
+            media: images
+            rename: safe
+          description: Shown in the project column before the video is opened.
+        - name: alt
+          label: Accessibility label
+          type: text
+- name: artistic_group
+  label: Artistic Work
+  type: group
+  items:
+  - name: artistic
+    label: Artistic projects
+    type: collection
+    path: _artistic
+    format: yaml-frontmatter
+    filename:
+      template: '{primary}.md'
+      field: create
+    view:
+      primary: title
+      sort: nav_order
+      order: asc
+    fields:
+    - name: title
+      label: Navigation title
+      type: string
+      required: true
+    - name: nav_order
+      label: Navigation order
+      type: number
+      required: true
+    - name: project_type
+      label: Project description / type
+      type: string
+    - name: title_line_1
+      label: Large title — line 1
+      type: string
+    - name: title_line_2
+      label: Large title — line 2
+      type: string
+    - name: description
+      label: Project description
+      type: rich-text
+      options:
+        format: markdown
+        switcher: false
+        media: false
+    - name: gallery
+      label: Gallery
+      type: block
+      list:
+        collapsible:
+          collapsed: true
+          summary: '{type} {index}'
+      blockKey: type
+      blocks:
+      - name: image
+        label: Image
+        fields:
+        - name: image
+          label: Image
+          type: image
+          required: true
+          options:
+            media: images
+            rename: safe
+        - name: alt
+          label: Alt text
+          type: text
+          description: Briefly describe the image for accessibility.
+      - name: video
+        label: Video
+        fields:
+        - name: video
+          label: Video file
+          type: file
+          required: true
+          options:
+            media: videos
+            categories:
+            - video
+            extensions:
+            - mp4
+            - webm
+            - mov
+            - m4v
+            rename: safe
+        - name: poster
+          label: Poster image
+          type: image
+          options:
+            media: images
+            rename: safe
+          description: Shown in the project column before the video is opened.
+        - name: alt
+          label: Accessibility label
+          type: text
+- name: harrilanpuisto
+  label: Harrilanpuisto
+  type: file
+  path: _data/harrilanpuisto.yml
+  format: yaml
+  fields:
+  - name: enabled
+    label: Show in website
+    type: boolean
+    default: false
+    description: Harrilanpuisto appears in the main navigation only when this is ON and at least one image or video has been added.
+  - name: media
+    label: Images and videos
+    type: block
+    list:
+      collapsible:
+        collapsed: true
+        summary: '{type} {index}'
+    blockKey: type
+    description: Add new media at the end of this list. The public Harrilanpuisto page automatically displays the newest item first.
+    blocks:
+    - name: image
+      label: Image
+      fields:
+      - name: image
+        label: Image
+        type: image
+        required: true
+        options:
+          media: images
+          rename: safe
+      - name: alt
+        label: Alt text
+        type: text
+      - name: caption
+        label: Lightbox caption
+        type: text
+        description: Shown only when this item is opened in the lightbox.
+    - name: video
+      label: Video
+      fields:
+      - name: video
+        label: Video file
+        type: file
+        required: true
+        options:
+          media: videos
+          categories:
+          - video
+          extensions:
+          - mp4
+          - webm
+          - mov
+          - m4v
+          rename: safe
+      - name: poster
+        label: Poster image
+        type: image
+        options:
+          media: images
+          rename: safe
+      - name: alt
+        label: Accessibility label
+        type: text
+      - name: caption
+        label: Lightbox caption
+        type: text
+        description: Shown only when this item is opened in the lightbox.
+- name: general
+  label: General
+  type: group
+  items:
+  - name: site_settings
+    label: Site settings
+    type: file
+    path: _data/site.yml
+    format: yaml
+    fields:
+    - name: brand
+      label: Top-left site name
+      type: string
+      required: true
+      description: Controls the Harri.la name shown at the top-left of every page. It is also used in browser/page titles.
+    - name: footer_slot_1_visible
+      label: Show footer item 1
+      type: boolean
+      default: true
+      description: This is the slot currently used for Instagram. Turn it off to remove the item.
+    - name: footer_slot_1_text
+      label: Footer item 1 display text
+      type: string
+      required: true
+      description: Rename this item freely, for example Instagram, Behance, CV, Contact, or anything else.
+    - name: footer_slot_1_link_type
+      label: Footer item 1 link type
+      type: select
+      default: external
+      options:
+        values:
+        - name: email
+          label: Email
+        - name: external
+          label: External URL
+        - name: internal
+          label: Internal website path
+        - name: none
+          label: No link
+    - name: footer_slot_1_link
+      label: Footer item 1 link
+      type: string
+      description: Enter an email address, full https:// URL, or internal path according to the selected link type.
+    - name: footer_slot_2_visible
+      label: Show footer item 2
+      type: boolean
+      default: true
+      description: This is the slot currently used for the email address. Turn it off to remove the item.
+    - name: footer_slot_2_text
+      label: Footer item 2 display text
+      type: string
+      required: true
+      description: Rename this item freely, for example Email, Contact, LinkedIn, CV, or anything else.
+    - name: footer_slot_2_link_type
+      label: Footer item 2 link type
+      type: select
+      default: email
+      options:
+        values:
+        - name: email
+          label: Email
+        - name: external
+          label: External URL
+        - name: internal
+          label: Internal website path
+        - name: none
+          label: No link
+    - name: footer_slot_2_link
+      label: Footer item 2 link
+      type: string
+      description: Enter an email address, full https:// URL, or internal path according to the selected link type.
+    - name: design_research_label
+      label: Design Research section name
+      type: string
+      required: true
+      description: Changes this section name everywhere in the website navigation.
+    - name: design_work_label
+      label: Design Work section name
+      type: string
+      required: true
+      description: Changes this section name everywhere in the website navigation.
+    - name: artistic_work_label
+      label: Artistic Work section name
+      type: string
+      required: true
+      description: Changes this section name everywhere in the website navigation.
+    - name: harrilanpuisto_label
+      label: Harrilanpuisto section name
+      type: string
+      required: true
+      description: Changes the Harrilanpuisto name in the website navigation and page title.
+    - name: welcome_messages
+      label: Welcome messages
+      type: string
+      list: true
+  - name: about
+    label: About page
+    type: file
+    path: about.md
+    format: yaml-frontmatter
+    fields:
+    - name: layout
+      type: string
+      hidden: true
+      readonly: true
+    - name: title
+      label: Page title
+      type: string
+    - name: permalink
+      type: string
+      hidden: true
+      readonly: true
+    - name: greeting_messages
+      label: Greeting phrases
+      type: string
+      list: true
+      description: The About greeting randomly uses these phrases and changes every 30 seconds.
+    - name: morning_greeting_messages
+      label: Morning-only greeting phrases
+      type: string
+      list: true
+      description: These phrases are added to the About greeting rotation only from 12:00 AM (midnight) until 11:59 AM, using the visitor's local device time.
+    - name: ascii_messages
+      label: Fullscreen ASCII faces
+      type: object
+      list:
+        min: 1
+        collapsible:
+          collapsed: true
+          summary: '{text}'
+      description: Add, remove, reorder, or recolor the ASCII faces used by the 10th-click fullscreen easter egg. Their display order is randomized automatically.
+      fields:
+      - name: text
+        label: ASCII
+        type: string
+        required: true
+        description: Type the ASCII face exactly as you want it to appear.
+      - name: color
+        label: Color (hex)
+        type: string
+        required: true
+        default: '#FF0000'
+        pattern:
+          regex: ^#[0-9A-Fa-f]{6}$
+          message: 'Use a 6-digit hex color such as #FF0000.'
+        description: Hex color for this ASCII face, for example
+    - name: bio
+      label: Biography
+      type: text
+      required: true
+      description: Edit the About biography here. Text wraps automatically to the column width. Press Enter only when you intentionally want a hard line break.
+    - name: mini_cv_sections
+      label: Mini-CV sections
+      type: object
+      list:
+        collapsible:
+          collapsed: true
+          summary: '{title}'
+      fields:
+      - name: title
+        label: Section title
+        type: string
+        required: true
+      - name: entries
+        label: Entries
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: '{text}'
+        fields:
+        - name: text
+          label: Entry
+          type: rich-text
+          required: true
+          options:
+            format: markdown
+            switcher: false
+            media: false
+          description: You can add inline links to any word or phrase. Text wraps automatically to the Mini-CV column.
+    - name: surprise_images
+      label: Surprise images
+      type: object
+      list:
+        min: 1
+        collapsible:
+          collapsed: true
+          summary: '{alt}'
+      description: Images revealed at the bottom of the Mini-CV. If there is one image, it always appears. If there are two or more, one is chosen randomly each time the page loads.
+      fields:
+      - name: image
+        label: Image
+        type: image
+        required: true
+        options:
+          media: images
+          rename: safe
+      - name: alt
+        label: Alt text
+        type: text
+        description: Briefly describe the image for accessibility.
