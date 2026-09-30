@@ -15,7 +15,7 @@ description: >-
   Directors Club NYC.
 gallery:
   - type: image
-    image: /assets/uploads/metawhatmain.gif
+    image: /assets/uploads/metawhatmain-1.gif
   - type: image
     image: /assets/uploads/metawhat1.jpg
   - type: image
