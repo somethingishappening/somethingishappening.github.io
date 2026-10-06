@@ -20,9 +20,11 @@ description: >-
   Designed with Milja Komulainen in collaboration with Baldur Heraldson.
 gallery:
   - type: image
-    image: /assets/uploads/coolerplanet-0401-1.jpg
+    image: /assets/uploads/1.jpg
     alt: Project image 1
   - type: image
-    image: /assets/uploads/coolerplanet-0433new.jpg
+    image: /assets/uploads/2.jpg
     alt: dad
+  - type: image
+    image: /assets/uploads/3.jpg
 ---
