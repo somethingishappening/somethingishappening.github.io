@@ -31,4 +31,6 @@ gallery:
     image: /assets/uploads/3.jpg
   - type: image
     image: /assets/uploads/bq5a91122.jpg
+  - type: image
+    image: /assets/uploads/bq5a91122-1.jpg
 ---
