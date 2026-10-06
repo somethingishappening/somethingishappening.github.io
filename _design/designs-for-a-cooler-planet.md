@@ -20,7 +20,7 @@ description: >-
   Designed with Milja Komulainen in collaboration with Baldur Heraldson.
 gallery:
   - type: image
-    image: /assets/uploads/bdw18-poster-180527page1.jpg
+    image: /assets/uploads/bdw18-poster-180527page1-1.jpg
   - type: image
     image: /assets/uploads/1.jpg
     alt: Project image 1
@@ -29,8 +29,4 @@ gallery:
     alt: dad
   - type: image
     image: /assets/uploads/3.jpg
-  - type: image
-    image: /assets/uploads/bq5a91122.jpg
-  - type: image
-    image: /assets/uploads/bq5a91122-1.jpg
 ---
