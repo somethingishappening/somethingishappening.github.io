@@ -207,9 +207,8 @@
   .site-nav .standalone-nav-link{
     display:block !important;
     width:max-content !important;
-    max-width:100% !important;
-    font-size:20px !important;
-    line-height:1.05 !important;
+    max-width:100% !important;font-size:17px !important;
+    line-height:18.7px !important;
     margin:0 0 5px !important;
   }
 
@@ -221,6 +220,8 @@
 /* ---------- MOBILE ---------- */
 @media (max-width:900px){
   .site-nav{
+    --harri-menu-open-pad-top:9px;
+    --harri-menu-open-pad-bottom:10px;
     box-sizing:border-box !important;
     height:auto !important;
     min-height:38px !important;
@@ -277,10 +278,12 @@
   }
 
   .site-nav.menu-open .main-menu-panel-inner{
-    padding-top:9px !important;
-    padding-bottom:10px !important;
+    padding-top:var(--harri-menu-open-pad-top) !important;
+    padding-bottom:var(--harri-menu-open-pad-bottom) !important;
     border-top-color:#111 !important;
-    border-bottom-color:#111 !important;
+    /* No lower divider in ordinary mobile templates. The 1px transparent
+       border remains in the box model, so menu height/animation stay identical. */
+    border-bottom-color:transparent !important;
   }
 
   /* Neutralize every older per-template menu animation. */
@@ -359,9 +362,8 @@
   .site-nav .standalone-nav-link{
     display:block !important;
     width:max-content !important;
-    max-width:100% !important;
-    font-size:20px !important;
-    line-height:1.05 !important;
+    max-width:100% !important;font-size:16px !important;
+    line-height:1.1 !important;
     margin:0 0 5px !important;
   }
 
@@ -398,6 +400,69 @@
     if(element) element.style.setProperty(property, value, "important");
   }
 
+  function measuredMenuHeight(){
+    if(!menuInner) return 0;
+
+    const innerStyle = getComputedStyle(menuInner);
+    const rootStyle = getComputedStyle(root);
+
+    /*
+      The menu's padding itself animates from 0 to its open values.
+      Measuring scrollHeight immediately after opening therefore measures
+      an intermediate state and can clip the final footer/email.
+
+      Measure the CONTENT height, then add the authoritative FINAL open
+      padding and borders. This preserves the exact existing animation while
+      making its target height correct from the first frame.
+    */
+    const currentPaddingTop = parseFloat(innerStyle.paddingTop) || 0;
+    const currentPaddingBottom = parseFloat(innerStyle.paddingBottom) || 0;
+
+    const finalPaddingTop =
+      parseFloat(rootStyle.getPropertyValue("--harri-menu-open-pad-top")) ||
+      currentPaddingTop;
+
+    const finalPaddingBottom =
+      parseFloat(rootStyle.getPropertyValue("--harri-menu-open-pad-bottom")) ||
+      currentPaddingBottom;
+
+    const borderTop = parseFloat(innerStyle.borderTopWidth) || 0;
+    const borderBottom = parseFloat(innerStyle.borderBottomWidth) || 0;
+
+    const contentHeight = Math.max(
+      0,
+      menuInner.scrollHeight - currentPaddingTop - currentPaddingBottom
+    );
+
+    let height =
+      contentHeight +
+      finalPaddingTop +
+      finalPaddingBottom +
+      borderTop +
+      borderBottom;
+
+    /* Guard against browser-specific line-height rounding at the footer. */
+    const footer = menuInner.querySelector(".left-footer");
+    const lastFooterItem = footer && footer.lastElementChild;
+
+    if(lastFooterItem){
+      const innerRect = menuInner.getBoundingClientRect();
+      const lastRect = lastFooterItem.getBoundingClientRect();
+
+      const footerTarget =
+        lastRect.bottom -
+        innerRect.top -
+        currentPaddingBottom +
+        finalPaddingBottom +
+        borderBottom +
+        2;
+
+      height = Math.max(height, footerTarget);
+    }
+
+    return Math.ceil(height);
+  }
+
   function readMemory(){
     try{
       const value = JSON.parse(sessionStorage.getItem(storageKey) || "{}");
@@ -413,12 +478,21 @@
     }catch(error){}
   }
 
-  function finishHeight(element, open){
+  function finishHeight(element, open, keepMeasuredOpen){
     if(!element) return;
 
     const onEnd = function(event){
       if(event.target !== element || event.propertyName !== "height") return;
       element.removeEventListener("transitionend", onEnd);
+
+      /*
+        Project accordions keep their existing behavior.
+        The main mobile menu stays at its exact measured open height instead
+        of switching to `auto` at the last frame; that removes the end snap
+        without changing the animation itself.
+      */
+      if(open && keepMeasuredOpen) return;
+
       forceStyle(element, "height", open ? "auto" : "0px");
     };
 
@@ -461,9 +535,11 @@
     ) return;
 
     requestAnimationFrame(function(){
-      forceStyle(menuPanel, "height", menuInner.scrollHeight + "px");
+      forceStyle(menuPanel, "height", measuredMenuHeight() + "px");
     });
   }
+
+  root._harriRetargetOpenMenu = retargetOpenMenu;
 
   function setGroup(button, open, persist, animate){
     const panel = button.nextElementSibling;
@@ -558,8 +634,8 @@
         menuPanel.getBoundingClientRect();
 
         requestAnimationFrame(function(){
-          forceStyle(menuPanel, "height", menuInner.scrollHeight + "px");
-          finishHeight(menuPanel, true);
+          forceStyle(menuPanel, "height", measuredMenuHeight() + "px");
+          finishHeight(menuPanel, true, true);
         });
       }
     }else{
@@ -621,6 +697,25 @@
       if(isMobile()) setMenu(false, true);
     });
   });
+
+
+  /*
+    Keep the already-open main menu fitted to its real content if mobile
+    font metrics or accordion content settle after the opening animation.
+    This does not alter the animation; it only updates the resting height.
+  */
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){
+      retargetOpenMenu();
+    });
+  }
+
+  if("ResizeObserver" in window && menuInner){
+    const menuObserver = new ResizeObserver(function(){
+      retargetOpenMenu();
+    });
+    menuObserver.observe(menuInner);
+  }
 
   let previousMode = isMobile() ? "mobile" : "desktop";
 
