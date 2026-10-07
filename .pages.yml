@@ -59,6 +59,10 @@ content:
         - name: work
           label: Work template
       description: Choose Research template for the long article + Project Overview + figures layout, or Work template for the short description + image/video gallery layout. The project still stays under Design Research in the navigation.
+    - name: research_type
+      label: Research project type / descriptor
+      type: string
+      description: Small text shown above the large Research project title, like the project type in the Work template. Examples: Typographic Research, Visual Research, Publication, Research Project.
     - name: headline_line_1
       label: Article title — line 1
       type: string
@@ -89,6 +93,19 @@ content:
         label: Section title
         type: string
         description: The heading shown in the article. For the opening section, you can leave this blank if the large Article title above should act as the heading.
+      - name: heading_level
+        label: Heading level
+        type: select
+        default: h2
+        options:
+          values:
+          - name: h1
+            label: Header 1 — chapter title
+          - name: h2
+            label: Header 2 — body-size bold
+          - name: h3
+            label: Header 3 — body-size regular, underlined
+        description: Header 1 is the chapter-title level. Header 2 is body-size bold. Header 3 is body-size regular and underlined, matching the article hierarchy.
       - name: body
         label: Section text
         type: rich-text
@@ -96,24 +113,25 @@ content:
           format: markdown
           switcher: false
           media: false
-        description: Write normally. Heading 2 is body-size bold; Heading 3 is body-size regular. Both keep the Research heading spacing rhythm. To cite an image, simply type (Fig. 1), (Fig. 2), etc. The website detects these references automatically.
-      - name: navigation
-        label: Project Overview navigation
+        description: Write normally. Header 1 is the chapter-title level. Header 2 is body-size bold. Header 3 is body-size regular and underlined. To cite an image, simply type (Fig. 1), (Fig. 2), etc. The website detects these references automatically.
+      - name: nav_column
+        label: Show in navigation
         type: select
         default: none
         options:
           values:
           - name: none
-            label: Do not show this section
-          - name: left_title
-            label: Left column — bold title
-          - name: left_subtitle
-            label: Left column — subtitle
-          - name: right_title
-            label: Right column — bold title
-          - name: right_subtitle
-            label: Right column — subtitle
-        description: Choose where this same article section should appear in the Project Overview. The link is created automatically.
+            label: Do not show
+          - name: left
+            label: Left column
+          - name: right
+            label: Right column
+        description: The navigation style comes automatically from the Heading level. For Header 3, choose Right column if you want it shown in the right-side navigation, or Do not show if you want it hidden.
+      - name: navigation
+        label: Legacy navigation placement
+        type: string
+        hidden: true
+        description: Preserved invisibly so older Research projects continue to work.
       - name: nav_label
         label: Navigation label (optional)
         type: string
