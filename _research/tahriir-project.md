@@ -431,11 +431,13 @@ sections:
     nav_label: Open Endings
     id: open-endings
 figures:
-  - image: /assets/uploads/tahriir-fig-1.png
-    caption: Wide figure example. Hover or focus (Fig. 1), or scroll into its
-      paragraph, to show it in the desktop figure column.
+  - number: 1
+    image: /assets/uploads/fig-1.jpg
+    caption: this research project was funded by TAIKE and the Finnish Cultural
+      Foundation
     alt: Arabic calligraphy manuscript detail
-  - image: /assets/uploads/research-demo-fig-2.png
+  - number: 2
+    image: /assets/uploads/fig-5.gif
     caption: Portrait figure example. The image is reduced proportionally when
       necessary so the image and caption remain inside the viewport.
     alt: Portrait crop used to demonstrate Research figure fitting
