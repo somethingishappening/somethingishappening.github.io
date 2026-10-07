@@ -2015,6 +2015,91 @@
     padding-top:9px !important;
   }
 }
+
+/* RESEARCH INTRO SCREEN + BODY-SIZED H2/H3 — v115 */
+
+/*
+  Desktop: the first scroll viewport behaves like the Work template.
+  Title remains at the top; the Abstract / Summary sits at the bottom.
+  The exact last-line baseline is corrected against the footer separately.
+*/
+@media (min-width:901px){
+  .research-intro-screen{
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .research-abstract-panel{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .research-abstract-panel > h1{
+    flex:0 0 auto;
+  }
+
+  .research-abstract-copy{
+    margin-top:auto;
+    max-width:700px;
+  }
+}
+
+/* Mobile keeps the existing normal document flow. */
+@media (max-width:900px){
+  .research-intro-screen,
+  .research-abstract-panel{
+    min-height:0;
+    display:block;
+  }
+
+  .research-abstract-copy{
+    margin-top:0;
+  }
+}
+
+/*
+  H1 chapter titles are intentionally untouched.
+
+  H2: same size as body text, bold.
+  H3: same size and weight as body text.
+  H2 and H3 share the existing Research heading spacing rhythm.
+*/
+.paper h2,
+.paper h3{
+  font-size:18px !important;
+  line-height:1.15 !important;
+  margin:26px 0 12px !important;
+  letter-spacing:0 !important;
+}
+
+.paper h2{
+  font-weight:700 !important;
+}
+
+.paper h3{
+  font-weight:400 !important;
+}
+
+@media (min-width:901px) and (max-width:1180px){
+  .paper h2,
+  .paper h3{
+    font-size:17px !important;
+    line-height:1.15 !important;
+  }
+}
+
+@media (max-width:900px){
+  .paper h2,
+  .paper h3{
+    font-size:17px !important;
+    line-height:1.16 !important;
+    margin:30px 0 12px !important;
+  }
+}
+
 </style>
 </head>
 <body class="page-research">
@@ -2023,110 +2108,154 @@
   {% include nav.html %}
 
   <main class="paper" id="paper">
+    {% assign first_section = page.sections | first %}
+    {% assign abstract_content = page.abstract %}
+    {% assign abstract_uses_first_section = false %}
+
+    {% if abstract_content == blank and first_section and first_section.body %}
+      {% assign abstract_content = first_section.body %}
+      {% assign abstract_uses_first_section = true %}
+    {% endif %}
+
     {% assign has_section_navigation = false %}
     {% for section in page.sections %}
-      {% if section.navigation and section.navigation != "none" %}
-        {% assign has_section_navigation = true %}
-      {% endif %}
+      {% unless abstract_uses_first_section and forloop.first %}
+        {% if section.navigation and section.navigation != "none" %}
+          {% assign has_section_navigation = true %}
+        {% endif %}
+      {% endunless %}
     {% endfor %}
 
-    <div class="project-header-shell">
-      <div class="project-title-row">
-        <div class="project-title">{{ page.title }}</div>
-        <button class="mobile-project-toc-toggle" type="button" aria-label="Open text navigation" aria-expanded="false">
-          <span aria-hidden="true">+</span>
-        </button>
-      </div>
+    <div class="research-intro-screen">
+      <div class="project-header-shell">
+        <div class="project-title-row">
+          <div class="project-title">{{ page.title }}</div>
+          <button class="mobile-project-toc-toggle" type="button" aria-label="Open text navigation" aria-expanded="false">
+            <span aria-hidden="true">+</span>
+          </button>
+        </div>
 
-      <nav class="mobile-toc" aria-label="Article navigation">
-        <span class="mobile-toc-arrow" aria-hidden="true">→</span>
+        <nav class="mobile-toc" aria-label="Article navigation">
+          <span class="mobile-toc-arrow" aria-hidden="true">→</span>
 
-        {% if has_section_navigation %}
-          <div class="mobile-toc-columns">
-            <div class="mobile-toc-col">
-              {% for section in page.sections %}
-                {% if section.navigation == "left_title" or section.navigation == "left_subtitle" %}
-                  {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
-                  {% assign section_anchor = section_anchor | strip %}
-                  {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
-                  <div class="mobile-toc-auto-item {% if section.navigation == 'left_title' %}mobile-toc-auto-title{% else %}mobile-toc-auto-subtitle{% endif %}">
-                    <a {% if section.navigation == "left_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ navigation_label }}</a>
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
-            <div class="mobile-toc-col">
-              {% for section in page.sections %}
-                {% if section.navigation == "right_title" or section.navigation == "right_subtitle" %}
-                  {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
-                  {% assign section_anchor = section_anchor | strip %}
-                  {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
-                  <div class="mobile-toc-auto-item {% if section.navigation == 'right_title' %}mobile-toc-auto-title{% else %}mobile-toc-auto-subtitle{% endif %}">
-                    <a {% if section.navigation == "right_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ navigation_label }}</a>
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
-          </div>
-        {% elsif page.toc_columns and page.toc_columns.size > 0 %}
-          <div class="mobile-toc-columns">
-            {% for column in page.toc_columns %}
+          {% if has_section_navigation %}
+            <div class="mobile-toc-columns">
               <div class="mobile-toc-col">
-                {% for group in column.groups %}
-                  <div class="mobile-toc-group">
-                    <a class="toc-group-title" href="#{{ group.title.section_id }}" data-mobile-section="{{ group.title.section_id }}">{{ group.title.label }}</a>
-                    {% for item in group.links %}
-                      <a href="#{{ item.section_id }}" data-mobile-section="{{ item.section_id }}">{{ item.label }}</a>
-                    {% endfor %}
-                  </div>
+                <div class="mobile-toc-auto-item mobile-toc-auto-title">
+                  <a class="toc-group-title" href="#abstract" data-mobile-section="abstract">Abstract</a>
+                </div>
+
+                {% for section in page.sections %}
+                  {% unless abstract_uses_first_section and forloop.first %}
+                    {% if section.navigation == "left_title" or section.navigation == "left_subtitle" %}
+                      {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+                      {% assign section_anchor = section_anchor | strip %}
+                      {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
+                      <div class="mobile-toc-auto-item {% if section.navigation == 'left_title' %}mobile-toc-auto-title{% else %}mobile-toc-auto-subtitle{% endif %}">
+                        <a {% if section.navigation == "left_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ navigation_label }}</a>
+                      </div>
+                    {% endif %}
+                  {% endunless %}
                 {% endfor %}
               </div>
-            {% endfor %}
-          </div>
-        {% else %}
-          <div class="mobile-toc-columns"><div class="mobile-toc-col">
-            {% for section in page.sections %}
-              {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
-              {% assign section_anchor = section_anchor | strip %}
-              <a href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ section.nav_label | default: section.heading | default: "Section" }}</a>
-            {% endfor %}
-          </div></div>
-        {% endif %}
-      </nav>
+
+              <div class="mobile-toc-col">
+                {% for section in page.sections %}
+                  {% unless abstract_uses_first_section and forloop.first %}
+                    {% if section.navigation == "right_title" or section.navigation == "right_subtitle" %}
+                      {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+                      {% assign section_anchor = section_anchor | strip %}
+                      {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
+                      <div class="mobile-toc-auto-item {% if section.navigation == 'right_title' %}mobile-toc-auto-title{% else %}mobile-toc-auto-subtitle{% endif %}">
+                        <a {% if section.navigation == "right_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ navigation_label }}</a>
+                      </div>
+                    {% endif %}
+                  {% endunless %}
+                {% endfor %}
+              </div>
+            </div>
+
+          {% elsif page.toc_columns and page.toc_columns.size > 0 %}
+            <div class="mobile-toc-columns">
+              {% for column in page.toc_columns %}
+                <div class="mobile-toc-col">
+                  {% if forloop.first %}
+                    <div class="mobile-toc-group">
+                      <a class="toc-group-title" href="#abstract" data-mobile-section="abstract">Abstract</a>
+                    </div>
+                  {% endif %}
+
+                  {% for group in column.groups %}
+                    <div class="mobile-toc-group">
+                      <a class="toc-group-title" href="#{{ group.title.section_id }}" data-mobile-section="{{ group.title.section_id }}">{{ group.title.label }}</a>
+                      {% for item in group.links %}
+                        <a href="#{{ item.section_id }}" data-mobile-section="{{ item.section_id }}">{{ item.label }}</a>
+                      {% endfor %}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
+
+          {% else %}
+            <div class="mobile-toc-columns">
+              <div class="mobile-toc-col">
+                <a class="toc-group-title" href="#abstract" data-mobile-section="abstract">Abstract</a>
+
+                {% for section in page.sections %}
+                  {% unless abstract_uses_first_section and forloop.first %}
+                    {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+                    {% assign section_anchor = section_anchor | strip %}
+                    <a href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ section.nav_label | default: section.heading | default: "Section" }}</a>
+                  {% endunless %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        </nav>
+      </div>
+
+      <section id="abstract" class="anchor-target research-abstract-panel">
+        <h1>
+          <span class="title-line">{{ page.headline_line_1 }}</span>
+          <span class="title-line">{{ page.headline_line_2 }}</span>
+        </h1>
+
+        <div class="research-copy research-abstract-copy">
+          {{ abstract_content | markdownify }}
+        </div>
+      </section>
     </div>
 
     {% for section in page.sections %}
-      {% capture section_id %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
-      {% assign section_id = section_id | strip %}
-      {% assign is_chapter_target = false %}
+      {% unless abstract_uses_first_section and forloop.first %}
+        {% capture section_id %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+        {% assign section_id = section_id | strip %}
+        {% assign is_chapter_target = false %}
 
-      {% if section.navigation %}
-        {% if section.navigation == "left_title" or section.navigation == "right_title" %}
-          {% assign is_chapter_target = true %}
-        {% endif %}
-      {% elsif page.toc_columns and page.toc_columns.size > 0 %}
-        {% for column in page.toc_columns %}
-          {% for group in column.groups %}
-            {% if group.title.section_id == section_id %}
-              {% assign is_chapter_target = true %}
-            {% endif %}
+        {% if section.navigation %}
+          {% if section.navigation == "left_title" or section.navigation == "right_title" %}
+            {% assign is_chapter_target = true %}
+          {% endif %}
+        {% elsif page.toc_columns and page.toc_columns.size > 0 %}
+          {% for column in page.toc_columns %}
+            {% for group in column.groups %}
+              {% if group.title.section_id == section_id %}
+                {% assign is_chapter_target = true %}
+              {% endif %}
+            {% endfor %}
           {% endfor %}
-        {% endfor %}
-      {% endif %}
-
-      <section id="{{ section_id }}" class="anchor-target">
-        {% if forloop.first %}
-          <h1>
-            <span class="title-line">{{ page.headline_line_1 }}</span>
-            <span class="title-line">{{ page.headline_line_2 }}</span>
-          </h1>
-        {% elsif is_chapter_target and section.heading %}
-          <h1 class="chapter-heading">{{ section.heading }}</h1>
-        {% elsif section.heading %}
-          <h2>{{ section.heading }}</h2>
         {% endif %}
-        <div class="research-copy">{{ section.body | markdownify }}</div>
-      </section>
+
+        <section id="{{ section_id }}" class="anchor-target">
+          {% if is_chapter_target and section.heading %}
+            <h1 class="chapter-heading">{{ section.heading }}</h1>
+          {% elsif section.heading %}
+            <h2>{{ section.heading }}</h2>
+          {% endif %}
+          <div class="research-copy">{{ section.body | markdownify }}</div>
+        </section>
+      {% endunless %}
     {% endfor %}
   </main>
 
@@ -2135,48 +2264,72 @@
       {% if has_section_navigation %}
         <div class="toc-col">
           <span class="toc-arrow" aria-hidden="true">→</span>
+
+          <div class="toc-auto-item toc-auto-title">
+            <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
+          </div>
+
           {% for section in page.sections %}
-            {% if section.navigation == "left_title" or section.navigation == "left_subtitle" %}
-              {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
-              {% assign section_anchor = section_anchor | strip %}
-              {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
-              <div class="toc-auto-item {% if section.navigation == 'left_title' %}toc-auto-title{% else %}toc-auto-subtitle{% endif %}">
-                <a {% if section.navigation == "left_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ navigation_label }}</a>
-              </div>
-            {% endif %}
+            {% unless abstract_uses_first_section and forloop.first %}
+              {% if section.navigation == "left_title" or section.navigation == "left_subtitle" %}
+                {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+                {% assign section_anchor = section_anchor | strip %}
+                {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
+                <div class="toc-auto-item {% if section.navigation == 'left_title' %}toc-auto-title{% else %}toc-auto-subtitle{% endif %}">
+                  <a {% if section.navigation == "left_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ navigation_label }}</a>
+                </div>
+              {% endif %}
+            {% endunless %}
           {% endfor %}
         </div>
+
         <div class="toc-col">
           {% for section in page.sections %}
-            {% if section.navigation == "right_title" or section.navigation == "right_subtitle" %}
-              {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
-              {% assign section_anchor = section_anchor | strip %}
-              {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
-              <div class="toc-auto-item {% if section.navigation == 'right_title' %}toc-auto-title{% else %}toc-auto-subtitle{% endif %}">
-                <a {% if section.navigation == "right_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ navigation_label }}</a>
-              </div>
-            {% endif %}
+            {% unless abstract_uses_first_section and forloop.first %}
+              {% if section.navigation == "right_title" or section.navigation == "right_subtitle" %}
+                {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+                {% assign section_anchor = section_anchor | strip %}
+                {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
+                <div class="toc-auto-item {% if section.navigation == 'right_title' %}toc-auto-title{% else %}toc-auto-subtitle{% endif %}">
+                  <a {% if section.navigation == "right_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ navigation_label }}</a>
+                </div>
+              {% endif %}
+            {% endunless %}
           {% endfor %}
         </div>
+
       {% elsif page.toc_columns and page.toc_columns.size > 0 %}
         {% for column in page.toc_columns %}
           <div class="toc-col">
-            {% if forloop.first %}<span class="toc-arrow" aria-hidden="true">→</span>{% endif %}
+            {% if forloop.first %}
+              <span class="toc-arrow" aria-hidden="true">→</span>
+              <div class="toc-group">
+                <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
+              </div>
+            {% endif %}
+
             {% for group in column.groups %}
               <div class="toc-group">
                 <a class="toc-group-title" href="#{{ group.title.section_id }}" data-section="{{ group.title.section_id }}">{{ group.title.label }}</a>
-                {% for item in group.links %}<a href="#{{ item.section_id }}" data-section="{{ item.section_id }}">{{ item.label }}</a>{% endfor %}
+                {% for item in group.links %}
+                  <a href="#{{ item.section_id }}" data-section="{{ item.section_id }}">{{ item.label }}</a>
+                {% endfor %}
               </div>
             {% endfor %}
           </div>
         {% endfor %}
+
       {% else %}
         <div class="toc-col">
           <span class="toc-arrow" aria-hidden="true">→</span>
+          <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
+
           {% for section in page.sections %}
-            {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
-            {% assign section_anchor = section_anchor | strip %}
-            <a href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ section.nav_label | default: section.heading | default: "Section" }}</a>
+            {% unless abstract_uses_first_section and forloop.first %}
+              {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+              {% assign section_anchor = section_anchor | strip %}
+              <a href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ section.nav_label | default: section.heading | default: "Section" }}</a>
+            {% endunless %}
           {% endfor %}
         </div>
       {% endif %}
@@ -3700,6 +3853,7 @@
 })();
 </script>
 
+{% include desktop-baseline-alignment.html target=".research-abstract-copy" %}
 {% include desktop-top-baseline-alignment.html reference=".brand" target=".project-title" %}
 </body>
 </html>
