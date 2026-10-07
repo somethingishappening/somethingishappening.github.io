@@ -70,7 +70,7 @@ content:
     - name: research_type
       label: Research project type / descriptor
       type: string
-      description: Small text shown above the large Research project title, like the project type in the Work template. Examples: Typographic Research, Visual Research, Publication, Research Project.
+      description: "Small text shown above the large Research project title, like the project type in the Work template. Examples: Typographic Research, Visual Research, Publication, Research Project."
     - name: headline_line_1
       label: Displayed project title — line 1
       type: string
