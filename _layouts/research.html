@@ -1994,35 +1994,31 @@
   Harri.la -> divider -> Design Research.
 
   Therefore the Research separator uses:
-  - 8px breathing room above the divider after the email
+  - baseline-to-divider distance matched to the Harri.la baseline-to-divider distance
   - 9px breathing room below the divider before the secondary menu
 
   The divider itself remains a real 1px full-width menu border.
 */
 @media (max-width:900px){
-  .layout:has(> .site-nav.menu-open):has(> .paper > .project-header-shell.toc-open)
+  .layout:has(> .site-nav.menu-open):has(.project-header-shell.toc-open)
   > .site-nav{
-    --harri-menu-open-pad-bottom:8px;
+    --harri-menu-open-pad-bottom:9px;
   }
 
-  .layout:has(> .site-nav.menu-open):has(> .paper > .project-header-shell.toc-open)
+  .layout:has(> .site-nav.menu-open):has(.project-header-shell.toc-open)
   > .site-nav .main-menu-panel-inner{
     border-bottom-color:#111 !important;
   }
 
-  .layout:has(> .site-nav.menu-open):has(> .paper > .project-header-shell.toc-open)
-  > .paper > .project-header-shell > .project-title-row{
+  .layout:has(> .site-nav.menu-open):has(.project-header-shell.toc-open)
+  > .paper .project-header-shell > .project-title-row{
     padding-top:9px !important;
   }
 }
 
-/* RESEARCH INTRO SCREEN + BODY-SIZED H2/H3 — v115 */
 
-/*
-  Desktop: the first scroll viewport behaves like the Work template.
-  Title remains at the top; the Abstract / Summary sits at the bottom.
-  The exact last-line baseline is corrected against the footer separately.
-*/
+/* RESEARCH INTRO SCREEN + HEADING HIERARCHY — v117 */
+
 @media (min-width:901px){
   .research-intro-screen{
     min-height:100%;
@@ -2047,7 +2043,6 @@
   }
 }
 
-/* Mobile keeps the existing normal document flow. */
 @media (max-width:900px){
   .research-intro-screen,
   .research-abstract-panel{
@@ -2061,42 +2056,150 @@
 }
 
 /*
-  H1 chapter titles are intentionally untouched.
+  Project title:
+  the ONLY large title remains the H1 inside #abstract.
 
-  H2: same size as body text, bold.
-  H3: same size and weight as body text.
-  H2 and H3 share the existing Research heading spacing rhythm.
+  Header 1:
+  chapter title; former H2 scale.
+
+  Header 2:
+  exactly body-text size, bold.
+
+  Header 3:
+  exactly body-text size, regular and underlined,
+  matching the supplied reference.
 */
-.paper h2,
-.paper h3{
+.paper section:not(#abstract) > h1.chapter-heading{
+  font-size:24px !important;
+  line-height:1.05 !important;
+  font-weight:700 !important;
+  letter-spacing:-0.015em !important;
+  margin:26px 0 12px !important;
+  max-width:700px !important;
+}
+
+.paper section:not(#abstract) > h2,
+.paper .research-copy h2{
   font-size:18px !important;
   line-height:1.15 !important;
-  margin:26px 0 12px !important;
-  letter-spacing:0 !important;
-}
-
-.paper h2{
   font-weight:700 !important;
+  letter-spacing:0 !important;
+  margin:26px 0 12px !important;
 }
 
-.paper h3{
+.paper section:not(#abstract) > h3,
+.paper .research-copy h3{
+  font-size:18px !important;
+  line-height:1.15 !important;
   font-weight:400 !important;
+  letter-spacing:0 !important;
+  margin:26px 0 12px !important;
+  text-decoration:underline !important;
+  text-decoration-thickness:1px !important;
+  text-underline-offset:2px !important;
 }
 
 @media (min-width:901px) and (max-width:1180px){
-  .paper h2,
-  .paper h3{
+  .paper section:not(#abstract) > h2,
+  .paper .research-copy h2,
+  .paper section:not(#abstract) > h3,
+  .paper .research-copy h3{
     font-size:17px !important;
     line-height:1.15 !important;
   }
 }
 
 @media (max-width:900px){
-  .paper h2,
-  .paper h3{
+  .paper section:not(#abstract) > h1.chapter-heading{
+    font-size:23px !important;
+    line-height:1.05 !important;
+    margin:30px 0 12px !important;
+  }
+
+  .paper section:not(#abstract) > h2,
+  .paper .research-copy h2,
+  .paper section:not(#abstract) > h3,
+  .paper .research-copy h3{
     font-size:17px !important;
     line-height:1.16 !important;
     margin:30px 0 12px !important;
+  }
+}
+
+/* New navigation appearance is derived from heading level. */
+.toc-auto-h1 > a,
+.mobile-toc-auto-h1 > a{
+  font-weight:700 !important;
+  line-height:1.04 !important;
+}
+
+.toc-auto-h2 > a,
+.toc-auto-h3 > a,
+.mobile-toc-auto-h2 > a,
+.mobile-toc-auto-h3 > a{
+  font-weight:400 !important;
+}
+
+.toc-auto-h3 > a{
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+
+
+/* MOBILE RESEARCH PROJECT NAME — v118 */
+.project-title-mobile{
+  display:none;
+}
+
+@media (max-width:900px){
+  .project-title-desktop{
+    display:none !important;
+  }
+
+  .project-title-mobile{
+    display:inline !important;
+    font-size:inherit !important;
+    line-height:inherit !important;
+    font-weight:700 !important;
+  }
+}
+
+
+
+
+/* MOBILE RESEARCH STICKY HEADER CONTAINMENT FIX — v119
+   The desktop Abstract still uses its first-screen wrapper.
+   On mobile the wrapper becomes boxless so .project-header-shell can remain
+   sticky for the full Research article instead of stopping at the end of the
+   Abstract screen. */
+@media (max-width:900px){
+  .research-intro-screen{
+    display:contents !important;
+  }
+
+  .research-abstract-panel{
+    display:block !important;
+    min-height:0 !important;
+  }
+}
+
+
+/* MOBILE DUAL-MENU STACK — v120
+   The Research bar sits below the actual rendered height of the main nav.
+   This allows both menus to remain open, visible and independently closable. */
+@media (max-width:900px){
+  .layout{
+    --harri-current-main-nav-height:38px;
+  }
+
+  .project-header-shell{
+    top:var(--harri-current-main-nav-height) !important;
+  }
+
+  /* Preserve the original scroll-up behavior when the closed main bar is hidden. */
+  .layout:has(> .site-nav.mobile-scroll-hidden:not(.menu-open))
+  .project-header-shell{
+    top:0 !important;
   }
 }
 
@@ -2120,7 +2223,9 @@
     {% assign has_section_navigation = false %}
     {% for section in page.sections %}
       {% unless abstract_uses_first_section and forloop.first %}
-        {% if section.navigation and section.navigation != "none" %}
+        {% if section.nav_column and section.nav_column != "none" %}
+          {% assign has_section_navigation = true %}
+        {% elsif section.navigation and section.navigation != "none" %}
           {% assign has_section_navigation = true %}
         {% endif %}
       {% endunless %}
@@ -2129,7 +2234,12 @@
     <div class="research-intro-screen">
       <div class="project-header-shell">
         <div class="project-title-row">
-          <div class="project-title">{{ page.title }}</div>
+          <div class="project-title">
+          {% if page.research_type %}
+            <span class="project-title-desktop">{{ page.research_type }}</span>
+          {% endif %}
+          <span class="project-title-mobile">{{ page.mobile_research_title | default: page.title }}</span>
+        </div>
           <button class="mobile-project-toc-toggle" type="button" aria-label="Open text navigation" aria-expanded="false">
             <span aria-hidden="true">+</span>
           </button>
@@ -2147,12 +2257,18 @@
 
                 {% for section in page.sections %}
                   {% unless abstract_uses_first_section and forloop.first %}
-                    {% if section.navigation == "left_title" or section.navigation == "left_subtitle" %}
+                    {% assign nav_side = section.nav_column %}
+                    {% if nav_side == blank %}
+                      {% if section.navigation == "left_title" or section.navigation == "left_subtitle" %}{% assign nav_side = "left" %}{% endif %}
+                    {% endif %}
+                    {% if nav_side == "left" %}
                       {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
                       {% assign section_anchor = section_anchor | strip %}
                       {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
-                      <div class="mobile-toc-auto-item {% if section.navigation == 'left_title' %}mobile-toc-auto-title{% else %}mobile-toc-auto-subtitle{% endif %}">
-                        <a {% if section.navigation == "left_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ navigation_label }}</a>
+                      {% assign level = section.heading_level %}
+                      {% if level == blank %}{% if section.navigation == "left_title" or section.navigation == "right_title" %}{% assign level = "h1" %}{% else %}{% assign level = "h2" %}{% endif %}{% endif %}
+                      <div class="mobile-toc-auto-item mobile-toc-auto-{{ level }}">
+                        <a {% if level == "h1" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ navigation_label }}</a>
                       </div>
                     {% endif %}
                   {% endunless %}
@@ -2162,12 +2278,18 @@
               <div class="mobile-toc-col">
                 {% for section in page.sections %}
                   {% unless abstract_uses_first_section and forloop.first %}
-                    {% if section.navigation == "right_title" or section.navigation == "right_subtitle" %}
+                    {% assign nav_side = section.nav_column %}
+                    {% if nav_side == blank %}
+                      {% if section.navigation == "right_title" or section.navigation == "right_subtitle" %}{% assign nav_side = "right" %}{% endif %}
+                    {% endif %}
+                    {% if nav_side == "right" %}
                       {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
                       {% assign section_anchor = section_anchor | strip %}
                       {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
-                      <div class="mobile-toc-auto-item {% if section.navigation == 'right_title' %}mobile-toc-auto-title{% else %}mobile-toc-auto-subtitle{% endif %}">
-                        <a {% if section.navigation == "right_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ navigation_label }}</a>
+                      {% assign level = section.heading_level %}
+                      {% if level == blank %}{% if section.navigation == "left_title" or section.navigation == "right_title" %}{% assign level = "h1" %}{% else %}{% assign level = "h2" %}{% endif %}{% endif %}
+                      <div class="mobile-toc-auto-item mobile-toc-auto-{{ level }}">
+                        <a {% if level == "h1" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ navigation_label }}</a>
                       </div>
                     {% endif %}
                   {% endunless %}
@@ -2231,27 +2353,35 @@
       {% unless abstract_uses_first_section and forloop.first %}
         {% capture section_id %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
         {% assign section_id = section_id | strip %}
-        {% assign is_chapter_target = false %}
+        {% assign section_level = section.heading_level %}
 
-        {% if section.navigation %}
+        {% if section_level == blank %}
           {% if section.navigation == "left_title" or section.navigation == "right_title" %}
-            {% assign is_chapter_target = true %}
+            {% assign section_level = "h1" %}
+          {% else %}
+            {% assign section_level = "h2" %}
           {% endif %}
-        {% elsif page.toc_columns and page.toc_columns.size > 0 %}
-          {% for column in page.toc_columns %}
-            {% for group in column.groups %}
-              {% if group.title.section_id == section_id %}
-                {% assign is_chapter_target = true %}
-              {% endif %}
+
+          {% if section.navigation == blank and page.toc_columns and page.toc_columns.size > 0 %}
+            {% for column in page.toc_columns %}
+              {% for group in column.groups %}
+                {% if group.title.section_id == section_id %}
+                  {% assign section_level = "h1" %}
+                {% endif %}
+              {% endfor %}
             {% endfor %}
-          {% endfor %}
+          {% endif %}
         {% endif %}
 
         <section id="{{ section_id }}" class="anchor-target">
-          {% if is_chapter_target and section.heading %}
-            <h1 class="chapter-heading">{{ section.heading }}</h1>
-          {% elsif section.heading %}
-            <h2>{{ section.heading }}</h2>
+          {% if section.heading %}
+            {% if section_level == "h1" %}
+              <h1 class="chapter-heading">{{ section.heading }}</h1>
+            {% elsif section_level == "h3" %}
+              <h3>{{ section.heading }}</h3>
+            {% else %}
+              <h2>{{ section.heading }}</h2>
+            {% endif %}
           {% endif %}
           <div class="research-copy">{{ section.body | markdownify }}</div>
         </section>
@@ -2271,12 +2401,18 @@
 
           {% for section in page.sections %}
             {% unless abstract_uses_first_section and forloop.first %}
-              {% if section.navigation == "left_title" or section.navigation == "left_subtitle" %}
+              {% assign nav_side = section.nav_column %}
+              {% if nav_side == blank %}
+                {% if section.navigation == "left_title" or section.navigation == "left_subtitle" %}{% assign nav_side = "left" %}{% endif %}
+              {% endif %}
+              {% if nav_side == "left" %}
                 {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
                 {% assign section_anchor = section_anchor | strip %}
                 {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
-                <div class="toc-auto-item {% if section.navigation == 'left_title' %}toc-auto-title{% else %}toc-auto-subtitle{% endif %}">
-                  <a {% if section.navigation == "left_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ navigation_label }}</a>
+                {% assign level = section.heading_level %}
+                {% if level == blank %}{% if section.navigation == "left_title" or section.navigation == "right_title" %}{% assign level = "h1" %}{% else %}{% assign level = "h2" %}{% endif %}{% endif %}
+                <div class="toc-auto-item toc-auto-{{ level }}">
+                  <a {% if level == "h1" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ navigation_label }}</a>
                 </div>
               {% endif %}
             {% endunless %}
@@ -2286,12 +2422,18 @@
         <div class="toc-col">
           {% for section in page.sections %}
             {% unless abstract_uses_first_section and forloop.first %}
-              {% if section.navigation == "right_title" or section.navigation == "right_subtitle" %}
+              {% assign nav_side = section.nav_column %}
+              {% if nav_side == blank %}
+                {% if section.navigation == "right_title" or section.navigation == "right_subtitle" %}{% assign nav_side = "right" %}{% endif %}
+              {% endif %}
+              {% if nav_side == "right" %}
                 {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
                 {% assign section_anchor = section_anchor | strip %}
                 {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
-                <div class="toc-auto-item {% if section.navigation == 'right_title' %}toc-auto-title{% else %}toc-auto-subtitle{% endif %}">
-                  <a {% if section.navigation == "right_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ navigation_label }}</a>
+                {% assign level = section.heading_level %}
+                {% if level == blank %}{% if section.navigation == "left_title" or section.navigation == "right_title" %}{% assign level = "h1" %}{% else %}{% assign level = "h2" %}{% endif %}{% endif %}
+                <div class="toc-auto-item toc-auto-{{ level }}">
+                  <a {% if level == "h1" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ navigation_label }}</a>
                 </div>
               {% endif %}
             {% endunless %}
@@ -3855,5 +3997,69 @@
 
 {% include desktop-baseline-alignment.html target=".research-abstract-copy" %}
 {% include desktop-top-baseline-alignment.html reference=".brand" target=".project-title" %}
+
+
+
+<script id="research-mobile-dual-menu-stack-v120">
+(function(){
+  const layout = document.querySelector(".layout");
+  const siteNav = document.querySelector(".site-nav");
+  const researchHeader = document.querySelector(".project-header-shell");
+
+  if(!layout || !siteNav || !researchHeader) return;
+
+  const breakpoint = 900;
+  let raf = 0;
+
+  function updateStackHeight(){
+    cancelAnimationFrame(raf);
+
+    raf = requestAnimationFrame(function(){
+      if(window.innerWidth > breakpoint){
+        layout.style.removeProperty("--harri-current-main-nav-height");
+        return;
+      }
+
+      /*
+        Use the actual rendered height, not the closed 38px assumption.
+        ResizeObserver fires throughout the hamburger height animation,
+        so the Research bar follows the menu smoothly as it expands/collapses.
+      */
+      const height = Math.ceil(siteNav.getBoundingClientRect().height);
+      layout.style.setProperty(
+        "--harri-current-main-nav-height",
+        height + "px"
+      );
+    });
+  }
+
+  updateStackHeight();
+
+  if("ResizeObserver" in window){
+    const observer = new ResizeObserver(updateStackHeight);
+    observer.observe(siteNav);
+  }
+
+  const mutationObserver = new MutationObserver(updateStackHeight);
+  mutationObserver.observe(siteNav, {
+    attributes:true,
+    attributeFilter:["class","style"]
+  });
+
+  window.addEventListener("resize", updateStackHeight, {passive:true});
+
+  const mainButton = siteNav.querySelector(".mobile-menu-button");
+  const researchButton = researchHeader.querySelector(".mobile-project-toc-toggle");
+
+  if(mainButton){
+    mainButton.addEventListener("click", updateStackHeight, true);
+  }
+
+  if(researchButton){
+    researchButton.addEventListener("click", updateStackHeight, true);
+  }
+})();
+</script>
+
 </body>
 </html>
