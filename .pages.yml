@@ -67,84 +67,20 @@ content:
       label: Article title — line 2
       type: string
       description: Optional second line of the large title inside the Research article. It is independent from the Navigation title above.
-    - name: toc_columns
-      label: Research template — Project Overview titles & subtitles
-      type: object
-      list:
-        min: 1
-        max: 2
-        collapsible:
-          collapsed: true
-          summary: Column {index}
-      description: Two desktop columns, like the reference layout. Inside each column you can add as many bold titles and subtitle links as you need.
-      fields:
-      - name: groups
-        label: Titles
-        type: object
-        list:
-          min: 1
-          collapsible:
-            collapsed: true
-            summary: '{title}'
-        fields:
-        - name: title
-          label: Chapter title
-          type: object
-          required: true
-          description: A normal navigation link like Header 2, but displayed in bold. Its linked Article Section is automatically displayed as a large Header 1 in the text.
-          fields:
-          - name: label
-            label: Title
-            type: string
-            required: true
-            description: 'For example: Header 1.'
-          - name: section_id
-            label: Linked Article Section ID
-            type: string
-            required: true
-            pattern: ^[a-z0-9-]+$
-            description: Same field used by Header 2 links. It must match the ID of the Article Section this title should scroll to.
-        - name: links
-          label: Subtitles
-          type: object
-          list:
-            collapsible:
-              collapsed: true
-              summary: '{label}'
-          fields:
-          - name: label
-            label: Subtitle
-            type: string
-            required: true
-            description: 'For example: Header 2.'
-          - name: section_id
-            label: Linked Article Section ID
-            type: string
-            required: true
-            description: This must match the ID of the Article Section that this subtitle should scroll to.
     - name: sections
-      label: Research template — article sections
+      label: Research article
       type: object
       list:
         min: 1
         collapsible:
           collapsed: true
-          summary: '{nav_label} ({index})'
+          summary: '{heading}'
+      description: Write the article once here. Each section can also be placed directly into the two-column Project Overview navigation; no manual Section IDs or separate navigation structure are needed.
       fields:
-      - name: id
-        label: Section ID
-        type: string
-        description: Short lowercase ID such as overview, process, typography.
-        pattern: ^[a-z0-9-]+$
-        required: true
-      - name: nav_label
-        label: Navigation label
-        type: string
-        required: true
       - name: heading
-        label: Section heading
+        label: Section title
         type: string
-        description: Text heading for this section. Sections linked by a bold chapter title are automatically shown as large Header 1 headings; sections linked as subtitles are shown as Header 2. The first section uses the large project title above, so this can be blank there.
+        description: The heading shown in the article. For the opening section, you can leave this blank if the large Article title above should act as the heading.
       - name: body
         label: Section text
         type: rich-text
@@ -152,15 +88,46 @@ content:
           format: markdown
           switcher: false
           media: false
-        description: Type [fig:1], [fig:2], etc. anywhere in the text. It is published as (Fig. 1), (Fig. 2), etc.
+        description: Write normally. To cite an image, simply type (Fig. 1), (Fig. 2), etc. The website detects these references automatically.
+      - name: navigation
+        label: Project Overview navigation
+        type: select
+        default: none
+        options:
+          values:
+          - name: none
+            label: Do not show this section
+          - name: left_title
+            label: Left column — bold title
+          - name: left_subtitle
+            label: Left column — subtitle
+          - name: right_title
+            label: Right column — bold title
+          - name: right_subtitle
+            label: Right column — subtitle
+        description: Choose where this same article section should appear in the Project Overview. The link is created automatically.
+      - name: nav_label
+        label: Navigation label (optional)
+        type: string
+        description: Leave blank to use the Section title. Fill this only if you want a shorter/different label in the Project Overview.
+      - name: id
+        label: Legacy Section ID
+        type: string
+        hidden: true
+        description: Kept invisibly so older Research projects remain compatible.
     - name: figures
-      label: Research template — figures
+      label: Research figures
       type: object
       list:
         collapsible:
           collapsed: true
-          summary: Figure {index}
+          summary: 'Fig. {number}'
+      description: Add the image that corresponds to each (Fig. X) written in your article. Figure references in the text are detected automatically.
       fields:
+      - name: number
+        label: Figure number
+        type: number
+        description: 'Enter the number used in your text. Example: enter 3 for (Fig. 3). Older figures without a number continue to use their list order.'
       - name: image
         label: Image
         type: image
@@ -174,6 +141,41 @@ content:
         label: Alt text
         type: text
         description: Briefly describe the image for accessibility.
+    - name: toc_columns
+      label: Legacy Project Overview data
+      type: object
+      hidden: true
+      description: Preserved invisibly for backwards compatibility with older Research projects.
+      list:
+        min: 1
+        max: 2
+      fields:
+      - name: groups
+        label: Legacy groups
+        type: object
+        list: true
+        fields:
+        - name: title
+          label: Legacy title
+          type: object
+          fields:
+          - name: label
+            label: Label
+            type: string
+          - name: section_id
+            label: Section ID
+            type: string
+        - name: links
+          label: Legacy links
+          type: object
+          list: true
+          fields:
+          - name: label
+            label: Label
+            type: string
+          - name: section_id
+            label: Section ID
+            type: string
     - name: project_type
       label: Work template — project description / type
       type: string
