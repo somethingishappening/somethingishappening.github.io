@@ -39,10 +39,14 @@ content:
       order: asc
     fields:
     - name: title
-      label: Navigation title
+      label: Project name
       type: string
       required: true
-      description: Shown in the main site navigation. It is also the default name used in the mobile Research bar unless you set the optional mobile name below.
+      description: The default project name. It is used when an optional Main menu name or Mobile Research navigation name is left blank.
+    - name: menu_title
+      label: Main menu name (optional)
+      type: string
+      description: Optional shorter or different name shown only in the main website navigation. Leave blank to use Project name.
     - name: mobile_research_title
       label: Mobile Research navigation name (optional)
       type: string
@@ -68,11 +72,11 @@ content:
       type: string
       description: Small text shown above the large Research project title, like the project type in the Work template. Examples: Typographic Research, Visual Research, Publication, Research Project.
     - name: headline_line_1
-      label: Article title — line 1
+      label: Displayed project title — line 1
       type: string
       description: First line of the large title inside the Research article. It is independent from the Navigation title above.
     - name: headline_line_2
-      label: Article title — line 2
+      label: Displayed project title — line 2
       type: string
       description: Optional second line of the large title inside the Research article. It is independent from the Navigation title above.
     - name: abstract
@@ -294,9 +298,14 @@ content:
       order: asc
     fields:
     - name: title
-      label: Navigation title
+      label: Project name
       type: string
       required: true
+      description: Default project name. Leave Main menu name blank to use this in the website navigation.
+    - name: menu_title
+      label: Main menu name (optional)
+      type: string
+      description: Optional shorter or different name shown only in the main website navigation. Leave blank to use Project name.
     - name: nav_order
       label: Navigation order
       type: number
@@ -305,10 +314,10 @@ content:
       label: Project description / type
       type: string
     - name: title_line_1
-      label: Large title — line 1
+      label: Displayed project title — line 1
       type: string
     - name: title_line_2
-      label: Large title — line 2
+      label: Displayed project title — line 2
       type: string
     - name: description
       label: Project description
@@ -385,9 +394,14 @@ content:
       order: asc
     fields:
     - name: title
-      label: Navigation title
+      label: Project name
       type: string
       required: true
+      description: Default project name. Leave Main menu name blank to use this in the website navigation.
+    - name: menu_title
+      label: Main menu name (optional)
+      type: string
+      description: Optional shorter or different name shown only in the main website navigation. Leave blank to use Project name.
     - name: nav_order
       label: Navigation order
       type: number
@@ -396,10 +410,10 @@ content:
       label: Project description / type
       type: string
     - name: title_line_1
-      label: Large title — line 1
+      label: Displayed project title — line 1
       type: string
     - name: title_line_2
-      label: Large title — line 2
+      label: Displayed project title — line 2
       type: string
     - name: description
       label: Project description
