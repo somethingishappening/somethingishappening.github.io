@@ -65,7 +65,7 @@
           <div class="project-links{% unless research_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in research_projects %}
-                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.title }}</a>
+                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.menu_title | default: project.title }}</a>
               {% endfor %}
             </div>
           </div>
@@ -86,7 +86,7 @@
           <div class="project-links{% unless design_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in design_projects %}
-                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.title }}</a>
+                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.menu_title | default: project.title }}</a>
               {% endfor %}
             </div>
           </div>
@@ -107,7 +107,7 @@
           <div class="project-links{% unless artistic_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in artistic_projects %}
-                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.title }}</a>
+                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.menu_title | default: project.title }}</a>
               {% endfor %}
             </div>
           </div>
