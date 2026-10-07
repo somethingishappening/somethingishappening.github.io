@@ -112,7 +112,7 @@
 
         /*
           Always measure from the target's natural, unshifted position.
-          The footer remains the fixed reference; only the main text moves.
+          The footer remains the preferred reference; only the main text moves.
         */
         target.style.transform = "";
 
@@ -120,10 +120,38 @@
 
         const targetBaseline = targetMarker.getBoundingClientRect().top;
         const footerBaseline = footerMarker.getBoundingClientRect().top;
-        const delta = footerBaseline - targetBaseline;
+        const desiredDelta = footerBaseline - targetBaseline;
+
+        /*
+          Short-height desktop protection.
+
+          Exact footer-baseline alignment can require a large negative
+          translation when the browser is wide but vertically short. In a
+          clipped desktop column that could move the first line above the
+          visible top edge.
+
+          Clamp only that upward movement. The text may stop slightly above
+          the footer baseline on very short windows, but it can never be
+          cropped from the top. As soon as there is enough height again,
+          desiredDelta becomes safe and exact baseline alignment returns.
+        */
+        const naturalRect = target.getBoundingClientRect();
+        const container = target.parentElement;
+
+        let safeTop = 0;
+
+        if(container){
+          const containerRect = container.getBoundingClientRect();
+          const containerStyle = getComputedStyle(container);
+          const paddingTop = parseFloat(containerStyle.paddingTop) || 0;
+          safeTop = containerRect.top + paddingTop;
+        }
+
+        const minimumSafeDelta = safeTop - naturalRect.top;
+        const appliedDelta = Math.max(desiredDelta, minimumSafeDelta);
 
         target.style.transform =
-          "translateY(" + delta.toFixed(2) + "px)";
+          "translateY(" + appliedDelta.toFixed(2) + "px)";
       });
     }
 
