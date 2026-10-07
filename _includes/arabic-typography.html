@@ -1,0 +1,146 @@
+<style id="harri-arabic-typography">
+/* Site-wide Arabic typography */
+.arabic-inline,
+[lang="ar"],
+[dir="rtl"].arabic-block{
+  font-family:"IBM Plex Sans Arabic", Arial, sans-serif !important;
+}
+
+.arabic-inline{
+  unicode-bidi:isolate;
+  direction:rtl;
+}
+
+.arabic-block{
+  direction:rtl;
+  unicode-bidi:isolate;
+}
+</style>
+
+<script id="harri-arabic-typography-script">
+(function(){
+  const arabicRE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+  const arabicRunRE = /([\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF][\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u064B-\u065F\u0670\u06D6-\u06ED\u200C\u200D\u0640\s،؛؟«»٪٫٬0-9٠-٩۰-۹\-–—()]*[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF])/g;
+
+  const skipTags = new Set([
+    "SCRIPT","STYLE","NOSCRIPT","TEXTAREA","INPUT","SELECT","OPTION",
+    "CODE","PRE","SVG","PATH","CANVAS"
+  ]);
+
+  function isPredominantlyArabic(text){
+    const letters = (text || "").match(/[A-Za-z\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/g) || [];
+    if(!letters.length) return false;
+    const arabic = letters.filter(function(ch){ return arabicRE.test(ch); }).length;
+    return arabic / letters.length > 0.6;
+  }
+
+  function wrapArabicRuns(root){
+    const walker = document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node){
+          if(!node.nodeValue || !arabicRE.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+
+          const parent = node.parentElement;
+          if(!parent || skipTags.has(parent.tagName)) return NodeFilter.FILTER_REJECT;
+          if(parent.closest(".arabic-inline, .arabic-block, [lang='ar']")) return NodeFilter.FILTER_REJECT;
+
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+
+    const nodes = [];
+    while(walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(function(node){
+      const text = node.nodeValue;
+      arabicRunRE.lastIndex = 0;
+      if(!arabicRunRE.test(text)) return;
+      arabicRunRE.lastIndex = 0;
+
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      let match;
+
+      while((match = arabicRunRE.exec(text))){
+        if(match.index > last){
+          frag.appendChild(document.createTextNode(text.slice(last, match.index)));
+        }
+
+        const bdi = document.createElement("bdi");
+        bdi.className = "arabic-inline";
+        bdi.lang = "ar";
+        bdi.dir = "rtl";
+        bdi.textContent = match[0];
+        frag.appendChild(bdi);
+
+        last = match.index + match[0].length;
+      }
+
+      if(last < text.length){
+        frag.appendChild(document.createTextNode(text.slice(last)));
+      }
+
+      node.parentNode.replaceChild(frag, node);
+    });
+
+    /*
+      If a whole visible block is predominantly Arabic, mark the block RTL.
+      Inline mixed-language paragraphs remain in their original direction.
+    */
+    root.querySelectorAll(
+      "p, li, figcaption, h1, h2, h3, h4, h5, h6, .project-name, .section-title, .nav-section-title, .about-copy, .cv-item, .project-description, .article-body"
+    ).forEach(function(el){
+      if(el.closest("script, style, textarea, code, pre")) return;
+      const text = el.textContent.trim();
+      if(text && isPredominantlyArabic(text)){
+        el.classList.add("arabic-block");
+        el.lang = "ar";
+        el.dir = "rtl";
+      }
+    });
+  }
+
+  function run(){
+    wrapArabicRuns(document.body);
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", run, {once:true});
+  } else {
+    run();
+  }
+
+  /*
+    CMS-rendered or dynamically injected content may arrive after page load.
+    Process only newly added nodes, without disturbing existing wrappers.
+  */
+  if("MutationObserver" in window){
+    const observer = new MutationObserver(function(mutations){
+      mutations.forEach(function(mutation){
+        mutation.addedNodes.forEach(function(node){
+          if(node.nodeType === 1){
+            wrapArabicRuns(node);
+          } else if(
+            node.nodeType === 3 &&
+            node.parentElement &&
+            arabicRE.test(node.nodeValue || "")
+          ){
+            wrapArabicRuns(node.parentElement);
+          }
+        });
+      });
+    });
+
+    if(document.body){
+      observer.observe(document.body, {childList:true, subtree:true});
+    } else {
+      document.addEventListener("DOMContentLoaded", function(){
+        observer.observe(document.body, {childList:true, subtree:true});
+      }, {once:true});
+    }
+  }
+})();
+</script>

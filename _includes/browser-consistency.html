@@ -1,0 +1,72 @@
+<style id="harri-browser-consistency">
+/*
+  HARRI.LA BROWSER CONSISTENCY LAYER
+  ----------------------------------
+  Preserve the approved full-width design exactly.
+  No max-width artboard, no centering, no new outer margins,
+  no changed grid columns or page spacing.
+*/
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  font-synthesis:none;
+}
+
+body{
+  font-synthesis:none;
+  font-kerning:normal;
+  font-optical-sizing:auto;
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+img,
+video{
+  max-width:100%;
+}
+
+/* Prevent browser-specific intrinsic sizing from changing grid tracks. */
+.about-layout > *,
+.layout > *{
+  min-width:0;
+}
+
+/* Keep the existing viewport-based composition, but use the modern
+   dynamic viewport unit when supported so Safari/Chrome agree more closely
+   about visible browser height. This does not alter the approved geometry. */
+@supports (height:100dvh){
+  @media (min-width:901px){
+    .about-layout{
+      height:100dvh;
+    }
+
+    .page-work .layout,
+    .page-research .layout,
+    .page-harrilanpuisto .layout{
+      min-height:100dvh;
+    }
+
+    .page-work .left,
+    .page-work .project-info,
+    .page-harrilanpuisto .left,
+    .page-harrilanpuisto .project-info{
+      height:calc(100dvh - 58px);
+    }
+
+    .page-research .left,
+    .page-research .right{
+      height:calc(100dvh - 56px);
+    }
+
+    .page-work .media-item,
+    .page-harrilanpuisto .media-item{
+      min-height:calc(100dvh - 58px);
+    }
+  }
+}
+</style>
