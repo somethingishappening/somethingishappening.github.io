@@ -1357,7 +1357,8 @@ button{font:inherit;color:inherit}
    can collide with the media column. Mobile still begins at 900px. */
 @media (min-width:901px) and (max-width:1250px){
   .project-type{
-    font-size:clamp(21px,2.1vw,25px) !important;
+    font-size:27px !important;
+    line-height:1 !important;
   }
 
   .project-info h1{
@@ -1393,9 +1394,39 @@ button{font:inherit;color:inherit}
   }
 }
 
+
+/* DESKTOP PRIMARY TITLE SIZE — always identical to Harri.la. */
+@media (min-width:901px){
+  .brand,
+  .project-type{
+    font-size:27px !important;
+    line-height:1 !important;
+  }
+}
+
 </style>
+
+{% if page.collection == "design" or page.collection == "artistic" %}
+<style id="design-artistic-mobile-research-gap">
+@media (max-width:900px){
+  /* Research mobile text -> figure = 14px.
+     Preserve the existing final paragraph's 14px bottom margin and remove
+     only the extra Work-template spacing after the description. */
+  .project-description{
+    margin-bottom:0 !important;
+  }
+
+  .media-column{
+    margin-top:0 !important;
+  }
+}
+</style>
+{% endif %}
+
+  {% include browser-consistency.html %}
+  {% include arabic-typography.html %}
 </head>
-<body>
+<body class="page-work">
 <div class="layout">
   {% include nav.html %}
 
@@ -1827,5 +1858,11 @@ lightbox.addEventListener("touchend", e=>{
 })();
 </script>
 
+{% if page.collection == "design" or page.collection == "artistic" %}
+  {% include desktop-baseline-alignment.html target=".project-description" %}
+{% endif %}
+{% if page.collection == "design" or page.collection == "artistic" %}
+  {% include desktop-top-baseline-alignment.html reference=".brand" target=".project-type" %}
+{% endif %}
 </body>
 </html>

@@ -725,8 +725,10 @@ html.nav-state-syncing .nav-group *{
 }
 
 </style>
+  {% include browser-consistency.html %}
+  {% include arabic-typography.html %}
 </head>
-<body>
+<body class="page-about">
 <div class="about-layout">
   {% include nav.html %}
 
@@ -1455,6 +1457,6 @@ html.nav-state-syncing .nav-group *{
   showHeader();
 })();
 </script>
-
+{% include desktop-baseline-alignment.html target=".about-copy" %}
 </body>
 </html>

@@ -1960,9 +1960,51 @@
   }
 }
 
+
+/* DESKTOP PRIMARY TITLE SIZE — always identical to Harri.la. */
+@media (min-width:901px){
+  .brand,
+  .project-title{
+    font-size:27px !important;
+    line-height:1 !important;
+  }
+}
+
+</style>
+{% include browser-consistency.html %}
+  {% include arabic-typography.html %}
+<style id="research-dual-menu-spacing-v110">
+/*
+  MOBILE RESEARCH ONLY — only while BOTH menus are open.
+
+  Use the same divider rhythm as the primary mobile navigation:
+  Harri.la -> divider -> Design Research.
+
+  Therefore the Research separator uses:
+  - 8px breathing room above the divider after the email
+  - 9px breathing room below the divider before the secondary menu
+
+  The divider itself remains a real 1px full-width menu border.
+*/
+@media (max-width:900px){
+  .layout:has(> .site-nav.menu-open):has(> .paper > .project-header-shell.toc-open)
+  > .site-nav{
+    --harri-menu-open-pad-bottom:8px;
+  }
+
+  .layout:has(> .site-nav.menu-open):has(> .paper > .project-header-shell.toc-open)
+  > .site-nav .main-menu-panel-inner{
+    border-bottom-color:#111 !important;
+  }
+
+  .layout:has(> .site-nav.menu-open):has(> .paper > .project-header-shell.toc-open)
+  > .paper > .project-header-shell > .project-title-row{
+    padding-top:9px !important;
+  }
+}
 </style>
 </head>
-<body>
+<body class="page-research">
 
 <div class="layout">
   {% include nav.html %}
@@ -3508,5 +3550,42 @@
 })();
 </script>
 
+
+<script id="research-dual-menu-height-sync">
+(function(){
+  const researchHeader = document.querySelector(".project-header-shell");
+  const siteNav = document.querySelector(".site-nav");
+  if(!researchHeader || !siteNav) return;
+
+  function syncMainMenuHeight(){
+    if(
+      window.innerWidth <= 900 &&
+      siteNav.classList.contains("menu-open") &&
+      typeof siteNav._harriRetargetOpenMenu === "function"
+    ){
+      requestAnimationFrame(function(){
+        siteNav._harriRetargetOpenMenu();
+      });
+    }
+  }
+
+  const observer = new MutationObserver(function(mutations){
+    if(mutations.some(function(m){
+      return m.type === "attributes" && m.attributeName === "class";
+    })){
+      syncMainMenuHeight();
+    }
+  });
+
+  observer.observe(researchHeader, {
+    attributes:true,
+    attributeFilter:["class"]
+  });
+
+  window.addEventListener("resize", syncMainMenuHeight, {passive:true});
+})();
+</script>
+
+{% include desktop-top-baseline-alignment.html reference=".brand" target=".project-title" %}
 </body>
 </html>
