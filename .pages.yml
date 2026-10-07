@@ -67,6 +67,14 @@ content:
       label: Article title — line 2
       type: string
       description: Optional second line of the large title inside the Research article. It is independent from the Navigation title above.
+    - name: abstract
+      label: Abstract / project summary
+      type: rich-text
+      options:
+        format: markdown
+        switcher: false
+        media: false
+      description: This is the text shown in the first Research screen. On desktop its final line aligns with the footer email baseline. It is automatically linked as “Abstract” in the Research navigation.
     - name: sections
       label: Research article
       type: object
@@ -75,7 +83,7 @@ content:
         collapsible:
           collapsed: true
           summary: '{heading}'
-      description: Write the article once here. Each section can also be placed directly into the two-column Project Overview navigation; no manual Section IDs or separate navigation structure are needed.
+      description: Add the article sections that come after the Abstract. Each section can also be placed directly into the two-column Project Overview navigation; no manual Section IDs or separate navigation structure are needed.
       fields:
       - name: heading
         label: Section title
@@ -88,7 +96,7 @@ content:
           format: markdown
           switcher: false
           media: false
-        description: Write normally. To cite an image, simply type (Fig. 1), (Fig. 2), etc. The website detects these references automatically.
+        description: Write normally. Heading 2 is body-size bold; Heading 3 is body-size regular. Both keep the Research heading spacing rhythm. To cite an image, simply type (Fig. 1), (Fig. 2), etc. The website detects these references automatically.
       - name: navigation
         label: Project Overview navigation
         type: select
