@@ -1970,6 +1970,19 @@
   }
 }
 
+
+/* ARTICLE-SECTIONS-AS-NAVIGATION */
+.toc-auto-item,
+.mobile-toc-auto-item{margin:0;}
+.toc-auto-title{margin-top:12px;}
+.toc-col .toc-auto-title:first-of-type{margin-top:0;}
+.mobile-toc-auto-title{margin-top:10px;}
+.mobile-toc-col .mobile-toc-auto-title:first-of-type{margin-top:0;}
+.toc-auto-title > a,
+.mobile-toc-auto-title > a{font-weight:700 !important;line-height:1.04 !important;}
+.toc-auto-subtitle > a,
+.mobile-toc-auto-subtitle > a{font-weight:400 !important;}
+
 </style>
 {% include browser-consistency.html %}
   {% include arabic-typography.html %}
@@ -2010,6 +2023,13 @@
   {% include nav.html %}
 
   <main class="paper" id="paper">
+    {% assign has_section_navigation = false %}
+    {% for section in page.sections %}
+      {% if section.navigation and section.navigation != "none" %}
+        {% assign has_section_navigation = true %}
+      {% endif %}
+    {% endfor %}
+
     <div class="project-header-shell">
       <div class="project-title-row">
         <div class="project-title">{{ page.title }}</div>
@@ -2021,14 +2041,40 @@
       <nav class="mobile-toc" aria-label="Article navigation">
         <span class="mobile-toc-arrow" aria-hidden="true">→</span>
 
-        {% if page.toc_columns and page.toc_columns.size > 0 %}
+        {% if has_section_navigation %}
+          <div class="mobile-toc-columns">
+            <div class="mobile-toc-col">
+              {% for section in page.sections %}
+                {% if section.navigation == "left_title" or section.navigation == "left_subtitle" %}
+                  {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+                  {% assign section_anchor = section_anchor | strip %}
+                  {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
+                  <div class="mobile-toc-auto-item {% if section.navigation == 'left_title' %}mobile-toc-auto-title{% else %}mobile-toc-auto-subtitle{% endif %}">
+                    <a {% if section.navigation == "left_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ navigation_label }}</a>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <div class="mobile-toc-col">
+              {% for section in page.sections %}
+                {% if section.navigation == "right_title" or section.navigation == "right_subtitle" %}
+                  {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+                  {% assign section_anchor = section_anchor | strip %}
+                  {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
+                  <div class="mobile-toc-auto-item {% if section.navigation == 'right_title' %}mobile-toc-auto-title{% else %}mobile-toc-auto-subtitle{% endif %}">
+                    <a {% if section.navigation == "right_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ navigation_label }}</a>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% elsif page.toc_columns and page.toc_columns.size > 0 %}
           <div class="mobile-toc-columns">
             {% for column in page.toc_columns %}
               <div class="mobile-toc-col">
                 {% for group in column.groups %}
                   <div class="mobile-toc-group">
                     <a class="toc-group-title" href="#{{ group.title.section_id }}" data-mobile-section="{{ group.title.section_id }}">{{ group.title.label }}</a>
-
                     {% for item in group.links %}
                       <a href="#{{ item.section_id }}" data-mobile-section="{{ item.section_id }}">{{ item.label }}</a>
                     {% endfor %}
@@ -2038,23 +2084,27 @@
             {% endfor %}
           </div>
         {% else %}
-          <div class="mobile-toc-columns">
-            <div class="mobile-toc-col">
-              {% for section in page.sections %}
-                {% assign section_id = section.id | default: section.nav_label | slugify %}
-                <a href="#{{ section_id }}" data-mobile-section="{{ section_id }}">{{ section.nav_label | default: section.heading | default: "Section" }}</a>
-              {% endfor %}
-            </div>
-          </div>
+          <div class="mobile-toc-columns"><div class="mobile-toc-col">
+            {% for section in page.sections %}
+              {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+              {% assign section_anchor = section_anchor | strip %}
+              <a href="#{{ section_anchor }}" data-mobile-section="{{ section_anchor }}">{{ section.nav_label | default: section.heading | default: "Section" }}</a>
+            {% endfor %}
+          </div></div>
         {% endif %}
       </nav>
     </div>
 
     {% for section in page.sections %}
-      {% assign section_id = section.id | default: section.nav_label | slugify %}
+      {% capture section_id %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+      {% assign section_id = section_id | strip %}
       {% assign is_chapter_target = false %}
 
-      {% if page.toc_columns and page.toc_columns.size > 0 %}
+      {% if section.navigation %}
+        {% if section.navigation == "left_title" or section.navigation == "right_title" %}
+          {% assign is_chapter_target = true %}
+        {% endif %}
+      {% elsif page.toc_columns and page.toc_columns.size > 0 %}
         {% for column in page.toc_columns %}
           {% for group in column.groups %}
             {% if group.title.section_id == section_id %}
@@ -2082,21 +2132,40 @@
 
   <aside class="right" aria-label="Article navigation and figure preview">
     <nav class="toc" aria-label="Table of contents">
-      {% if page.toc_columns and page.toc_columns.size > 0 %}
+      {% if has_section_navigation %}
+        <div class="toc-col">
+          <span class="toc-arrow" aria-hidden="true">→</span>
+          {% for section in page.sections %}
+            {% if section.navigation == "left_title" or section.navigation == "left_subtitle" %}
+              {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+              {% assign section_anchor = section_anchor | strip %}
+              {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
+              <div class="toc-auto-item {% if section.navigation == 'left_title' %}toc-auto-title{% else %}toc-auto-subtitle{% endif %}">
+                <a {% if section.navigation == "left_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ navigation_label }}</a>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="toc-col">
+          {% for section in page.sections %}
+            {% if section.navigation == "right_title" or section.navigation == "right_subtitle" %}
+              {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+              {% assign section_anchor = section_anchor | strip %}
+              {% assign navigation_label = section.nav_label | default: section.heading | default: "Section" %}
+              <div class="toc-auto-item {% if section.navigation == 'right_title' %}toc-auto-title{% else %}toc-auto-subtitle{% endif %}">
+                <a {% if section.navigation == "right_title" %}class="toc-group-title"{% endif %} href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ navigation_label }}</a>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% elsif page.toc_columns and page.toc_columns.size > 0 %}
         {% for column in page.toc_columns %}
           <div class="toc-col">
-            {% if forloop.first %}
-              <span class="toc-arrow" aria-hidden="true">→</span>
-              
-            {% endif %}
-
+            {% if forloop.first %}<span class="toc-arrow" aria-hidden="true">→</span>{% endif %}
             {% for group in column.groups %}
               <div class="toc-group">
                 <a class="toc-group-title" href="#{{ group.title.section_id }}" data-section="{{ group.title.section_id }}">{{ group.title.label }}</a>
-
-                {% for item in group.links %}
-                  <a href="#{{ item.section_id }}" data-section="{{ item.section_id }}">{{ item.label }}</a>
-                {% endfor %}
+                {% for item in group.links %}<a href="#{{ item.section_id }}" data-section="{{ item.section_id }}">{{ item.label }}</a>{% endfor %}
               </div>
             {% endfor %}
           </div>
@@ -2104,10 +2173,10 @@
       {% else %}
         <div class="toc-col">
           <span class="toc-arrow" aria-hidden="true">→</span>
-          
           {% for section in page.sections %}
-            {% assign section_id = section.id | default: section.nav_label | slugify %}
-            <a href="#{{ section_id }}" data-section="{{ section_id }}">{{ section.nav_label | default: section.heading | default: "Section" }}</a>
+            {% capture section_anchor %}{% if section.id %}{{ section.id }}{% else %}section-{{ forloop.index }}{% endif %}{% endcapture %}
+            {% assign section_anchor = section_anchor | strip %}
+            <a href="#{{ section_anchor }}" data-section="{{ section_anchor }}">{{ section.nav_label | default: section.heading | default: "Section" }}</a>
           {% endfor %}
         </div>
       {% endif %}
@@ -2237,7 +2306,8 @@
   }
 
   (rawFigures || []).forEach((fig, index) => {
-    const number = index + 1;
+    const parsedNumber = Number.parseInt(fig.number, 10);
+    const number = Number.isFinite(parsedNumber) && parsedNumber > 0 ? parsedNumber : index + 1;
     figures[`fig${number}`] = {
       label: `Fig. ${number}`,
       src: cmsAssetPath(fig.image || ""),
@@ -2246,13 +2316,57 @@
     };
   });
 
-  /* [fig:3] in the CMS becomes the interactive (Fig. 3) reference. */
-  document.querySelectorAll(".research-copy").forEach(container => {
-    container.innerHTML = container.innerHTML.replace(
-      /\[fig:(\d+)\]/gi,
-      (_, number) => `<span class="figure-ref" tabindex="0" data-figure="fig${number}">(Fig. ${number})</span>`
-    );
-  });
+  /*
+    Write references naturally as (Fig. 1), (Fig. 2), etc.
+    Matching CMS figures become interactive automatically.
+    Legacy [fig:1] syntax remains supported invisibly.
+  */
+  const figureReferencePattern = /(?:\(Fig\.\s*(\d+)\)|\[fig:(\d+)\])/gi;
+
+  function linkFigureReferences(container){
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+      acceptNode(node){
+        if(!node.nodeValue) return NodeFilter.FILTER_REJECT;
+        figureReferencePattern.lastIndex = 0;
+        if(!figureReferencePattern.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+        const parent = node.parentElement;
+        if(!parent || parent.closest(".figure-ref, script, style, code, pre")) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const textNodes = [];
+    while(walker.nextNode()) textNodes.push(walker.currentNode);
+
+    textNodes.forEach(node => {
+      const text = node.nodeValue;
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+      let match;
+      figureReferencePattern.lastIndex = 0;
+
+      while((match = figureReferencePattern.exec(text))){
+        if(match.index > lastIndex) fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+        const number = match[1] || match[2];
+        const key = `fig${number}`;
+        if(figures[key]){
+          const ref = document.createElement("span");
+          ref.className = "figure-ref";
+          ref.tabIndex = 0;
+          ref.dataset.figure = key;
+          ref.textContent = `(Fig. ${number})`;
+          fragment.appendChild(ref);
+        }else{
+          fragment.appendChild(document.createTextNode(`(Fig. ${number})`));
+        }
+        lastIndex = match.index + match[0].length;
+      }
+      if(lastIndex < text.length) fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+      node.parentNode.replaceChild(fragment, node);
+    });
+  }
+
+  document.querySelectorAll(".research-copy").forEach(linkFigureReferences);
 
   /* Build mobile inline figures automatically from those same records. */
   document.querySelectorAll(".research-copy p").forEach(paragraph => {
