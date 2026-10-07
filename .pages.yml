@@ -42,7 +42,11 @@ content:
       label: Navigation title
       type: string
       required: true
-      description: Shown in the main site navigation and in the mobile Research project-name bar. This can be different from the Article title below.
+      description: Shown in the main site navigation. It is also the default name used in the mobile Research bar unless you set the optional mobile name below.
+    - name: mobile_research_title
+      label: Mobile Research navigation name (optional)
+      type: string
+      description: Optional custom name shown only in the mobile Research project navigation bar. Leave blank to use the Navigation title above.
     - name: nav_order
       label: Navigation order
       type: number
