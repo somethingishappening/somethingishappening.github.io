@@ -66,7 +66,7 @@ sections:
       Yaʿmar and states that the diacritic approach was fully completed in the
       2nd century AH [8th century AD] (Abbott, 1939b, p. 39).
     nav_column: left
-  - heading: The Shape Of The Nuqta
+  - heading: The Shape Of A Dot
     heading_level: h2
     body: >-
       Ibn Muqla states that a dot, or “Nuqta,” can take two visual forms: a
@@ -131,7 +131,7 @@ sections:
       balance within textual layouts and compositions. Calligraphers and scribes
       attributed these idiosyncrasies to the dot as an agency or allowance.
     nav_column: left
-  - heading: The Diacritic Separate From The Letter
+  - heading: The Independent Dot
     heading_level: h2
     body: Calligraphers manipulated the dots adorning Arabic letters, managing their
       placement. They moved the marks around, managing the micro-levels of
@@ -152,7 +152,7 @@ sections:
       diacritic experiments with MaryamSoft and QalamBartar, documented in the
       “MaryamSoft” section of this chapter.*
     nav_column: left
-  - heading: The Diacritic As An Ornament (Space / Void Fillers)
+  - heading: The Dot As An Ornament
     heading_level: h3
     body: >-
       Beyond aiding readability and legibility, Arabic diacritics are naturally
@@ -178,7 +178,7 @@ sections:
       colour (Fig. 11). This feature adds another layer of ornamentation and
       playfulness to the written text."
     nav_column: none
-  - heading: Technological Limitations In Modern Typography
+  - heading: Typographic Limitations
     heading_level: h2
     body: >-
       The laborious development of the calligraphic script was not mirrored in
@@ -225,7 +225,7 @@ sections:
       layout, while the individual letters and their dots that make up the text
       block remain untouched.
     nav_column: left
-  - heading: Bounding Box
+  - heading: The Bounding Box
     heading_level: h3
     body: >-
       The concepts and logic that govern modern typesetting and typography
