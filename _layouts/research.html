@@ -2023,13 +2023,19 @@
 @media (min-width:901px){
   .research-intro-screen{
     min-height:100%;
+    height:auto;
     display:flex;
     flex-direction:column;
   }
 
+  /*
+    A short Abstract fills the remainder of the first viewport.
+    A long Abstract is NEVER allowed to shrink below its content height:
+    the intro screen expands naturally and the article starts afterwards.
+  */
   .research-abstract-panel{
-    flex:1 1 auto;
-    min-height:0;
+    flex:1 0 auto;
+    min-height:auto;
     display:flex;
     flex-direction:column;
   }
@@ -2039,6 +2045,8 @@
   }
 
   .research-abstract-copy{
+    flex:0 0 auto;
+    min-height:min-content;
     margin-top:auto;
     max-width:700px;
   }
@@ -2251,6 +2259,22 @@
   .mobile-toc-auto-h3 + .mobile-toc-auto-h1{
     margin-top:10px !important;
   }
+}
+
+
+/* RESEARCH RESIZE FLOW SAFETY — v128
+   Article sections must always consume their true content height. */
+.paper > section.anchor-target{
+  position:relative;
+  height:auto !important;
+  min-height:0;
+  overflow:visible;
+}
+
+.paper .research-copy{
+  height:auto !important;
+  min-height:0;
+  overflow:visible;
 }
 
 </style>

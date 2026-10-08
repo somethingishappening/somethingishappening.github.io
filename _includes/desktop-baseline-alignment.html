@@ -148,7 +148,19 @@
         }
 
         const minimumSafeDelta = safeTop - naturalRect.top;
-        const appliedDelta = Math.max(desiredDelta, minimumSafeDelta);
+
+        /*
+          If the text itself is taller than the available vertical space,
+          baseline-locking is impossible without visually overlapping other
+          content. In that case keep the text in normal document flow.
+          Exact footer alignment automatically returns when it fits again.
+        */
+        const availableHeight = Math.max(0, footerBaseline - safeTop);
+
+        const appliedDelta =
+          naturalRect.height > availableHeight
+            ? 0
+            : Math.max(desiredDelta, minimumSafeDelta);
 
         target.style.transform =
           "translateY(" + appliedDelta.toFixed(2) + "px)";
