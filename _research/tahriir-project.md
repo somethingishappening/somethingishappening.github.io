@@ -393,7 +393,7 @@ sections:
       possible ways to simulate their immediacy in mainstream typesetting
       environments.
     nav_column: left
-  - heading: An Abjad Writing System
+  - heading: An Abjad System
     heading_level: h2
     body: Arabic is a semi-Abjad or partially consonantal writing system. Unlike an
       alphabetic scheme, an abjad system represents only consonants in writing.
