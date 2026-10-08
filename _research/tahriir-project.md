@@ -34,8 +34,8 @@ abstract: >-
   This research was funded by Kone Säätiö and Suomen Kulttuurirahasto (Fig. 1)
 sections:
   - heading: The Dot
-    heading_level: h2
-    nav_column: none
+    heading_level: h1
+    nav_column: left
 figures:
   - number: 1
     image: /assets/uploads/fig-1-1.jpg
