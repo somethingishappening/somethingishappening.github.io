@@ -1,12 +1,12 @@
-HARRI.LA Research navigation arrow fix
+HARRI.LA patch — running text + surprise image
 
-Replace these files in the repository:
-- _layouts/research.html
-- research_0.js
-
-The live layout fix is in _layouts/research.html. research_0.js is included as the matching source/snapshot so the repository stays consistent.
+Replace the four files in your repository's _layouts/ folder with these files.
 
 Changes:
-1. Sections set to "Do not show" no longer become arrow stops. The arrow stays on the nearest preceding visible navigation item (Abstract is the initial fallback).
-2. The modern per-section Show in navigation settings take precedence over legacy toc_columns data, including when every article section is hidden.
-3. Mobile Research links no longer trigger two competing smooth-scroll handlers.
+- Desktop Research running text: line-height 1.2
+- Desktop Research bullet running text: line-height 1.2
+- Desktop Design/Artistic Work running text: line-height 1.2
+- Desktop Harrilanpuisto description running text: line-height 1.2
+- Mini-CV running text: 18px / 1.2 on desktop, 17px / 1.16 on mobile
+- Surprise image remains hidden on initial entry and only becomes eligible after real scrolling reaches the end
+- Preserves the recent hidden-section Research arrow fallback and CV section-title-size restoration

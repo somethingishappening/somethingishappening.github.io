@@ -765,6 +765,22 @@ html.nav-state-syncing .nav-group *{
   }
 }
 
+
+
+/* MINI-CV RUNNING TEXT — match the other content templates */
+@media (min-width:901px){
+  .cv-item{
+    font-size:18px !important;
+    line-height:1.2 !important;
+  }
+}
+@media (max-width:900px){
+  .cv-item{
+    font-size:17px !important;
+    line-height:1.16 !important;
+  }
+}
+
 </style>
   {% include browser-consistency.html %}
   {% include arabic-typography.html %}
@@ -1280,22 +1296,29 @@ html.nav-state-syncing .nav-group *{
 
   chooseSurpriseImage();
 
+  // The surprise must never appear merely because the CV happens to fit
+  // inside a tall viewport. It becomes eligible only after the visitor has
+  // actually scrolled the CV/page away from its initial position.
+  let cvHasUserScrolled = false;
+
   function updateCvSurprise(){
     if(!cvColumn || !cvSurprise) return;
 
     let atEnd = false;
 
-    if(window.innerWidth > 900){
-      atEnd =
-        cvColumn.scrollTop + cvColumn.clientHeight >=
-        cvColumn.scrollHeight - 3;
-    }else{
-      const rect = cvSurprise.getBoundingClientRect();
-      const pageBottom =
-        window.scrollY + window.innerHeight >=
-        document.documentElement.scrollHeight - 3;
+    if(cvHasUserScrolled){
+      if(window.innerWidth > 900){
+        atEnd =
+          cvColumn.scrollTop + cvColumn.clientHeight >=
+          cvColumn.scrollHeight - 3;
+      }else{
+        const rect = cvSurprise.getBoundingClientRect();
+        const pageBottom =
+          window.scrollY + window.innerHeight >=
+          document.documentElement.scrollHeight - 3;
 
-      atEnd = pageBottom && rect.top < window.innerHeight;
+        atEnd = pageBottom && rect.top < window.innerHeight;
+      }
     }
 
     cvSurprise.classList.toggle('revealed',atEnd);
@@ -1303,10 +1326,27 @@ html.nav-state-syncing .nav-group *{
   }
 
   if(cvColumn){
-    cvColumn.addEventListener('scroll',updateCvSurprise,{passive:true});
+    cvColumn.addEventListener('scroll',function(){
+      if(window.innerWidth > 900 && cvColumn.scrollTop > 1){
+        cvHasUserScrolled = true;
+      }
+      updateCvSurprise();
+    },{passive:true});
   }
-  window.addEventListener('scroll',updateCvSurprise,{passive:true});
+  window.addEventListener('scroll',function(){
+    if(window.innerWidth <= 900 && window.scrollY > 1){
+      cvHasUserScrolled = true;
+    }
+    updateCvSurprise();
+  },{passive:true});
   window.addEventListener('resize',updateCvSurprise);
+  window.addEventListener('pageshow',function(){
+    cvHasUserScrolled = false;
+    if(cvSurprise){
+      cvSurprise.classList.remove('revealed');
+      cvSurprise.setAttribute('aria-hidden','true');
+    }
+  });
   requestAnimationFrame(updateCvSurprise);
 
   // Desktop About: wheel/trackpad scrolling anywhere controls Mini-CV.
