@@ -145,12 +145,10 @@ sections:
       surrounding the mark (Fig. 8) (Fig. 9). That level of agency did not carry
       over to mainstream Arabic typography. This lack of command exists due to
       the limitations of time-bound Western technologies used to design
-      typefaces (check the subsection titled “**Bounding Box**” in
-      **Technological Limitations).*Currently, only MaryamSoft lets users
-      manipulate diacritic positioning. However, this software and its typefaces
-      are not available outside the Republic of Iran. This research conducted
-      diacritic experiments with MaryamSoft and QalamBartar, documented in the
-      “MaryamSoft” section of this chapter.*
+      typefaces (check the subsection titled “The Bounding Box” in Technological
+      Limitations)**.**Currently, only MaryamSoft lets users manipulate
+      diacritic positioning. However, this software and its typefaces are not
+      available outside the Republic of Iran*.*
     nav_column: left
   - heading: The Dot As An Ornament
     heading_level: h3
@@ -386,9 +384,9 @@ sections:
     nav_column: left
   - heading: Short Vowels/Sound Marks
     heading_level: h1
-    body: This research primarily**** addresses the loss of the dots in the
-      agencies. However, one cannot study or work on the Nuqat without examining
-      the typographic flexibilities of the short vowels. Short vowels, like the
+    body: This research primarily addresses the loss of the dots in the agencies.
+      However, one cannot study or work on the Nuqat without examining the
+      typographic flexibilities of the short vowels. Short vowels, like the
       Diacritics, are floating marks positioned above or below Arabic letters.
       This section mainly follows the structure of the previous one. It starts
       with the historical development of the marks, their assigned agencies, and
