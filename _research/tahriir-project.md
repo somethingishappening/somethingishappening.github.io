@@ -1,9 +1,10 @@
 ---
-title: Letters, Memory, and Motion
+title: Freeing the dot
 nav_order: 1
 layout: research
-headline_line_1: Letters, Memory,
-headline_line_2: and Motion
+research_type: Arabic typographic research
+headline_line_1: Freeing the dot
+headline_line_2: Reviving Arabic diacritic agencies
 abstract: >-
   Introducing letterpress printing technology to the Arabic script stripped the
   writing system of many of its characteristics. The loss of several integral
@@ -31,7 +32,8 @@ abstract: >-
 
   This research was funded by Kone Säätiö and Suomen Kulttuurirahasto (Fig. 1)
 sections:
-  - body: >-
+  - heading_level: h2
+    body: >-
       This is a temporary content example to show how a longer Research project
       can read when the Project Overview contains five bold chapter titles and
       smaller subtitles beneath them. [fig:1]
@@ -40,10 +42,12 @@ sections:
       The text below is deliberately structured as chapters and subsections so
       you can test the navigation, scrolling, hierarchy, and visual rhythm with
       something closer to real content.
+    nav_column: none
     navigation: none
     nav_label: Introduction
     id: overview
   - heading: Ways of Looking
+    heading_level: h2
     body: >-
       This chapter begins by treating observation as a design method. Rather
       than starting from a fixed solution, it follows small visual clues,
@@ -54,10 +58,12 @@ sections:
       This paragraph adds enough depth to make the scroll transition visible and
       lets the active arrow remain on this chapter while the reader moves
       through its opening text.
+    nav_column: none
     navigation: none
     nav_label: Ways of Looking
     id: ways-of-looking
   - heading: First Encounters
+    heading_level: h2
     body: >-
       Early encounters often determine what becomes visible later. At the
       beginning of the project, sketches, photographs, notes, screenshots, found
@@ -88,10 +94,12 @@ sections:
       after it is transformed? Which details carry memory, and which disappear?
       How much context is necessary before an image, word, or letter begins to
       communicate something specific?
+    nav_column: none
     navigation: none
     nav_label: First Encounters
     id: first-encounters
   - heading: Fragments and References
+    heading_level: h2
     body: >-
       Fragments are placed beside references from different periods and media.
       The aim is not to build a linear archive, but to see how unrelated objects
@@ -120,10 +128,12 @@ sections:
       counters, broken edges—are translated into experiments. The references are
       not copied directly; they are used to define conditions that new forms
       must negotiate.
+    nav_column: none
     navigation: none
     nav_label: Fragments and References
     id: fragments-references
   - heading: The Shape of a Letter
+    heading_level: h2
     body: >-
       The second chapter moves from observation into form. Letterforms become a
       way of testing proportion and pressure [fig:2], while rhythm and the small
@@ -134,10 +144,12 @@ sections:
       This paragraph adds enough depth to make the scroll transition visible and
       lets the active arrow remain on this chapter while the reader moves
       through its opening text.
+    nav_column: none
     navigation: none
     nav_label: The Shape of a Letter
     id: shape-of-a-letter
   - heading: Weight and Counterform
+    heading_level: h2
     body: >-
       Changes in weight alter more than the darkness of a letter. They reshape
       its internal spaces, change the speed of reading, and redistribute
@@ -166,10 +178,12 @@ sections:
       identity, while others benefited from being opened. The resulting system
       accepts small local deviations in order to maintain a more consistent
       overall texture.
+    nav_column: none
     navigation: none
     nav_label: Weight and Counterform
     id: weight-counterform
   - heading: Rhythm in Repetition
+    heading_level: h2
     body: >-
       Repeated forms expose differences that are difficult to notice in
       isolation. Rhythm becomes a tool for comparing spacing, density, and the
@@ -197,10 +211,12 @@ sections:
       stable rhythm than strict duplication. The project therefore treats rhythm
       as a perceptual relation between elements rather than as a measurable
       equality between them.
+    nav_column: none
     navigation: none
     nav_label: Rhythm in Repetition
     id: rhythm-repetition
   - heading: Printed Memory
+    heading_level: h2
     body: >-
       Here the project turns toward reproduction and memory. Printed matter is
       considered not only as a carrier of information, but as an object that
@@ -210,10 +226,12 @@ sections:
       This paragraph adds enough depth to make the scroll transition visible and
       lets the active arrow remain on this chapter while the reader moves
       through its opening text.
+    nav_column: none
     navigation: none
     nav_label: Printed Memory
     id: printed-memory
   - heading: Traces of Use
+    heading_level: h2
     body: >-
       Marks of use introduce evidence of time into the surface. Folds, stains,
       annotations, registration errors, faded ink, and worn edges become part of
@@ -242,10 +260,12 @@ sections:
       Clean digital structures sit beside marks that appear unstable or
       accidental, making the process of reproduction part of the final image
       rather than something hidden behind it.
+    nav_column: none
     navigation: none
     nav_label: Traces of Use
     id: traces-of-use
   - heading: Reproduction and Loss
+    heading_level: h2
     body: >-
       Every reproduction changes something. Scale, contrast, texture, and detail
       are lost or transformed, and those losses can reveal which parts of an
@@ -281,10 +301,12 @@ sections:
       while less essential details were allowed to change. Reproduction became a
       way of testing resilience rather than a final step performed after the
       design was complete.
+    nav_column: none
     navigation: none
     nav_label: Reproduction and Loss
     id: reproduction-loss
   - heading: Systems in Motion
+    heading_level: h2
     body: >-
       The fourth chapter tests what happens when the observations are turned
       into rules. A system is useful here only if it remains open enough to be
@@ -294,10 +316,12 @@ sections:
       This paragraph adds enough depth to make the scroll transition visible and
       lets the active arrow remain on this chapter while the reader moves
       through its opening text.
+    nav_column: none
     navigation: none
     nav_label: Systems in Motion
     id: systems-in-motion
   - heading: Rules and Exceptions
+    heading_level: h2
     body: >-
       Rules create consistency, but exceptions reveal where the system is too
       rigid. The work develops through a continuous negotiation between
@@ -323,10 +347,12 @@ sections:
       more like a framework for making decisions: stable enough to create
       continuity, but flexible enough to respond to differences in content,
       scale, and context.
+    nav_column: none
     navigation: none
     nav_label: Rules and Exceptions
     id: rules-exceptions
   - heading: Testing the Grid
+    heading_level: h2
     body: >-
       The grid is treated as a hypothesis rather than a final answer. Elements
       are moved, repeated, compressed, and misaligned to understand when the
@@ -354,10 +380,12 @@ sections:
       asked whether the same underlying logic could generate different
       arrangements. Consistency shifted from repeated appearance to repeated
       decision-making.
+    nav_column: none
     navigation: none
     nav_label: Testing the Grid
     id: testing-grid
   - heading: What Remains
+    heading_level: h2
     body: >-
       The final chapter gathers what survives the experiments: recurring
       decisions, unresolved tensions, and visual behaviours that remain
@@ -367,10 +395,12 @@ sections:
       This paragraph adds enough depth to make the scroll transition visible and
       lets the active arrow remain on this chapter while the reader moves
       through its opening text.
+    nav_column: none
     navigation: none
     nav_label: What Remains
     id: what-remains
   - heading: Reading the Residue
+    heading_level: h2
     body: >-
       Residue can be read as evidence of process. Instead of presenting only
       polished outcomes, the project keeps selected leftovers that make the
@@ -397,10 +427,12 @@ sections:
       kept because they clarify a decision, others because they introduce
       uncertainty, and many are discarded. What remains is not a comprehensive
       record but a selective map of the project's movement.
+    nav_column: none
     navigation: none
     nav_label: Reading the Residue
     id: reading-residue
   - heading: Open Endings
+    heading_level: h2
     body: >-
       The project closes without trying to resolve every question. The remaining
       gaps become possible starting points for another iteration, another
@@ -427,6 +459,7 @@ sections:
       It records what was learned through the current set of conditions while
       remaining open to modification when those conditions change. The project
       ends at a point where it can be read as complete, but not exhausted.
+    nav_column: none
     navigation: none
     nav_label: Open Endings
     id: open-endings
