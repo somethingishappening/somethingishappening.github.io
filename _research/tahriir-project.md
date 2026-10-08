@@ -146,11 +146,243 @@ sections:
       over to mainstream Arabic typography. This lack of command exists due to
       the limitations of time-bound Western technologies used to design
       typefaces (check the subsection titled “**Bounding Box**” in
-      **Technological Limitations).**Currently, only MaryamSoft lets users
+      **Technological Limitations).*Currently, only MaryamSoft lets users
       manipulate diacritic positioning. However, this software and its typefaces
-      are not available outside the Republic of Iran*. This research conducted
+      are not available outside the Republic of Iran. This research conducted
       diacritic experiments with MaryamSoft and QalamBartar, documented in the
       “MaryamSoft” section of this chapter.*
+    nav_column: left
+  - heading: The Diacritic As An Ornament (Space / Void Fillers)
+    heading_level: h3
+    body: >-
+      Beyond aiding readability and legibility, Arabic diacritics are naturally
+      ornamental. These dots are a defining visual aspect of the script.
+      However, not all dots used in Arabic script aid reading; some can function
+      as ornamental accessories, a feature restricted to the Diwani Jeli script.
+      These embellishments are smaller than their counterparts associated with
+      specific letters. The calligrapher generally adds the Jeli dots after
+      finishing the written calligraphic composition (Fig. 10).
+
+
+      Jeli markers accentuate or highlight the neighbouring negative, unfilled
+      spaces constructed by the calligraphic composition (Massoudy, 2010, p.
+      49). The miniature marks and the negative spaces, created by their
+      absence, create rhythm, movement, and dynamic arrangements within the
+      artwork.
+    nav_column: none
+  - heading: Colored Dots
+    heading_level: h3
+    body: "Although colouring dots is not the norm, dyed dots appear in Arabic
+      Manuscripts. An example appears in the Sultan Baybars Qur’an: the Rasm was
+      executed in gold. In contrast, the diacritics were executed in a different
+      colour (Fig. 11). This feature adds another layer of ornamentation and
+      playfulness to the written text."
+    nav_column: none
+  - heading: Technological Limitations In Modern Typography
+    heading_level: h2
+    body: >-
+      The laborious development of the calligraphic script was not mirrored in
+      its typographic evolution; many of its features were abandoned, forgotten,
+      or unknown to modern typographers, graphic designers, digital artists, and
+      practitioners. Modulating the Arabic script stripped it of its dynamic
+      nature. In his dissertation, Nemeth (2017) states that modifications and
+      simplifications to the manuscript Arabic script were necessary to adapt it
+      to movable-type technology. Nemeth notes that the changes administered to
+      the Arabic script stripped it of its dynamic fluidity (Nemeth, 2017, p.
+      22). The shift from written to typed Arabic meant losing the agency and
+      immediacy calligraphers had enjoyed for centuries.
+
+
+      Arabic diacritics and marks maintained their independence from the Rasm,
+      or body, characters to which they belong. Calligraphers exercised agency
+      over these floating characters, deciding whether to position them above or
+      below the letters depending on the surrounding environment. Scribes used
+      them to create rhythm, compensate for the negative spaces left by the
+      letters, and add movement to calligraphic layouts. Texts benefited from
+      the calligrapher’s immediacy, reacting and morphing depending on the
+      writer’s aesthetic preferences or textual limitations, a license of
+      privilege granted to scribes to freely modify things like diacritics in
+      the moment of writing, depending on what they, the text, or the
+      composition required. Metal type limited this immediacy and agency. Each
+      letter was cased with its corresponding diacritic, creating a rigid and
+      unyielding typographic system void of agency and fluidity, contrary to the
+      notions and values held by its calligraphic ancestor (Fig. 12). This
+      inheritance trickled down to the inner workings of modern typographic
+      design and practices, in the form of the digital bounding box. Nemeth
+      (2017) states that type-building tools are inadequate and cannot provide
+      comprehensive means for Arabic font building, making specific script
+      characteristics, including the control of diacritics and marks,
+      inadequately addressed (Nemeth, 2017, p. 470).
+
+
+      Current Arabic type designers, using commercial type-making tools, build
+      typefaces with little consideration for the manuscript and calligraphic
+      legacy of Arabic diacritics. These rigid outcomes make diacritics static,
+      with their colours, textures, and dimensions predefined by the type
+      designer, limiting the creative and artistic expression of the graphic
+      designer and typographer. Therefore, the room for the modern typesetter’s,
+      analogue or digital, expression only happens at the macro level of the
+      layout, while the individual letters and their dots that make up the text
+      block remain untouched.
+    nav_column: left
+  - heading: Bounding Box
+    heading_level: h3
+    body: >-
+      The concepts and logic that govern modern typesetting and typography
+      standards are rooted in the norms of their letterpress ancestry.
+      Letterpress characters are housed in individual metal boxes; these metal
+      type boxes allowed the typesetter to move, replace, and set individual
+      letters to produce words, sentences, and typographic layouts. The idea of
+      metal or glyph boxes survived the evolution of typographic technology.
+      These confines laid the foundation for modern type creation. At present,
+      type designers develop their letters in what is known as a bounding box
+      (Fig. 13), the modern digital offspring of the analogue metal type box
+      (Fig. 12). Hence, just like Arabic type in the letterpress era, diacritics
+      are locked within the bounding boxes with the letters they belong to,
+      making their manipulation unnecessarily laborious or even unattainable.
+
+
+      Unlike Arabic diacritics, short vowels retained independence throughout
+      the evolution of Arabic typography (Fig. 14). Punch-cutters and
+      typecasters approached these characters as individual characters in their
+      own right. Each mark existed in its metal box and could then be positioned
+      over its corresponding letter by the typesetter. The same procedure
+      trickled down into modern font building. Presently, short vowels exist
+      within their own bounding boxes that appear when prompted by typists and
+      typesetters.
+    nav_column: left
+  - heading: Mainstream Workarounds
+    heading_level: h2
+    body: >-
+      Open-type Arabic typefaces currently lack diacritic manipulation features
+      in long texts. Therefore, a designer or typesetter has to resort to
+      alternative, damaging measures to manipulate or control the dots. The
+      apparent solution would be to outline the desired text and individually
+      select and adjust the diacritics that require modification.
+
+
+      Outlining type can cause multiple problems and setbacks for the designer.
+      First, the approach is laborious and slow because contemporary typesetting
+      software that supports text outlining, such as Adobe InDesign, vectorises
+      text as an inflexible, cohesive entity or compound path, making
+      micro-letter modification extremely difficult. Secondly, these approaches
+      damage the letters and render them uneditable or final once the change is
+      made, making this working method unsustainable. The following instructions
+      demonstrate how to manipulate diacritics by outlining text blocks.
+    nav_column: left
+  - heading: "Alteration Using the Direct Selection Tool "
+    heading_level: h3
+    body: >-
+      • Start by selecting the text block and outlining the type by selecting
+      “Type” and then “Create Outlines.”
+
+
+      • Next, select the shape you want to edit using the Direct Selection Tool.
+
+
+      • Cut the dot by clicking on “Edit”, then “Cut”, or by right-clicking and
+      selecting “Cut.”
+
+
+      • Paste the character back in place by clicking on “Edit” then “Paste In
+      Place” or by right-clicking and selecting “Paste In Place.”
+
+
+      Following the above steps will allow the designer to detach the dot from
+      the rest of the text, allowing them to change it freely (Fig. 15). To
+      manipulate additional marks, the designer has to follow the same steps
+      throughout the text diacritics, individually changing the dots they wish
+      to edit to achieve their required result.
+    nav_column: none
+  - heading: Global Alterations By Moving The Text Block To A Vector Editing
+      Software Like Adobe Illustrator
+    heading_level: h3
+    body: >-
+      The following actions allow the designer to modify the diacritics of only
+      one letter throughout a text.
+
+
+      • Transfer the text block to vector editing software, such as Adobe
+      Illustrator.
+
+
+      • Outline the text by clicking on “Object,” then “Expand...” Or by
+      selecting “Type” and then “Create Outlines.”
+
+
+      • Click the chosen diacritic group twice to enter the individual selection
+      mode—this step is valid if the designer requires the global modification
+      of diacritics of one specific letter.
+
+
+      • Start a global edit by clicking “Select” and then “Start Global Edit.”
+
+
+      • Click the diacritic you want to change again and alter it. The changes
+      will be automatically applied to the rest.
+
+
+      This method lets the designer make global diacritic changes by navigating
+      multiple compound paths to reach the desired diacritic group and adjusting
+      it throughout the text.
+    nav_column: none
+  - heading: "Globally Change All The Diacritics "
+    heading_level: h3
+    body: >-
+      To globally change all the diacritics in a text, the typographer needs to
+      stop after the second step mentioned above and follow the following
+      instructions:
+
+
+      • Select “Object,” then “Compound Path,” and then “Release,” making every
+      element in the text an individual component—but also damaging the closed
+      counters of the typeface (Fig. 16).
+
+
+      • Select the diacritic group you wish to alter and start a global edit by
+      clicking “Select” and then “Start Global Edit.”
+
+
+      • Make the modifications necessary—The changes will be automatically
+      applied to the rest.
+
+
+      • Repair the damage from the first step by going through the whole text
+      and subtracting the closed counters from their characters.
+
+
+      Global Diacritic changes in long texts are nearly impossible without
+      intricate, involved methods. The drawback is that these methods are
+      irreversible. Once the text is vectorised, you can no longer edit its
+      content.
+    nav_column: none
+  - heading: MaryamSoft
+    heading_level: h2
+    body: >-
+      Maryam Soft was founded in 1982 in response to the lack of software
+      support for Persian. Maryam Soft developed QalamBartar, a software that
+      hosts modern and calligraphic fonts by Iranian designers. The software
+      functions as a plug-in across typesetting environments such as InDesign
+      and Microsoft Word. All QalamBartar fonts allow typographic agency through
+      the movement of diacritics, short vowels, and letters. Some fonts also
+      include larger diacritics that designers can substitute into typographic
+      compositions.
+
+
+      I had the privilege of using QalamBartar by MaryamSoft and the typeface
+      Dabir by Amir Mahdi Moslehi for this research. Experimenting with the
+      software yielded many positive and successful results. Typographic agency
+      at the level of letter diacritics is relatively possible with QalamBartar
+      and its respective fonts.
+
+
+      Maryam Soft achieved strides in Arabic and Persian typography. Their
+      software reflects their dedication to advancing the field, and their
+      achievements go beyond the scope of diacritic agencies limited to this
+      research. However, because of geopolitical sanctions on the Islamic
+      Republic of Iran, Maryam Soft's technology and the fonts that work with it
+      are limited to designers and users in Iran. They are not accessible to
+      many working in Arabic typography and graphic design.
     nav_column: left
 figures:
   - number: 1
