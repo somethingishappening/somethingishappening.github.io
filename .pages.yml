@@ -183,6 +183,19 @@ content:
           - name: small
             label: 33%
         description: Controls how wide this figure appears on the Research page. Existing figures without a setting remain full width. The expanded lightbox always uses the full available size.
+      - name: display_alignment
+        label: Alignment in figure area
+        type: select
+        default: left
+        options:
+          values:
+          - name: left
+            label: Left
+          - name: center
+            label: Center
+          - name: right
+            label: Right
+        description: Controls where the figure sits inside its designated figure area. Existing figures remain left aligned unless you choose another alignment.
       - name: caption
         label: Caption
         type: text
