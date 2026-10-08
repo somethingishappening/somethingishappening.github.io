@@ -149,11 +149,11 @@ sections:
       Limitations).
 
 
-      *Currently, only MaryamSoft lets users manipulate diacritic positioning.
+      Currently, only MaryamSoft lets users manipulate diacritic positioning.
       However, this software and its typefaces are not available outside the
       Republic of Iran. This research conducted diacritic experiments with
       MaryamSoft and QalamBartar, documented in the “MaryamSoft” section of this
-      chapter.*
+      chapter.
     nav_column: left
   - heading: The Ornamental Dot
     heading_level: h3
