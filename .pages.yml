@@ -168,6 +168,21 @@ content:
         options:
           media: images
           rename: safe
+      - name: display_size
+        label: Display size on page
+        type: select
+        default: full
+        options:
+          values:
+          - name: full
+            label: 100% — Full figure column
+          - name: large
+            label: 75%
+          - name: medium
+            label: 50%
+          - name: small
+            label: 33%
+        description: Controls how wide this figure appears on the Research page. Existing figures without a setting remain full width. The expanded lightbox always uses the full available size.
       - name: caption
         label: Caption
         type: text
