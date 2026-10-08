@@ -724,6 +724,21 @@ html.nav-state-syncing .nav-group *{
   }
 }
 
+
+
+/* ABOUT DESCRIPTIVE TEXT — DESCENDER VISIBILITY FIX
+   Keep the exact footer-baseline alignment from v134, but let the final
+   biography line paint into the existing bottom padding so glyph descenders
+   (g, y, p, j, etc.) are never clipped by the centre column. */
+@media (min-width:901px){
+  .center{
+    overflow:visible !important;
+  }
+  .about-copy{
+    overflow:visible !important;
+  }
+}
+
 </style>
   {% include browser-consistency.html %}
   {% include arabic-typography.html %}
