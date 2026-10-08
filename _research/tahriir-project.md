@@ -65,7 +65,7 @@ sections:
       Yaʿmar and states that the diacritic approach was fully completed in the
       2nd century AH [8th century AD] (Abbott, 1939b, p. 39).
     nav_column: left
-  - heading: The Shape Of The Nuqta
+  - heading: The Dot's Shape
     heading_level: h2
     body: >-
       Ibn Muqla states that a dot, or “Nuqta,” can take two visual forms: a
