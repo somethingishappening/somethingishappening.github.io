@@ -394,7 +394,7 @@ sections:
       with the historical development of the marks, their assigned agencies, and
       possible ways to simulate their immediacy in mainstream typesetting
       environments.
-    nav_column: none
+    nav_column: left
 figures:
   - number: 1
     image: /assets/uploads/fig-1-1.jpg
