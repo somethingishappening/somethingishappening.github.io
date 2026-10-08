@@ -2334,27 +2334,45 @@
 }
 
 
+
+
 /* ============================================================
-   RESEARCH FLUID DESKTOP/LAPTOP LAYOUT — v132
-   Same composition, but no fixed-width clipping or overlaps.
+   RESEARCH STABLE DESKTOP/LAPTOP ARCHITECTURE — v133
    ============================================================ */
 
 @media (min-width:901px){
 
   /*
-    Keep the three-column composition across desktop/laptop sizes,
-    but allow every rail to shrink safely.
+    One document scroll only.
+    Left and right rails remain sticky, but the Research article itself is
+    ordinary document flow. This prevents browser-specific nested-scroll
+    position glitches when resizing.
   */
+  html,
+  body{
+    height:auto !important;
+    min-height:100%;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+  }
+
   .layout{
-    --research-left-col:clamp(170px, 14vw, 220px);
-    --research-desktop-gap:clamp(18px, 2vw, 28px);
+    --research-left-col:clamp(180px, 14vw, 220px);
+    --research-gap:clamp(20px, 2vw, 28px);
+    --research-figure-hang:43.5vh;
+
+    height:auto !important;
+    min-height:100vh !important;
+    overflow:visible !important;
 
     grid-template-columns:
       var(--research-left-col)
-      minmax(0, 1.10fr)
-      minmax(0, .95fr) !important;
+      minmax(0,745fr)
+      minmax(0,660fr) !important;
 
-    gap:var(--research-desktop-gap) !important;
+    grid-template-rows:auto !important;
+    gap:var(--research-gap) !important;
+    align-items:start !important;
   }
 
   .left,
@@ -2364,15 +2382,51 @@
     max-width:100%;
   }
 
+  .left{
+    position:sticky !important;
+    top:32px !important;
+    height:calc(100vh - 58px) !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  .paper{
+    position:relative !important;
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+    padding-right:0 !important;
+    scrollbar-gutter:auto !important;
+    overflow-anchor:none;
+  }
+
+  .right{
+    position:sticky !important;
+    top:32px !important;
+    height:calc(100vh - 58px) !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+    display:block !important;
+  }
+
   /*
-    PROJECT TITLE
-    A CMS line remains a block, but it may wrap again if the available
-    laptop column is narrower than the entered line.
+    PROJECT DESCRIPTOR + LARGE TITLE
+    Never use a transform on the descriptor. The large title keeps the same
+    desktop point size and wraps naturally inside the centre column.
   */
+  .project-title{
+    transform:none !important;
+    width:100%;
+    max-width:100% !important;
+    white-space:normal !important;
+    overflow-wrap:break-word;
+  }
+
   .paper h1{
     width:100%;
     max-width:100% !important;
-    font-size:clamp(40px, 4.2vw, 54px);
+    font-size:54px !important;
+    line-height:.95 !important;
   }
 
   .paper h1 .title-line{
@@ -2384,82 +2438,8 @@
     word-break:normal;
   }
 
-  .project-title,
-  .research-copy,
-  .research-copy p,
-  .research-copy li,
-  .paper h2,
-  .paper h3,
-  .paper h1.chapter-heading{
-    max-width:100% !important;
-    overflow-wrap:break-word;
-  }
-
-  /*
-    RIGHT RAIL
-    Navigation and figure are now in real grid rows.
-    A figure can never pass underneath the navigation.
-  */
-  .right{
-    display:grid !important;
-    grid-template-rows:auto minmax(min-content, 1fr) !important;
-    gap:clamp(18px, 2.2vh, 26px) !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-    scrollbar-width:none;
-  }
-
-  .right::-webkit-scrollbar{
-    width:0;
-    height:0;
-  }
-
-  .toc{
-    position:relative;
-    z-index:2;
-    width:min(100%, 320px) !important;
-    min-width:0 !important;
-    max-width:100% !important;
-    margin-right:clamp(0px, 4vw, 64px) !important;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-    gap:clamp(14px, 2vw, 34px) !important;
-    background:var(--bg);
-  }
-
-  .toc-col,
-  .toc a{
-    min-width:0;
-    max-width:100%;
-  }
-
-  .toc a{
-    overflow-wrap:break-word;
-  }
-
-  .figure-stage{
-    position:relative !important;
-    top:auto !important;
-    right:auto !important;
-    left:auto !important;
-
-    grid-row:2;
-    align-self:center;
-    justify-self:end;
-
-    width:min(94%, 700px) !important;
-    max-width:100% !important;
-    margin:0 !important;
-
-    z-index:1;
-  }
-
-  /*
-    FIRST SCREEN / ABSTRACT
-    Pure normal-flow layout: no resize transform/min-height JS.
-    Short Abstracts sit at the bottom; long Abstracts simply expand.
-  */
   .research-intro-screen{
-    min-height:100% !important;
+    min-height:calc(100vh - 58px) !important;
     height:auto !important;
     display:flex !important;
     flex-direction:column !important;
@@ -2483,46 +2463,97 @@
   .research-abstract-copy > :last-child{
     margin-bottom:0 !important;
   }
+
+  /*
+    Restore the established Research navigation location.
+    It occupies the same upper-right region as before v132.
+  */
+  .toc{
+    position:absolute !important;
+    top:0 !important;
+    right:20% !important;
+
+    width:min(320px, 80%) !important;
+    min-width:0 !important;
+    max-width:80% !important;
+
+    margin:0 !important;
+    justify-self:auto !important;
+
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+    gap:clamp(18px, 2.1vw, 34px) !important;
+
+    font-size:13px !important;
+    line-height:1.04 !important;
+
+    /*
+      The TOC gets the area ABOVE the fixed figure hanging line.
+      If a project has an unusually long TOC, the TOC itself scrolls rather
+      than allowing the figure to cover it.
+    */
+    max-height:calc(var(--research-figure-hang) - 24px) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    scrollbar-width:none;
+    background:var(--bg);
+    z-index:3;
+  }
+
+  .toc::-webkit-scrollbar{
+    width:0;
+    height:0;
+  }
+
+  .toc-col,
+  .toc a{
+    min-width:0;
+    max-width:100%;
+  }
+
+  .toc a{
+    overflow-wrap:break-word;
+  }
+
+  /*
+    FIGURE HANGING LINE
+    Every desktop figure begins at EXACTLY the same vertical line.
+    The image may resize to fit below that line, but its top never moves.
+  */
+  .figure-stage{
+    position:absolute !important;
+    top:var(--research-figure-hang) !important;
+    left:0 !important;
+    right:0 !important;
+
+    width:auto !important;
+    max-width:none !important;
+    margin:0 !important;
+
+    transform:none !important;
+    z-index:1 !important;
+  }
+
+  .figure-stage .figure-box{
+    margin-top:0 !important;
+  }
 }
 
 /*
-  Compact desktop/laptop.
-  Preserve the desktop composition instead of letting fixed dimensions
-  squeeze the article and figure rail into one another.
+  Narrow desktop/laptop:
+  preserve the SAME three-column proportions and title size.
+  Content wraps; it is never clipped or pushed into another column.
 */
 @media (min-width:901px) and (max-width:1180px){
-
   .layout{
-    --research-left-col:clamp(170px, 18vw, 200px);
-    --research-desktop-gap:clamp(16px, 1.8vw, 22px);
-
-    grid-template-columns:
-      var(--research-left-col)
-      minmax(0, 1.16fr)
-      minmax(0, .84fr) !important;
-  }
-
-  .paper h1{
-    font-size:clamp(36px, 4vw, 46px) !important;
-    line-height:.96 !important;
-  }
-
-  .paper p,
-  .research-copy ul > li{
-    font-size:17px !important;
+    --research-left-col:clamp(170px, 17vw, 200px);
+    --research-gap:clamp(16px, 1.7vw, 22px);
   }
 
   .toc{
-    width:100% !important;
-    max-width:none !important;
-    margin-right:0 !important;
-    gap:12px !important;
-    font-size:12px !important;
-  }
-
-  .figure-stage{
-    width:100% !important;
-    max-width:none !important;
+    right:12% !important;
+    width:min(300px, 88%) !important;
+    max-width:88% !important;
+    gap:14px !important;
   }
 
   .figure-caption{
@@ -3137,21 +3168,19 @@
     if(window.innerWidth <= 900) return;
     if(!figureRefs.length) return;
 
-    const paperRect = paperScroller.getBoundingClientRect();
-    const readingLine = paperRect.top + paperScroller.clientHeight * 0.42;
+    const viewportTop = 32;
+    const viewportBottom = window.innerHeight - 26;
+    const readingLine =
+      viewportTop + (viewportBottom - viewportTop) * 0.42;
 
     /*
       Desktop Research figure rule:
-      If more than one figure reference is currently visible in the reading
-      area, the FIRST one mentioned in the text has priority.
-
-      As soon as that earlier reference leaves the visible reading area, the
-      next visible reference can take over. If no figure reference is visible,
-      fall back to the established scroll-driven reading-line behavior.
+      Use the actual browser viewport. The Research article is normal document
+      flow on desktop, so no nested paper-scroll geometry is involved.
     */
     const visibleRefs = figureRefs.filter(ref => {
       const rect = ref.getBoundingClientRect();
-      return rect.bottom >= paperRect.top && rect.top <= paperRect.bottom;
+      return rect.bottom >= viewportTop && rect.top <= viewportBottom;
     });
 
     let currentKey = visibleRefs.length
@@ -3222,6 +3251,7 @@
   }
 
   paperScroller.addEventListener("scroll", handleFigureReadingScroll, {passive:true});
+  window.addEventListener("scroll", handleFigureReadingScroll, {passive:true});
 
   window.addEventListener("resize", () => {
     if(window.innerWidth > 900){
@@ -3253,10 +3283,9 @@
   function currentSectionId(){
     if(!sections.length) return "";
 
-    const paperRect = paperScroller.getBoundingClientRect();
     const readingLine = window.innerWidth <= 900
       ? 145
-      : paperRect.top + 72;
+      : 104;
 
     let current = sections[0].id;
 
@@ -3544,14 +3573,21 @@
   paperScroller.addEventListener("scroll", handleTextNavigationScroll, {passive:true});
 
   window.addEventListener("scroll", () => {
-    if(window.innerWidth <= 900){
-      handleTextNavigationScroll();
-    }
+    handleTextNavigationScroll();
   }, {passive:true});
 
   if(mobileToc){
     mobileToc.addEventListener("scroll", () => {
       if(window.innerWidth <= 900){
+        positionNavigationArrows();
+      }
+    }, {passive:true});
+  }
+
+  const desktopToc = document.querySelector(".toc");
+  if(desktopToc){
+    desktopToc.addEventListener("scroll", () => {
+      if(window.innerWidth > 900){
         positionNavigationArrows();
       }
     }, {passive:true});
@@ -3953,21 +3989,10 @@
     const target = document.getElementById(id);
     if (!target) return;
 
-    if (window.innerWidth > 900 && paper) {
-      const paperRect = paper.getBoundingClientRect();
-      const targetRect = target.getBoundingClientRect();
-      const destination = paper.scrollTop + (targetRect.top - paperRect.top);
-
-      paper.scrollTo({
-        top: destination,
-        behavior: "smooth"
-      });
-    } else {
-      target.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
   }
 
   document.querySelectorAll('.toc a[href^="#"], .mobile-toc a[href^="#"]').forEach(function (link) {
@@ -4485,7 +4510,6 @@
 })();
 </script>
 
-{% include desktop-top-baseline-alignment.html reference=".brand" target=".project-title" %}
 
 
 
