@@ -110,8 +110,17 @@
 
         const delta = referenceBaseline - targetBaseline;
 
+        const canvasScale = parseFloat(
+          document.documentElement.dataset.harriCanvasScale || "1"
+        ) || 1;
+
+        const cssDelta =
+          document.documentElement.classList.contains("harri-desktop-canvas")
+            ? delta / canvasScale
+            : delta;
+
         target.style.transform =
-          "translateY(" + delta.toFixed(2) + "px)";
+          "translateY(" + cssDelta.toFixed(2) + "px)";
       });
     }
 
@@ -119,6 +128,11 @@
 
     window.addEventListener("resize", align, {passive:true});
     window.addEventListener("orientationchange", align, {passive:true});
+    window.addEventListener(
+      "harri:desktop-canvas-resized",
+      align,
+      {passive:true}
+    );
 
     if(document.fonts && document.fonts.ready){
       document.fonts.ready.then(function(){

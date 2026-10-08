@@ -162,8 +162,17 @@
             ? 0
             : Math.max(desiredDelta, minimumSafeDelta);
 
+        const canvasScale = parseFloat(
+          document.documentElement.dataset.harriCanvasScale || "1"
+        ) || 1;
+
+        const cssDelta =
+          document.documentElement.classList.contains("harri-desktop-canvas")
+            ? appliedDelta / canvasScale
+            : appliedDelta;
+
         target.style.transform =
-          "translateY(" + appliedDelta.toFixed(2) + "px)";
+          "translateY(" + cssDelta.toFixed(2) + "px)";
       });
     }
 
@@ -175,6 +184,11 @@
 
     window.addEventListener("resize", align, {passive:true});
     window.addEventListener("orientationchange", align, {passive:true});
+    window.addEventListener(
+      "harri:desktop-canvas-resized",
+      align,
+      {passive:true}
+    );
 
     if(document.fonts && document.fonts.ready){
       document.fonts.ready.then(function(){

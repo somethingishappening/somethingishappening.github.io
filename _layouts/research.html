@@ -2489,6 +2489,7 @@
 }
 
 </style>
+  {% include desktop-canvas-lock.html %}
 </head>
 <body class="page-research">
 
@@ -3375,14 +3376,57 @@
   }
 
   function moveDesktopArrow(link, force = false){
-    if(!desktopTocArrow || !link || window.innerWidth <= 900) return;
+    if(!desktopTocArrow || !link) return;
 
+    const desktopCanvas =
+      document.documentElement.classList.contains("harri-desktop-canvas");
+
+    if(!desktopCanvas && window.innerWidth <= 900) return;
     if(!force && desktopArrowTarget === link) return;
 
     const changedTarget = desktopArrowTarget !== link;
     desktopArrowTarget = link;
 
     const rect = link.getBoundingClientRect();
+
+    if(desktopCanvas && desktopToc){
+      /*
+        In the uniformly scaled reference canvas, keep the arrow in the
+        TOC's own coordinate system. getBoundingClientRect() is already
+        visually scaled, so divide by the canvas scale before applying a
+        CSS transform inside the zoomed canvas.
+      */
+      const scale = parseFloat(
+        document.documentElement.dataset.harriCanvasScale || "1"
+      ) || 1;
+      const tocRect = desktopToc.getBoundingClientRect();
+
+      if(desktopTocArrow.parentElement !== desktopToc){
+        desktopToc.appendChild(desktopTocArrow);
+      }
+
+      const x =
+        ((rect.left - tocRect.left) / scale) +
+        desktopToc.scrollLeft - 20;
+
+      const y =
+        ((rect.top - tocRect.top) / scale) +
+        desktopToc.scrollTop + 1;
+
+      desktopToc.style.position = "relative";
+      desktopTocArrow.style.position = "absolute";
+      desktopTocArrow.style.left = "0px";
+      desktopTocArrow.style.top = "0px";
+
+      setArrowTransform(
+        desktopTocArrow,
+        x,
+        y,
+        changedTarget && !force
+      );
+      return;
+    }
+
     const x = rect.left - 20;
     const y = rect.top + 1;
 
@@ -3474,6 +3518,16 @@
   const desktopToc = document.querySelector(".toc");
 
   function fitDesktopResearchToc(){
+    if(
+      document.documentElement.classList.contains("harri-desktop-canvas")
+    ){
+      if(desktopToc){
+        desktopToc.style.setProperty("--research-toc-fit", "1");
+        desktopToc.style.setProperty("overflow-y", "hidden");
+      }
+      return;
+    }
+
     if(!desktopToc || window.innerWidth <= 900) {
       if(desktopToc){
         desktopToc.style.removeProperty("--research-toc-fit");
@@ -3637,6 +3691,16 @@
       positionNavigationArrows();
     });
   }
+
+  window.addEventListener(
+    "harri:desktop-canvas-resized",
+    () => {
+      desktopArrowTarget = null;
+      fitDesktopResearchToc();
+      positionNavigationArrows();
+    },
+    {passive:true}
+  );
 
   // ------------------------------------------------------------
   // 5) MOBILE PROJECT TEXT NAVIGATION

@@ -1,0 +1,343 @@
+<style id="harri-desktop-canvas-lock">
+/*
+  HARRI.LA DESKTOP REFERENCE CANVAS — v136
+  ----------------------------------------
+  Desktop/laptop pages use one 2048 × 1080 design coordinate system.
+  The whole composition scales uniformly to the available browser window.
+  Mobile devices that ENTER at <=900 CSS px keep the existing mobile layout.
+*/
+html.harri-desktop-canvas{
+  --harri-reference-width:2048;
+  --harri-reference-height:1080;
+  --harri-desktop-scale:1;
+  --harri-reference-vh:10.8px;
+  --harri-reference-vw:20.48px;
+}
+
+html.harri-desktop-canvas,
+html.harri-desktop-canvas body{
+  width:100%;
+  min-width:0;
+  background:#fff;
+}
+
+/* Fixed-screen pages */
+html.harri-desktop-canvas body.page-about,
+html.harri-desktop-canvas body.page-research{
+  height:100%;
+  min-height:100%;
+  overflow:hidden !important;
+}
+
+/* Long media pages retain their existing vertical scrolling. */
+html.harri-desktop-canvas body.page-work,
+html.harri-desktop-canvas body.page-harrilanpuisto{
+  min-height:100%;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+}
+
+/* Every desktop root is laid out at the reference width. */
+html.harri-desktop-canvas body > .about-layout,
+html.harri-desktop-canvas body > .layout{
+  box-sizing:border-box !important;
+  width:2048px !important;
+  min-width:2048px !important;
+  max-width:2048px !important;
+  margin-right:0 !important;
+  transform:none !important;
+  transform-origin:0 0 !important;
+}
+
+/* About is a fixed 2048 × 1080 composition. */
+html.harri-desktop-canvas body.page-about > .about-layout{
+  height:1080px !important;
+  min-height:1080px !important;
+  max-height:1080px !important;
+
+  --page-pad-x:18px !important;
+  --page-pad-top:32px !important;
+  --page-pad-bottom:25px !important;
+  --left-w:220px !important;
+  --right-w:300px !important;
+  --gap:28px !important;
+
+  grid-template-columns:220px minmax(0,1fr) 300px !important;
+  gap:28px !important;
+}
+
+/* Neutralize the old 901–1100 compact-desktop About variant. */
+html.harri-desktop-canvas body.page-about .about-copy{
+  font-size:40px !important;
+}
+html.harri-desktop-canvas body.page-about .about-greeting{
+  font-size:54px !important;
+}
+html.harri-desktop-canvas body.page-about .cv-title{
+  font-size:27px !important;
+}
+html.harri-desktop-canvas body.page-about .cv-section h2{
+  font-size:23px !important;
+}
+
+/* Work / Artistic / Harrilanpuisto use the same reference desktop rails. */
+html.harri-desktop-canvas body.page-work > .layout,
+html.harri-desktop-canvas body.page-harrilanpuisto > .layout{
+  min-height:1080px !important;
+  grid-template-columns:220px minmax(0,745fr) minmax(0,660fr) !important;
+  gap:28px !important;
+  padding:32px 18px 26px !important;
+}
+
+html.harri-desktop-canvas body.page-work .left,
+html.harri-desktop-canvas body.page-work .project-info,
+html.harri-desktop-canvas body.page-harrilanpuisto .left,
+html.harri-desktop-canvas body.page-harrilanpuisto .project-info{
+  top:32px !important;
+  height:1022px !important;
+}
+
+html.harri-desktop-canvas body.page-work .media-item,
+html.harri-desktop-canvas body.page-harrilanpuisto .media-item{
+  min-height:1022px !important;
+}
+
+/* Neutralize Work's old compact-desktop type variant. */
+html.harri-desktop-canvas body.page-work .project-type{
+  font-size:27px !important;
+  line-height:1 !important;
+}
+html.harri-desktop-canvas body.page-work .project-info h1{
+  font-size:54px !important;
+  line-height:.94 !important;
+  max-width:610px !important;
+}
+html.harri-desktop-canvas body.page-work .project-info h1 .title-line{
+  white-space:nowrap !important;
+}
+html.harri-desktop-canvas body.page-work .project-description{
+  font-size:18px !important;
+  line-height:1.13 !important;
+}
+
+/*
+  Research keeps the approved fixed-page interaction:
+  left/right rails fixed, only the centre article scrolls.
+*/
+html.harri-desktop-canvas body.page-research > .layout{
+  height:1080px !important;
+  min-height:1080px !important;
+  max-height:1080px !important;
+
+  grid-template-columns:220px minmax(0,745fr) minmax(0,660fr) !important;
+  grid-template-rows:minmax(0,1fr) !important;
+  gap:28px !important;
+  padding:32px 18px 26px !important;
+  overflow:hidden !important;
+}
+
+html.harri-desktop-canvas body.page-research .left,
+html.harri-desktop-canvas body.page-research .right{
+  top:auto !important;
+  height:1024px !important;
+  min-height:0 !important;
+}
+
+html.harri-desktop-canvas body.page-research .paper{
+  height:100% !important;
+  min-height:0 !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+
+html.harri-desktop-canvas body.page-research .paper h1{
+  font-size:54px !important;
+}
+html.harri-desktop-canvas body.page-research .paper p{
+  font-size:18px !important;
+}
+html.harri-desktop-canvas body.page-research .project-title{
+  font-size:27px !important;
+  line-height:1 !important;
+}
+
+/* Restore the reference TOC exactly; no laptop-specific compaction. */
+html.harri-desktop-canvas body.page-research .toc{
+  --research-toc-fit:1 !important;
+  width:min(320px,48%) !important;
+  min-width:290px !important;
+  margin-right:20% !important;
+  margin-top:0 !important;
+  gap:34px !important;
+  font-size:13px !important;
+  line-height:1.04 !important;
+  max-height:447.8px !important;
+  overflow-y:hidden !important;
+  overflow-x:visible !important;
+}
+
+/* Every Research figure hangs from the same reference line. */
+html.harri-desktop-canvas body.page-research .figure-stage{
+  top:469.8px !important; /* 43.5% of the 1080px reference height */
+  right:3.5% !important;
+  width:94% !important;
+  max-width:700px !important;
+  margin:0 !important;
+}
+
+/*
+  Keep desktop rules authoritative even if browser page zoom later makes the
+  reported CSS viewport narrower than 900px. A page that ENTERED as desktop
+  remains the desktop composition for that page session.
+*/
+html.harri-desktop-canvas .mobile-menu-button,
+html.harri-desktop-canvas .mobile-project-toc-toggle,
+html.harri-desktop-canvas .mobile-toc{
+  /* desktop defaults in the original layouts remain authoritative */
+}
+
+/* Do not allow a post-load zoom to switch the root into mobile geometry. */
+html.harri-desktop-canvas body.page-about > .about-layout{
+  display:grid !important;
+}
+html.harri-desktop-canvas body.page-work > .layout,
+html.harri-desktop-canvas body.page-research > .layout,
+html.harri-desktop-canvas body.page-harrilanpuisto > .layout{
+  display:grid !important;
+}
+</style>
+
+<script id="harri-desktop-canvas-lock-script">
+(function(){
+  const REFERENCE_WIDTH = 2048;
+  const REFERENCE_HEIGHT = 1080;
+  const ENTRY_BREAKPOINT = 900;
+
+  const html = document.documentElement;
+  const enteredAsDesktop = window.innerWidth > ENTRY_BREAKPOINT;
+
+  if(!enteredAsDesktop) return;
+
+  html.classList.add("harri-desktop-canvas");
+
+  let baselineDpr = window.devicePixelRatio || 1;
+  let baselineScreenWidth = window.screen ? window.screen.width : 0;
+  let baselineScreenHeight = window.screen ? window.screen.height : 0;
+  let raf = 0;
+
+  function root(){
+    return document.querySelector(
+      "body > .about-layout, body > .layout"
+    );
+  }
+
+  function applyScale(){
+    cancelAnimationFrame(raf);
+
+    raf = requestAnimationFrame(function(){
+      const pageRoot = root();
+      if(!pageRoot) return;
+
+      const scale = Math.min(
+        window.innerWidth / REFERENCE_WIDTH,
+        window.innerHeight / REFERENCE_HEIGHT
+      );
+
+      /*
+        Top-align the reference artboard. On common laptop aspect ratios the
+        width is the limiting dimension, so there is no added side margin.
+        On extra-wide displays, center it horizontally.
+      */
+      const renderedWidth = REFERENCE_WIDTH * scale;
+      const leftVisual = Math.max(
+        0,
+        (window.innerWidth - renderedWidth) / 2
+      );
+      const leftCss = scale > 0 ? leftVisual / scale : 0;
+
+      html.style.setProperty(
+        "--harri-desktop-scale",
+        scale.toFixed(6)
+      );
+      html.dataset.harriCanvasScale = scale.toFixed(6);
+
+      pageRoot.style.setProperty(
+        "zoom",
+        scale.toFixed(6),
+        "important"
+      );
+      pageRoot.style.setProperty(
+        "margin-left",
+        leftCss.toFixed(3) + "px",
+        "important"
+      );
+      pageRoot.style.setProperty(
+        "margin-top",
+        "0px",
+        "important"
+      );
+
+      /*
+        Baseline and arrow helpers listen to this event after the canvas
+        geometry is final.
+      */
+      window.dispatchEvent(
+        new CustomEvent("harri:desktop-canvas-resized", {
+          detail:{scale:scale}
+        })
+      );
+    });
+  }
+
+  function screenChanged(){
+    if(!window.screen) return false;
+    return (
+      window.screen.width !== baselineScreenWidth ||
+      window.screen.height !== baselineScreenHeight
+    );
+  }
+
+  function handleResize(){
+    const currentDpr = window.devicePixelRatio || 1;
+    const dprChanged = Math.abs(currentDpr - baselineDpr) > 0.01;
+    const movedToDifferentScreen = screenChanged();
+
+    /*
+      Browser page zoom normally changes devicePixelRatio while the physical
+      screen identity stays the same. Do NOT compensate: let browser zoom work
+      normally after entry, as requested.
+
+      Moving the window to a different monitor can also change DPR; when the
+      screen dimensions changed too, adopt the new monitor and refit.
+    */
+    if(dprChanged && !movedToDifferentScreen){
+      return;
+    }
+
+    if(movedToDifferentScreen){
+      baselineDpr = currentDpr;
+      baselineScreenWidth = window.screen.width;
+      baselineScreenHeight = window.screen.height;
+    }
+
+    applyScale();
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      applyScale,
+      {once:true}
+    );
+  }else{
+    applyScale();
+  }
+
+  window.addEventListener("resize", handleResize, {passive:true});
+  window.addEventListener(
+    "orientationchange",
+    applyScale,
+    {passive:true}
+  );
+})();
+</script>
