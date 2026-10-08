@@ -251,7 +251,7 @@ sections:
       within their own bounding boxes that appear when prompted by typists and
       typesetters.
     nav_column: left
-  - heading: Mainstream Workarounds
+  - heading: Mainstream Bypasses
     heading_level: h2
     body: >-
       Open-type Arabic typefaces currently lack diacritic manipulation features
