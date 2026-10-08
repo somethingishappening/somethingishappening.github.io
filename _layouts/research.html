@@ -4521,5 +4521,212 @@
 })();
 </script>
 
+
+
+<style id="research-abstract-footer-baseline-fix">
+/*
+  RESEARCH ABSTRACT ↔ FOOTER BASELINE
+  -----------------------------------
+  The Abstract remains in normal document flow. We do NOT translate it.
+  JavaScript only adds the exact extra min-height required to the first-screen
+  wrapper so the Abstract's last line reaches the footer/email baseline.
+  Following article sections are therefore pushed down by the same amount.
+*/
+.research-abstract-baseline-marker{
+  display:inline-block !important;
+  width:0 !important;
+  height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  overflow:hidden !important;
+  vertical-align:baseline !important;
+  line-height:0 !important;
+  font-size:0 !important;
+  pointer-events:none !important;
+}
+</style>
+
+<script id="research-abstract-footer-baseline-script">
+(function(){
+  const DESKTOP_BREAKPOINT = 900;
+
+  function start(){
+    const intro = document.querySelector(".research-intro-screen");
+    const abstractCopy = document.querySelector(".research-abstract-copy");
+    const footer = document.querySelector(".left-footer");
+
+    if(!intro || !abstractCopy || !footer) return;
+
+    let raf = 0;
+    let abstractMarker = null;
+    let footerMarker = null;
+
+    function visible(el){
+      if(!el) return false;
+      const style = getComputedStyle(el);
+      return style.display !== "none" &&
+             style.visibility !== "hidden" &&
+             el.getClientRects().length > 0;
+    }
+
+    function lastTextNode(container){
+      const walker = document.createTreeWalker(
+        container,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode(node){
+            if(!node.nodeValue || !node.nodeValue.trim()){
+              return NodeFilter.FILTER_REJECT;
+            }
+
+            const parent = node.parentElement;
+            if(!parent || !visible(parent)){
+              return NodeFilter.FILTER_REJECT;
+            }
+
+            return NodeFilter.FILTER_ACCEPT;
+          }
+        }
+      );
+
+      let last = null;
+      while(walker.nextNode()) last = walker.currentNode;
+      return last;
+    }
+
+    function lastVisibleFooterItem(){
+      const items = Array.from(footer.children).filter(visible);
+      return items.length ? items[items.length - 1] : footer;
+    }
+
+    function makeMarker(container, role){
+      const existing = container.querySelector(
+        '.research-abstract-baseline-marker[data-role="' + role + '"]'
+      );
+      if(existing) existing.remove();
+
+      const textNode = lastTextNode(container);
+      if(!textNode) return null;
+
+      const marker = document.createElement("span");
+      marker.className = "research-abstract-baseline-marker";
+      marker.dataset.role = role;
+      marker.setAttribute("aria-hidden", "true");
+
+      textNode.parentNode.insertBefore(marker, textNode.nextSibling);
+      return marker;
+    }
+
+    function ensureMarkers(){
+      if(!abstractMarker || !abstractMarker.isConnected){
+        abstractMarker = makeMarker(abstractCopy, "abstract");
+      }
+
+      const footerItem = lastVisibleFooterItem();
+      if(!footerItem) return false;
+
+      if(
+        !footerMarker ||
+        !footerMarker.isConnected ||
+        !footerItem.contains(footerMarker)
+      ){
+        footerMarker = makeMarker(footerItem, "footer");
+      }
+
+      return !!(abstractMarker && footerMarker);
+    }
+
+    function measureAndAlign(){
+      cancelAnimationFrame(raf);
+
+      raf = requestAnimationFrame(function(){
+        if(window.innerWidth <= DESKTOP_BREAKPOINT){
+          intro.style.minHeight = "";
+          return;
+        }
+
+        /*
+          Always measure from the original v134 geometry first.
+          No transform or absolute positioning is introduced.
+        */
+        intro.style.minHeight = "100%";
+
+        requestAnimationFrame(function(){
+          if(!ensureMarkers()) return;
+
+          const abstractBaseline =
+            abstractMarker.getBoundingClientRect().top;
+          const footerBaseline =
+            footerMarker.getBoundingClientRect().top;
+
+          /*
+            Only move the Abstract DOWN when it is above the footer baseline.
+            Increasing the wrapper's min-height grows the flexible Abstract
+            panel, and margin-top:auto places the Abstract lower naturally.
+          */
+          const needed = Math.max(
+            0,
+            footerBaseline - abstractBaseline
+          );
+
+          intro.style.minHeight =
+            needed > 0.25
+              ? "calc(100% + " + needed.toFixed(2) + "px)"
+              : "100%";
+
+          /*
+            One refinement pass absorbs sub-pixel font/layout rounding.
+          */
+          requestAnimationFrame(function(){
+            const residual =
+              footerMarker.getBoundingClientRect().top -
+              abstractMarker.getBoundingClientRect().top;
+
+            if(residual > 0.35){
+              const corrected = needed + residual;
+              intro.style.minHeight =
+                "calc(100% + " + corrected.toFixed(2) + "px)";
+            }
+          });
+        });
+      });
+    }
+
+    measureAndAlign();
+
+    window.addEventListener(
+      "resize",
+      measureAndAlign,
+      {passive:true}
+    );
+
+    window.addEventListener(
+      "orientationchange",
+      measureAndAlign,
+      {passive:true}
+    );
+
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(function(){
+        abstractMarker = null;
+        footerMarker = null;
+        measureAndAlign();
+      });
+    }
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      start,
+      {once:true}
+    );
+  }else{
+    start();
+  }
+})();
+</script>
+
 </body>
 </html>
