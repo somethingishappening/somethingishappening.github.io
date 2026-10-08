@@ -741,40 +741,44 @@ html.nav-state-syncing .nav-group *{
 
 
 
-/* MINI-CV SECTION TITLES — follow the Research-template H2 style. */
+/* MINI-CV TYPOGRAPHY — match Research without changing CV alignment.
+   Titles use the Research H2 type treatment, but keep the CV's own zero
+   top margin so the first title remains aligned with the top of the column. */
 .cv-section h2{
   font-size:18px !important;
   line-height:1.15 !important;
   font-weight:700 !important;
   letter-spacing:0 !important;
-  margin:26px 0 12px !important;
+  margin:0 0 12px !important;
 }
 
+/* Match Research running text exactly on wide desktop. */
+.cv-item{
+  font-size:18px !important;
+  line-height:1.2 !important;
+}
+
+/* Research drops both H2 and running text to 17px on narrower desktops. */
 @media (min-width:901px) and (max-width:1180px){
   .cv-section h2{
     font-size:17px !important;
     line-height:1.15 !important;
   }
+
+  .cv-item{
+    font-size:17px !important;
+    line-height:1.2 !important;
+  }
 }
 
+/* Match the Research mobile type sizes/leading while preserving CV spacing. */
 @media (max-width:900px){
   .cv-section h2{
     font-size:17px !important;
     line-height:1.16 !important;
-    margin:30px 0 12px !important;
+    margin:0 0 12px !important;
   }
-}
 
-
-
-/* MINI-CV RUNNING TEXT — 15px on desktop, retaining the shared 1.2 leading. */
-@media (min-width:901px){
-  .cv-item{
-    font-size:15px !important;
-    line-height:1.2 !important;
-  }
-}
-@media (max-width:900px){
   .cv-item{
     font-size:17px !important;
     line-height:1.16 !important;

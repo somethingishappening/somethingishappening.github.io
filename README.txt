@@ -1,15 +1,14 @@
-HARRI.LA — Mini-CV typography update
+HARRI.LA — CV Research typography + Abstract alignment fix
 
-Replace only:
+Replace these files in the repository:
   _layouts/about.html
+  _layouts/research.html
 
 Changes:
-- Mini-CV running text is 15px on desktop with line-height 1.2.
-- Mini-CV section titles now follow the Research-template H2 typography:
-  * >1180px: 18px / 1.15 / 700
-  * 901–1180px: 17px / 1.15 / 700
-  * <=900px: 17px / 1.16 / 700
-  * letter-spacing: 0
-  * matching Research H2 vertical margins
-- Mobile Mini-CV body text remains 17px / 1.16.
-- Existing surprise-image behavior fix is preserved.
+- Mini-CV body matches Research running text exactly:
+  18px / 1.2 on wide desktop, 17px / 1.2 at 901–1180px, 17px / 1.16 mobile.
+- Mini-CV section titles use Research H2 typography, but retain zero top margin
+  so the first title stays top-aligned as before.
+- Clicking Abstract in the desktop Research navigation returns the internal
+  article scroller to scrollTop 0, matching the initial project-opening alignment.
+- Existing surprise-image behavior and hidden-section arrow fallback are preserved.

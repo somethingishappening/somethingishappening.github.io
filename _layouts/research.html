@@ -3933,9 +3933,16 @@
     if (!target) return;
 
     if (window.innerWidth > 900 && paper) {
-      const paperRect = paper.getBoundingClientRect();
-      const targetRect = target.getBoundingClientRect();
-      const destination = paper.scrollTop + (targetRect.top - paperRect.top);
+      /* Abstract represents the project's opening state. Returning to it must
+         restore the exact same alignment as opening the Research project,
+         including the project descriptor/title above the Abstract section. */
+      const destination = id === "abstract"
+        ? 0
+        : (() => {
+            const paperRect = paper.getBoundingClientRect();
+            const targetRect = target.getBoundingClientRect();
+            return paper.scrollTop + (targetRect.top - paperRect.top);
+          })();
 
       paper.scrollTo({
         top: destination,
