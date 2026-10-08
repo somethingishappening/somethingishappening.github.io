@@ -2458,8 +2458,6 @@
 @media (max-width:900px){
   .mobile-inline-figure{
     max-width:100% !important;
-    margin-left:0 !important;
-    margin-right:auto !important;
   }
 
   .mobile-inline-figure figcaption{
@@ -2882,13 +2880,20 @@
       ? fig.display_size
       : "full";
 
+    const displayAlignment = ["left", "center", "right"].includes(
+      fig.display_alignment
+    )
+      ? fig.display_alignment
+      : "left";
+
     figures[`fig${number}`] = {
       label: `Fig. ${number}`,
       src: cmsAssetPath(fig.image || ""),
       alt: fig.alt || `Figure ${number}`,
       caption: fig.caption || "",
       displaySize,
-      widthPercent: figureDisplayWidths[displaySize]
+      widthPercent: figureDisplayWidths[displaySize],
+      displayAlignment
     };
   });
 
@@ -2962,7 +2967,20 @@
       const inline = document.createElement("figure");
       inline.className = "mobile-inline-figure";
       inline.dataset.figureSize = fig.displaySize || "full";
+      inline.dataset.figureAlignment = fig.displayAlignment || "left";
       inline.style.width = `${fig.widthPercent || 100}%`;
+
+      if((fig.displayAlignment || "left") === "center"){
+        inline.style.marginLeft = "auto";
+        inline.style.marginRight = "auto";
+      }else if((fig.displayAlignment || "left") === "right"){
+        inline.style.marginLeft = "auto";
+        inline.style.marginRight = "0";
+      }else{
+        inline.style.marginLeft = "0";
+        inline.style.marginRight = "auto";
+      }
+
       inline.innerHTML = `
         <div class="figure-box">
           <img data-mobile-image="${key}" alt="${fig.alt || ""}">
@@ -2983,9 +3001,40 @@
 
   let figureSwitchToken = 0;
 
+  function applyDesktopFigureAlignment(fig){
+    const alignment = fig && ["left", "center", "right"].includes(fig.displayAlignment)
+      ? fig.displayAlignment
+      : "left";
+
+    stage.dataset.figureAlignment = alignment;
+
+    const figureBox = document.getElementById("figureBox");
+    const figureCaption = stage.querySelector(".figure-caption");
+
+    if(!figureBox || !figureCaption) return;
+
+    if(alignment === "center"){
+      figureBox.style.marginLeft = "auto";
+      figureBox.style.marginRight = "auto";
+      figureCaption.style.marginLeft = "auto";
+      figureCaption.style.marginRight = "auto";
+    }else if(alignment === "right"){
+      figureBox.style.marginLeft = "auto";
+      figureBox.style.marginRight = "0";
+      figureCaption.style.marginLeft = "auto";
+      figureCaption.style.marginRight = "0";
+    }else{
+      figureBox.style.marginLeft = "0";
+      figureBox.style.marginRight = "auto";
+      figureCaption.style.marginLeft = "0";
+      figureCaption.style.marginRight = "auto";
+    }
+  }
+
   function applyFigureImmediately(key, fig){
     label.textContent = fig.label;
     caption.textContent = fig.caption;
+    applyDesktopFigureAlignment(fig);
 
     if(fig.src){
       image.src = fig.src;
@@ -3041,6 +3090,7 @@
 
         label.textContent = fig.label;
         caption.textContent = fig.caption;
+        applyDesktopFigureAlignment(fig);
         image.src = fig.src;
         image.alt = fig.alt || fig.label;
         image.style.display = "block";
