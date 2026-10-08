@@ -462,15 +462,11 @@
   }
 
   /*
-    Resolve an unlisted article section to its visible parent in the
-    Research navigation.
-
-    H3 -> preceding H2 in the same chapter -> H1
-    H2 -> preceding H1
-    H1 -> nearest preceding visible H1
-
-    Abstract is NOT used as a generic fallback; it is selected only while
-    the reader is actually in the Abstract section.
+    Hidden article sections do not get their own arrow stop. While the reader
+    is inside one of them, keep the arrow on the nearest visible navigation
+    item that precedes it. This makes "Do not show" sections transparent to
+    the arrow instead of creating jumps or empty arrow states. Abstract is the
+    stable fallback before the first visible article item.
   */
   function hierarchicalNavigationLink(id, links, dataKey){
     const direct = links.find(link => link.dataset[dataKey] === id) || null;
@@ -479,75 +475,17 @@
     const currentIndex = sections.findIndex(section => section.id === id);
     if(currentIndex < 0) return null;
 
-    const currentSection = sections[currentIndex];
-    const currentLevel = sectionHeadingLevel(currentSection);
-
-    function visibleLinkForSection(section){
-      if(!section || section.id === "abstract") return null;
-      return links.find(link => link.dataset[dataKey] === section.id) || null;
-    }
-
-    if(currentLevel === 3){
-      /*
-        First look specifically for the H2 parent, but stop if we cross into
-        a previous H1 chapter.
-      */
-      for(let i = currentIndex - 1; i >= 0; i--){
-        const candidate = sections[i];
-        const level = sectionHeadingLevel(candidate);
-
-        if(level === 2){
-          const link = visibleLinkForSection(candidate);
-          if(link) return link;
-
-          /*
-            The H2 exists but is hidden from navigation. Its own parent H1 is
-            therefore the appropriate visible fallback.
-          */
-          for(let j = i - 1; j >= 0; j--){
-            const parent = sections[j];
-            if(sectionHeadingLevel(parent) === 1){
-              return visibleLinkForSection(parent);
-            }
-          }
-          return null;
-        }
-
-        if(level === 1){
-          return visibleLinkForSection(candidate);
-        }
-      }
-    }
-
-    if(currentLevel === 2){
-      for(let i = currentIndex - 1; i >= 0; i--){
-        const candidate = sections[i];
-        if(sectionHeadingLevel(candidate) === 1){
-          return visibleLinkForSection(candidate);
-        }
-      }
-    }
-
-    if(currentLevel === 1){
-      for(let i = currentIndex - 1; i >= 0; i--){
-        const candidate = sections[i];
-        if(sectionHeadingLevel(candidate) === 1){
-          const link = visibleLinkForSection(candidate);
-          if(link) return link;
-        }
-      }
-    }
-
-    /*
-      Final safety fallback: nearest previous visible article navigation item
-      in document order, never Abstract unless id itself is "abstract".
-    */
     for(let i = currentIndex - 1; i >= 0; i--){
-      const link = visibleLinkForSection(sections[i]);
+      const candidateId = sections[i].id;
+      const link = links.find(
+        item => item.dataset[dataKey] === candidateId
+      ) || null;
       if(link) return link;
     }
 
-    return null;
+    return links.find(
+      link => link.dataset[dataKey] === "abstract"
+    ) || null;
   }
 
   function desktopLinkForSection(id){
@@ -1139,7 +1077,11 @@
     }
   }
 
-  document.querySelectorAll('.toc a[href^="#"], .mobile-toc a[href^="#"]').forEach(function (link) {
+  /* Desktop TOC uses the paper scroller. Mobile Research navigation has its
+     own handler above because it must first close both menus and calculate the
+     sticky-header offset. Keeping mobile out of this generic handler prevents
+     one tap from starting two competing smooth-scroll animations. */
+  document.querySelectorAll('.toc a[href^="#"]').forEach(function (link) {
     link.addEventListener("click", function (event) {
       const href = link.getAttribute("href");
       if (!href || href.length < 2) return;
