@@ -2140,10 +2140,7 @@
   font-weight:400 !important;
 }
 
-.toc-auto-h3 > a{
-  text-decoration:underline;
-  text-underline-offset:2px;
-}
+
 
 
 /* MOBILE RESEARCH PROJECT NAME — v118 */
@@ -2200,6 +2197,54 @@
   .layout:has(> .site-nav.mobile-scroll-hidden:not(.menu-open))
   .project-header-shell{
     top:0 !important;
+  }
+}
+
+
+/* RESEARCH NAV HEADING RHYTHM — v125 */
+
+/* All generated Research navigation rows share the same leading. */
+.toc-auto-h1 > a,
+.toc-auto-h2 > a,
+.toc-auto-h3 > a,
+.mobile-toc-auto-h1 > a,
+.mobile-toc-auto-h2 > a,
+.mobile-toc-auto-h3 > a{
+  line-height:1.04 !important;
+}
+
+/* H1 is the only bold chapter level in the navigation. */
+.toc-auto-h1 > a,
+.mobile-toc-auto-h1 > a{
+  font-weight:700 !important;
+}
+
+/* H2 and H3 look identical in the navigation. */
+.toc-auto-h2 > a,
+.toc-auto-h3 > a,
+.mobile-toc-auto-h2 > a,
+.mobile-toc-auto-h3 > a{
+  font-weight:400 !important;
+  text-decoration:none !important;
+}
+
+/*
+  Normal leading:
+  H1 -> H2/H3
+  H2 -> H2/H3
+  H3 -> H2/H3
+
+  Add the existing chapter-group gap only when a new H1 follows H2/H3.
+*/
+.toc-auto-h2 + .toc-auto-h1,
+.toc-auto-h3 + .toc-auto-h1{
+  margin-top:12px !important;
+}
+
+@media (max-width:900px){
+  .mobile-toc-auto-h2 + .mobile-toc-auto-h1,
+  .mobile-toc-auto-h3 + .mobile-toc-auto-h1{
+    margin-top:10px !important;
   }
 }
 
