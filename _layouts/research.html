@@ -320,7 +320,7 @@
       opacity:1;
       will-change:transform;
       transform:translate3d(0,0,0);
-      transition:transform .30s cubic-bezier(.22,.61,.36,1);
+      transition:transform .46s cubic-bezier(.16,1,.3,1);
     }
 
     .toc-arrow{
@@ -1553,21 +1553,7 @@
 }
 
 
-/* PROJECT OVERVIEW CURRENT-SELECTION ARROW */
-@media (min-width:901px){
-  .toc-arrow{
-    position:fixed !important;
-    transition:
-      top .34s cubic-bezier(.22,.61,.36,1),
-      left .34s cubic-bezier(.22,.61,.36,1) !important;
-  }
-}
 
-@media (max-width:900px){
-  .mobile-toc-arrow{
-    transition:top .34s cubic-bezier(.22,.61,.36,1) !important;
-  }
-}
 
 
 
@@ -2275,6 +2261,22 @@
   height:auto !important;
   min-height:0;
   overflow:visible;
+}
+
+
+/* RESEARCH ARROW SMOOTH GLIDE — v129
+   Authoritative late rule so older responsive CSS cannot override it. */
+.toc-arrow,
+.mobile-toc-arrow{
+  transition:transform .46s cubic-bezier(.16,1,.3,1) !important;
+  will-change:transform !important;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .toc-arrow,
+  .mobile-toc-arrow{
+    transition:none !important;
+  }
 }
 
 </style>
@@ -3030,50 +3032,81 @@
     return mobileTocLinks.find(link => link.dataset.mobileSection === id) || null;
   }
 
+  function setArrowTransform(arrow, x, y, animate){
+    if(!arrow) return;
+
+    const value =
+      `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+
+    if(!animate || arrow.dataset.arrowReady !== "true"){
+      /*
+        Initial placement and resize geometry should not visibly travel from
+        an obsolete position. Put the arrow in place immediately, then restore
+        the normal glide for subsequent section changes.
+      */
+      arrow.style.transition = "none";
+      arrow.style.transform = value;
+      arrow.dataset.arrowReady = "true";
+
+      requestAnimationFrame(() => {
+        arrow.style.removeProperty("transition");
+      });
+      return;
+    }
+
+    arrow.style.transform = value;
+  }
+
   function moveDesktopArrow(link, force = false){
     if(!desktopTocArrow || !link || window.innerWidth <= 900) return;
 
-    /*
-      Do not rewrite the same arrow target on every article scroll frame.
-      Repeated top/left writes were restarting the CSS transition and made the
-      arrow visibly twitch. Retarget only when the active navigation item
-      changes, or when layout geometry genuinely changes (resize).
-    */
     if(!force && desktopArrowTarget === link) return;
+
+    const changedTarget = desktopArrowTarget !== link;
     desktopArrowTarget = link;
 
     const rect = link.getBoundingClientRect();
-    const x = Math.round(rect.left - 20);
-    const y = Math.round(rect.top + 1);
+    const x = rect.left - 20;
+    const y = rect.top + 1;
 
     desktopTocArrow.style.position = "fixed";
     desktopTocArrow.style.left = "0px";
     desktopTocArrow.style.top = "0px";
-    desktopTocArrow.style.transform =
-      `translate3d(${x}px, ${y}px, 0)`;
+
+    setArrowTransform(
+      desktopTocArrow,
+      x,
+      y,
+      changedTarget && !force
+    );
   }
 
   function moveMobileArrow(link, force = false){
     if(!mobileTocArrow || !mobileToc || !link) return;
 
     if(!force && mobileArrowTarget === link) return;
+
+    const changedTarget = mobileArrowTarget !== link;
     mobileArrowTarget = link;
 
     const navRect = mobileToc.getBoundingClientRect();
     const linkRect = link.getBoundingClientRect();
 
-    const x = Math.round(
-      (linkRect.left - navRect.left) + mobileToc.scrollLeft - 16
-    );
-    const y = Math.round(
-      (linkRect.top - navRect.top) + mobileToc.scrollTop + 1
-    );
+    const x =
+      (linkRect.left - navRect.left) + mobileToc.scrollLeft - 16;
+    const y =
+      (linkRect.top - navRect.top) + mobileToc.scrollTop + 1;
 
     mobileTocArrow.style.position = "absolute";
     mobileTocArrow.style.left = "0px";
     mobileTocArrow.style.top = "0px";
-    mobileTocArrow.style.transform =
-      `translate3d(${x}px, ${y}px, 0)`;
+
+    setArrowTransform(
+      mobileTocArrow,
+      x,
+      y,
+      changedTarget && !force
+    );
   }
 
   function setActiveNavigationForSection(id){
