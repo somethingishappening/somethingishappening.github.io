@@ -697,6 +697,66 @@ figures:
     caption: this research project was funded by TAIKE and the Finnish Cultural
       Foundation
     alt: Arabic calligraphy manuscript detail
+  - number: 2
+    image: /assets/uploads/fig-2-1.jpg
+  - number: 3
+    image: /assets/uploads/fig-3.png
+  - number: 4
+    image: /assets/uploads/fig-4.jpg
+  - number: 5
+    image: /assets/uploads/fig-5-1.gif
+  - number: 6
+    image: /assets/uploads/fig-6.jpg
+  - number: 7
+    image: /assets/uploads/fig-7.jpg
+  - number: 8
+    image: /assets/uploads/fig-8.jpg
+  - number: 9
+    image: /assets/uploads/fig-9.jpg
+  - number: 10
+    image: /assets/uploads/fig-10.jpg
+  - number: 11
+    image: /assets/uploads/fig-11.jpg
+  - number: 12
+    image: /assets/uploads/fig-12.png
+  - number: 13
+    image: /assets/uploads/fig-13.jpg
+  - number: 14
+    image: /assets/uploads/fig-14.png
+  - number: 15
+    image: /assets/uploads/fig-15.png
+  - number: 16
+    image: /assets/uploads/fig-16.png
+  - number: 17
+    image: /assets/uploads/fig-17.gif
+  - number: 18
+    image: /assets/uploads/fig-18.png
+  - number: 19
+    image: /assets/uploads/fig-19.jpg
+  - number: 20
+    image: /assets/uploads/fig-20.png
+  - number: 21
+    image: /assets/uploads/fig-21.gif
+  - number: 22
+    image: /assets/uploads/fig-22.png
+  - number: 23
+    image: /assets/uploads/fig-23.jpg
+  - number: 24
+    image: /assets/uploads/fig-24-1.jpg
+  - number: 25
+    image: /assets/uploads/fig-25.jpg
+  - number: 26
+    image: /assets/uploads/fig-26.jpg
+  - number: 27
+    image: /assets/uploads/fig-27.png
+  - number: 28
+    image: /assets/uploads/fig-28.jpg
+  - number: 29
+    image: /assets/uploads/fig-29.png
+  - number: 30
+    image: /assets/uploads/fig-30.jpg
+  - number: 31
+    image: /assets/uploads/31.jpg
 toc_columns:
   - groups:
       - title:
