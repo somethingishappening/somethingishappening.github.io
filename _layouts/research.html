@@ -2444,6 +2444,30 @@
   }
 }
 
+
+
+/* RESEARCH FIGURE CMS DISPLAY SIZE
+   Existing/blank = 100%. Smaller options stay aligned to the same left edge
+   and the same desktop hanging line. Lightbox size is unchanged. */
+@media (min-width:901px){
+  .figure-stage .figure-caption{
+    max-width:var(--research-figure-fit-width, 190px) !important;
+  }
+}
+
+@media (max-width:900px){
+  .mobile-inline-figure{
+    max-width:100% !important;
+    margin-left:0 !important;
+    margin-right:auto !important;
+  }
+
+  .mobile-inline-figure figcaption{
+    width:100% !important;
+    max-width:100% !important;
+  }
+}
+
 </style>
 </head>
 <body class="page-research">
@@ -2841,14 +2865,30 @@
     return base + clean;
   }
 
+  const figureDisplayWidths = {
+    full: 100,
+    large: 75,
+    medium: 50,
+    small: 33
+  };
+
   (rawFigures || []).forEach((fig, index) => {
     const parsedNumber = Number.parseInt(fig.number, 10);
     const number = Number.isFinite(parsedNumber) && parsedNumber > 0 ? parsedNumber : index + 1;
+    const displaySize = Object.prototype.hasOwnProperty.call(
+      figureDisplayWidths,
+      fig.display_size
+    )
+      ? fig.display_size
+      : "full";
+
     figures[`fig${number}`] = {
       label: `Fig. ${number}`,
       src: cmsAssetPath(fig.image || ""),
       alt: fig.alt || `Figure ${number}`,
-      caption: fig.caption || ""
+      caption: fig.caption || "",
+      displaySize,
+      widthPercent: figureDisplayWidths[displaySize]
     };
   });
 
@@ -2921,6 +2961,8 @@
       const number = key.replace(/\D/g, "");
       const inline = document.createElement("figure");
       inline.className = "mobile-inline-figure";
+      inline.dataset.figureSize = fig.displaySize || "full";
+      inline.style.width = `${fig.widthPercent || 100}%`;
       inline.innerHTML = `
         <div class="figure-box">
           <img data-mobile-image="${key}" alt="${fig.alt || ""}">
@@ -3597,6 +3639,24 @@
         projectTocToggle.setAttribute("aria-expanded", "false");
         projectTocToggle.setAttribute("aria-label", "Open text navigation");
 
+        /*
+          A Research section choice is a reading action, so leave the screen
+          completely clear: close the main Harri.la hamburger menu too.
+          Trigger its existing controller rather than duplicating its animation.
+        */
+        const siteNav = document.querySelector(".site-nav");
+        const mainMenuButton = siteNav
+          ? siteNav.querySelector(".mobile-menu-button")
+          : null;
+
+        if(
+          siteNav &&
+          mainMenuButton &&
+          siteNav.classList.contains("menu-open")
+        ){
+          mainMenuButton.click();
+        }
+
         let positioned = false;
 
         const positionTargetBelowClosedHeader = () => {
@@ -3973,6 +4033,14 @@
     const fullFigureWidth = stage.clientWidth;
     if(fullFigureWidth <= 0) return;
 
+    const currentKey = stage.dataset.currentFigure || "";
+    const currentFigure = figures[currentKey] || null;
+    const requestedPercent = currentFigure
+      ? (currentFigure.widthPercent || 100)
+      : 100;
+    const requestedFigureWidth =
+      fullFigureWidth * Math.max(0.01, Math.min(1, requestedPercent / 100));
+
     const captionStyles = getComputedStyle(caption);
     const captionMarginTop = parseFloat(captionStyles.marginTop) || 0;
     const captionHeight = caption.getBoundingClientRect().height + captionMarginTop;
@@ -3988,13 +4056,13 @@
     );
 
     const naturalRatio = img.naturalWidth / img.naturalHeight;
-    const fullWidthImageHeight = fullFigureWidth / naturalRatio;
+    const requestedImageHeight = requestedFigureWidth / naturalRatio;
 
-    let fittedWidth = fullFigureWidth;
+    let fittedWidth = requestedFigureWidth;
 
-    if(fullWidthImageHeight > availableImageHeight){
+    if(requestedImageHeight > availableImageHeight){
       fittedWidth = Math.min(
-        fullFigureWidth,
+        requestedFigureWidth,
         availableImageHeight * naturalRatio
       );
     }
