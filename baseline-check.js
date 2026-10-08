@@ -1,22 +1,6 @@
-<style id="harri-desktop-baseline-style">
-.harri-baseline-marker{
-  display:inline-block !important;
-  width:0 !important;
-  height:0 !important;
-  margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
-  overflow:hidden !important;
-  vertical-align:baseline !important;
-  line-height:0 !important;
-  font-size:0 !important;
-  pointer-events:none !important;
-}
-</style>
 
-<script class="harri-desktop-baseline-script">
 (function(){
-  const targetSelector = {{ include.target | jsonify }};
+  const targetSelector = ".research-abstract-copy";
   const desktopBreakpoint = 900;
 
   function start(){
@@ -199,4 +183,3 @@
     start();
   }
 })();
-</script>
