@@ -885,7 +885,7 @@ figures:
 
       Edited by the author.
   - number: 27
-    image: /assets/uploads/fig-27.png
+    image: /assets/uploads/fig-27-1.png
     caption: “Diacritic Positioning” in the “Middle East Character Formats.”
   - number: 28
     image: /assets/uploads/fig-28.jpg
