@@ -741,19 +741,25 @@ html.nav-state-syncing .nav-group *{
 
 
 
-/* MINI-CV SECTION TITLES — same type size/leading as their entries.
-   Only weight distinguishes the title. Section spacing stays unchanged. */
+/* MINI-CV SECTION TITLES — restored to their earlier heading size.
+   Keep the current tighter leading and section spacing unchanged. */
 .cv-section h2{
-  font-size:14px !important;
+  font-size:23px !important;
   line-height:17.12px !important;
   font-weight:750 !important;
   letter-spacing:normal !important;
   margin:0 0 10px !important;
 }
 
+@media (max-width:1100px) and (min-width:901px){
+  .cv-section h2{
+    font-size:21px !important;
+  }
+}
+
 @media (max-width:900px){
   .cv-section h2{
-    font-size:16px !important;
+    font-size:23px !important;
     line-height:20.24px !important;
     margin-bottom:12px !important;
   }
