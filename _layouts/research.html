@@ -2337,166 +2337,91 @@
 
 
 /* ============================================================
-   RESEARCH STABLE DESKTOP/LAPTOP ARCHITECTURE — v133
+   RESEARCH FIXED-PAGE STABILITY — v134
+   Preserve original fixed page + internally scrolling article.
    ============================================================ */
 
 @media (min-width:901px){
 
-  /*
-    One document scroll only.
-    Left and right rails remain sticky, but the Research article itself is
-    ordinary document flow. This prevents browser-specific nested-scroll
-    position glitches when resizing.
-  */
+  /* Preserve original application-style viewport behavior. */
   html,
   body{
-    height:auto !important;
-    min-height:100%;
-    overflow-x:hidden !important;
-    overflow-y:auto !important;
+    height:100% !important;
+    overflow:hidden !important;
   }
 
   .layout{
-    --research-left-col:clamp(180px, 14vw, 220px);
-    --research-gap:clamp(20px, 2vw, 28px);
-    --research-figure-hang:43.5vh;
-
-    height:auto !important;
-    min-height:100vh !important;
-    overflow:visible !important;
-
-    grid-template-columns:
-      var(--research-left-col)
-      minmax(0,745fr)
-      minmax(0,660fr) !important;
-
-    grid-template-rows:auto !important;
-    gap:var(--research-gap) !important;
-    align-items:start !important;
+    height:100vh !important;
+    min-height:0 !important;
+    grid-template-rows:minmax(0,1fr) !important;
+    overflow:hidden !important;
   }
 
   .left,
-  .paper,
   .right{
-    min-width:0 !important;
-    max-width:100%;
-  }
-
-  .left{
-    position:sticky !important;
-    top:32px !important;
-    height:calc(100vh - 58px) !important;
+    position:relative !important;
+    top:auto !important;
+    height:100% !important;
     min-height:0 !important;
-    overflow:hidden !important;
   }
 
   .paper{
     position:relative !important;
-    height:auto !important;
+    height:100% !important;
     min-height:0 !important;
-    overflow:visible !important;
-    padding-right:0 !important;
-    scrollbar-gutter:auto !important;
-    overflow-anchor:none;
-  }
-
-  .right{
-    position:sticky !important;
-    top:32px !important;
-    height:calc(100vh - 58px) !important;
-    min-height:0 !important;
-    overflow:hidden !important;
-    display:block !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    scroll-behavior:smooth;
+    overscroll-behavior:contain;
+    scrollbar-width:none;
+    scrollbar-gutter:stable;
+    padding-right:4px;
   }
 
   /*
-    PROJECT DESCRIPTOR + LARGE TITLE
-    Never use a transform on the descriptor. The large title keeps the same
-    desktop point size and wraps naturally inside the centre column.
+    Descriptor stays in natural flow. Do not move it with transforms during
+    resize; this prevents it from becoming visually stranded inside body text.
   */
   .project-title{
     transform:none !important;
-    width:100%;
     max-width:100% !important;
     white-space:normal !important;
     overflow-wrap:break-word;
   }
 
+  /*
+    The CMS title-line break remains preferred, but a long line is allowed to
+    wrap again when a laptop column is too narrow. It is never clipped.
+  */
   .paper h1{
-    width:100%;
     max-width:100% !important;
-    font-size:54px !important;
-    line-height:.95 !important;
   }
 
   .paper h1 .title-line{
     display:block;
-    width:100%;
-    max-width:100%;
+    max-width:100% !important;
     white-space:normal !important;
     overflow-wrap:break-word;
     word-break:normal;
   }
 
-  .research-intro-screen{
-    min-height:calc(100vh - 58px) !important;
-    height:auto !important;
-    display:flex !important;
-    flex-direction:column !important;
-    overflow:visible !important;
-  }
-
-  .research-abstract-panel{
-    flex:1 0 auto !important;
-    min-height:0 !important;
-    height:auto !important;
-    display:flex !important;
-    flex-direction:column !important;
-    overflow:visible !important;
-  }
-
-  .research-abstract-copy{
-    margin-top:auto !important;
-    transform:none !important;
-  }
-
-  .research-abstract-copy > :last-child{
-    margin-bottom:0 !important;
-  }
-
   /*
-    Restore the established Research navigation location.
-    It occupies the same upper-right region as before v132.
+    Restore the original right-rail positions:
+    navigation above; every figure hangs from the exact same 43.5vh line.
+    If the navigation is unusually long, only the navigation scrolls so it
+    cannot disappear underneath the figure.
   */
+  .right{
+    overflow:hidden !important;
+  }
+
   .toc{
-    position:absolute !important;
-    top:0 !important;
-    right:20% !important;
-
-    width:min(320px, 80%) !important;
-    min-width:0 !important;
-    max-width:80% !important;
-
-    margin:0 !important;
-    justify-self:auto !important;
-
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-    gap:clamp(18px, 2.1vw, 34px) !important;
-
-    font-size:13px !important;
-    line-height:1.04 !important;
-
-    /*
-      The TOC gets the area ABOVE the fixed figure hanging line.
-      If a project has an unusually long TOC, the TOC itself scrolls rather
-      than allowing the figure to cover it.
-    */
-    max-height:calc(var(--research-figure-hang) - 24px) !important;
+    max-height:calc(43.5vh - 22px) !important;
     overflow-y:auto !important;
     overflow-x:hidden !important;
     scrollbar-width:none;
-    background:var(--bg);
     z-index:3;
+    background:var(--bg);
   }
 
   .toc::-webkit-scrollbar{
@@ -2504,60 +2429,18 @@
     height:0;
   }
 
-  .toc-col,
-  .toc a{
-    min-width:0;
-    max-width:100%;
-  }
-
-  .toc a{
-    overflow-wrap:break-word;
-  }
-
-  /*
-    FIGURE HANGING LINE
-    Every desktop figure begins at EXACTLY the same vertical line.
-    The image may resize to fit below that line, but its top never moves.
-  */
   .figure-stage{
     position:absolute !important;
-    top:var(--research-figure-hang) !important;
-    left:0 !important;
-    right:0 !important;
-
-    width:auto !important;
-    max-width:none !important;
+    top:43.5vh !important;
+    right:3.5% !important;
+    width:94% !important;
     margin:0 !important;
-
     transform:none !important;
     z-index:1 !important;
   }
 
   .figure-stage .figure-box{
     margin-top:0 !important;
-  }
-}
-
-/*
-  Narrow desktop/laptop:
-  preserve the SAME three-column proportions and title size.
-  Content wraps; it is never clipped or pushed into another column.
-*/
-@media (min-width:901px) and (max-width:1180px){
-  .layout{
-    --research-left-col:clamp(170px, 17vw, 200px);
-    --research-gap:clamp(16px, 1.7vw, 22px);
-  }
-
-  .toc{
-    right:12% !important;
-    width:min(300px, 88%) !important;
-    max-width:88% !important;
-    gap:14px !important;
-  }
-
-  .figure-caption{
-    width:min(190px, 100%) !important;
   }
 }
 
@@ -3168,19 +3051,21 @@
     if(window.innerWidth <= 900) return;
     if(!figureRefs.length) return;
 
-    const viewportTop = 32;
-    const viewportBottom = window.innerHeight - 26;
-    const readingLine =
-      viewportTop + (viewportBottom - viewportTop) * 0.42;
+    const paperRect = paperScroller.getBoundingClientRect();
+    const readingLine = paperRect.top + paperScroller.clientHeight * 0.42;
 
     /*
       Desktop Research figure rule:
-      Use the actual browser viewport. The Research article is normal document
-      flow on desktop, so no nested paper-scroll geometry is involved.
+      If more than one figure reference is currently visible in the reading
+      area, the FIRST one mentioned in the text has priority.
+
+      As soon as that earlier reference leaves the visible reading area, the
+      next visible reference can take over. If no figure reference is visible,
+      fall back to the established scroll-driven reading-line behavior.
     */
     const visibleRefs = figureRefs.filter(ref => {
       const rect = ref.getBoundingClientRect();
-      return rect.bottom >= viewportTop && rect.top <= viewportBottom;
+      return rect.bottom >= paperRect.top && rect.top <= paperRect.bottom;
     });
 
     let currentKey = visibleRefs.length
@@ -3251,7 +3136,6 @@
   }
 
   paperScroller.addEventListener("scroll", handleFigureReadingScroll, {passive:true});
-  window.addEventListener("scroll", handleFigureReadingScroll, {passive:true});
 
   window.addEventListener("resize", () => {
     if(window.innerWidth > 900){
@@ -3283,9 +3167,10 @@
   function currentSectionId(){
     if(!sections.length) return "";
 
+    const paperRect = paperScroller.getBoundingClientRect();
     const readingLine = window.innerWidth <= 900
       ? 145
-      : 104;
+      : paperRect.top + 72;
 
     let current = sections[0].id;
 
@@ -3573,21 +3458,14 @@
   paperScroller.addEventListener("scroll", handleTextNavigationScroll, {passive:true});
 
   window.addEventListener("scroll", () => {
-    handleTextNavigationScroll();
+    if(window.innerWidth <= 900){
+      handleTextNavigationScroll();
+    }
   }, {passive:true});
 
   if(mobileToc){
     mobileToc.addEventListener("scroll", () => {
       if(window.innerWidth <= 900){
-        positionNavigationArrows();
-      }
-    }, {passive:true});
-  }
-
-  const desktopToc = document.querySelector(".toc");
-  if(desktopToc){
-    desktopToc.addEventListener("scroll", () => {
-      if(window.innerWidth > 900){
         positionNavigationArrows();
       }
     }, {passive:true});
@@ -3989,10 +3867,21 @@
     const target = document.getElementById(id);
     if (!target) return;
 
-    target.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+    if (window.innerWidth > 900 && paper) {
+      const paperRect = paper.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const destination = paper.scrollTop + (targetRect.top - paperRect.top);
+
+      paper.scrollTo({
+        top: destination,
+        behavior: "smooth"
+      });
+    } else {
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
   }
 
   document.querySelectorAll('.toc a[href^="#"], .mobile-toc a[href^="#"]').forEach(function (link) {
