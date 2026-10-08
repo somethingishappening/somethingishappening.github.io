@@ -92,7 +92,7 @@ sections:
       3). A similar example is a thirteenth-century manuscript folio, attributed
       to either Egypt or Syria, currently held by The Metropolitan Museum of Art
       in New York City (Fig. 4).
-    nav_column: none
+    nav_column: left
   - heading: The Dot As A Diacritic
     heading_level: h2
     body: >-
@@ -121,7 +121,7 @@ sections:
       because the letter can easily fit the dots over it horizontally, in
       contrast to other characters like the initial form of the letter “Tha’”
       (ثـ) (al-Qalqashandy, 1914, p.156).
-    nav_column: none
+    nav_column: left
   - heading: Diacritic Agency
     heading_level: h3
     body: The use of Diacritics in the Arabic script extends beyond the obvious one
@@ -129,7 +129,7 @@ sections:
       value in written text, calligraphic compositions, and artwork, creating
       balance within textual layouts and compositions. Calligraphers and scribes
       attributed these idiosyncrasies to the dot as an agency or allowance.
-    nav_column: none
+    nav_column: left
   - heading: The Independent Dot
     heading_level: h2
     body: Calligraphers manipulated the dots adorning Arabic letters, managing their
