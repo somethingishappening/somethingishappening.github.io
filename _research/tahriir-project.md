@@ -706,21 +706,21 @@ figures:
 
       Edited by the author.
   - number: 3
-    image: /assets/uploads/fig-3.png
+    image: /assets/uploads/fig-3-1.png
     caption: >-
       The Sultan Baybars’ Qur’an with circular diacritics. The dots are colored
       differently from their base characters. 
 
       Retrieved from the British Library collection (ibn al-Wahid, 1306).
   - number: 4
-    image: /assets/uploads/fig-4.jpg
+    image: /assets/uploads/fig-4-1.jpg
     caption: >-
       Qur’anic manuscript leaf; the text is fully dotted with golden-outlined
       circles.
 
       Retrieved from The Metropolitan Museum of Art collection (unavailable).
   - number: 5
-    image: /assets/uploads/fig-5-1.gif
+    image: /assets/uploads/fig-5-2.gif
     caption: |-
       The different Arabic Dot groups.
       Figure illustrated by the author.
@@ -814,7 +814,7 @@ figures:
       Figure executed by the author, using Lyon Arabic by Commercial Type,
       designed by Khajag Apelian and Wael Morcos.
   - number: 17
-    image: /assets/uploads/fig-17.gif
+    image: /assets/uploads/fig-17-1.gif
     caption: >-
       The basic Arabic short vowels. In order of appearance: A, U, I.
 
