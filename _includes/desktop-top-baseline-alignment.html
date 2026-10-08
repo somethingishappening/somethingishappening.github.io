@@ -110,13 +110,13 @@
 
         const delta = referenceBaseline - targetBaseline;
 
-        const canvasScale = parseFloat(
-          document.documentElement.dataset.harriCanvasScale || "1"
+        const referenceScale = parseFloat(
+          document.documentElement.dataset.harriReferenceScale || "1"
         ) || 1;
 
         const cssDelta =
-          document.documentElement.classList.contains("harri-desktop-canvas")
-            ? delta / canvasScale
+          document.documentElement.classList.contains("harri-reference-desktop")
+            ? delta / referenceScale
             : delta;
 
         target.style.transform =
@@ -128,11 +128,7 @@
 
     window.addEventListener("resize", align, {passive:true});
     window.addEventListener("orientationchange", align, {passive:true});
-    window.addEventListener(
-      "harri:desktop-canvas-resized",
-      align,
-      {passive:true}
-    );
+    window.addEventListener("harri:reference-fitted", align, {passive:true});
 
     if(document.fonts && document.fonts.ready){
       document.fonts.ready.then(function(){

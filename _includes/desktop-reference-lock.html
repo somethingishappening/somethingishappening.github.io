@@ -1,0 +1,320 @@
+<style id="harri-desktop-reference-lock-v137">
+/*
+  HARRI.LA DESKTOP REFERENCE LOCK — v137
+  --------------------------------------
+  Reference CSS canvas: 2560 × 1350.
+
+  All ORIGINAL desktop design values remain in the page templates:
+  - original grid fractions
+  - original fonts
+  - original Work image gaps
+  - original image proportions
+  - original Research navigation geometry
+  - original Research figure dimensions
+
+  This layer only:
+  1. gives the page the same desktop coordinate system everywhere;
+  2. neutralizes compact-desktop type overrides;
+  3. replaces viewport-height-dependent shell dimensions with their
+     1350px-reference equivalents.
+*/
+
+html.harri-reference-desktop{
+  --harri-reference-width:2560;
+  --harri-reference-height:1350;
+  --harri-reference-scale:1;
+}
+
+html.harri-reference-desktop,
+html.harri-reference-desktop body{
+  width:100%;
+  min-width:0;
+  background:#fff;
+}
+
+/* Preserve the existing mobile implementation completely. */
+html.harri-reference-desktop body > .about-layout,
+html.harri-reference-desktop body > .layout{
+  box-sizing:border-box !important;
+  width:2560px !important;
+  min-width:2560px !important;
+  max-width:2560px !important;
+  transform:none !important;
+  transform-origin:0 0 !important;
+}
+
+/* ABOUT — original wide desktop values, no redesign. */
+html.harri-reference-desktop body.page-about{
+  overflow:hidden !important;
+}
+
+html.harri-reference-desktop body.page-about > .about-layout{
+  height:1350px !important;
+  min-height:1350px !important;
+  max-height:1350px !important;
+}
+
+/* Neutralize ONLY the old 901–1100 compact-desktop overrides. */
+html.harri-reference-desktop body.page-about{
+  --gap:28px !important;
+  --right-w:300px !important;
+}
+html.harri-reference-desktop body.page-about .about-copy{
+  font-size:40px !important;
+}
+html.harri-reference-desktop body.page-about .about-greeting{
+  font-size:54px !important;
+}
+html.harri-reference-desktop body.page-about .cv-title{
+  font-size:27px !important;
+}
+html.harri-reference-desktop body.page-about .cv-section h2{
+  font-size:23px !important;
+}
+
+/* WORK / ARTISTIC — preserve original dimensions and 18px gallery gap. */
+html.harri-reference-desktop body.page-work > .layout{
+  min-height:1350px !important;
+}
+html.harri-reference-desktop body.page-work .left,
+html.harri-reference-desktop body.page-work .project-info{
+  height:1292px !important; /* 1350 - 58 */
+}
+html.harri-reference-desktop body.page-work .media-item{
+  min-height:1292px !important;
+}
+
+/* Exact original wide-desktop type values. */
+html.harri-reference-desktop body.page-work .project-type{
+  font-size:27px !important;
+  line-height:1 !important;
+}
+html.harri-reference-desktop body.page-work .project-info h1{
+  font-size:54px !important;
+  line-height:.94 !important;
+  max-width:610px !important;
+}
+html.harri-reference-desktop body.page-work .project-info h1 .title-line{
+  white-space:nowrap !important;
+}
+html.harri-reference-desktop body.page-work .project-description{
+  font-size:18px !important;
+  line-height:1.13 !important;
+}
+
+/* Explicitly preserve the approved original gallery spacing. */
+html.harri-reference-desktop body.page-work .media-item{
+  margin-bottom:18px !important;
+}
+html.harri-reference-desktop body.page-work .media-item:last-child{
+  margin-bottom:0 !important;
+}
+
+/* HARRILANPUISTO — same shell calibration; keep its own original media CSS. */
+html.harri-reference-desktop body.page-harrilanpuisto > .layout{
+  min-height:1350px !important;
+}
+html.harri-reference-desktop body.page-harrilanpuisto .left,
+html.harri-reference-desktop body.page-harrilanpuisto .project-info{
+  height:1292px !important;
+}
+
+/* RESEARCH — preserve fixed page + internally scrolling paper. */
+html.harri-reference-desktop body.page-research{
+  overflow:hidden !important;
+}
+html.harri-reference-desktop body.page-research > .layout{
+  height:1350px !important;
+  min-height:1350px !important;
+  max-height:1350px !important;
+}
+html.harri-reference-desktop body.page-research .left,
+html.harri-reference-desktop body.page-research .right{
+  height:1294px !important; /* original Research 1350 - 56 */
+}
+html.harri-reference-desktop body.page-research .paper{
+  height:100% !important;
+  min-height:0 !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+}
+
+/* Restore original wide Research typography exactly. */
+html.harri-reference-desktop body.page-research .project-title{
+  font-size:27px !important;
+  line-height:1 !important;
+}
+html.harri-reference-desktop body.page-research .paper h1{
+  font-size:54px !important;
+  line-height:.95 !important;
+}
+html.harri-reference-desktop body.page-research .paper h1 .title-line{
+  white-space:nowrap !important;
+}
+html.harri-reference-desktop body.page-research .paper p,
+html.harri-reference-desktop body.page-research .research-copy ul > li,
+html.harri-reference-desktop body.page-research .paper section:not(#abstract) > h2,
+html.harri-reference-desktop body.page-research .paper .research-copy h2,
+html.harri-reference-desktop body.page-research .paper section:not(#abstract) > h3,
+html.harri-reference-desktop body.page-research .paper .research-copy h3{
+  font-size:18px !important;
+}
+
+/*
+  Keep the Research TOC exactly at its original 13px geometry.
+  v135's viewport-fit system is disabled separately in JS while reference lock
+  is active.
+*/
+html.harri-reference-desktop body.page-research .toc{
+  --research-toc-fit:1 !important;
+  font-size:13px !important;
+  gap:34px !important;
+  overflow-y:visible !important;
+}
+
+/*
+  Original Research hanging line:
+  43.5% of the 1350px reference viewport = 587.25px.
+  Figure width/aspect/caption remain entirely controlled by the original CSS.
+*/
+html.harri-reference-desktop body.page-research .figure-stage{
+  top:587.25px !important;
+}
+
+/* Keep desktop page structures desktop even after later browser page zoom. */
+html.harri-reference-desktop body.page-about > .about-layout,
+html.harri-reference-desktop body.page-work > .layout,
+html.harri-reference-desktop body.page-research > .layout,
+html.harri-reference-desktop body.page-harrilanpuisto > .layout{
+  display:grid !important;
+}
+</style>
+
+<script id="harri-desktop-reference-lock-script-v137">
+(function(){
+  const REFERENCE_WIDTH = 2560;
+  const REFERENCE_HEIGHT = 1350;
+  const DESKTOP_ENTRY = 900;
+
+  const html = document.documentElement;
+
+  /*
+    Decide desktop/mobile only once on entry.
+    Mobile sessions keep the existing mobile code unchanged.
+  */
+  if(window.innerWidth <= DESKTOP_ENTRY) return;
+
+  html.classList.add("harri-reference-desktop");
+
+  let baselineDpr = window.devicePixelRatio || 1;
+  let baselineScreenWidth = window.screen ? window.screen.width : 0;
+  let baselineScreenHeight = window.screen ? window.screen.height : 0;
+  let raf = 0;
+
+  function pageRoot(){
+    return document.querySelector(
+      "body > .about-layout, body > .layout"
+    );
+  }
+
+  function fitReference(){
+    cancelAnimationFrame(raf);
+
+    raf = requestAnimationFrame(function(){
+      const root = pageRoot();
+      if(!root) return;
+
+      const scale = Math.min(
+        window.innerWidth / REFERENCE_WIDTH,
+        window.innerHeight / REFERENCE_HEIGHT
+      );
+
+      const renderedWidth = REFERENCE_WIDTH * scale;
+      const spareWidth = Math.max(0, window.innerWidth - renderedWidth);
+
+      /*
+        Keep the artboard top-aligned. Center only spare horizontal space.
+        This introduces no artificial top margin.
+      */
+      const visualLeft = spareWidth / 2;
+      const cssLeft = scale ? visualLeft / scale : 0;
+
+      html.dataset.harriReferenceScale = scale.toFixed(6);
+      html.style.setProperty(
+        "--harri-reference-scale",
+        scale.toFixed(6)
+      );
+
+      root.style.setProperty(
+        "zoom",
+        scale.toFixed(6),
+        "important"
+      );
+      root.style.setProperty(
+        "margin-left",
+        cssLeft.toFixed(3) + "px",
+        "important"
+      );
+      root.style.setProperty(
+        "margin-top",
+        "0px",
+        "important"
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("harri:reference-fitted", {
+          detail:{scale:scale}
+        })
+      );
+    });
+  }
+
+  function changedPhysicalScreen(){
+    if(!window.screen) return false;
+    return (
+      window.screen.width !== baselineScreenWidth ||
+      window.screen.height !== baselineScreenHeight
+    );
+  }
+
+  function onResize(){
+    const currentDpr = window.devicePixelRatio || 1;
+    const dprChanged = Math.abs(currentDpr - baselineDpr) > 0.01;
+    const physicalScreenChanged = changedPhysicalScreen();
+
+    /*
+      Manual browser zoom generally changes DPR on the same screen.
+      Do not compensate for it: the user explicitly wants normal browser zoom
+      after entering the site.
+
+      Ordinary window resizing keeps DPR stable and refits the reference.
+      Moving to another monitor may change both screen dimensions and DPR;
+      adopt the new screen and refit.
+    */
+    if(dprChanged && !physicalScreenChanged){
+      return;
+    }
+
+    if(physicalScreenChanged){
+      baselineDpr = currentDpr;
+      baselineScreenWidth = window.screen.width;
+      baselineScreenHeight = window.screen.height;
+    }
+
+    fitReference();
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      fitReference,
+      {once:true}
+    );
+  }else{
+    fitReference();
+  }
+
+  window.addEventListener("resize", onResize, {passive:true});
+  window.addEventListener("orientationchange", fitReference, {passive:true});
+})();
+</script>

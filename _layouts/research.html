@@ -2489,7 +2489,7 @@
 }
 
 </style>
-  {% include desktop-canvas-lock.html %}
+  {% include desktop-reference-lock.html %}
 </head>
 <body class="page-research">
 
@@ -3378,10 +3378,10 @@
   function moveDesktopArrow(link, force = false){
     if(!desktopTocArrow || !link) return;
 
-    const desktopCanvas =
-      document.documentElement.classList.contains("harri-desktop-canvas");
+    const referenceMode =
+      document.documentElement.classList.contains("harri-reference-desktop");
 
-    if(!desktopCanvas && window.innerWidth <= 900) return;
+    if(!referenceMode && window.innerWidth <= 900) return;
     if(!force && desktopArrowTarget === link) return;
 
     const changedTarget = desktopArrowTarget !== link;
@@ -3389,32 +3389,15 @@
 
     const rect = link.getBoundingClientRect();
 
-    if(desktopCanvas && desktopToc){
-      /*
-        In the uniformly scaled reference canvas, keep the arrow in the
-        TOC's own coordinate system. getBoundingClientRect() is already
-        visually scaled, so divide by the canvas scale before applying a
-        CSS transform inside the zoomed canvas.
-      */
+    if(referenceMode){
       const scale = parseFloat(
-        document.documentElement.dataset.harriCanvasScale || "1"
+        document.documentElement.dataset.harriReferenceScale || "1"
       ) || 1;
-      const tocRect = desktopToc.getBoundingClientRect();
 
-      if(desktopTocArrow.parentElement !== desktopToc){
-        desktopToc.appendChild(desktopTocArrow);
-      }
+      const x = (rect.left - 20) / scale;
+      const y = (rect.top + 1) / scale;
 
-      const x =
-        ((rect.left - tocRect.left) / scale) +
-        desktopToc.scrollLeft - 20;
-
-      const y =
-        ((rect.top - tocRect.top) / scale) +
-        desktopToc.scrollTop + 1;
-
-      desktopToc.style.position = "relative";
-      desktopTocArrow.style.position = "absolute";
+      desktopTocArrow.style.position = "fixed";
       desktopTocArrow.style.left = "0px";
       desktopTocArrow.style.top = "0px";
 
@@ -3519,11 +3502,11 @@
 
   function fitDesktopResearchToc(){
     if(
-      document.documentElement.classList.contains("harri-desktop-canvas")
+      document.documentElement.classList.contains("harri-reference-desktop")
     ){
       if(desktopToc){
         desktopToc.style.setProperty("--research-toc-fit", "1");
-        desktopToc.style.setProperty("overflow-y", "hidden");
+        desktopToc.style.setProperty("overflow-y", "visible");
       }
       return;
     }
@@ -3693,7 +3676,7 @@
   }
 
   window.addEventListener(
-    "harri:desktop-canvas-resized",
+    "harri:reference-fitted",
     () => {
       desktopArrowTarget = null;
       fitDesktopResearchToc();
