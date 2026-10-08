@@ -318,8 +318,9 @@
       line-height:1em;
       pointer-events:none;
       opacity:1;
-      will-change:top;
-      transition:top .34s cubic-bezier(.22,.61,.36,1);
+      will-change:transform;
+      transform:translate3d(0,0,0);
+      transition:transform .30s cubic-bezier(.22,.61,.36,1);
     }
 
     .toc-arrow{
@@ -2969,6 +2970,8 @@
 
   let clickedDesktopLink = null;
   let clickedMobileLink = null;
+  let desktopArrowTarget = null;
+  let mobileArrowTarget = null;
 
   function currentSectionId(){
     if(!sections.length) return "";
@@ -3003,26 +3006,50 @@
     return mobileTocLinks.find(link => link.dataset.mobileSection === id) || null;
   }
 
-  function moveDesktopArrow(link){
+  function moveDesktopArrow(link, force = false){
     if(!desktopTocArrow || !link || window.innerWidth <= 900) return;
 
+    /*
+      Do not rewrite the same arrow target on every article scroll frame.
+      Repeated top/left writes were restarting the CSS transition and made the
+      arrow visibly twitch. Retarget only when the active navigation item
+      changes, or when layout geometry genuinely changes (resize).
+    */
+    if(!force && desktopArrowTarget === link) return;
+    desktopArrowTarget = link;
+
     const rect = link.getBoundingClientRect();
+    const x = Math.round(rect.left - 20);
+    const y = Math.round(rect.top + 1);
+
     desktopTocArrow.style.position = "fixed";
-    desktopTocArrow.style.left = `${Math.round(rect.left - 20)}px`;
-    desktopTocArrow.style.top = `${Math.round(rect.top + 1)}px`;
+    desktopTocArrow.style.left = "0px";
+    desktopTocArrow.style.top = "0px";
+    desktopTocArrow.style.transform =
+      `translate3d(${x}px, ${y}px, 0)`;
   }
 
-  function moveMobileArrow(link){
+  function moveMobileArrow(link, force = false){
     if(!mobileTocArrow || !mobileToc || !link) return;
+
+    if(!force && mobileArrowTarget === link) return;
+    mobileArrowTarget = link;
 
     const navRect = mobileToc.getBoundingClientRect();
     const linkRect = link.getBoundingClientRect();
 
+    const x = Math.round(
+      (linkRect.left - navRect.left) + mobileToc.scrollLeft - 16
+    );
+    const y = Math.round(
+      (linkRect.top - navRect.top) + mobileToc.scrollTop + 1
+    );
+
     mobileTocArrow.style.position = "absolute";
-    mobileTocArrow.style.left =
-      `${Math.round((linkRect.left - navRect.left) + mobileToc.scrollLeft - 16)}px`;
-    mobileTocArrow.style.top =
-      `${Math.round((linkRect.top - navRect.top) + mobileToc.scrollTop + 1)}px`;
+    mobileTocArrow.style.left = "0px";
+    mobileTocArrow.style.top = "0px";
+    mobileTocArrow.style.transform =
+      `translate3d(${x}px, ${y}px, 0)`;
   }
 
   function setActiveNavigationForSection(id){
@@ -3070,8 +3097,8 @@
       || mobileTocLinks[0]
       || null;
 
-    moveDesktopArrow(desktopActive);
-    moveMobileArrow(mobileActive);
+    moveDesktopArrow(desktopActive, true);
+    moveMobileArrow(mobileActive, true);
   }
 
   tocLinks.forEach(link => {
@@ -3130,6 +3157,8 @@
       mobileToc.style.height = `${targetHeight}px`;
       mobileToc.classList.toggle("toc-scrollable", mobileProjectTocFullHeight() > targetHeight + 1);
     }
+    desktopArrowTarget = null;
+    mobileArrowTarget = null;
     requestAnimationFrame(positionNavigationArrows);
   });
 
