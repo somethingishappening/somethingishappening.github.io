@@ -2280,40 +2280,40 @@
 }
 
 
-/* RESEARCH BULLET HANGING INDENT — v130 */
 
-/* Semantic bullet lists created by the CMS rich-text editor. */
+/* RESEARCH BULLET ALIGNMENT — v131 */
+
+/*
+  Use native outside markers. The browser then lays every wrapped line at the
+  exact same content start as the first letter after the marker.
+*/
 .research-copy ul{
-  list-style:none;
-  margin:0 0 14px;
-  padding:0;
+  list-style-position:outside !important;
+  list-style-type:disc !important;
+  margin:0 0 14px !important;
+  padding-left:1.15em !important;
   max-width:700px;
 }
 
 .research-copy ul > li{
-  position:relative;
-  margin:0;
-  padding-left:1.05em;
+  display:list-item !important;
+  margin:0 0 14px !important;
+  padding:0 !important;
   font-size:18px;
   line-height:1.15;
 }
 
-.research-copy ul > li::before{
-  content:"•";
-  position:absolute;
-  left:0;
-  top:0;
-  width:.75em;
+.research-copy ul > li:last-child{
+  margin-bottom:0 !important;
 }
 
-/*
-  Literal paragraphs beginning with "• " receive this class in JS.
-  The hanging indent places every wrapped line directly under the first
-  letter after the bullet + following space.
-*/
-.research-copy p.manual-bullet{
-  padding-left:1.05em;
-  text-indent:-1.05em;
+.research-copy ul > li::marker{
+  font-size:1em;
+}
+
+/* Lists created from literal "• " paragraphs use the exact same geometry. */
+.research-copy ul.manual-bullet-list-v131{
+  list-style-type:disc !important;
 }
 
 @media (min-width:901px) and (max-width:1180px){
@@ -2323,6 +2323,10 @@
 }
 
 @media (max-width:900px){
+  .research-copy ul{
+    max-width:none;
+  }
+
   .research-copy ul > li{
     font-size:17px;
     line-height:1.16;
@@ -4284,7 +4288,6 @@
 })();
 </script>
 
-{% include desktop-baseline-alignment.html target=".research-abstract-copy" %}
 {% include desktop-top-baseline-alignment.html reference=".brand" target=".project-title" %}
 
 
@@ -4349,24 +4352,197 @@
   }
 })();
 </script>
+<style id="research-flow-baseline-marker-style-v131">
+.research-flow-baseline-marker{
+  display:inline-block !important;
+  width:0 !important;
+  height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  overflow:hidden !important;
+  vertical-align:baseline !important;
+  line-height:0 !important;
+  font-size:0 !important;
+  pointer-events:none !important;
+}
+</style>
 
 
-<script id="research-manual-bullet-indent-v130">
+<script id="research-abstract-flow-baseline-v131">
 (function(){
-  function markManualBullets(root){
-    (root || document).querySelectorAll(".research-copy p").forEach(function(p){
-      if(/^\s*•\s+/.test(p.textContent || "")){
-        p.classList.add("manual-bullet");
+  const intro = document.querySelector(".research-intro-screen");
+  const target = document.querySelector(".research-abstract-copy");
+  const footer = document.querySelector(".left-footer");
+  const desktopBreakpoint = 900;
+
+  if(!intro || !target || !footer) return;
+
+  let raf = 0;
+
+  function visible(el){
+    if(!el) return false;
+    const style = getComputedStyle(el);
+    return style.display !== "none" &&
+           style.visibility !== "hidden" &&
+           el.getClientRects().length > 0;
+  }
+
+  function lastVisibleFooterItem(){
+    const items = Array.from(footer.children).filter(visible);
+    return items.length ? items[items.length - 1] : null;
+  }
+
+  function lastTextNode(container){
+    const walker = document.createTreeWalker(
+      container,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node){
+          if(!node.nodeValue || !node.nodeValue.trim()){
+            return NodeFilter.FILTER_REJECT;
+          }
+          const parent = node.parentElement;
+          if(!parent || !visible(parent)){
+            return NodeFilter.FILTER_REJECT;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        }
       }
+    );
+
+    let last = null;
+    while(walker.nextNode()) last = walker.currentNode;
+    return last;
+  }
+
+  function markerAfterLastText(container, role){
+    container.querySelectorAll(
+      '.research-flow-baseline-marker[data-role="' + role + '"]'
+    ).forEach(function(marker){ marker.remove(); });
+
+    const textNode = lastTextNode(container);
+    if(!textNode) return null;
+
+    const marker = document.createElement("span");
+    marker.className = "research-flow-baseline-marker";
+    marker.dataset.role = role;
+    marker.setAttribute("aria-hidden", "true");
+
+    textNode.parentNode.insertBefore(marker, textNode.nextSibling);
+    return marker;
+  }
+
+  function align(){
+    cancelAnimationFrame(raf);
+
+    raf = requestAnimationFrame(function(){
+      target.style.removeProperty("transform");
+
+      if(window.innerWidth <= desktopBreakpoint){
+        intro.style.removeProperty("min-height");
+        return;
+      }
+
+      /*
+        Reset to the CSS first-screen minimum before measuring. Since the
+        adjustment is applied to the container's min-height, it participates
+        in normal flow and pushes all later chapters down with it.
+      */
+      intro.style.removeProperty("min-height");
+
+      requestAnimationFrame(function(){
+        const footerItem = lastVisibleFooterItem();
+        if(!footerItem) return;
+
+        const targetMarker = markerAfterLastText(target, "target");
+        const footerMarker = markerAfterLastText(footerItem, "footer");
+        if(!targetMarker || !footerMarker) return;
+
+        const targetBaseline = targetMarker.getBoundingClientRect().top;
+        const footerBaseline = footerMarker.getBoundingClientRect().top;
+        const delta = footerBaseline - targetBaseline;
+
+        const naturalHeight = intro.getBoundingClientRect().height;
+        const desiredHeight = Math.max(0, naturalHeight + delta);
+
+        /*
+          If content itself needs more height than desiredHeight, height:auto
+          wins. This means long Abstracts simply flow naturally and can never
+          overlap the article below.
+        */
+        intro.style.minHeight = desiredHeight.toFixed(2) + "px";
+      });
     });
   }
 
+  align();
+
+  window.addEventListener("resize", align, {passive:true});
+  window.addEventListener("orientationchange", align, {passive:true});
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(align);
+  }
+})();
+</script>
+
+
+<script id="research-manual-bullets-to-list-v131">
+(function(){
+  function stripLeadingBullet(root){
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while(walker.nextNode()){
+      const node = walker.currentNode;
+      if(!node.nodeValue || !node.nodeValue.trim()) continue;
+
+      if(/^\s*•\s+/.test(node.nodeValue)){
+        node.nodeValue = node.nodeValue.replace(/^\s*•\s+/, "");
+      }
+      return;
+    }
+  }
+
+  function convert(container){
+    const children = Array.from(container.children);
+    let currentList = null;
+
+    children.forEach(function(child){
+      const isManualBullet =
+        child.tagName === "P" &&
+        /^\s*•\s+/.test(child.textContent || "");
+
+      if(!isManualBullet){
+        currentList = null;
+        return;
+      }
+
+      if(!currentList){
+        currentList = document.createElement("ul");
+        currentList.className = "manual-bullet-list-v131";
+        container.insertBefore(currentList, child);
+      }
+
+      const item = document.createElement("li");
+
+      while(child.firstChild){
+        item.appendChild(child.firstChild);
+      }
+
+      stripLeadingBullet(item);
+      currentList.appendChild(item);
+      child.remove();
+    });
+  }
+
+  function run(){
+    document.querySelectorAll(".research-copy").forEach(convert);
+  }
+
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", function(){
-      markManualBullets(document);
-    }, {once:true});
+    document.addEventListener("DOMContentLoaded", run, {once:true});
   }else{
-    markManualBullets(document);
+    run();
   }
 })();
 </script>
