@@ -743,7 +743,7 @@ figures:
 
       Edited by the author.
   - number: 8
-    image: /assets/uploads/fig-8.jpg
+    image: /assets/uploads/fig-8-1.jpg
     caption: >-
       The “Basmala” executed by different calligraphers with the Thuluth
       calligraphic style. Each calligrapher interpreted the position of the
