@@ -3304,10 +3304,10 @@
 
   /*
     Hidden article sections do not get their own arrow stop. While the reader
-    is inside one of them, keep the arrow on the nearest visible navigation
-    item that precedes it. This makes "Do not show" sections transparent to
-    the arrow instead of creating jumps or empty arrow states. Abstract is the
-    stable fallback before the first visible article item.
+    is inside one, anchor the arrow to the nearest preceding visible H2-style
+    navigation item. H1/H3 items are deliberately skipped for this fallback,
+    so a hidden section always inherits the H2 context immediately above it.
+    Abstract remains the stable fallback when there is no earlier visible H2.
   */
   function hierarchicalNavigationLink(id, links, dataKey){
     const direct = links.find(link => link.dataset[dataKey] === id) || null;
@@ -3317,7 +3317,10 @@
     if(currentIndex < 0) return null;
 
     for(let i = currentIndex - 1; i >= 0; i--){
-      const candidateId = sections[i].id;
+      const candidateSection = sections[i];
+      if(sectionHeadingLevel(candidateSection) !== 2) continue;
+
+      const candidateId = candidateSection.id;
       const link = links.find(
         item => item.dataset[dataKey] === candidateId
       ) || null;
