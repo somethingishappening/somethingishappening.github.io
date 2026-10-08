@@ -2333,6 +2333,203 @@
   }
 }
 
+
+/* ============================================================
+   RESEARCH FLUID DESKTOP/LAPTOP LAYOUT — v132
+   Same composition, but no fixed-width clipping or overlaps.
+   ============================================================ */
+
+@media (min-width:901px){
+
+  /*
+    Keep the three-column composition across desktop/laptop sizes,
+    but allow every rail to shrink safely.
+  */
+  .layout{
+    --research-left-col:clamp(170px, 14vw, 220px);
+    --research-desktop-gap:clamp(18px, 2vw, 28px);
+
+    grid-template-columns:
+      var(--research-left-col)
+      minmax(0, 1.10fr)
+      minmax(0, .95fr) !important;
+
+    gap:var(--research-desktop-gap) !important;
+  }
+
+  .left,
+  .paper,
+  .right{
+    min-width:0 !important;
+    max-width:100%;
+  }
+
+  /*
+    PROJECT TITLE
+    A CMS line remains a block, but it may wrap again if the available
+    laptop column is narrower than the entered line.
+  */
+  .paper h1{
+    width:100%;
+    max-width:100% !important;
+    font-size:clamp(40px, 4.2vw, 54px);
+  }
+
+  .paper h1 .title-line{
+    display:block;
+    width:100%;
+    max-width:100%;
+    white-space:normal !important;
+    overflow-wrap:break-word;
+    word-break:normal;
+  }
+
+  .project-title,
+  .research-copy,
+  .research-copy p,
+  .research-copy li,
+  .paper h2,
+  .paper h3,
+  .paper h1.chapter-heading{
+    max-width:100% !important;
+    overflow-wrap:break-word;
+  }
+
+  /*
+    RIGHT RAIL
+    Navigation and figure are now in real grid rows.
+    A figure can never pass underneath the navigation.
+  */
+  .right{
+    display:grid !important;
+    grid-template-rows:auto minmax(min-content, 1fr) !important;
+    gap:clamp(18px, 2.2vh, 26px) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    scrollbar-width:none;
+  }
+
+  .right::-webkit-scrollbar{
+    width:0;
+    height:0;
+  }
+
+  .toc{
+    position:relative;
+    z-index:2;
+    width:min(100%, 320px) !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    margin-right:clamp(0px, 4vw, 64px) !important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+    gap:clamp(14px, 2vw, 34px) !important;
+    background:var(--bg);
+  }
+
+  .toc-col,
+  .toc a{
+    min-width:0;
+    max-width:100%;
+  }
+
+  .toc a{
+    overflow-wrap:break-word;
+  }
+
+  .figure-stage{
+    position:relative !important;
+    top:auto !important;
+    right:auto !important;
+    left:auto !important;
+
+    grid-row:2;
+    align-self:center;
+    justify-self:end;
+
+    width:min(94%, 700px) !important;
+    max-width:100% !important;
+    margin:0 !important;
+
+    z-index:1;
+  }
+
+  /*
+    FIRST SCREEN / ABSTRACT
+    Pure normal-flow layout: no resize transform/min-height JS.
+    Short Abstracts sit at the bottom; long Abstracts simply expand.
+  */
+  .research-intro-screen{
+    min-height:100% !important;
+    height:auto !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:visible !important;
+  }
+
+  .research-abstract-panel{
+    flex:1 0 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:visible !important;
+  }
+
+  .research-abstract-copy{
+    margin-top:auto !important;
+    transform:none !important;
+  }
+
+  .research-abstract-copy > :last-child{
+    margin-bottom:0 !important;
+  }
+}
+
+/*
+  Compact desktop/laptop.
+  Preserve the desktop composition instead of letting fixed dimensions
+  squeeze the article and figure rail into one another.
+*/
+@media (min-width:901px) and (max-width:1180px){
+
+  .layout{
+    --research-left-col:clamp(170px, 18vw, 200px);
+    --research-desktop-gap:clamp(16px, 1.8vw, 22px);
+
+    grid-template-columns:
+      var(--research-left-col)
+      minmax(0, 1.16fr)
+      minmax(0, .84fr) !important;
+  }
+
+  .paper h1{
+    font-size:clamp(36px, 4vw, 46px) !important;
+    line-height:.96 !important;
+  }
+
+  .paper p,
+  .research-copy ul > li{
+    font-size:17px !important;
+  }
+
+  .toc{
+    width:100% !important;
+    max-width:none !important;
+    margin-right:0 !important;
+    gap:12px !important;
+    font-size:12px !important;
+  }
+
+  .figure-stage{
+    width:100% !important;
+    max-width:none !important;
+  }
+
+  .figure-caption{
+    width:min(190px, 100%) !important;
+  }
+}
+
 </style>
 </head>
 <body class="page-research">
@@ -4352,142 +4549,6 @@
   }
 })();
 </script>
-<style id="research-flow-baseline-marker-style-v131">
-.research-flow-baseline-marker{
-  display:inline-block !important;
-  width:0 !important;
-  height:0 !important;
-  margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
-  overflow:hidden !important;
-  vertical-align:baseline !important;
-  line-height:0 !important;
-  font-size:0 !important;
-  pointer-events:none !important;
-}
-</style>
-
-
-<script id="research-abstract-flow-baseline-v131">
-(function(){
-  const intro = document.querySelector(".research-intro-screen");
-  const target = document.querySelector(".research-abstract-copy");
-  const footer = document.querySelector(".left-footer");
-  const desktopBreakpoint = 900;
-
-  if(!intro || !target || !footer) return;
-
-  let raf = 0;
-
-  function visible(el){
-    if(!el) return false;
-    const style = getComputedStyle(el);
-    return style.display !== "none" &&
-           style.visibility !== "hidden" &&
-           el.getClientRects().length > 0;
-  }
-
-  function lastVisibleFooterItem(){
-    const items = Array.from(footer.children).filter(visible);
-    return items.length ? items[items.length - 1] : null;
-  }
-
-  function lastTextNode(container){
-    const walker = document.createTreeWalker(
-      container,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode(node){
-          if(!node.nodeValue || !node.nodeValue.trim()){
-            return NodeFilter.FILTER_REJECT;
-          }
-          const parent = node.parentElement;
-          if(!parent || !visible(parent)){
-            return NodeFilter.FILTER_REJECT;
-          }
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      }
-    );
-
-    let last = null;
-    while(walker.nextNode()) last = walker.currentNode;
-    return last;
-  }
-
-  function markerAfterLastText(container, role){
-    container.querySelectorAll(
-      '.research-flow-baseline-marker[data-role="' + role + '"]'
-    ).forEach(function(marker){ marker.remove(); });
-
-    const textNode = lastTextNode(container);
-    if(!textNode) return null;
-
-    const marker = document.createElement("span");
-    marker.className = "research-flow-baseline-marker";
-    marker.dataset.role = role;
-    marker.setAttribute("aria-hidden", "true");
-
-    textNode.parentNode.insertBefore(marker, textNode.nextSibling);
-    return marker;
-  }
-
-  function align(){
-    cancelAnimationFrame(raf);
-
-    raf = requestAnimationFrame(function(){
-      target.style.removeProperty("transform");
-
-      if(window.innerWidth <= desktopBreakpoint){
-        intro.style.removeProperty("min-height");
-        return;
-      }
-
-      /*
-        Reset to the CSS first-screen minimum before measuring. Since the
-        adjustment is applied to the container's min-height, it participates
-        in normal flow and pushes all later chapters down with it.
-      */
-      intro.style.removeProperty("min-height");
-
-      requestAnimationFrame(function(){
-        const footerItem = lastVisibleFooterItem();
-        if(!footerItem) return;
-
-        const targetMarker = markerAfterLastText(target, "target");
-        const footerMarker = markerAfterLastText(footerItem, "footer");
-        if(!targetMarker || !footerMarker) return;
-
-        const targetBaseline = targetMarker.getBoundingClientRect().top;
-        const footerBaseline = footerMarker.getBoundingClientRect().top;
-        const delta = footerBaseline - targetBaseline;
-
-        const naturalHeight = intro.getBoundingClientRect().height;
-        const desiredHeight = Math.max(0, naturalHeight + delta);
-
-        /*
-          If content itself needs more height than desiredHeight, height:auto
-          wins. This means long Abstracts simply flow naturally and can never
-          overlap the article below.
-        */
-        intro.style.minHeight = desiredHeight.toFixed(2) + "px";
-      });
-    });
-  }
-
-  align();
-
-  window.addEventListener("resize", align, {passive:true});
-  window.addEventListener("orientationchange", align, {passive:true});
-
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(align);
-  }
-})();
-</script>
-
-
 <script id="research-manual-bullets-to-list-v131">
 (function(){
   function stripLeadingBullet(root){
