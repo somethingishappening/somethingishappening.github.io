@@ -2444,6 +2444,50 @@
   }
 }
 
+
+/* ============================================================
+   RESEARCH NAV VIEWPORT FIT — v135
+   Keep the same placement + figure hanging line; compact only when needed.
+   ============================================================ */
+
+@media (min-width:901px){
+  .toc{
+    --research-toc-fit:1;
+
+    /*
+      The navigation should normally stay at the existing 13px.
+      On shorter CSS viewports (including 100% zoom on small laptops),
+      JS lowers this factor just enough for the complete nav to fit above
+      the 43.5vh figure hanging line.
+    */
+    font-size:calc(13px * var(--research-toc-fit)) !important;
+    gap:calc(34px * var(--research-toc-fit)) !important;
+
+    /*
+      Once fitted, the full navigation remains visible.
+      Internal scrolling is only a final emergency fallback at the minimum
+      allowed scale.
+    */
+    overflow-x:hidden !important;
+  }
+
+  .toc a{
+    padding:
+      calc(1px * var(--research-toc-fit))
+      0 !important;
+  }
+
+  .toc-auto-title + .toc-auto-h1,
+  .toc-auto-h2 + .toc-auto-h1,
+  .toc-auto-h3 + .toc-auto-h1{
+    margin-top:calc(12px * var(--research-toc-fit)) !important;
+  }
+
+  .toc-col:nth-child(2) .toc-title{
+    margin-top:calc(17px * var(--research-toc-fit)) !important;
+  }
+}
+
 </style>
 </head>
 <body class="page-research">
@@ -3427,6 +3471,90 @@
     moveMobileArrow(mobileActive, true);
   }
 
+  const desktopToc = document.querySelector(".toc");
+
+  function fitDesktopResearchToc(){
+    if(!desktopToc || window.innerWidth <= 900) {
+      if(desktopToc){
+        desktopToc.style.removeProperty("--research-toc-fit");
+        desktopToc.style.removeProperty("overflow-y");
+      }
+      return;
+    }
+
+    /*
+      Available navigation height is the space above the fixed 43.5vh
+      figure hanging line, minus the same 22px breathing room used by v134.
+    */
+    const available = Math.max(
+      120,
+      (window.innerHeight * 0.435) - 22
+    );
+
+    desktopToc.style.setProperty("--research-toc-fit", "1");
+    desktopToc.style.setProperty("overflow-y", "hidden");
+
+    /*
+      Let layout settle before reading scrollHeight. Browser zoom changes
+      CSS-pixel viewport dimensions, so this automatically adapts at 80%,
+      90%, 100%, etc.
+    */
+    const naturalHeight = desktopToc.scrollHeight;
+
+    if(naturalHeight <= available + 1){
+      desktopToc.style.setProperty("--research-toc-fit", "1");
+      desktopToc.style.setProperty("overflow-y", "hidden");
+      requestAnimationFrame(positionNavigationArrows);
+      return;
+    }
+
+    /*
+      Find the largest scale that fits. 0.70 means the 13px nav can go no
+      smaller than ~9.1px. If an exceptionally large TOC still does not fit,
+      scrolling becomes the final fallback rather than cropping.
+    */
+    let low = 0.70;
+    let high = 1.00;
+    let best = low;
+
+    for(let i = 0; i < 9; i++){
+      const mid = (low + high) / 2;
+      desktopToc.style.setProperty(
+        "--research-toc-fit",
+        mid.toFixed(4)
+      );
+
+      const height = desktopToc.scrollHeight;
+
+      if(height <= available + 1){
+        best = mid;
+        low = mid;
+      }else{
+        high = mid;
+      }
+    }
+
+    desktopToc.style.setProperty(
+      "--research-toc-fit",
+      best.toFixed(4)
+    );
+
+    /*
+      Re-check at the chosen scale because font wrapping can change during
+      the fit calculation.
+    */
+    requestAnimationFrame(() => {
+      const stillTooTall = desktopToc.scrollHeight > available + 2;
+
+      desktopToc.style.setProperty(
+        "overflow-y",
+        stillTooTall ? "auto" : "hidden"
+      );
+
+      positionNavigationArrows();
+    });
+  }
+
   tocLinks.forEach(link => {
     link.addEventListener("click", () => {
       clickedDesktopLink = link;
@@ -3473,6 +3601,7 @@
 
   window.addEventListener("resize", () => {
     updateTextNavigation();
+
     if(
       window.innerWidth <= 900 &&
       mobileToc &&
@@ -3481,15 +3610,33 @@
     ){
       const targetHeight = mobileProjectTocTargetHeight();
       mobileToc.style.height = `${targetHeight}px`;
-      mobileToc.classList.toggle("toc-scrollable", mobileProjectTocFullHeight() > targetHeight + 1);
+      mobileToc.classList.toggle(
+        "toc-scrollable",
+        mobileProjectTocFullHeight() > targetHeight + 1
+      );
     }
+
     desktopArrowTarget = null;
     mobileArrowTarget = null;
-    requestAnimationFrame(positionNavigationArrows);
+
+    requestAnimationFrame(() => {
+      fitDesktopResearchToc();
+      positionNavigationArrows();
+    });
   });
 
   updateTextNavigation();
-  requestAnimationFrame(positionNavigationArrows);
+  requestAnimationFrame(() => {
+    fitDesktopResearchToc();
+    positionNavigationArrows();
+  });
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(() => {
+      fitDesktopResearchToc();
+      positionNavigationArrows();
+    });
+  }
 
   // ------------------------------------------------------------
   // 5) MOBILE PROJECT TEXT NAVIGATION
