@@ -694,69 +694,227 @@ sections:
 figures:
   - number: 1
     image: /assets/uploads/fig-1-1.jpg
-    caption: this research project was funded by TAIKE and the Finnish Cultural
-      Foundation
+    caption: This research project was funded by TAIKE and Suomen Kulttuurirahasto
+      (Finnish Cultural Foundation)
     alt: Arabic calligraphy manuscript detail
   - number: 2
     image: /assets/uploads/fig-2-1.jpg
+    caption: >-
+      Thuluth Calligraphic piece with circular diacritics, marked in yellow,
+      used to compensate for limited space. Retrieved from Qawā’id al-Khaṭ
+      al-’Araby (Muḥammad, 1986, p. 46).
+
+      Edited by the author.
   - number: 3
     image: /assets/uploads/fig-3.png
+    caption: >-
+      The Sultan Baybars’ Qur’an with circular diacritics. The dots are colored
+      differently from their base characters. 
+
+      Retrieved from the British Library collection (ibn al-Wahid, 1306).
   - number: 4
     image: /assets/uploads/fig-4.jpg
+    caption: >-
+      Qur’anic manuscript leaf; the text is fully dotted with golden-outlined
+      circles.
+
+      Retrieved from The Metropolitan Museum of Art collection (unavailable).
   - number: 5
     image: /assets/uploads/fig-5-1.gif
+    caption: |-
+      The different Arabic Dot groups.
+      Figure illustrated by the author.
   - number: 6
     image: /assets/uploads/fig-6.jpg
+    caption: >-
+      Calligraphic composition showcasing a vertical two-dot diacritic group,
+      marked in blue.
+
+      Retrieved from the McGill Islamic Studies Library. (al-Ḥāfiẓ, 1670)
+
+      Edited by the author.
   - number: 7
     image: /assets/uploads/fig-7.jpg
+    caption: >-
+      Calligraphic composition showcasing three dots arranged horizontally over
+      the letter “Shiin”, marked in blue.
+
+      Retrieved from the McGill Islamic Studies Library (Aḥmad, 1750).
+
+      Edited by the author.
   - number: 8
     image: /assets/uploads/fig-8.jpg
+    caption: >-
+      The “Basmala” executed by different calligraphers with the Thuluth
+      calligraphic style. Each calligrapher interpreted the position of the
+      “Yeh’s” dots differently. The dots are marked in blue, and their
+      corresponding rasm is highlighted in yellow.
+
+      Retrieved from Calligraphie Arabe Vivante (Massoudy, 2010, p. 57).
+
+      Edited by the author.
   - number: 9
     image: /assets/uploads/fig-9.jpg
+    caption: >-
+      The visual showcases a calligraphic composition in which the calligrapher
+      demonstrated agency by positioning the diacritics differently to achieve
+      visual balance and avoid diacritic and letter collision. The default
+      position is marked in white, while the calligrapher's agency is shown in
+      blue.
+
+      Retrieved from the McGill Islamic Studies Library (Aḥmad, 1750).
+
+      Edited by the author.
   - number: 10
     image: /assets/uploads/fig-10.jpg
+    caption: >-
+      Diwani Jeli calligraphic composition with ornamental diacritics, marked in
+      blue.
+
+      Retrieved from Qawā’id al-Khaṭ al-’Araby (Muḥammad, 1986, p. 64).
+
+      Edited by the author.
   - number: 11
     image: /assets/uploads/fig-11.jpg
+    caption: >-
+      Phrase taken from The Sultan Baybars’ Qur’an. The circular diacritics are
+      colored differently from their base characters (gold leaf).
+
+      Retrieved from The British Library collection (ibn al-Wahid, 1306).
+
+      Edited by the author.
   - number: 12
     image: /assets/uploads/fig-12.png
+    caption: Arabic metal characters existed with their corresponding diacritics. A
+      norm that carried over into modern ways of producing Arabic letters.
   - number: 13
     image: /assets/uploads/fig-13.jpg
+    caption: The bounding box as visualised by Glyphs App.
   - number: 14
     image: /assets/uploads/fig-14.png
+    caption: >-
+      Short vowels exist independently of their host letters because each mark
+      has its own bounding box.
+
+      Figure executed by the author, using Lyon Arabic by Commercial Type,
+      designed by Khajag Apelian and Wael Morcos.
   - number: 15
     image: /assets/uploads/fig-15.png
+    caption: >-
+      Diacritics detached and manipulated with the Direct Selection Tool. Grey
+      marks are in their default positions.
+
+      Figure executed by the author, using Lyon Arabic by Commercial Type,
+      designed by Khajag Apelian and Wael Morcos.
   - number: 16
     image: /assets/uploads/fig-16.png
+    caption: >-
+      Damaged closed counters. Counters will detach and become their own shapes.
+
+      Figure executed by the author, using Lyon Arabic by Commercial Type,
+      designed by Khajag Apelian and Wael Morcos.
   - number: 17
     image: /assets/uploads/fig-17.gif
+    caption: >-
+      The basic Arabic short vowels. In order of appearance: A, U, I.
+
+      Figure executed by the author, using Lyon Arabic by Commercial Type,
+      designed by Khajag Apelian and Wael Morcos.
   - number: 18
     image: /assets/uploads/fig-18.png
+    caption: >-
+      Arabic long vowels. In order of appearance: AA, UU, II.
+
+      Figure executed by the author, using Lyon Arabic by Commercial Type,
+      designed by Khajag Apelian and Wael Morcos.
   - number: 19
     image: /assets/uploads/fig-19.jpg
+    caption: >-
+      Qur’anic Folio from the Abbasid era; the red dots are not consonantal
+      diacritics but short vowels.
+
+      Retrieved from Wikipedia (2008).
   - number: 20
     image: /assets/uploads/fig-20.png
+    caption: |-
+      Arabic calligraphy piece employing the final forms of the short vowels.
+      Courtesy of El-Nimer Collection (George, 2017, p. 75).
   - number: 21
     image: /assets/uploads/fig-21.gif
+    caption: >-
+      Hadith calligraphic compositions, showcasing the rhythm and liveliness
+      added by the short vowels. The original composition is 
+
+      with the short vowels.
+
+      Edited by the author.
+
+      Retrieved from the McGill Islamic Studies Library (Munis zādah, 1286).
   - number: 22
     image: /assets/uploads/fig-22.png
+    caption: InDesign recognises diacritic agency and allows diacritics to move.
   - number: 23
     image: /assets/uploads/fig-23.jpg
+    caption: >-
+      Arabic Manuscript leaf executed in the maghribi script, adorned with
+      circular diacritics.
+
+      Courtesy of El-Nimer Collection (George, 2017, p. 183).
   - number: 24
     image: /assets/uploads/fig-24-1.jpg
+    caption: >-
+      Arabic Manuscript leaf executed in the Eastern Kufi script, adorned with
+      circular diacritics with gold leaf.
+
+      Retrieved from the Library of Congress (Qurʼan not identified).
   - number: 25
     image: /assets/uploads/fig-25.jpg
+    caption: |-
+      Hadith calligraphic artwork executed in the Thuluth and Naskh scripts.
+      Retrieved from the McGill Islamic Studies Library (Zuhdī, 1205).
   - number: 26
     image: /assets/uploads/fig-26.jpg
+    caption: >-
+      The visual showcases a calligraphic composition, in which the calligrapher
+      demonstrated their agency by using the letter pen to draw a bold and long
+      Fatha to achieve visual balance and
+
+      compensate for the negative space. Fatha is marked in blue.
+
+      Retrieved from the McGill Islamic Studies Library. (Aḥmad, 1750)
+
+      Edited by the author.
   - number: 27
     image: /assets/uploads/fig-27.png
+    caption: “Diacritic Positioning” in the “Middle East Character Formats.”
   - number: 28
     image: /assets/uploads/fig-28.jpg
+    caption: >-
+      The changes are applied in the main text box.
+
+      Typeface in use: Lyon Arabic by Commercial Type, designed by Khajag
+      Apelian and Wael Morcos.
   - number: 29
     image: /assets/uploads/fig-29.png
+    caption: >-
+      Scaling the Fatha to the proportions of the main characters.
+
+      Typeface in use: Lyon Arabic by Commercial Type, designed by Khajag
+      Apelian and Wael Morcos.
   - number: 30
     image: /assets/uploads/fig-30.jpg
+    caption: >-
+      The changes are applied in the main text box.
+
+      Typeface in use: Lyon Arabic by Commercial Type, designed by Khajag
+      Apelian and Wael Morcos.
   - number: 31
     image: /assets/uploads/31.jpg
+    caption: >-
+      The changes are applied in the main text box.
+
+      Typeface in use: Lyon Arabic by Commercial Type, designed by Khajag
+      Apelian and Wael Morcos.
 toc_columns:
   - groups:
       - title:
