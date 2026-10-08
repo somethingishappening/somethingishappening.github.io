@@ -1,6 +1,6 @@
 ---
 title: Freeing the dot
-menu_title: Freeing the dot
+menu_title: Freeing the nuqta
 nav_order: 1
 layout: research
 research_type: Arabic Typographic Research
