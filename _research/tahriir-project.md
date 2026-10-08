@@ -814,7 +814,7 @@ figures:
       Figure executed by the author, using Lyon Arabic by Commercial Type,
       designed by Khajag Apelian and Wael Morcos.
   - number: 17
-    image: /assets/uploads/fig-17-1.gif
+    image: /assets/uploads/fig-17-2.gif
     caption: >-
       The basic Arabic short vowels. In order of appearance: A, U, I.
 
