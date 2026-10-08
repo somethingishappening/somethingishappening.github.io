@@ -5,7 +5,7 @@ nav_order: 1
 layout: research
 research_type: Arabic Typographic Research
 headline_line_1: Freeing the dot
-headline_line_2: Reviving Arabic dot diacritic agencies
+headline_line_2: Reviving Arabic diacritic agencies
 abstract: >-
   Introducing letterpress printing technology to the Arabic script stripped the
   writing system of many of its characteristics. The loss of several integral
