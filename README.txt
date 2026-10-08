@@ -1,12 +1,15 @@
-HARRI.LA patch — running text + surprise image
+HARRI.LA — Mini-CV typography update
 
-Replace the four files in your repository's _layouts/ folder with these files.
+Replace only:
+  _layouts/about.html
 
 Changes:
-- Desktop Research running text: line-height 1.2
-- Desktop Research bullet running text: line-height 1.2
-- Desktop Design/Artistic Work running text: line-height 1.2
-- Desktop Harrilanpuisto description running text: line-height 1.2
-- Mini-CV running text: 18px / 1.2 on desktop, 17px / 1.16 on mobile
-- Surprise image remains hidden on initial entry and only becomes eligible after real scrolling reaches the end
-- Preserves the recent hidden-section Research arrow fallback and CV section-title-size restoration
+- Mini-CV running text is 15px on desktop with line-height 1.2.
+- Mini-CV section titles now follow the Research-template H2 typography:
+  * >1180px: 18px / 1.15 / 700
+  * 901–1180px: 17px / 1.15 / 700
+  * <=900px: 17px / 1.16 / 700
+  * letter-spacing: 0
+  * matching Research H2 vertical margins
+- Mobile Mini-CV body text remains 17px / 1.16.
+- Existing surprise-image behavior fix is preserved.
