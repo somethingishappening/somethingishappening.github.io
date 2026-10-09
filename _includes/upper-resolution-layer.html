@@ -1,6 +1,6 @@
-<style id="harri-upper-resolution-layer-v3">
+<style id="harri-upper-resolution-layer-v5">
 /*
-  HARRI.LA — UPPER-RESOLUTION LAYER v3
+  HARRI.LA — UPPER-RESOLUTION LAYER v5
   ------------------------------------
   This file is deliberately additive. The existing site remains the source of
   truth through 1680px wide and on every mobile/tablet breakpoint.
@@ -49,10 +49,12 @@
     --harri-hi-brand:clamp(27px,min(1.607143vw,3vh),54px);
     --harri-hi-welcome-height:clamp(148px,min(8.809524vw,16.444444vh),296px);
     --harri-hi-welcome-type:clamp(28px,min(1.666667vw,3.111111vh),56px);
-    --harri-hi-nav-type:clamp(20px,min(1.190476vw,2.222222vh),40px);
-    --harri-hi-nav-line:clamp(21px,min(1.25vw,2.333333vh),42px);
-    --harri-hi-link-type:clamp(17px,min(1.011905vw,1.888889vh),34px);
-    --harri-hi-link-line:clamp(18.7px,min(1.113095vw,2.077778vh),37.4px);
+    /* The final shared desktop navigation deliberately uses one type size
+       for category labels, project links and Harrilanpuisto: 17px / 18.7px. */
+    --harri-hi-nav-type:clamp(17px,min(1.011905vw,1.888889vh),34px);
+    --harri-hi-nav-line:clamp(18.7px,min(1.113095vw,2.077778vh),37.4px);
+    --harri-hi-link-type:var(--harri-hi-nav-type);
+    --harri-hi-link-line:var(--harri-hi-nav-line);
     --harri-hi-footer-type:clamp(13px,min(0.77381vw,1.444444vh),26px);
 
     --harri-hi-project-type:clamp(27px,min(1.607143vw,3vh),54px);
@@ -88,7 +90,11 @@
   body.page-about .group-head,
   body.page-work .group-head,
   body.page-research .group-head,
-  body.page-harrilanpuisto .group-head{
+  body.page-harrilanpuisto .group-head,
+  body.page-about .standalone-nav-link,
+  body.page-work .standalone-nav-link,
+  body.page-research .standalone-nav-link,
+  body.page-harrilanpuisto .standalone-nav-link{
     font-size:var(--harri-hi-nav-type) !important;
     line-height:var(--harri-hi-nav-line) !important;
   }
@@ -97,12 +103,13 @@
   body.page-work .project-links a,
   body.page-research .project-links a,
   body.page-harrilanpuisto .project-links a{
-    font-size:var(--harri-hi-link-type) !important;
-    line-height:var(--harri-hi-link-line) !important;
+    font-size:var(--harri-hi-nav-type) !important;
+    line-height:var(--harri-hi-nav-line) !important;
   }
 
   body.page-about .harrilanpuisto-link{
     font-size:var(--harri-hi-nav-type) !important;
+    line-height:var(--harri-hi-nav-line) !important;
   }
 
   body.page-about .left-footer,
@@ -310,10 +317,10 @@
     --harri-hi-brand:min(1.607143vw,3vh);
     --harri-hi-welcome-height:min(8.809524vw,16.444444vh);
     --harri-hi-welcome-type:min(1.666667vw,3.111111vh);
-    --harri-hi-nav-type:min(1.190476vw,2.222222vh);
-    --harri-hi-nav-line:min(1.25vw,2.333333vh);
-    --harri-hi-link-type:min(1.011905vw,1.888889vh);
-    --harri-hi-link-line:min(1.113095vw,2.077778vh);
+    --harri-hi-nav-type:min(1.011905vw,1.888889vh);
+    --harri-hi-nav-line:min(1.113095vw,2.077778vh);
+    --harri-hi-link-type:var(--harri-hi-nav-type);
+    --harri-hi-link-line:var(--harri-hi-nav-line);
     --harri-hi-footer-type:min(0.77381vw,1.444444vh);
 
     --harri-hi-project-type:min(1.607143vw,3vh);
