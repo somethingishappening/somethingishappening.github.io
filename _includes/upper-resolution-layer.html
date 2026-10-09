@@ -292,110 +292,164 @@
 </style>
 
 
-<style id="harri-upper-resolution-layer-v4-5k">
+<style id="harri-upper-resolution-layer-v6-5k-continuation">
 /*
-  HARRI.LA — 5K-ONLY COMPLETION LAYER
-  ------------------------------------
-  The v3 shell already scales horizontally beyond 4096px. At 5120×2880,
-  however, type and vertical measurements were still capped at 2×. This
-  second tier removes only that cap for genuine 5K-class viewports so the
-  existing composition stays proportional. All lower sizes remain untouched.
+  HARRI.LA — 5K CONTINUATION FROM THE WORKING 4K STATE
+  -----------------------------------------------------
+  4096×2304 is treated as the trusted large-screen state.
+  Above that size, the vertical/type system continues from its 2× 4K cap
+  at exactly the same rate as the viewport grows. Therefore 5120×2880 is
+  a clean 1.25× continuation of 4096×2304 rather than jumping from 2× to
+  ~3.05×.
 
-  Explicitly unchanged:
-  - <= 4799px wide or <= 2499px high
-  - mobile/tablet behavior
-  - Work media/gallery 18px spacing
-  - Research 43.5vh hanging line
-  - Research figure fit/CMS controls
-  - About/Work/Research/Harrilanpuisto content and CMS data
+  Horizontal tracks already scale continuously with vw in the main layer.
+  This tier only continues the capped type/vertical rhythm and the small
+  shared navigation measurements that otherwise remained frozen.
+
+  Nothing at 4096×2304 or below is changed.
 */
-@media (min-width:4800px) and (min-height:2500px){
+@media (min-width:4097px) and (min-height:2305px){
   :root{
-    --harri-hi-pad-top-32:min(1.904762vw,3.555556vh);
-    --harri-hi-pad-bottom-26:min(1.547619vw,2.888889vh);
+    /* 4K capped values, continued proportionally above 4096×2304. */
+    --harri-hi-pad-top-32:min(1.5625vw,2.777778vh);             /* 64 @ 4096 */
+    --harri-hi-pad-bottom-26:min(1.269531vw,2.256944vh);        /* 52 */
 
-    --harri-hi-brand:min(1.607143vw,3vh);
-    --harri-hi-welcome-height:min(8.809524vw,16.444444vh);
-    --harri-hi-welcome-type:min(1.666667vw,3.111111vh);
-    --harri-hi-nav-type:min(1.011905vw,1.888889vh);
-    --harri-hi-nav-line:min(1.113095vw,2.077778vh);
+    --harri-hi-brand:min(1.318359vw,2.34375vh);                 /* 54 */
+    --harri-hi-welcome-height:min(7.226563vw,12.847222vh);      /* 296 */
+    --harri-hi-welcome-type:min(1.367188vw,2.430556vh);         /* 56 */
+    --harri-hi-nav-type:min(.830078vw,1.475694vh);              /* 34 */
+    --harri-hi-nav-line:min(.913086vw,1.623264vh);              /* 37.4 */
     --harri-hi-link-type:var(--harri-hi-nav-type);
     --harri-hi-link-line:var(--harri-hi-nav-line);
-    --harri-hi-footer-type:min(0.77381vw,1.444444vh);
+    --harri-hi-footer-type:min(.634766vw,1.128472vh);           /* 26 */
 
-    --harri-hi-project-type:min(1.607143vw,3vh);
-    --harri-hi-h1:min(3.214286vw,6vh);
-    --harri-hi-body:min(1.071429vw,2vh);
-    --harri-hi-toc:min(0.77381vw,1.444444vh);
+    --harri-hi-project-type:min(1.318359vw,2.34375vh);          /* 54 */
+    --harri-hi-h1:min(2.636719vw,4.6875vh);                    /* 108 */
+    --harri-hi-body:min(.878906vw,1.5625vh);                   /* 36 */
+    --harri-hi-toc:min(.634766vw,1.128472vh);                  /* 26 */
   }
 
-  /* ABOUT — same proportions, no 2× cap at 5K. */
+  /* Shared navigation micro-rhythm: 5120 becomes exactly 1.25× the
+     measurements seen at the working 4096 state. */
+  body.page-about .nav-group,
+  body.page-work .nav-group,
+  body.page-research .nav-group,
+  body.page-harrilanpuisto .nav-group{
+    margin-bottom:min(.152588vw,.271267vh) !important;         /* 5 @ 4096 */
+  }
+
+  body.page-work .nav-group:has(.group-head[aria-expanded="true"]),
+  body.page-research .nav-group:has(.group-head[aria-expanded="true"]),
+  body.page-harrilanpuisto .nav-group:has(.group-head[aria-expanded="true"]){
+    margin-bottom:min(.549316vw,.976563vh) !important;         /* 18 */
+  }
+
+  body.page-about .group-head,
+  body.page-work .group-head,
+  body.page-research .group-head,
+  body.page-harrilanpuisto .group-head{
+    gap:min(.366211vw,.651042vh) !important;                   /* 12 */
+  }
+
+  body.page-about .group-toggle,
+  body.page-work .group-toggle,
+  body.page-research .group-toggle,
+  body.page-harrilanpuisto .group-toggle{
+    width:min(.671387vw,1.193576vh) !important;                /* 22 */
+    flex-basis:min(.671387vw,1.193576vh) !important;
+    font-size:min(.610352vw,1.085069vh) !important;            /* 20 */
+  }
+
+  body.page-about .project-links.open,
+  body.page-work .project-links.open,
+  body.page-research .project-links.open,
+  body.page-harrilanpuisto .project-links.open{
+    margin-top:min(.213623vw,.379774vh) !important;            /* 7 */
+  }
+
+  body.page-about .project-links-inner,
+  body.page-work .project-links-inner,
+  body.page-research .project-links-inner,
+  body.page-harrilanpuisto .project-links-inner{
+    gap:min(.091553vw,.16276vh) !important;                    /* 3 */
+    padding-bottom:min(.396729vw,.705295vh) !important;        /* 13 */
+  }
+
+  /* ABOUT — continue the exact 4K state rather than uncapping to 3.05×. */
   body.page-about .about-layout{
-    --page-pad-bottom:min(1.488095vw,2.777778vh) !important;
+    --page-pad-bottom:min(1.220703vw,2.170139vh) !important;    /* 50 @ 4096 */
   }
   body.page-about .left nav{
-    margin-top:min(8.809524vw,16.444444vh) !important;
+    margin-top:min(7.226563vw,12.847222vh) !important;         /* 296 */
   }
   body.page-about .greeting-zone{
-    top:min(8.630952vw,16.111111vh) !important;
-    height:min(16.369048vw,30.555556vh) !important;
+    top:min(7.080078vw,12.586806vh) !important;                /* 290 */
+    height:min(13.427734vw,23.871528vh) !important;            /* 550 */
   }
   body.page-about .about-copy{
-    font-size:min(2.380952vw,4.444444vh) !important;
+    font-size:min(1.953125vw,3.472222vh) !important;           /* 80 */
+  }
+  body.page-about .cv-column{
+    padding-bottom:min(.549316vw,.976563vh) !important;        /* 18 */
   }
   body.page-about .cv-section h2{
-    margin-bottom:min(0.714286vw,1.333333vh) !important;
+    margin-bottom:min(.585938vw,1.041667vh) !important;        /* 24 */
   }
   body.page-about .cv-section{
-    margin-bottom:min(1.547619vw,2.888889vh) !important;
+    margin-bottom:min(1.269531vw,2.256944vh) !important;       /* 52 */
   }
   body.page-about .cv-item{
-    margin-bottom:min(0.595238vw,1.111111vh) !important;
+    margin-bottom:min(.488281vw,.868056vh) !important;         /* 20 */
+  }
+  body.page-about .cv-surprise{
+    margin-top:min(.830078vw,1.475694vh) !important;           /* 34 */
   }
 
-  /* WORK + HARRILANPUISTO — keep existing grid ratios, extend only scale. */
+  /* WORK + HARRILANPUISTO — continue the working 4K vertical/type rhythm. */
   body.page-work .left,
   body.page-harrilanpuisto .left,
   body.page-work .project-info,
   body.page-harrilanpuisto .project-info{
-    height:calc(100vh - min(3.452381vw,6.444444vh)) !important;
+    height:calc(100vh - min(2.832031vw,5.034722vh)) !important; /* 116 */
   }
   body.page-work .project-type,
   body.page-harrilanpuisto .project-type{
-    margin-bottom:min(1.428571vw,2.666667vh) !important;
+    margin-bottom:min(1.171875vw,2.083333vh) !important;       /* 48 */
   }
   body.page-work .project-info h1,
   body.page-harrilanpuisto .project-info h1{
-    max-width:min(36.309524vw,67.777778vh) !important;
+    max-width:min(29.785156vw,52.951389vh) !important;         /* 1220 */
   }
   body.page-work .project-description,
   body.page-harrilanpuisto .project-description{
-    max-width:min(39.285714vw,73.333333vh) !important;
+    max-width:min(32.226563vw,57.291667vh) !important;         /* 1320 */
   }
   body.page-work .media-item,
   body.page-harrilanpuisto .media-item{
-    min-height:calc(100vh - min(3.452381vw,6.444444vh)) !important;
+    min-height:calc(100vh - min(2.832031vw,5.034722vh)) !important;
   }
 
-  /* RESEARCH — preserve exact hanging line and CMS figure sizing. */
+  /* RESEARCH — same continuation; hanging line and CMS figure sizing untouched. */
   body.page-research .project-title{
-    margin-bottom:min(1.428571vw,2.666667vh) !important;
+    margin-bottom:min(1.171875vw,2.083333vh) !important;       /* 48 */
   }
   body.page-research .paper h1{
-    max-width:min(40.47619vw,75.555556vh) !important;
-    margin-bottom:min(1.071429vw,2vh) !important;
+    max-width:min(33.203125vw,59.027778vh) !important;         /* 1360 */
+    margin-bottom:min(.878906vw,1.5625vh) !important;          /* 36 */
   }
   body.page-research .paper h1.chapter-heading{
-    margin-top:min(2.5vw,4.666667vh) !important;
+    margin-top:min(2.050781vw,3.645833vh) !important;          /* 84 */
   }
   body.page-research .paper p,
   body.page-research .research-copy ul > li{
-    max-width:min(41.666667vw,77.777778vh) !important;
+    max-width:min(34.179688vw,60.763889vh) !important;         /* 1400 */
   }
   body.page-research .toc{
-    width:min(min(19.047619vw,35.555556vh),48%) !important;
-    min-width:min(17.261905vw,32.222222vh) !important;
-    gap:min(2.02381vw,3.777778vh) !important;
+    width:min(min(15.625vw,27.777778vh),48%) !important;       /* 640 */
+    min-width:min(14.160156vw,25.173611vh) !important;         /* 580 */
+    gap:min(1.660156vw,2.951389vh) !important;                 /* 68 */
   }
+
+  /* Intentionally no Research .figure-stage rule: 43.5vh and CMS fit remain baseline-owned. */
 }
 </style>
