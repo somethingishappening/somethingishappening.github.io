@@ -283,3 +283,112 @@
   */
 }
 </style>
+
+
+<style id="harri-upper-resolution-layer-v4-5k">
+/*
+  HARRI.LA — 5K-ONLY COMPLETION LAYER
+  ------------------------------------
+  The v3 shell already scales horizontally beyond 4096px. At 5120×2880,
+  however, type and vertical measurements were still capped at 2×. This
+  second tier removes only that cap for genuine 5K-class viewports so the
+  existing composition stays proportional. All lower sizes remain untouched.
+
+  Explicitly unchanged:
+  - <= 4799px wide or <= 2499px high
+  - mobile/tablet behavior
+  - Work media/gallery 18px spacing
+  - Research 43.5vh hanging line
+  - Research figure fit/CMS controls
+  - About/Work/Research/Harrilanpuisto content and CMS data
+*/
+@media (min-width:4800px) and (min-height:2500px){
+  :root{
+    --harri-hi-pad-top-32:min(1.904762vw,3.555556vh);
+    --harri-hi-pad-bottom-26:min(1.547619vw,2.888889vh);
+
+    --harri-hi-brand:min(1.607143vw,3vh);
+    --harri-hi-welcome-height:min(8.809524vw,16.444444vh);
+    --harri-hi-welcome-type:min(1.666667vw,3.111111vh);
+    --harri-hi-nav-type:min(1.190476vw,2.222222vh);
+    --harri-hi-nav-line:min(1.25vw,2.333333vh);
+    --harri-hi-link-type:min(1.011905vw,1.888889vh);
+    --harri-hi-link-line:min(1.113095vw,2.077778vh);
+    --harri-hi-footer-type:min(0.77381vw,1.444444vh);
+
+    --harri-hi-project-type:min(1.607143vw,3vh);
+    --harri-hi-h1:min(3.214286vw,6vh);
+    --harri-hi-body:min(1.071429vw,2vh);
+    --harri-hi-toc:min(0.77381vw,1.444444vh);
+  }
+
+  /* ABOUT — same proportions, no 2× cap at 5K. */
+  body.page-about .about-layout{
+    --page-pad-bottom:min(1.488095vw,2.777778vh) !important;
+  }
+  body.page-about .left nav{
+    margin-top:min(8.809524vw,16.444444vh) !important;
+  }
+  body.page-about .greeting-zone{
+    top:min(8.630952vw,16.111111vh) !important;
+    height:min(16.369048vw,30.555556vh) !important;
+  }
+  body.page-about .about-copy{
+    font-size:min(2.380952vw,4.444444vh) !important;
+  }
+  body.page-about .cv-section h2{
+    margin-bottom:min(0.714286vw,1.333333vh) !important;
+  }
+  body.page-about .cv-section{
+    margin-bottom:min(1.547619vw,2.888889vh) !important;
+  }
+  body.page-about .cv-item{
+    margin-bottom:min(0.595238vw,1.111111vh) !important;
+  }
+
+  /* WORK + HARRILANPUISTO — keep existing grid ratios, extend only scale. */
+  body.page-work .left,
+  body.page-harrilanpuisto .left,
+  body.page-work .project-info,
+  body.page-harrilanpuisto .project-info{
+    height:calc(100vh - min(3.452381vw,6.444444vh)) !important;
+  }
+  body.page-work .project-type,
+  body.page-harrilanpuisto .project-type{
+    margin-bottom:min(1.428571vw,2.666667vh) !important;
+  }
+  body.page-work .project-info h1,
+  body.page-harrilanpuisto .project-info h1{
+    max-width:min(36.309524vw,67.777778vh) !important;
+  }
+  body.page-work .project-description,
+  body.page-harrilanpuisto .project-description{
+    max-width:min(39.285714vw,73.333333vh) !important;
+  }
+  body.page-work .media-item,
+  body.page-harrilanpuisto .media-item{
+    min-height:calc(100vh - min(3.452381vw,6.444444vh)) !important;
+  }
+
+  /* RESEARCH — preserve exact hanging line and CMS figure sizing. */
+  body.page-research .project-title{
+    margin-bottom:min(1.428571vw,2.666667vh) !important;
+  }
+  body.page-research .paper h1{
+    max-width:min(40.47619vw,75.555556vh) !important;
+    margin-bottom:min(1.071429vw,2vh) !important;
+  }
+  body.page-research .paper h1.chapter-heading{
+    margin-top:min(2.5vw,4.666667vh) !important;
+  }
+  body.page-research .paper p,
+  body.page-research .research-copy ul > li{
+    max-width:min(41.666667vw,77.777778vh) !important;
+  }
+  body.page-research .toc{
+    width:min(min(19.047619vw,35.555556vh),48%) !important;
+    min-width:min(17.261905vw,32.222222vh) !important;
+    gap:min(2.02381vw,3.777778vh) !important;
+  }
+}
+</style>

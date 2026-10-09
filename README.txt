@@ -1,23 +1,22 @@
-HARRI.LA — UPPER RESOLUTION LAYER v3
+HARRI.LA — upper-resolution layer v4 (5K-only fix)
+
+This package is based on the previously working v3 wide-screen layer.
+It changes only genuine 5K-class viewports:
+
+  min-width: 4800px AND min-height: 2500px
+
+Why:
+At 5120×2880 the v3 horizontal shell continued scaling, but typography,
+vertical spacing, and several content max-widths were still capped at 2×.
+That made the composition fall out of proportion only at 5K.
+
+What remains untouched:
+- all sizes below the 5K query, including 1680, 1920, 2560, 3440, 4096
+- mobile/tablet
+- Work 18px media spacing
+- Research 43.5vh hanging line
+- Research CMS figure fit/width controls
+- all content/CMS data
 
 Replace only:
   _includes/upper-resolution-layer.html
-
-No layout files need replacing if v2 is already installed.
-
-Checked target behaviour:
-- <= 1680px wide, including 1680x1050: upper-resolution layer is inactive.
-- 1920x1080: gentle proportional enlargement begins.
-- 2560x1440: horizontal grid keeps the 1680 reference proportions.
-- 3440x1440 ultrawide: side rails/gaps/padding continue scaling horizontally;
-  typography/vertical rhythm is limited by 1440px height.
-- 4096x2304: layout continues to use the screen proportionally; typography is
-  capped at 2x to avoid runaway enlargement.
-
-Preserved:
-- Work media/gallery 18px spacing
-- About baseline proportions
-- Research top:43.5vh figure hanging line
-- Research figure-fit/CMS width controls
-- Mobile/tablet behavior
-- Existing navigation/scroll logic
