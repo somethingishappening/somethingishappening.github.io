@@ -1,455 +1,272 @@
-<style id="harri-upper-resolution-layer-v5">
+<style id="harri-proportional-desktop-canvas-v7">
 /*
-  HARRI.LA — UPPER-RESOLUTION LAYER v5
-  ------------------------------------
-  This file is deliberately additive. The existing site remains the source of
-  truth through 1680px wide and on every mobile/tablet breakpoint.
+  HARRI.LA — PROPORTIONAL DESKTOP CANVAS v7
+  ------------------------------------------
+  The approved desktop composition is treated as a 1536px-wide reference.
+  On desktop/laptop (>900px), the entire composition scales uniformly with
+  viewport width instead of reflowing at small desktop sizes or becoming tiny
+  on 5K displays. Mobile remains completely owned by the existing <=900px CSS.
 
-  Reference desktop: 1680 × 900 CSS px.
-
-  Above 1680px:
-  - horizontal grid measurements follow viewport width, so the existing
-    desktop column proportions do not collapse on ultrawide / 4K canvases;
-  - vertical spacing and typography grow from the smaller of width-growth and
-    height-growth, so ultrawide screens do not become vertically oversized;
-  - type/vertical growth is bounded at 2× for extreme future viewports.
-
-  Explicitly untouched:
-  - all <= 1680px behaviour, including 1680 × 1050;
-  - all <= 900px mobile behaviour;
-  - Work media/gallery 18px spacing;
-  - Research 43.5vh hanging line;
-  - Research figure width/fit variables and CMS figure controls;
-  - Research scrolling/navigation logic;
-  - About/Work/Research/Harrilanpuisto content and CMS data.
+  1536px was chosen from the approved reference screenshots: at that width the
+  original 220px left rail, 28px gutters and 300px About CV rail reproduce the
+  same column proportions and text wrapping shown in both the desired 1024px
+  and 5120px examples.
 */
 
-@media (min-width:1681px){
-  :root{
-    /*
-      HORIZONTAL SHELL
-      These values are the original 1680px desktop measurements expressed as
-      vw. Therefore 220 / centre / 300 on About, and the 745:660 Work/Research
-      tracks, retain the same horizontal composition as the viewport widens.
-    */
-    --harri-hi-left:13.0952380952vw;      /* 220 / 1680 */
-    --harri-hi-gap:1.6666666667vw;        /* 28 / 1680 */
-    --harri-hi-pad-x:1.0714285714vw;      /* 18 / 1680 */
-    --harri-hi-about-right:17.8571428571vw;/* 300 / 1680 */
+html.harri-proportional-desktop{
+  --harri-canvas-width:1536px;
+  --harri-canvas-height:900px; /* JS replaces this with viewport-height / scale */
+  --harri-canvas-scale:1;
+  --harri-research-hanging-top:391.5px;
+}
 
-    /*
-      VERTICAL + TYPE SCALE
-      Each preferred value is tied to both the 1680px reference width and the
-      900px reference height. min() chooses the limiting dimension. The 2× cap
-      prevents runaway enlargement beyond the requested high-resolution range.
-    */
-    --harri-hi-pad-top-32:clamp(32px,min(1.904762vw,3.555556vh),64px);
-    --harri-hi-pad-bottom-26:clamp(26px,min(1.547619vw,2.888889vh),52px);
-
-    --harri-hi-brand:clamp(27px,min(1.607143vw,3vh),54px);
-    --harri-hi-welcome-height:clamp(148px,min(8.809524vw,16.444444vh),296px);
-    --harri-hi-welcome-type:clamp(28px,min(1.666667vw,3.111111vh),56px);
-    /* The final shared desktop navigation deliberately uses one type size
-       for category labels, project links and Harrilanpuisto: 17px / 18.7px. */
-    --harri-hi-nav-type:clamp(17px,min(1.011905vw,1.888889vh),34px);
-    --harri-hi-nav-line:clamp(18.7px,min(1.113095vw,2.077778vh),37.4px);
-    --harri-hi-link-type:var(--harri-hi-nav-type);
-    --harri-hi-link-line:var(--harri-hi-nav-line);
-    --harri-hi-footer-type:clamp(13px,min(0.77381vw,1.444444vh),26px);
-
-    --harri-hi-project-type:clamp(27px,min(1.607143vw,3vh),54px);
-    --harri-hi-h1:clamp(54px,min(3.214286vw,6vh),108px);
-    --harri-hi-body:clamp(18px,min(1.071429vw,2vh),36px);
-    --harri-hi-toc:clamp(13px,min(0.77381vw,1.444444vh),26px);
+@media (min-width:901px){
+  html.harri-proportional-desktop,
+  html.harri-proportional-desktop body{
+    width:100% !important;
+    min-width:0 !important;
+    background:#fff !important;
   }
 
-  /* =========================================================
-     SHARED DESKTOP NAVIGATION
-     ========================================================= */
-  body.page-about .brand,
-  body.page-work .brand,
-  body.page-research .brand,
-  body.page-harrilanpuisto .brand{
-    font-size:var(--harri-hi-brand) !important;
+  /* One source-width for every desktop template. JS zoom maps it to 100vw. */
+  html.harri-proportional-desktop body > .about-layout,
+  html.harri-proportional-desktop body > .layout{
+    box-sizing:border-box !important;
+    width:var(--harri-canvas-width) !important;
+    min-width:var(--harri-canvas-width) !important;
+    max-width:var(--harri-canvas-width) !important;
+    zoom:var(--harri-canvas-scale) !important;
+    margin:0 !important;
+    transform:none !important;
+    transform-origin:0 0 !important;
   }
 
-  body.page-work .welcome-zone,
-  body.page-research .welcome-zone,
-  body.page-harrilanpuisto .welcome-zone{
-    flex-basis:var(--harri-hi-welcome-height) !important;
-    height:var(--harri-hi-welcome-height) !important;
-    min-height:var(--harri-hi-welcome-height) !important;
+  /* ---------- shared desktop navigation ---------- */
+  html.harri-proportional-desktop .brand{
+    font-size:27px !important;
+    line-height:1 !important;
+  }
+  html.harri-proportional-desktop .group-head,
+  html.harri-proportional-desktop .project-links a,
+  html.harri-proportional-desktop .standalone-nav-link,
+  html.harri-proportional-desktop .harrilanpuisto-link{
+    font-size:17px !important;
+    line-height:18.7px !important;
+  }
+  html.harri-proportional-desktop .left-footer{
+    font-size:13px !important;
+    line-height:1.15 !important;
   }
 
-  body.page-work .welcome,
-  body.page-research .welcome,
-  body.page-harrilanpuisto .welcome{
-    font-size:var(--harri-hi-welcome-type) !important;
+  /* ---------- About ---------- */
+  html.harri-proportional-desktop body.page-about > .about-layout{
+    height:var(--harri-canvas-height) !important;
+    min-height:var(--harri-canvas-height) !important;
+    max-height:var(--harri-canvas-height) !important;
+    --page-pad-x:18px !important;
+    --page-pad-top:32px !important;
+    --page-pad-bottom:25px !important;
+    --left-w:220px !important;
+    --right-w:300px !important;
+    --gap:28px !important;
+    grid-template-columns:220px minmax(0,1fr) 300px !important;
+    gap:28px !important;
+    padding:32px 18px 25px !important;
   }
-
-  body.page-about .group-head,
-  body.page-work .group-head,
-  body.page-research .group-head,
-  body.page-harrilanpuisto .group-head,
-  body.page-about .standalone-nav-link,
-  body.page-work .standalone-nav-link,
-  body.page-research .standalone-nav-link,
-  body.page-harrilanpuisto .standalone-nav-link{
-    font-size:var(--harri-hi-nav-type) !important;
-    line-height:var(--harri-hi-nav-line) !important;
+  html.harri-proportional-desktop body.page-about .left nav{
+    margin-top:148px !important;
   }
-
-  body.page-about .project-links a,
-  body.page-work .project-links a,
-  body.page-research .project-links a,
-  body.page-harrilanpuisto .project-links a{
-    font-size:var(--harri-hi-nav-type) !important;
-    line-height:var(--harri-hi-nav-line) !important;
+  html.harri-proportional-desktop body.page-about .about-copy{
+    font-size:40px !important;
+    line-height:1.18 !important;
+    letter-spacing:-.025em !important;
   }
-
-  body.page-about .harrilanpuisto-link{
-    font-size:var(--harri-hi-nav-type) !important;
-    line-height:var(--harri-hi-nav-line) !important;
+  html.harri-proportional-desktop body.page-about .about-greeting{
+    font-size:54px !important;
   }
-
-  body.page-about .left-footer,
-  body.page-work .left-footer,
-  body.page-research .left-footer,
-  body.page-harrilanpuisto .left-footer{
-    font-size:var(--harri-hi-footer-type) !important;
-  }
-
-  /* =========================================================
-     ABOUT
-     Keep the original 220 / flexible / 300 relationship relative
-     to viewport width rather than letting only the middle track grow.
-     ========================================================= */
-  body.page-about .about-layout{
-    --page-pad-x:var(--harri-hi-pad-x) !important;
-    --page-pad-top:var(--harri-hi-pad-top-32) !important;
-    --page-pad-bottom:clamp(25px,min(1.488095vw,2.777778vh),50px) !important;
-    --left-w:var(--harri-hi-left) !important;
-    --right-w:var(--harri-hi-about-right) !important;
-    --gap:var(--harri-hi-gap) !important;
-  }
-
-  body.page-about .left nav{
-    margin-top:clamp(148px,min(8.809524vw,16.444444vh),296px) !important;
-  }
-
-  body.page-about .greeting-zone{
-    top:clamp(145px,min(8.630952vw,16.111111vh),290px) !important;
-    height:clamp(275px,min(16.369048vw,30.555556vh),550px) !important;
-  }
-
-  body.page-about .about-greeting{
-    font-size:var(--harri-hi-h1) !important;
-  }
-
-  body.page-about .about-copy{
-    font-size:clamp(40px,min(2.380952vw,4.444444vh),80px) !important;
-  }
-
-  /* Preserve the established Mini-CV top alignment. */
-  body.page-about .cv-column{
+  html.harri-proportional-desktop body.page-about .cv-column{
     padding-top:0 !important;
   }
-
-  /* In the chosen baseline CV H2 and running text are both 18px desktop. */
-  body.page-about .cv-section h2,
-  body.page-about .cv-item{
-    font-size:var(--harri-hi-body) !important;
+  /* Current approved CV = Research H2 + Research running text. */
+  html.harri-proportional-desktop body.page-about .cv-section h2{
+    font-size:18px !important;
+    line-height:1.15 !important;
+    font-weight:700 !important;
+    letter-spacing:0 !important;
+    margin:0 0 12px !important;
   }
-
-  body.page-about .cv-section h2{
-    margin-top:0 !important;
-    margin-bottom:clamp(12px,min(0.714286vw,1.333333vh),24px) !important;
-  }
-
-  body.page-about .cv-section{
-    margin-bottom:clamp(26px,min(1.547619vw,2.888889vh),52px) !important;
-  }
-
-  body.page-about .cv-item{
-    margin-bottom:clamp(10px,min(0.595238vw,1.111111vh),20px) !important;
-  }
-
-  /* =========================================================
-     WORK + ARTISTIC + HARRILANPUISTO
-     Horizontal shell scales with viewport width. Centre/right keep
-     the existing 745:660 relationship. Media-stack spacing is not touched.
-     ========================================================= */
-  body.page-work .layout,
-  body.page-harrilanpuisto .layout{
-    grid-template-columns:
-      var(--harri-hi-left)
-      minmax(0,745fr)
-      minmax(0,660fr) !important;
-    gap:var(--harri-hi-gap) !important;
-    padding:
-      var(--harri-hi-pad-top-32)
-      var(--harri-hi-pad-x)
-      var(--harri-hi-pad-bottom-26) !important;
-  }
-
-  body.page-work .left,
-  body.page-harrilanpuisto .left,
-  body.page-work .project-info,
-  body.page-harrilanpuisto .project-info{
-    top:var(--harri-hi-pad-top-32) !important;
-    height:calc(100vh - clamp(58px,min(3.452381vw,6.444444vh),116px)) !important;
-  }
-
-  body.page-work .project-type,
-  body.page-harrilanpuisto .project-type{
-    font-size:var(--harri-hi-project-type) !important;
-    margin-bottom:clamp(24px,min(1.428571vw,2.666667vh),48px) !important;
-  }
-
-  body.page-work .project-info h1,
-  body.page-harrilanpuisto .project-info h1{
-    font-size:var(--harri-hi-h1) !important;
-    max-width:clamp(610px,min(36.309524vw,67.777778vh),1220px) !important;
-  }
-
-  body.page-work .project-description,
-  body.page-harrilanpuisto .project-description{
-    max-width:clamp(660px,min(39.285714vw,73.333333vh),1320px) !important;
-    font-size:var(--harri-hi-body) !important;
-  }
-
-  body.page-work .media-item,
-  body.page-harrilanpuisto .media-item{
-    min-height:calc(100vh - clamp(58px,min(3.452381vw,6.444444vh),116px)) !important;
-  }
-
-  /* Deliberately no .media-stack gap / media-item margin overrides. */
-
-  /* =========================================================
-     RESEARCH
-     Keep the existing 745:660 grid and exact 43.5vh hanging line.
-     IMPORTANT: no figure-stage width/max-width/caption-width override here;
-     the baseline fit script and CMS --research-figure-fit-width stay in charge.
-     ========================================================= */
-  body.page-research .layout{
-    grid-template-columns:
-      var(--harri-hi-left)
-      minmax(0,745fr)
-      minmax(0,660fr) !important;
-    gap:var(--harri-hi-gap) !important;
-    padding:
-      var(--harri-hi-pad-top-32)
-      var(--harri-hi-pad-x)
-      var(--harri-hi-pad-bottom-26) !important;
-  }
-
-  body.page-research .project-title{
-    font-size:var(--harri-hi-project-type) !important;
-    margin-bottom:clamp(24px,min(1.428571vw,2.666667vh),48px) !important;
-  }
-
-  body.page-research .paper h1{
-    font-size:var(--harri-hi-h1) !important;
-    max-width:clamp(680px,min(40.47619vw,75.555556vh),1360px) !important;
-    margin-bottom:clamp(18px,min(1.071429vw,2vh),36px) !important;
-  }
-
-  body.page-research .paper h1.chapter-heading{
-    margin-top:clamp(42px,min(2.5vw,4.666667vh),84px) !important;
-  }
-
-  /*
-    The actual Research section H2/H3 in the chosen baseline is 18px, not the
-    older generic 24px .paper h2 rule. Scale that established style only.
-  */
-  body.page-research .paper section:not(#abstract) > h2,
-  body.page-research .paper .research-copy h2,
-  body.page-research .paper section:not(#abstract) > h3,
-  body.page-research .paper .research-copy h3{
-    font-size:var(--harri-hi-body) !important;
-  }
-
-  body.page-research .paper p,
-  body.page-research .research-copy ul > li{
-    font-size:var(--harri-hi-body) !important;
+  html.harri-proportional-desktop body.page-about .cv-item{
+    font-size:18px !important;
     line-height:1.2 !important;
-    max-width:clamp(700px,min(41.666667vw,77.777778vh),1400px) !important;
   }
 
-  body.page-research .toc{
-    width:min(clamp(320px,min(19.047619vw,35.555556vh),640px),48%) !important;
-    min-width:clamp(290px,min(17.261905vw,32.222222vh),580px) !important;
-    gap:clamp(34px,min(2.02381vw,3.777778vh),68px) !important;
-    font-size:var(--harri-hi-toc) !important;
+  /* ---------- Work / Artistic / Harrilanpuisto ---------- */
+  html.harri-proportional-desktop body.page-work > .layout,
+  html.harri-proportional-desktop body.page-harrilanpuisto > .layout{
+    min-height:var(--harri-canvas-height) !important;
+    grid-template-columns:220px minmax(0,745fr) minmax(0,660fr) !important;
+    gap:28px !important;
+    padding:32px 18px 26px !important;
   }
+  html.harri-proportional-desktop body.page-work .project-type,
+  html.harri-proportional-desktop body.page-harrilanpuisto .project-type{
+    font-size:27px !important;
+    line-height:1 !important;
+  }
+  html.harri-proportional-desktop body.page-work .project-info h1,
+  html.harri-proportional-desktop body.page-harrilanpuisto .project-info h1{
+    font-size:54px !important;
+    line-height:.94 !important;
+    max-width:610px !important;
+  }
+  html.harri-proportional-desktop body.page-work .project-info h1 .title-line,
+  html.harri-proportional-desktop body.page-harrilanpuisto .project-info h1 .title-line{
+    white-space:nowrap !important;
+  }
+  html.harri-proportional-desktop body.page-work .project-description,
+  html.harri-proportional-desktop body.page-harrilanpuisto .project-description{
+    font-size:18px !important;
+    line-height:1.2 !important;
+  }
+  /* Work's 18px source gutter is intentionally not overridden. It scales with
+     the composition, keeping exactly the same relative spacing. */
 
-  /*
-    Intentionally no .figure-stage positional/size rule here.
-    `top:43.5vh`, the restored left/right figure rail, the CMS widthPercent,
-    and --research-figure-fit-width all remain exactly baseline-controlled.
-  */
+  /* ---------- Research ---------- */
+  html.harri-proportional-desktop body.page-research > .layout{
+    height:var(--harri-canvas-height) !important;
+    min-height:var(--harri-canvas-height) !important;
+    max-height:var(--harri-canvas-height) !important;
+    grid-template-columns:220px minmax(0,745fr) minmax(0,660fr) !important;
+    grid-template-rows:minmax(0,1fr) !important;
+    gap:28px !important;
+    padding:32px 18px 26px !important;
+    overflow:hidden !important;
+  }
+  html.harri-proportional-desktop body.page-research .project-title{
+    font-size:27px !important;
+    line-height:1 !important;
+  }
+  html.harri-proportional-desktop body.page-research .paper h1{
+    font-size:54px !important;
+    line-height:.95 !important;
+  }
+  html.harri-proportional-desktop body.page-research .paper h1 .title-line{
+    white-space:nowrap !important;
+  }
+  html.harri-proportional-desktop body.page-research .paper p,
+  html.harri-proportional-desktop body.page-research .research-copy ul > li,
+  html.harri-proportional-desktop body.page-research .paper section:not(#abstract) > h2,
+  html.harri-proportional-desktop body.page-research .paper .research-copy h2,
+  html.harri-proportional-desktop body.page-research .paper section:not(#abstract) > h3,
+  html.harri-proportional-desktop body.page-research .paper .research-copy h3{
+    font-size:18px !important;
+  }
+  html.harri-proportional-desktop body.page-research .paper p,
+  html.harri-proportional-desktop body.page-research .research-copy ul > li{
+    line-height:1.2 !important;
+  }
+  html.harri-proportional-desktop body.page-research .toc{
+    --research-toc-fit:1 !important;
+    width:min(320px,48%) !important;
+    min-width:290px !important;
+    margin-right:20% !important;
+    margin-top:0 !important;
+    gap:34px !important;
+    font-size:13px !important;
+    line-height:1.04 !important;
+  }
+  /* Same hanging line visually: 43.5% of the scaled desktop viewport. */
+  html.harri-proportional-desktop body.page-research .figure-stage{
+    top:var(--harri-research-hanging-top) !important;
+    right:3.5% !important;
+    width:94% !important;
+    max-width:700px !important;
+    margin:0 !important;
+  }
 }
 </style>
 
+<script id="harri-proportional-desktop-canvas-script-v7">
+(function(){
+  const REFERENCE_WIDTH = 1536;
+  const DESKTOP_BREAKPOINT = 900;
+  const html = document.documentElement;
 
-<style id="harri-upper-resolution-layer-v6-5k-continuation">
-/*
-  HARRI.LA — 5K CONTINUATION FROM THE WORKING 4K STATE
-  -----------------------------------------------------
-  4096×2304 is treated as the trusted large-screen state.
-  Above that size, the vertical/type system continues from its 2× 4K cap
-  at exactly the same rate as the viewport grows. Therefore 5120×2880 is
-  a clean 1.25× continuation of 4096×2304 rather than jumping from 2× to
-  ~3.05×.
+  let baselineDpr = window.devicePixelRatio || 1;
+  let baselineScreenWidth = window.screen ? window.screen.width : 0;
+  let baselineScreenHeight = window.screen ? window.screen.height : 0;
+  let raf = 0;
 
-  Horizontal tracks already scale continuously with vw in the main layer.
-  This tier only continues the capped type/vertical rhythm and the small
-  shared navigation measurements that otherwise remained frozen.
-
-  Nothing at 4096×2304 or below is changed.
-*/
-@media (min-width:4097px) and (min-height:2305px){
-  :root{
-    /* 4K capped values, continued proportionally above 4096×2304. */
-    --harri-hi-pad-top-32:min(1.5625vw,2.777778vh);             /* 64 @ 4096 */
-    --harri-hi-pad-bottom-26:min(1.269531vw,2.256944vh);        /* 52 */
-
-    --harri-hi-brand:min(1.318359vw,2.34375vh);                 /* 54 */
-    --harri-hi-welcome-height:min(7.226563vw,12.847222vh);      /* 296 */
-    --harri-hi-welcome-type:min(1.367188vw,2.430556vh);         /* 56 */
-    --harri-hi-nav-type:min(.830078vw,1.475694vh);              /* 34 */
-    --harri-hi-nav-line:min(.913086vw,1.623264vh);              /* 37.4 */
-    --harri-hi-link-type:var(--harri-hi-nav-type);
-    --harri-hi-link-line:var(--harri-hi-nav-line);
-    --harri-hi-footer-type:min(.634766vw,1.128472vh);           /* 26 */
-
-    --harri-hi-project-type:min(1.318359vw,2.34375vh);          /* 54 */
-    --harri-hi-h1:min(2.636719vw,4.6875vh);                    /* 108 */
-    --harri-hi-body:min(.878906vw,1.5625vh);                   /* 36 */
-    --harri-hi-toc:min(.634766vw,1.128472vh);                  /* 26 */
+  function pageRoot(){
+    return document.querySelector('body > .about-layout, body > .layout');
   }
 
-  /* Shared navigation micro-rhythm: 5120 becomes exactly 1.25× the
-     measurements seen at the working 4096 state. */
-  body.page-about .nav-group,
-  body.page-work .nav-group,
-  body.page-research .nav-group,
-  body.page-harrilanpuisto .nav-group{
-    margin-bottom:min(.152588vw,.271267vh) !important;         /* 5 @ 4096 */
+  function clearCanvas(){
+    html.classList.remove('harri-proportional-desktop');
+    html.style.removeProperty('--harri-canvas-scale');
+    html.style.removeProperty('--harri-canvas-height');
+    html.style.removeProperty('--harri-research-hanging-top');
+    delete window.__harriCanvasScale;
   }
 
-  body.page-work .nav-group:has(.group-head[aria-expanded="true"]),
-  body.page-research .nav-group:has(.group-head[aria-expanded="true"]),
-  body.page-harrilanpuisto .nav-group:has(.group-head[aria-expanded="true"]){
-    margin-bottom:min(.549316vw,.976563vh) !important;         /* 18 */
+  function applyCanvas(){
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(function(){
+      const root = pageRoot();
+      if(!root) return;
+
+      if(window.innerWidth <= DESKTOP_BREAKPOINT){
+        clearCanvas();
+        return;
+      }
+
+      const scale = window.innerWidth / REFERENCE_WIDTH;
+      const sourceHeight = window.innerHeight / scale;
+      const hangingTop = sourceHeight * 0.435;
+
+      html.classList.add('harri-proportional-desktop');
+      html.style.setProperty('--harri-canvas-scale', scale.toFixed(8));
+      html.style.setProperty('--harri-canvas-height', sourceHeight.toFixed(4) + 'px');
+      html.style.setProperty('--harri-research-hanging-top', hangingTop.toFixed(4) + 'px');
+      html.dataset.harriCanvasScale = scale.toFixed(8);
+      window.__harriCanvasScale = scale;
+
+      window.dispatchEvent(new CustomEvent('harri:canvas-scaled', {
+        detail:{scale:scale, sourceHeight:sourceHeight}
+      }));
+    });
   }
 
-  body.page-about .group-head,
-  body.page-work .group-head,
-  body.page-research .group-head,
-  body.page-harrilanpuisto .group-head{
-    gap:min(.366211vw,.651042vh) !important;                   /* 12 */
+  function physicalScreenChanged(){
+    if(!window.screen) return false;
+    return window.screen.width !== baselineScreenWidth ||
+           window.screen.height !== baselineScreenHeight;
   }
 
-  body.page-about .group-toggle,
-  body.page-work .group-toggle,
-  body.page-research .group-toggle,
-  body.page-harrilanpuisto .group-toggle{
-    width:min(.671387vw,1.193576vh) !important;                /* 22 */
-    flex-basis:min(.671387vw,1.193576vh) !important;
-    font-size:min(.610352vw,1.085069vh) !important;            /* 20 */
+  function onResize(){
+    const currentDpr = window.devicePixelRatio || 1;
+    const dprChanged = Math.abs(currentDpr - baselineDpr) > 0.01;
+    const screenChanged = physicalScreenChanged();
+
+    /* Preserve normal browser page zoom on the same physical monitor. */
+    if(dprChanged && !screenChanged) return;
+
+    if(screenChanged){
+      baselineDpr = currentDpr;
+      baselineScreenWidth = window.screen.width;
+      baselineScreenHeight = window.screen.height;
+    }
+
+    applyCanvas();
   }
 
-  body.page-about .project-links.open,
-  body.page-work .project-links.open,
-  body.page-research .project-links.open,
-  body.page-harrilanpuisto .project-links.open{
-    margin-top:min(.213623vw,.379774vh) !important;            /* 7 */
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', applyCanvas, {once:true});
+  }else{
+    applyCanvas();
   }
 
-  body.page-about .project-links-inner,
-  body.page-work .project-links-inner,
-  body.page-research .project-links-inner,
-  body.page-harrilanpuisto .project-links-inner{
-    gap:min(.091553vw,.16276vh) !important;                    /* 3 */
-    padding-bottom:min(.396729vw,.705295vh) !important;        /* 13 */
-  }
-
-  /* ABOUT — continue the exact 4K state rather than uncapping to 3.05×. */
-  body.page-about .about-layout{
-    --page-pad-bottom:min(1.220703vw,2.170139vh) !important;    /* 50 @ 4096 */
-  }
-  body.page-about .left nav{
-    margin-top:min(7.226563vw,12.847222vh) !important;         /* 296 */
-  }
-  body.page-about .greeting-zone{
-    top:min(7.080078vw,12.586806vh) !important;                /* 290 */
-    height:min(13.427734vw,23.871528vh) !important;            /* 550 */
-  }
-  body.page-about .about-copy{
-    font-size:min(1.953125vw,3.472222vh) !important;           /* 80 */
-  }
-  body.page-about .cv-column{
-    padding-bottom:min(.549316vw,.976563vh) !important;        /* 18 */
-  }
-  body.page-about .cv-section h2{
-    margin-bottom:min(.585938vw,1.041667vh) !important;        /* 24 */
-  }
-  body.page-about .cv-section{
-    margin-bottom:min(1.269531vw,2.256944vh) !important;       /* 52 */
-  }
-  body.page-about .cv-item{
-    margin-bottom:min(.488281vw,.868056vh) !important;         /* 20 */
-  }
-  body.page-about .cv-surprise{
-    margin-top:min(.830078vw,1.475694vh) !important;           /* 34 */
-  }
-
-  /* WORK + HARRILANPUISTO — continue the working 4K vertical/type rhythm. */
-  body.page-work .left,
-  body.page-harrilanpuisto .left,
-  body.page-work .project-info,
-  body.page-harrilanpuisto .project-info{
-    height:calc(100vh - min(2.832031vw,5.034722vh)) !important; /* 116 */
-  }
-  body.page-work .project-type,
-  body.page-harrilanpuisto .project-type{
-    margin-bottom:min(1.171875vw,2.083333vh) !important;       /* 48 */
-  }
-  body.page-work .project-info h1,
-  body.page-harrilanpuisto .project-info h1{
-    max-width:min(29.785156vw,52.951389vh) !important;         /* 1220 */
-  }
-  body.page-work .project-description,
-  body.page-harrilanpuisto .project-description{
-    max-width:min(32.226563vw,57.291667vh) !important;         /* 1320 */
-  }
-  body.page-work .media-item,
-  body.page-harrilanpuisto .media-item{
-    min-height:calc(100vh - min(2.832031vw,5.034722vh)) !important;
-  }
-
-  /* RESEARCH — same continuation; hanging line and CMS figure sizing untouched. */
-  body.page-research .project-title{
-    margin-bottom:min(1.171875vw,2.083333vh) !important;       /* 48 */
-  }
-  body.page-research .paper h1{
-    max-width:min(33.203125vw,59.027778vh) !important;         /* 1360 */
-    margin-bottom:min(.878906vw,1.5625vh) !important;          /* 36 */
-  }
-  body.page-research .paper h1.chapter-heading{
-    margin-top:min(2.050781vw,3.645833vh) !important;          /* 84 */
-  }
-  body.page-research .paper p,
-  body.page-research .research-copy ul > li{
-    max-width:min(34.179688vw,60.763889vh) !important;         /* 1400 */
-  }
-  body.page-research .toc{
-    width:min(min(15.625vw,27.777778vh),48%) !important;       /* 640 */
-    min-width:min(14.160156vw,25.173611vh) !important;         /* 580 */
-    gap:min(1.660156vw,2.951389vh) !important;                 /* 68 */
-  }
-
-  /* Intentionally no Research .figure-stage rule: 43.5vh and CMS fit remain baseline-owned. */
-}
-</style>
+  window.addEventListener('resize', onResize, {passive:true});
+  window.addEventListener('orientationchange', applyCanvas, {passive:true});
+})();
+</script>

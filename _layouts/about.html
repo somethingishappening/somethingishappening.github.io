@@ -975,10 +975,16 @@ html.nav-state-syncing .nav-group *{
     const centerRect = center.getBoundingClientRect();
     const copyRect = aboutCopy.getBoundingClientRect();
     const gapAboveCopy = 28;
-    const safeBottom = Math.max(0,copyRect.top - centerRect.top - gapAboveCopy);
+    const canvasScale = window.__harriCanvasScale || 1;
+    const safeBottom = Math.max(
+      0,
+      ((copyRect.top - centerRect.top) / canvasScale) - gapAboveCopy
+    );
 
     // Desktop playground starts at the same vertical level as Harri.la
-    // but remains entirely inside the center-column white space.
+    // but remains entirely inside the center-column white space. When the
+    // proportional desktop canvas is active, DOM rects are visual/zoomed
+    // pixels while the zone height is a source-canvas measurement.
     zone.style.top = '0px';
     zone.style.height = Math.round(safeBottom) + 'px';
   }

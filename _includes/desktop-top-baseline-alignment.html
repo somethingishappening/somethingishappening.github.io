@@ -109,9 +109,11 @@
           targetMarker.getBoundingClientRect().top;
 
         const delta = referenceBaseline - targetBaseline;
+        const canvasScale = window.__harriCanvasScale || 1;
+        const sourceDelta = delta / canvasScale;
 
         target.style.transform =
-          "translateY(" + delta.toFixed(2) + "px)";
+          "translateY(" + sourceDelta.toFixed(2) + "px)";
       });
     }
 
@@ -119,6 +121,7 @@
 
     window.addEventListener("resize", align, {passive:true});
     window.addEventListener("orientationchange", align, {passive:true});
+    window.addEventListener("harri:canvas-scaled", align, {passive:true});
 
     if(document.fonts && document.fonts.ready){
       document.fonts.ready.then(function(){

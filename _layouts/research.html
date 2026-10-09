@@ -3387,8 +3387,9 @@
     desktopArrowTarget = link;
 
     const rect = link.getBoundingClientRect();
-    const x = rect.left - 20;
-    const y = rect.top + 1;
+    const canvasScale = window.__harriCanvasScale || 1;
+    const x = (rect.left / canvasScale) - 20;
+    const y = (rect.top / canvasScale) + 1;
 
     desktopTocArrow.style.position = "fixed";
     desktopTocArrow.style.left = "0px";
@@ -3942,7 +3943,9 @@
         : (() => {
             const paperRect = paper.getBoundingClientRect();
             const targetRect = target.getBoundingClientRect();
-            return paper.scrollTop + (targetRect.top - paperRect.top);
+            const canvasScale = window.__harriCanvasScale || 1;
+            return paper.scrollTop +
+              ((targetRect.top - paperRect.top) / canvasScale);
           })();
 
       paper.scrollTo({
@@ -4047,6 +4050,7 @@
     }
 
     const stageRect = stage.getBoundingClientRect();
+    const canvasScale = window.__harriCanvasScale || 1;
     const fullFigureWidth = stage.clientWidth;
     if(fullFigureWidth <= 0) return;
 
@@ -4060,11 +4064,12 @@
 
     const captionStyles = getComputedStyle(caption);
     const captionMarginTop = parseFloat(captionStyles.marginTop) || 0;
-    const captionHeight = caption.getBoundingClientRect().height + captionMarginTop;
+    const captionHeight =
+      (caption.getBoundingClientRect().height / canvasScale) + captionMarginTop;
 
     const availableTotalHeight = Math.max(
       0,
-      window.innerHeight - stageRect.top - bottomPageMargin
+      ((window.innerHeight - stageRect.top) / canvasScale) - bottomPageMargin
     );
 
     const availableImageHeight = Math.max(

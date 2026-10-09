@@ -162,8 +162,11 @@
             ? 0
             : Math.max(desiredDelta, minimumSafeDelta);
 
+        const canvasScale = window.__harriCanvasScale || 1;
+        const sourceDelta = appliedDelta / canvasScale;
+
         target.style.transform =
-          "translateY(" + appliedDelta.toFixed(2) + "px)";
+          "translateY(" + sourceDelta.toFixed(2) + "px)";
       });
     }
 
@@ -175,6 +178,7 @@
 
     window.addEventListener("resize", align, {passive:true});
     window.addEventListener("orientationchange", align, {passive:true});
+    window.addEventListener("harri:canvas-scaled", align, {passive:true});
 
     if(document.fonts && document.fonts.ready){
       document.fonts.ready.then(function(){
