@@ -1,14 +1,23 @@
-HARRI.LA — CV Research typography + Abstract alignment fix
+HARRI.LA — Upper-resolution layer v2
 
-Replace these files in the repository:
-  _layouts/about.html
-  _layouts/research.html
+Baseline: harri-cv-research-text-abstract-alignment-fix.zip
 
-Changes:
-- Mini-CV body matches Research running text exactly:
-  18px / 1.2 on wide desktop, 17px / 1.2 at 901–1180px, 17px / 1.16 mobile.
-- Mini-CV section titles use Research H2 typography, but retain zero top margin
-  so the first title stays top-aligned as before.
-- Clicking Abstract in the desktop Research navigation returns the internal
-  article scroller to scrollTop 0, matching the initial project-opening alignment.
-- Existing surprise-image behavior and hidden-section arrow fallback are preserved.
+This revision fixes the large-screen trigger and resize jump in v1.
+
+What changed from v1:
+- no hard min-height trigger
+- scaling starts smoothly above the 1680px desktop reference
+- every scaled measurement uses the smaller of viewport-width and viewport-height growth
+- this prevents wide/short windows from suddenly enlarging and prevents a jump at the breakpoint
+- growth is capped at 4/3
+
+Preserved exactly:
+- Work media/gallery spacing
+- About baseline proportions
+- Research figure hanging line (43.5vh)
+- CMS controls/content logic
+- mobile rules and mobile layout
+- Mini-CV/Abstract/surprise-image/hidden-section-arrow fixes from the chosen baseline
+
+Install:
+Copy _includes/upper-resolution-layer.html and the four _layouts files into the same paths in the repository.
