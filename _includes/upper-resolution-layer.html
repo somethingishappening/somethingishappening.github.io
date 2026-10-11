@@ -457,3 +457,286 @@
   /* Intentionally no Research .figure-stage rule: 43.5vh and CMS fit remain baseline-owned. */
 }
 </style>
+
+<style id="harri-desktop-balance-v6-2">
+/*
+  HARRI.LA — DESKTOP BALANCE v6.2
+  --------------------------------
+  Two narrowly-scoped corrections based on the supplied device references:
+
+  1) 901–1680px stays the existing DESKTOP layout, but its measurements scale
+     toward the 1680px reference instead of forcing full-size desktop type into
+     1024/1280/1366 canvases. Mobile (<=900px) is completely untouched.
+
+  2) Above 1680px, Work already owns a 50/50 text/media split. Do not impose a
+     second max-width on the project description; let the text use the full
+     text half. This fixes the ultrawide text-to-column ratio without changing
+     the media width or the 18px gallery spacing.
+*/
+
+@media (min-width:901px) and (max-width:1680px){
+  :root{
+    /* Width-derived shell. These resolve to the original values at 1680px. */
+    --harri-lo-left:clamp(140px,13.095238vw,220px);
+    --harri-lo-about-right:clamp(190px,17.857143vw,300px);
+    --harri-lo-gap:clamp(16px,1.666667vw,28px);
+    --harri-lo-pad-x:clamp(11px,1.071429vw,18px);
+    --harri-lo-pad-top:clamp(20px,1.904762vw,32px);
+    --harri-lo-pad-bottom:clamp(16px,1.547619vw,26px);
+
+    /* One hierarchy, scaled from the established 1680 desktop reference. */
+    --harri-lo-brand:clamp(18px,1.607143vw,27px);
+    --harri-lo-welcome-type:clamp(18px,1.666667vw,28px);
+    --harri-lo-nav-type:clamp(12px,1.011905vw,17px);
+    --harri-lo-nav-line:clamp(13.2px,1.113095vw,18.7px);
+    --harri-lo-footer-type:clamp(9px,.77381vw,13px);
+    --harri-lo-project-type:var(--harri-lo-brand);
+    --harri-lo-h1:clamp(36px,3.214286vw,54px);
+    --harri-lo-body:clamp(13px,1.071429vw,18px);
+    --harri-lo-toc:clamp(10px,.77381vw,13px);
+  }
+
+  /* ---------- shared desktop navigation ---------- */
+  body.page-about .brand,
+  body.page-work .brand,
+  body.page-research .brand,
+  body.page-harrilanpuisto .brand{
+    font-size:var(--harri-lo-brand) !important;
+  }
+
+  body.page-about .group-head,
+  body.page-work .group-head,
+  body.page-research .group-head,
+  body.page-harrilanpuisto .group-head,
+  body.page-about .standalone-nav-link,
+  body.page-work .standalone-nav-link,
+  body.page-research .standalone-nav-link,
+  body.page-harrilanpuisto .standalone-nav-link,
+  body.page-about .harrilanpuisto-link{
+    font-size:var(--harri-lo-nav-type) !important;
+    line-height:var(--harri-lo-nav-line) !important;
+  }
+
+  body.page-about .project-links a,
+  body.page-work .project-links a,
+  body.page-research .project-links a,
+  body.page-harrilanpuisto .project-links a{
+    font-size:var(--harri-lo-nav-type) !important;
+    line-height:var(--harri-lo-nav-line) !important;
+  }
+
+  body.page-about .left-footer,
+  body.page-work .left-footer,
+  body.page-research .left-footer,
+  body.page-harrilanpuisto .left-footer{
+    font-size:var(--harri-lo-footer-type) !important;
+  }
+
+  body.page-about .group-head,
+  body.page-work .group-head,
+  body.page-research .group-head,
+  body.page-harrilanpuisto .group-head{
+    gap:clamp(8px,.714286vw,12px) !important;
+  }
+
+  body.page-about .group-toggle,
+  body.page-work .group-toggle,
+  body.page-research .group-toggle,
+  body.page-harrilanpuisto .group-toggle{
+    width:clamp(15px,1.309524vw,22px) !important;
+    flex-basis:clamp(15px,1.309524vw,22px) !important;
+    font-size:clamp(13px,1.190476vw,20px) !important;
+  }
+
+  body.page-about .nav-group,
+  body.page-work .nav-group,
+  body.page-research .nav-group,
+  body.page-harrilanpuisto .nav-group{
+    margin-bottom:clamp(3px,.297619vw,5px) !important;
+  }
+
+  body.page-about .project-links.open,
+  body.page-work .project-links.open,
+  body.page-research .project-links.open,
+  body.page-harrilanpuisto .project-links.open{
+    margin-top:clamp(4px,.416667vw,7px) !important;
+  }
+
+  body.page-about .project-links-inner,
+  body.page-work .project-links-inner,
+  body.page-research .project-links-inner,
+  body.page-harrilanpuisto .project-links-inner{
+    gap:clamp(2px,.178571vw,3px) !important;
+    padding-bottom:clamp(8px,.77381vw,13px) !important;
+  }
+
+  /* ---------- About ---------- */
+  body.page-about .about-layout{
+    --page-pad-x:var(--harri-lo-pad-x) !important;
+    --page-pad-top:var(--harri-lo-pad-top) !important;
+    --page-pad-bottom:clamp(16px,1.488095vw,25px) !important;
+    --left-w:var(--harri-lo-left) !important;
+    --right-w:var(--harri-lo-about-right) !important;
+    --gap:var(--harri-lo-gap) !important;
+  }
+
+  body.page-about .left nav{
+    margin-top:clamp(90px,8.809524vw,148px) !important;
+  }
+
+  body.page-about .greeting-zone{
+    top:clamp(88px,8.630952vw,145px) !important;
+    height:clamp(168px,16.369048vw,275px) !important;
+  }
+
+  body.page-about .about-greeting{
+    font-size:var(--harri-lo-h1) !important;
+  }
+
+  body.page-about .about-copy{
+    font-size:clamp(24px,2.380952vw,40px) !important;
+    line-height:1.18 !important;
+  }
+
+  /* Keep the Mini-CV aligned at the top, but scale its Research typography
+     with the same desktop body scale. */
+  body.page-about .cv-column{
+    padding-top:0 !important;
+  }
+
+  body.page-about .cv-section h2,
+  body.page-about .cv-item{
+    font-size:var(--harri-lo-body) !important;
+  }
+
+  body.page-about .cv-section h2{
+    line-height:1.15 !important;
+    margin-top:0 !important;
+    margin-bottom:clamp(8px,.714286vw,12px) !important;
+  }
+
+  body.page-about .cv-item{
+    line-height:1.2 !important;
+    margin-bottom:clamp(7px,.595238vw,10px) !important;
+  }
+
+  body.page-about .cv-section{
+    margin-bottom:clamp(17px,1.547619vw,26px) !important;
+  }
+
+  /* ---------- Work / Artistic / Harrilanpuisto ---------- */
+  body.page-work .layout,
+  body.page-harrilanpuisto .layout{
+    grid-template-columns:
+      var(--harri-lo-left)
+      minmax(0,745fr)
+      minmax(0,660fr) !important;
+    gap:var(--harri-lo-gap) !important;
+    padding:
+      var(--harri-lo-pad-top)
+      var(--harri-lo-pad-x)
+      var(--harri-lo-pad-bottom) !important;
+  }
+
+  body.page-work .left,
+  body.page-harrilanpuisto .left,
+  body.page-work .project-info,
+  body.page-harrilanpuisto .project-info{
+    top:var(--harri-lo-pad-top) !important;
+    height:calc(100vh - clamp(36px,3.452381vw,58px)) !important;
+  }
+
+  body.page-work .welcome-zone,
+  body.page-research .welcome-zone,
+  body.page-harrilanpuisto .welcome-zone{
+    flex-basis:clamp(90px,8.809524vw,148px) !important;
+    height:clamp(90px,8.809524vw,148px) !important;
+    min-height:clamp(90px,8.809524vw,148px) !important;
+  }
+
+  body.page-work .welcome,
+  body.page-research .welcome,
+  body.page-harrilanpuisto .welcome{
+    font-size:var(--harri-lo-welcome-type) !important;
+  }
+
+  body.page-work .project-type,
+  body.page-harrilanpuisto .project-type{
+    font-size:var(--harri-lo-project-type) !important;
+    margin-bottom:clamp(15px,1.428571vw,24px) !important;
+  }
+
+  body.page-work .project-info h1,
+  body.page-harrilanpuisto .project-info h1{
+    font-size:var(--harri-lo-h1) !important;
+  }
+
+  body.page-work .project-description,
+  body.page-harrilanpuisto .project-description{
+    font-size:var(--harri-lo-body) !important;
+    line-height:1.2 !important;
+  }
+
+  /* Work owns a responsive 50/50 content split. Let its copy use that entire
+     assigned half instead of reintroducing an independent line-length cap. */
+  body.page-work .project-description{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  /* ---------- Research ---------- */
+  body.page-research .layout{
+    grid-template-columns:
+      var(--harri-lo-left)
+      minmax(0,745fr)
+      minmax(0,660fr) !important;
+    gap:var(--harri-lo-gap) !important;
+    padding:
+      var(--harri-lo-pad-top)
+      var(--harri-lo-pad-x)
+      var(--harri-lo-pad-bottom) !important;
+  }
+
+  body.page-research .project-title{
+    font-size:var(--harri-lo-project-type) !important;
+    margin-bottom:clamp(15px,1.428571vw,24px) !important;
+  }
+
+  body.page-research .paper h1{
+    font-size:var(--harri-lo-h1) !important;
+    margin-bottom:clamp(12px,1.071429vw,18px) !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3,
+  body.page-research .paper p,
+  body.page-research .research-copy ul > li{
+    font-size:var(--harri-lo-body) !important;
+  }
+
+  body.page-research .paper p,
+  body.page-research .research-copy ul > li{
+    line-height:1.2 !important;
+  }
+
+  body.page-research .toc{
+    font-size:var(--harri-lo-toc) !important;
+    gap:clamp(22px,2.02381vw,34px) !important;
+  }
+
+  /* Deliberately no Research figure-stage position/size override here. */
+}
+
+/* ULTRAWIDE WORK RATIO FIX
+   The Work template already defines project-info as one half and media-column
+   as the other half. The high-resolution layer must not narrow the copy again. */
+@media (min-width:1681px){
+  body.page-work .project-description{
+    width:100% !important;
+    max-width:100% !important;
+  }
+}
+</style>
+
