@@ -218,12 +218,15 @@
     font-size:var(--harri-hi-body) !important;
   }
 
-  body.page-work .media-item,
+  /* Work gallery items deliberately keep the baseline natural-aspect-ratio
+     sizing. Do not impose a viewport-height minimum here: doing so creates
+     large apparent gaps between differently proportioned project images. */
   body.page-harrilanpuisto .media-item{
     min-height:calc(100vh - clamp(58px,min(3.452381vw,6.444444vh),116px)) !important;
   }
 
-  /* Deliberately no .media-stack gap / media-item margin overrides. */
+  /* Deliberately no Work .media-stack gap / media-item margin overrides.
+     The Work template remains on its baseline 18px image spacing. */
 
   /* =========================================================
      RESEARCH
@@ -424,7 +427,8 @@
   body.page-harrilanpuisto .project-description{
     max-width:min(32.226563vw,57.291667vh) !important;         /* 1320 */
   }
-  body.page-work .media-item,
+  /* Same rule at 5K: Work items stay natural-height; only Harrilanpuisto
+     keeps its viewport-relative media-item minimum. */
   body.page-harrilanpuisto .media-item{
     min-height:calc(100vh - min(2.832031vw,5.034722vh)) !important;
   }
