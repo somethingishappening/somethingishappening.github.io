@@ -4723,11 +4723,32 @@
       const textNode = lastTextNode(container);
       if(!textNode) return null;
 
+      /*
+        Put the probe directly after the final VISIBLE character, not merely
+        after the text node. A sentence that ends with a figure reference is
+        usually represented as:
+
+          normal sentence text + trailing space + <span class="figure-ref">…
+
+        If the figure reference wraps, a marker inserted after the whole text
+        node can be carried onto that next line by the trailing whitespace.
+        Splitting at the final non-whitespace character keeps the probe on the
+        actual sentence baseline regardless of what the figure reference does.
+      */
+      const value = textNode.nodeValue || "";
+      const match = value.match(/\S(?=\s*$)/);
+      const visibleEnd = match ? match.index + 1 : value.length;
+
+      const trailing = visibleEnd < value.length
+        ? textNode.splitText(visibleEnd)
+        : textNode.nextSibling;
+
       const marker = document.createElement("span");
       marker.className = "research-abstract-baseline-marker";
       marker.dataset.role = role;
       marker.setAttribute("aria-hidden", "true");
-      textNode.parentNode.insertBefore(marker, textNode.nextSibling);
+
+      textNode.parentNode.insertBefore(marker, trailing);
       return marker;
     }
 
