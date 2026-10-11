@@ -1,22 +1,18 @@
-HARRI.LA — Research load-jump fix
+HARRI Research v6.7 stability fix
 
-Based on the current Research baseline and keeps the existing
-{% include upper-resolution-layer.html %} hook intact.
+Replace BOTH files together:
+- _layouts/research.html
+- _includes/upper-resolution-layer.html
 
-Replace only:
-  _layouts/research.html
+This package keeps the v6.5 responsive typography/scaling layer and adds:
+1. Direct rendered-line alignment between the Abstract's final prose line and the footer email line.
+2. Alignment based on the actual resolved intro height, including naturally-tall Abstract cases.
+3. Re-alignment after late font/layout size changes.
+4. Iterative Research figure fitting so caption reflow is re-measured after the image shrinks.
 
-What changed:
-- opening scroll/reset happens before the visible frame instead of two rAFs later
-- Abstract/footer baseline calculation is performed in one layout cycle
-- the Research layout is withheld for a single initialization frame so the first
-  visible frame already has the final geometry
-
-Untouched:
-- upper-resolution-layer.html itself (keep your current v6.2 file)
-- Work/About/Harrilanpuisto
-- Research 43.5vh figure hanging line
-- figure CMS controls and fit logic
-- hidden-section arrow fallback
-- Abstract nav scrollTop:0 behavior
-- mobile layout/navigation
+Unchanged:
+- mobile layout
+- 43.5vh Research figure hanging line
+- CMS figure size/alignment controls
+- Research navigation/arrow behavior
+- Work spacing fixes

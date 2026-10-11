@@ -4026,10 +4026,16 @@
 
 
 
-/* DESIGN RESEARCH FIGURE FIT RULE
-   Full width is always attempted first. The image is reduced only when
-   its natural aspect ratio plus the caption would exceed the available
-   vertical space above the website's bottom margin. No crop, no stretch. */
+/* DESIGN RESEARCH FIGURE FIT RULE — iterative final fit
+   ---------------------------------------------------------
+   The CMS requested size is attempted first. If image + caption would run
+   below the website bottom margin, the image is reduced proportionally.
+
+   IMPORTANT: caption wrapping depends on the fitted width. Therefore fitting
+   is iterative: apply a width, re-measure the caption at that width, then
+   re-check the available image height. This guarantees that the final
+   image + caption combination fits rather than relying on a one-pass guess.
+   No crop, no stretch; the source aspect ratio is always preserved. */
 (function(){
   const stage = document.getElementById("figureStage");
   const box = document.getElementById("figureBox");
@@ -4040,9 +4046,26 @@
 
   let resizeRaf = 0;
   const bottomPageMargin = 26;
+  const MAX_PASSES = 4;
 
   function clearDesktopFit(){
     stage.style.removeProperty("--research-figure-fit-width");
+  }
+
+  function requestedWidth(){
+    const fullFigureWidth = stage.clientWidth;
+    if(fullFigureWidth <= 0) return 0;
+
+    const currentKey = stage.dataset.currentFigure || "";
+    const currentFigure = figures[currentKey] || null;
+    const requestedPercent = currentFigure
+      ? (currentFigure.widthPercent || 100)
+      : 100;
+
+    return fullFigureWidth * Math.max(
+      0.01,
+      Math.min(1, requestedPercent / 100)
+    );
   }
 
   function fitDesktopResearchFigure(){
@@ -4057,50 +4080,54 @@
     }
 
     const stageRect = stage.getBoundingClientRect();
-    const fullFigureWidth = stage.clientWidth;
-    if(fullFigureWidth <= 0) return;
-
-    const currentKey = stage.dataset.currentFigure || "";
-    const currentFigure = figures[currentKey] || null;
-    const requestedPercent = currentFigure
-      ? (currentFigure.widthPercent || 100)
-      : 100;
-    const requestedFigureWidth =
-      fullFigureWidth * Math.max(0.01, Math.min(1, requestedPercent / 100));
-
-    const captionStyles = getComputedStyle(caption);
-    const captionMarginTop = parseFloat(captionStyles.marginTop) || 0;
-    const captionHeight = caption.getBoundingClientRect().height + captionMarginTop;
+    const requestedFigureWidth = requestedWidth();
+    if(requestedFigureWidth <= 0) return;
 
     const availableTotalHeight = Math.max(
       0,
       window.innerHeight - stageRect.top - bottomPageMargin
     );
 
-    const availableImageHeight = Math.max(
-      0,
-      availableTotalHeight - captionHeight
-    );
-
     const naturalRatio = img.naturalWidth / img.naturalHeight;
-    const requestedImageHeight = requestedFigureWidth / naturalRatio;
-
     let fittedWidth = requestedFigureWidth;
-
-    if(requestedImageHeight > availableImageHeight){
-      fittedWidth = Math.min(
-        requestedFigureWidth,
-        availableImageHeight * naturalRatio
-      );
-    }
-
-    /* A whole-pixel floor gives a small safety buffer against subpixel
-       overflow while preserving the source aspect ratio. */
-    fittedWidth = Math.max(1, Math.floor(fittedWidth));
 
     stage.style.setProperty(
       "--research-figure-fit-width",
-      fittedWidth + "px"
+      Math.max(1, Math.floor(fittedWidth)) + "px"
+    );
+
+    for(let pass = 0; pass < MAX_PASSES; pass++){
+      const captionStyles = getComputedStyle(caption);
+      const captionMarginTop = parseFloat(captionStyles.marginTop) || 0;
+      const captionHeight =
+        caption.getBoundingClientRect().height + captionMarginTop;
+
+      const availableImageHeight = Math.max(
+        0,
+        availableTotalHeight - captionHeight
+      );
+
+      const allowedByHeight = availableImageHeight * naturalRatio;
+      const nextWidth = Math.max(
+        1,
+        Math.floor(Math.min(requestedFigureWidth, allowedByHeight))
+      );
+
+      if(Math.abs(nextWidth - fittedWidth) < 1){
+        fittedWidth = nextWidth;
+        break;
+      }
+
+      fittedWidth = nextWidth;
+      stage.style.setProperty(
+        "--research-figure-fit-width",
+        fittedWidth + "px"
+      );
+    }
+
+    stage.style.setProperty(
+      "--research-figure-fit-width",
+      Math.max(1, Math.floor(fittedWidth)) + "px"
     );
   }
 
@@ -4114,8 +4141,13 @@
   img.addEventListener("load", scheduleFit);
   window.addEventListener("resize", scheduleFit, {passive:true});
 
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(scheduleFit).catch(() => {});
+  if(document.fonts){
+    if(document.fonts.ready){
+      document.fonts.ready.then(scheduleFit).catch(() => {});
+    }
+    if(typeof document.fonts.addEventListener === "function"){
+      document.fonts.addEventListener("loadingdone", scheduleFit);
+    }
   }
 
   scheduleFit();
@@ -4624,33 +4656,20 @@
 
 <style id="research-abstract-footer-baseline-fix">
 /*
-  RESEARCH ABSTRACT ↔ FOOTER BASELINE
-  -----------------------------------
-  The Abstract remains in normal document flow. We do NOT translate it.
-  JavaScript only adds the exact extra min-height required to the first-screen
-  wrapper so the Abstract's last line reaches the footer/email baseline.
-  Following article sections are therefore pushed down by the same amount.
+  RESEARCH ABSTRACT ↔ FOOTER VISUAL LINE ALIGNMENT
+  ------------------------------------------------
+  The Abstract stays in normal document flow. The first-screen wrapper is
+  extended by the exact number of pixels required for the final prose line to
+  reach the email line. The (Fig. n) reference is deliberately excluded.
 */
-.research-abstract-baseline-marker{
-  display:inline-block !important;
-  width:0 !important;
-  height:0 !important;
-  margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
-  overflow:hidden !important;
-  vertical-align:baseline !important;
-  line-height:0 !important;
-  font-size:0 !important;
-  pointer-events:none !important;
-}
-
 </style>
 
 <script id="research-abstract-footer-baseline-script">
 (function(){
   const DESKTOP_BREAKPOINT = 900;
   const READY_EVENT = "harri:research-baseline-ready";
+  const EPSILON = 0.25;
+  const MAX_ALIGNMENT_PASSES = 5;
 
   function start(){
     const intro = document.querySelector(".research-intro-screen");
@@ -4662,11 +4681,9 @@
       return;
     }
 
-    let raf1 = 0;
-    let raf2 = 0;
-    let raf3 = 0;
-    let abstractMarker = null;
-    let footerMarker = null;
+    let alignRaf = 0;
+    let resizeRaf = 0;
+    let initialFinished = false;
 
     function visible(el){
       if(!el) return false;
@@ -4676,7 +4693,7 @@
              el.getClientRects().length > 0;
     }
 
-    function lastTextNode(container){
+    function lastTextNode(container, excludeSelector){
       const walker = document.createTreeWalker(
         container,
         NodeFilter.SHOW_TEXT,
@@ -4689,16 +4706,9 @@
             if(!parent || !visible(parent)){
               return NodeFilter.FILTER_REJECT;
             }
-
-            /* Figure references use a smaller, slightly raised inline style.
-               They may also wrap onto their own line at narrow desktop widths.
-               The alignment target is the Abstract sentence itself, not the
-               (Fig. n) reference, so never use figure-reference text as the
-               baseline marker source. */
-            if(parent.closest(".figure-ref, .research-abstract-baseline-marker")){
+            if(excludeSelector && parent.closest(excludeSelector)){
               return NodeFilter.FILTER_REJECT;
             }
-
             return NodeFilter.FILTER_ACCEPT;
           }
         }
@@ -4709,82 +4719,51 @@
       return last;
     }
 
+    function finalVisibleCharacterIndex(text){
+      const match = (text || "").match(/\S(?=\s*$)/);
+      return match ? match.index + 1 : (text || "").length;
+    }
+
+    function lastRenderedLineRect(container, excludeSelector){
+      const node = lastTextNode(container, excludeSelector);
+      if(!node) return null;
+
+      const end = finalVisibleCharacterIndex(node.nodeValue || "");
+      if(end <= 0) return null;
+
+      const range = document.createRange();
+      range.setStart(node, 0);
+      range.setEnd(node, end);
+
+      const rects = Array.from(range.getClientRects()).filter(
+        rect => rect.width > 0 || rect.height > 0
+      );
+      return rects.length ? rects[rects.length - 1] : null;
+    }
+
     function lastVisibleFooterItem(){
       const items = Array.from(footer.children).filter(visible);
       return items.length ? items[items.length - 1] : footer;
     }
 
-    function makeMarker(container, role){
-      const existing = container.querySelector(
-        '.research-abstract-baseline-marker[data-role="' + role + '"]'
+    function lineDifference(){
+      const abstractLine = lastRenderedLineRect(
+        abstractCopy,
+        ".figure-ref"
       );
-      if(existing) existing.remove();
-
-      const textNode = lastTextNode(container);
-      if(!textNode) return null;
-
-      /*
-        Put the probe directly after the final VISIBLE character, not merely
-        after the text node. A sentence that ends with a figure reference is
-        usually represented as:
-
-          normal sentence text + trailing space + <span class="figure-ref">…
-
-        If the figure reference wraps, a marker inserted after the whole text
-        node can be carried onto that next line by the trailing whitespace.
-        Splitting at the final non-whitespace character keeps the probe on the
-        actual sentence baseline regardless of what the figure reference does.
-      */
-      const value = textNode.nodeValue || "";
-      const match = value.match(/\S(?=\s*$)/);
-      const visibleEnd = match ? match.index + 1 : value.length;
-
-      const trailing = visibleEnd < value.length
-        ? textNode.splitText(visibleEnd)
-        : textNode.nextSibling;
-
-      const marker = document.createElement("span");
-      marker.className = "research-abstract-baseline-marker";
-      marker.dataset.role = role;
-      marker.setAttribute("aria-hidden", "true");
-
-      textNode.parentNode.insertBefore(marker, trailing);
-      return marker;
-    }
-
-    function ensureMarkers(force){
-      if(force){
-        abstractMarker = null;
-        footerMarker = null;
-      }
-
-      if(!abstractMarker || !abstractMarker.isConnected){
-        abstractMarker = makeMarker(abstractCopy, "abstract");
-      }
-
       const footerItem = lastVisibleFooterItem();
-      if(!footerItem) return false;
+      const footerLine = lastRenderedLineRect(footerItem, null);
 
-      if(
-        !footerMarker ||
-        !footerMarker.isConnected ||
-        !footerItem.contains(footerMarker)
-      ){
-        footerMarker = makeMarker(footerItem, "footer");
-      }
+      if(!abstractLine || !footerLine) return 0;
 
-      return !!(abstractMarker && footerMarker);
+      /* Align the visible lower edge of the rendered prose line and email
+         line. This directly matches what is seen on screen even though the
+         two columns use different font sizes. */
+      return footerLine.bottom - abstractLine.bottom;
     }
 
-    /*
-      Preserve the old exact three-pass alignment, but do it while the
-      Research layout is still hidden by html.research-initializing.
-      This keeps the email/last-line baseline exact without a visible jump.
-    */
-    function measureAndAlign(forceMarkers, done){
-      cancelAnimationFrame(raf1);
-      cancelAnimationFrame(raf2);
-      cancelAnimationFrame(raf3);
+    function alignNow(done){
+      cancelAnimationFrame(alignRaf);
 
       if(window.innerWidth <= DESKTOP_BREAKPOINT){
         intro.style.minHeight = "";
@@ -4792,74 +4771,74 @@
         return;
       }
 
+      /* Start from the real resolved first-screen geometry, not from a
+         percentage-based guess. This is the key fix for cases where the
+         Abstract's natural content height is already taller than 100%. */
       intro.style.minHeight = "100%";
 
-      raf1 = requestAnimationFrame(function(){
-        if(!ensureMarkers(!!forceMarkers)){
-          if(done) done();
-          return;
+      alignRaf = requestAnimationFrame(function(){
+        const baseHeight = intro.getBoundingClientRect().height;
+        let targetHeight = baseHeight;
+
+        for(let pass = 0; pass < MAX_ALIGNMENT_PASSES; pass++){
+          const residual = lineDifference();
+          if(Math.abs(residual) <= EPSILON) break;
+
+          targetHeight = Math.max(baseHeight, targetHeight + residual);
+          intro.style.minHeight = targetHeight.toFixed(2) + "px";
+          intro.getBoundingClientRect();
         }
 
-        const abstractBaseline =
-          abstractMarker.getBoundingClientRect().top;
-        const footerBaseline =
-          footerMarker.getBoundingClientRect().top;
-
-        let needed = Math.max(
-          0,
-          footerBaseline - abstractBaseline
-        );
-
-        intro.style.minHeight =
-          needed > 0.25
-            ? "calc(100% + " + needed.toFixed(2) + "px)"
-            : "100%";
-
-        raf2 = requestAnimationFrame(function(){
-          const residual =
-            footerMarker.getBoundingClientRect().top -
-            abstractMarker.getBoundingClientRect().top;
-
-          if(residual > 0.35){
-            needed += residual;
-            intro.style.minHeight =
-              "calc(100% + " + needed.toFixed(2) + "px)";
+        requestAnimationFrame(function(){
+          const finalResidual = lineDifference();
+          if(Math.abs(finalResidual) > EPSILON){
+            const currentHeight = intro.getBoundingClientRect().height;
+            intro.style.minHeight = Math.max(
+              baseHeight,
+              currentHeight + finalResidual
+            ).toFixed(2) + "px";
           }
 
-          /*
-            One final frame confirms the corrected geometry before the layout
-            can be revealed. No geometry is changed in this final pass.
-          */
-          raf3 = requestAnimationFrame(function(){
-            if(done) done();
-          });
+          if(done) done();
         });
       });
     }
 
-    let resizeRaf = 0;
     function scheduleAlign(){
       cancelAnimationFrame(resizeRaf);
       resizeRaf = requestAnimationFrame(function(){
-        measureAndAlign(false);
+        alignNow();
       });
     }
 
     window.addEventListener("resize", scheduleAlign, {passive:true});
     window.addEventListener("orientationchange", scheduleAlign, {passive:true});
 
-    function finishInitialAlignment(){
-      abstractMarker = null;
-      footerMarker = null;
-      measureAndAlign(true, function(){
-        document.dispatchEvent(new Event(READY_EVENT));
+    if("ResizeObserver" in window){
+      const observer = new ResizeObserver(function(){
+        if(initialFinished) scheduleAlign();
+      });
+      observer.observe(abstractCopy);
+      observer.observe(footer);
+    }
+
+    if(document.fonts && typeof document.fonts.addEventListener === "function"){
+      document.fonts.addEventListener("loadingdone", function(){
+        if(initialFinished) scheduleAlign();
       });
     }
 
-    /*
-      Wait for final font metrics before the first visible Research frame.
-      This is what lets us keep both exact footer alignment and no load jump.
-    */
+    function finishInitialAlignment(){
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          alignNow(function(){
+            initialFinished = true;
+            document.dispatchEvent(new Event(READY_EVENT));
+          });
+        });
+      });
+    }
+
     if(document.fonts && document.fonts.ready){
       document.fonts.ready
         .then(finishInitialAlignment)
