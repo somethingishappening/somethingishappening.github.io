@@ -1,1 +1,4 @@
-Replace only _layouts/research.html. Restores the original Research Abstract flex/bottom-aligned layout, applies only a visual baseline nudge to the final prose line, and replaces the TOC arrow with the exact thick geometric arrow vector from the supplied reference. Keep the current upper-resolution-layer.html unchanged.
+Research desktop Abstract baseline fix based on v6.12 EPS-arrow version.
+Replace only _layouts/research.html.
+The EPS navigation arrow is unchanged.
+The Abstract stays in its original flex/bottom-aligned layout; JS extends the first-screen wrapper by the measured prose-to-email baseline difference.
