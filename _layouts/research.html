@@ -4689,6 +4689,16 @@
             if(!parent || !visible(parent)){
               return NodeFilter.FILTER_REJECT;
             }
+
+            /* Figure references use a smaller, slightly raised inline style.
+               They may also wrap onto their own line at narrow desktop widths.
+               The alignment target is the Abstract sentence itself, not the
+               (Fig. n) reference, so never use figure-reference text as the
+               baseline marker source. */
+            if(parent.closest(".figure-ref, .research-abstract-baseline-marker")){
+              return NodeFilter.FILTER_REJECT;
+            }
+
             return NodeFilter.FILTER_ACCEPT;
           }
         }

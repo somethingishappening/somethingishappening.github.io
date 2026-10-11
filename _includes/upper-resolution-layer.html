@@ -785,3 +785,30 @@
 }
 </style>
 
+
+<style id="harri-research-lower-desktop-type-v6-5">
+/*
+  RESEARCH LOWER-DESKTOP TYPE CONTINUITY
+  --------------------------------------
+  The v6.2 desktop-balance layer intentionally scales desktop typography from
+  the 1680px reference, but --harri-lo-body had a 13px floor. That floor makes
+  the Research running text stop shrinking below ~1213px and therefore look
+  relatively oversized at 1024px. Research H2/H3 are body-sized by design, so
+  they follow the same continuous scale here. Mobile (<=900px) is untouched.
+*/
+@media (min-width:901px) and (max-width:1680px){
+  body.page-research .paper p,
+  body.page-research .research-copy ul > li,
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    font-size:1.0714285714vw !important; /* 18px at the 1680px reference */
+  }
+
+  body.page-research .paper p,
+  body.page-research .research-copy ul > li{
+    line-height:1.2 !important;
+  }
+}
+</style>
