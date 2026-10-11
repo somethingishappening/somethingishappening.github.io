@@ -1,12 +1,14 @@
-HARRI.LA Research v6.8 — true cross-browser baseline fix
+Mobile main project title smart-fit
 
-Replace only:
+Replace:
+  _layouts/work.html
   _layouts/research.html
 
-Keep your current _includes/upper-resolution-layer.html unchanged.
-
-Change:
-- The final prose line and footer email are measured with zero-size inline baseline markers.
-- Markers are inserted immediately after the final visible character, before whitespace / (Fig. n).
-- This measures the browser's real typographic baseline rather than DOM Range line-box bottoms.
-- Existing Research scaling, figures, CMS controls, hanging line, navigation and mobile rules are unchanged.
+Rule at <= 900px:
+- Existing CMS-authored title lines remain the preferred lines.
+- If a line exceeds the available width by about 2.5 average glyphs or less,
+  the entire H1 is reduced uniformly just enough to keep that line intact.
+- The automatic reduction is capped at 12% (minimum scale 0.88).
+- If more reduction would be needed, the existing mobile font size is kept
+  and the line wraps naturally instead.
+- Desktop behavior is unchanged.

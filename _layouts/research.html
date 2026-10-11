@@ -4654,6 +4654,87 @@
 
 
 
+
+<script id="mobile-smart-project-title-fit">
+(function(){
+  const MOBILE_MAX = 900;
+  const MAX_OVERFLOW_GLYPHS = 2.5;
+  const MIN_SCALE = 0.88;
+  const title = document.querySelector('.paper h1');
+  if(!title) return;
+
+  const lines = Array.from(title.children).filter(function(el){
+    return el.classList && el.classList.contains('title-line');
+  });
+  if(!lines.length) return;
+
+  let resizeRaf = 0;
+
+  function reset(){
+    title.style.removeProperty('font-size');
+    lines.forEach(function(line){ line.style.removeProperty('white-space'); });
+  }
+
+  function measureNoWrap(line){
+    const previous = line.style.whiteSpace;
+    line.style.whiteSpace = 'nowrap';
+    const width = line.scrollWidth;
+    line.style.whiteSpace = previous;
+    return width;
+  }
+
+  function fit(){
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(function(){
+      reset();
+      if(window.innerWidth > MOBILE_MAX) return;
+
+      const available = title.getBoundingClientRect().width;
+      if(!available) return;
+
+      const baseSize = parseFloat(getComputedStyle(title).fontSize);
+      let requiredScale = 1;
+      let onlySlightOverflow = true;
+      let hasOverflow = false;
+
+      lines.forEach(function(line){
+        const natural = measureNoWrap(line);
+        if(natural <= available + 0.5) return;
+
+        hasOverflow = true;
+        const text = (line.textContent || '').trim();
+        const glyphCount = Math.max(1, text.replace(/\s+/g, '').length);
+        const averageGlyph = natural / glyphCount;
+        const overflowGlyphs = (natural - available) / Math.max(averageGlyph, 1);
+        const scale = available / natural;
+
+        requiredScale = Math.min(requiredScale, scale);
+        if(overflowGlyphs > MAX_OVERFLOW_GLYPHS || scale < MIN_SCALE){
+          onlySlightOverflow = false;
+        }
+      });
+
+      if(hasOverflow && onlySlightOverflow){
+        /* Keep a tiny safety margin so another browser cannot re-wrap by 1px. */
+        const scale = Math.max(MIN_SCALE, requiredScale * 0.995);
+        title.style.fontSize = (baseSize * scale).toFixed(2) + 'px';
+        lines.forEach(function(line){ line.style.whiteSpace = 'nowrap'; });
+      }
+      /* Larger overflow keeps the normal mobile size and wraps naturally. */
+    });
+  }
+
+  window.addEventListener('resize', fit, {passive:true});
+  window.addEventListener('orientationchange', fit, {passive:true});
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(fit).catch(fit);
+  }else{
+    fit();
+  }
+})();
+</script>
+
 <style id="research-abstract-footer-baseline-fix">
 /*
   RESEARCH ABSTRACT ↔ FOOTER VISUAL LINE ALIGNMENT
