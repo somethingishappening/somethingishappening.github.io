@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ page.title }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
   <script>
-    /* Research opens from a deterministic top position. Do this before first paint
-       so the browser cannot briefly restore an old internal/window scroll state. */
-    document.documentElement.classList.add("research-initializing");
+    /* Keep Research opening at the deterministic top position. */
     if("scrollRestoration" in history){ history.scrollRestoration = "manual"; }
   </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +30,6 @@
 
     /* Prevent a one-frame flash of the pre-aligned Research geometry. The class
        is removed immediately after the opening state is synchronised below. */
-    html.research-initializing body.page-research .layout{visibility:hidden}
     html{scroll-behavior:smooth}
     body{
       margin:0;
@@ -4878,19 +4875,10 @@
 })();
 </script>
 
-<style id="research-abstract-footer-baseline-fix">
-/*
-  RESEARCH ABSTRACT ↔ FOOTER VISUAL LINE ALIGNMENT
-  ------------------------------------------------
-  The Abstract stays in normal document flow. The first-screen wrapper is
-  extended by the exact number of pixels required for the final prose line to
-  reach the email line. The (Fig. n) reference is deliberately excluded.
-*/
-
-
+<style id="research-nav-arrow-eps-style">
 /* RESEARCH NAV ARROW — exact outline supplied in nav arrow.eps.
-   The JS sizes this outline from the target row's font size and places the
-   arrow TIP on the vertical middle of that row's rendered cap height. */
+   Existing JS sizes the outline from the target row and aligns its tip to
+   the middle of that row's rendered cap height. */
 .toc-arrow,
 .mobile-toc-arrow{
   width:14px !important;
@@ -4912,203 +4900,26 @@
 }
 </style>
 
-<script id="research-abstract-footer-baseline-script">
-(function(){
-  const DESKTOP_BREAKPOINT = 900;
-  const READY_EVENT = "harri:research-baseline-ready";
-  const PROSE_MARKER_CLASS = "research-prose-baseline-marker";
-  const FOOTER_MARKER_CLASS = "research-footer-baseline-marker";
-  const MIN_TITLE_GAP = 6;
+<style id="research-figure-reference-body-style">
+/* (Fig. X) in body copy = normal Research running text, red only. */
+.figure-ref{
+  font-family:inherit !important;
+  font-size:1em !important;
+  line-height:inherit !important;
+  font-weight:400 !important;
+  letter-spacing:inherit !important;
+  padding:0 !important;
+  top:0 !important;
+  vertical-align:baseline !important;
+  color:var(--accent) !important;
+}
+</style>
 
-  function start(){
-    const intro = document.querySelector(".research-intro-screen");
-    const panel = document.querySelector(".research-abstract-panel");
-    const heading = panel && panel.querySelector(":scope > h1");
-    const copy = document.querySelector(".research-abstract-copy");
-    const footer = document.querySelector(".left-footer");
-
-    if(!intro || !panel || !heading || !copy || !footer){
-      document.dispatchEvent(new Event(READY_EVENT));
-      return;
-    }
-
-    let raf = 0;
-    let resizeRaf = 0;
-    let initialFinished = false;
-
-    function visible(el){
-      if(!el) return false;
-      const st = getComputedStyle(el);
-      return st.display !== "none" && st.visibility !== "hidden" && el.getClientRects().length > 0;
-    }
-
-    function removeMarkers(root, cls){
-      if(!root) return;
-      root.querySelectorAll("." + cls).forEach(function(marker){
-        const p = marker.parentNode;
-        marker.remove();
-        if(p && p.normalize) p.normalize();
-      });
-    }
-
-    function lastTextNode(container, excludeSelector){
-      const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
-        acceptNode(node){
-          if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-          const parent = node.parentElement;
-          if(!parent || !visible(parent)) return NodeFilter.FILTER_REJECT;
-          if(excludeSelector && parent.closest(excludeSelector)) return NodeFilter.FILTER_REJECT;
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      });
-      let last = null;
-      while(walker.nextNode()) last = walker.currentNode;
-      return last;
-    }
-
-    function finalVisibleCharacterIndex(text){
-      const match = (text || "").match(/\S(?=\s*$)/);
-      return match ? match.index + 1 : (text || "").length;
-    }
-
-    function insertMarker(container, excludeSelector, cls){
-      removeMarkers(container, cls);
-      const node = lastTextNode(container, excludeSelector);
-      if(!node) return null;
-      const end = finalVisibleCharacterIndex(node.nodeValue || "");
-      if(end <= 0) return null;
-      const trailing = node.splitText(end);
-      const marker = document.createElement("span");
-      marker.className = cls;
-      marker.setAttribute("aria-hidden", "true");
-      marker.style.cssText = "display:inline-block;width:0;height:0;padding:0;margin:0;border:0;line-height:0;vertical-align:baseline;overflow:hidden;pointer-events:none";
-      trailing.parentNode.insertBefore(marker, trailing);
-      return marker;
-    }
-
-    function footerItem(){
-      const items = Array.from(footer.children).filter(visible);
-      return items.length ? items[items.length - 1] : footer;
-    }
-
-    function cleanup(){
-      removeMarkers(copy, PROSE_MARKER_CLASS);
-      removeMarkers(footerItem(), FOOTER_MARKER_CLASS);
-    }
-
-    function measureDelta(){
-      const pm = insertMarker(copy, ".figure-ref", PROSE_MARKER_CLASS);
-      const fm = insertMarker(footerItem(), null, FOOTER_MARKER_CLASS);
-      if(!pm || !fm) return 0;
-      return fm.getBoundingClientRect().top - pm.getBoundingClientRect().top;
-    }
-
-    function alignNow(done){
-      cancelAnimationFrame(raf);
-
-      /* Restore the original Research layout model first. */
-      copy.style.removeProperty("margin-top");
-      copy.style.removeProperty("transform");
-      copy.style.removeProperty("will-change");
-      intro.style.removeProperty("margin-bottom");
-      intro.style.removeProperty("padding-bottom");
-      intro.style.minHeight = window.innerWidth > DESKTOP_BREAKPOINT ? "100%" : "";
-      cleanup();
-
-      if(window.innerWidth <= DESKTOP_BREAKPOINT){
-        if(done) done();
-        return;
-      }
-
-      raf = requestAnimationFrame(function(){
-        /* The copy remains margin-top:auto and therefore keeps the original
-           bottom-aligned Abstract composition. We only nudge the painted copy
-           by the baseline difference; we do not change its flex position. */
-        let delta = measureDelta();
-        cleanup();
-
-        const copyTop = copy.getBoundingClientRect().top;
-        const headingBottom = heading.getBoundingClientRect().bottom;
-        const minDelta = (headingBottom + MIN_TITLE_GAP) - copyTop;
-        delta = Math.max(delta, minDelta);
-
-        if(Math.abs(delta) > 0.05){
-          copy.style.setProperty("transform", "translateY(" + delta.toFixed(3) + "px)", "important");
-          copy.style.setProperty("will-change", "transform");
-        }
-
-        requestAnimationFrame(function(){
-          cleanup();
-          if(done) done();
-        });
-      });
-    }
-
-    function schedule(){
-      cancelAnimationFrame(resizeRaf);
-      resizeRaf = requestAnimationFrame(function(){ alignNow(); });
-    }
-
-    window.addEventListener("resize", schedule, {passive:true});
-    window.addEventListener("orientationchange", schedule, {passive:true});
-
-    if("ResizeObserver" in window){
-      const ro = new ResizeObserver(function(){ if(initialFinished) schedule(); });
-      ro.observe(copy);
-      ro.observe(footer);
-    }
-
-    if(document.fonts && typeof document.fonts.addEventListener === "function"){
-      document.fonts.addEventListener("loadingdone", function(){ if(initialFinished) schedule(); });
-    }
-
-    function finish(){
-      requestAnimationFrame(function(){
-        requestAnimationFrame(function(){
-          alignNow(function(){
-            initialFinished = true;
-            document.dispatchEvent(new Event(READY_EVENT));
-          });
-        });
-      });
-    }
-
-    if(document.fonts && document.fonts.ready) document.fonts.ready.then(finish).catch(finish);
-    else finish();
-  }
-
-  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, {once:true});
-  else start();
-})();
-</script>
-
-<script id="research-initial-paint-release">
-(function(){
-  let revealed = false;
-
-  function reveal(){
-    if(revealed) return;
-    revealed = true;
-    document.documentElement.classList.remove("research-initializing");
-  }
-
-  function revealOnNextFrame(){
-    requestAnimationFrame(reveal);
-  }
-
-  document.addEventListener(
-    "harri:research-baseline-ready",
-    revealOnNextFrame,
-    {once:true}
-  );
-
-  /*
-    Safety fallback only: the normal path is the baseline-ready event above.
-    This prevents an unusual font/API failure from leaving the page hidden.
-  */
-  setTimeout(revealOnNextFrame, 1800);
-})();
-</script>
+{%- comment -%}
+  Use the EXACT same bottom-baseline alignment system as the Work template.
+  No Research-specific baseline algorithm lives here anymore.
+{%- endcomment -%}
+{% include desktop-baseline-alignment.html target=".research-abstract-copy" %}
 
 </body>
 </html>
