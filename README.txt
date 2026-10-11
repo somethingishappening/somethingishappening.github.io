@@ -1,11 +1,10 @@
-HARRI.LA v6.12.3 — tabular Fig. numerals + animated shared menu underline
-
-Replace only:
+Replace these files in the repository:
   _layouts/research.html
   _includes/nav.html
 
-Changes:
-- Research body (Fig. X) stays Geist Regular / body size / red, and now enables OpenType lining + tabular numerals (lnum + tnum).
-- Shared website menu hover/focus underline now uses the same draw-in animation as (Fig. X): scaleX from left, 0.16s ease.
-- Applies through the shared nav include to category labels, project links, Harrilanpuisto, and footer navigation links.
-- No layout, scaling, Research arrow, figure behavior, CMS, or mobile sizing changes.
+Changes only:
+- Research body (Fig. X) underline moved optically closer to the baseline.
+- Underline thickness remains the original 1 CSS px.
+- Animated menu underline applies only to project names (.project-links and Harrilanpuisto standalone project link).
+- Section/category labels and footer links never underline.
+- Menu underline uses the same .16s left-origin draw animation and baseline distance as (Fig. X).

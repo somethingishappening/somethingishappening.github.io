@@ -4916,6 +4916,12 @@
   font-variant-numeric:lining-nums tabular-nums !important;
   font-feature-settings:"lnum" 1, "tnum" 1 !important;
 }
+/* Keep the animated Fig. underline optically close to the text baseline.
+   Thickness remains the original 1 CSS px. */
+.figure-ref::after{
+  bottom:.10em !important;
+  height:1px !important;
+}
 </style>
 
 {%- comment -%}
