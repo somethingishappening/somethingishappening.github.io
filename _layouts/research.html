@@ -4918,19 +4918,21 @@
   const READY_EVENT = "harri:research-baseline-ready";
   const PROSE_MARKER_CLASS = "research-prose-baseline-marker";
   const FOOTER_MARKER_CLASS = "research-footer-baseline-marker";
-  const MAX_PASSES = 4;
-  const EPSILON = 0.2;
+  const MIN_TITLE_GAP = 6;
 
   function start(){
     const intro = document.querySelector(".research-intro-screen");
+    const panel = document.querySelector(".research-abstract-panel");
+    const heading = panel && panel.querySelector(":scope > h1");
     const copy = document.querySelector(".research-abstract-copy");
     const footer = document.querySelector(".left-footer");
 
-    if(!intro || !copy || !footer){
+    if(!intro || !panel || !heading || !copy || !footer){
       document.dispatchEvent(new Event(READY_EVENT));
       return;
     }
 
+    let raf = 0;
     let resizeRaf = 0;
     let initialFinished = false;
 
@@ -4943,20 +4945,19 @@
     function removeMarkers(root, cls){
       if(!root) return;
       root.querySelectorAll("." + cls).forEach(function(marker){
-        const parent = marker.parentNode;
+        const p = marker.parentNode;
         marker.remove();
-        if(parent && parent.normalize) parent.normalize();
+        if(p && p.normalize) p.normalize();
       });
     }
 
-    function finalProseTextNode(){
-      const walker = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT, {
+    function lastTextNode(container, excludeSelector){
+      const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
         acceptNode(node){
           if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
           const parent = node.parentElement;
           if(!parent || !visible(parent)) return NodeFilter.FILTER_REJECT;
-          if(parent.closest(".figure-ref")) return NodeFilter.FILTER_REJECT;
-          if(parent.closest("." + PROSE_MARKER_CLASS)) return NodeFilter.FILTER_REJECT;
+          if(excludeSelector && parent.closest(excludeSelector)) return NodeFilter.FILTER_REJECT;
           return NodeFilter.FILTER_ACCEPT;
         }
       });
@@ -4970,17 +4971,17 @@
       return match ? match.index + 1 : (text || "").length;
     }
 
-    function insertProseMarker(){
-      removeMarkers(copy, PROSE_MARKER_CLASS);
-      const node = finalProseTextNode();
+    function insertMarker(container, excludeSelector, cls){
+      removeMarkers(container, cls);
+      const node = lastTextNode(container, excludeSelector);
       if(!node) return null;
       const end = finalVisibleCharacterIndex(node.nodeValue || "");
       if(end <= 0) return null;
       const trailing = node.splitText(end);
       const marker = document.createElement("span");
-      marker.className = PROSE_MARKER_CLASS;
+      marker.className = cls;
       marker.setAttribute("aria-hidden", "true");
-      marker.style.cssText = "display:inline-block;width:0;height:0;padding:0;margin:0;border:0;font-size:0;line-height:0;vertical-align:baseline;overflow:hidden;pointer-events:none";
+      marker.style.cssText = "display:inline-block;width:0;height:0;padding:0;margin:0;border:0;line-height:0;vertical-align:baseline;overflow:hidden;pointer-events:none";
       trailing.parentNode.insertBefore(marker, trailing);
       return marker;
     }
@@ -4990,86 +4991,57 @@
       return items.length ? items[items.length - 1] : footer;
     }
 
-    function insertFooterMarker(){
-      const item = footerItem();
-      removeMarkers(item, FOOTER_MARKER_CLASS);
-      const walker = document.createTreeWalker(item, NodeFilter.SHOW_TEXT, {
-        acceptNode(node){
-          if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-          const parent = node.parentElement;
-          return parent && visible(parent) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-        }
-      });
-      let node = null;
-      while(walker.nextNode()) node = walker.currentNode;
-      if(!node) return null;
-      const end = finalVisibleCharacterIndex(node.nodeValue || "");
-      const trailing = node.splitText(end);
-      const marker = document.createElement("span");
-      marker.className = FOOTER_MARKER_CLASS;
-      marker.setAttribute("aria-hidden", "true");
-      marker.style.cssText = "display:inline-block;width:0;height:0;padding:0;margin:0;border:0;font-size:0;line-height:0;vertical-align:baseline;overflow:hidden;pointer-events:none";
-      trailing.parentNode.insertBefore(marker, trailing);
-      return marker;
-    }
-
     function cleanup(){
       removeMarkers(copy, PROSE_MARKER_CLASS);
       removeMarkers(footerItem(), FOOTER_MARKER_CLASS);
     }
 
-    function baselineDelta(){
-      const proseMarker = insertProseMarker();
-      const footerMarker = insertFooterMarker();
-      if(!proseMarker || !footerMarker){
-        cleanup();
-        return 0;
-      }
-      const delta = footerMarker.getBoundingClientRect().top - proseMarker.getBoundingClientRect().top;
-      cleanup();
-      return delta;
+    function measureDelta(){
+      const pm = insertMarker(copy, ".figure-ref", PROSE_MARKER_CLASS);
+      const fm = insertMarker(footerItem(), null, FOOTER_MARKER_CLASS);
+      if(!pm || !fm) return 0;
+      return fm.getBoundingClientRect().top - pm.getBoundingClientRect().top;
     }
 
     function alignNow(done){
+      cancelAnimationFrame(raf);
+
+      /* Restore the original Research layout model first. */
+      copy.style.removeProperty("margin-top");
       copy.style.removeProperty("transform");
       copy.style.removeProperty("will-change");
-      copy.style.removeProperty("margin-top");
-      intro.style.removeProperty("height");
-      intro.style.removeProperty("padding-bottom");
       intro.style.removeProperty("margin-bottom");
+      intro.style.removeProperty("padding-bottom");
+      intro.style.minHeight = window.innerWidth > DESKTOP_BREAKPOINT ? "100%" : "";
       cleanup();
 
       if(window.innerWidth <= DESKTOP_BREAKPOINT){
-        intro.style.removeProperty("min-height");
         if(done) done();
         return;
       }
 
-      let extra = 0;
-      intro.style.setProperty("min-height", "100%", "important");
+      raf = requestAnimationFrame(function(){
+        /* The copy remains margin-top:auto and therefore keeps the original
+           bottom-aligned Abstract composition. We only nudge the painted copy
+           by the baseline difference; we do not change its flex position. */
+        let delta = measureDelta();
+        cleanup();
 
-      function pass(index){
+        const copyTop = copy.getBoundingClientRect().top;
+        const headingBottom = heading.getBoundingClientRect().bottom;
+        const minDelta = (headingBottom + MIN_TITLE_GAP) - copyTop;
+        delta = Math.max(delta, minDelta);
+
+        if(Math.abs(delta) > 0.05){
+          copy.style.setProperty("transform", "translateY(" + delta.toFixed(3) + "px)", "important");
+          copy.style.setProperty("will-change", "transform");
+        }
+
         requestAnimationFrame(function(){
-          const residual = baselineDelta();
-          extra = Math.max(0, extra + residual);
-          intro.style.setProperty(
-            "min-height",
-            extra > EPSILON ? "calc(100% + " + extra.toFixed(3) + "px)" : "100%",
-            "important"
-          );
-
-          if(index + 1 < MAX_PASSES && Math.abs(residual) > EPSILON){
-            pass(index + 1);
-          }else{
-            requestAnimationFrame(function(){
-              cleanup();
-              if(done) done();
-            });
-          }
+          cleanup();
+          if(done) done();
         });
-      }
-
-      pass(0);
+      });
     }
 
     function schedule(){
@@ -5081,40 +5053,32 @@
     window.addEventListener("orientationchange", schedule, {passive:true});
 
     if("ResizeObserver" in window){
-      const ro = new ResizeObserver(function(){
-        if(initialFinished) schedule();
-      });
+      const ro = new ResizeObserver(function(){ if(initialFinished) schedule(); });
       ro.observe(copy);
       ro.observe(footer);
     }
 
     if(document.fonts && typeof document.fonts.addEventListener === "function"){
-      document.fonts.addEventListener("loadingdone", function(){
-        if(initialFinished) schedule();
+      document.fonts.addEventListener("loadingdone", function(){ if(initialFinished) schedule(); });
+    }
+
+    function finish(){
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          alignNow(function(){
+            initialFinished = true;
+            document.dispatchEvent(new Event(READY_EVENT));
+          });
+        });
       });
     }
 
-    function finishInitial(){
-      alignNow(function(){
-        initialFinished = true;
-        document.dispatchEvent(new Event(READY_EVENT));
-      });
-    }
-
-    if(document.fonts && document.fonts.ready){
-      document.fonts.ready.then(function(){
-        requestAnimationFrame(function(){ requestAnimationFrame(finishInitial); });
-      }).catch(finishInitial);
-    }else{
-      requestAnimationFrame(function(){ requestAnimationFrame(finishInitial); });
-    }
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(finish).catch(finish);
+    else finish();
   }
 
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", start, {once:true});
-  }else{
-    start();
-  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, {once:true});
+  else start();
 })();
 </script>
 
