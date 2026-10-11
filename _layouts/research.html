@@ -2543,7 +2543,7 @@
         </div>
 
         <nav class="mobile-toc" aria-label="Article navigation">
-          <span class="mobile-toc-arrow" aria-hidden="true"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M0 41H58L35 18H50L90 50L50 82H35L58 59H0Z"/></svg></span>
+          <span class="mobile-toc-arrow" aria-hidden="true">→</span>
 
           {% if has_modern_navigation_settings or has_section_navigation %}
             <div class="mobile-toc-columns">
@@ -2690,7 +2690,7 @@
     <nav class="toc" aria-label="Table of contents">
       {% if has_modern_navigation_settings or has_section_navigation %}
         <div class="toc-col">
-          <span class="toc-arrow" aria-hidden="true"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M0 41H58L35 18H50L90 50L50 82H35L58 59H0Z"/></svg></span>
+          <span class="toc-arrow" aria-hidden="true">→</span>
 
           <div class="toc-auto-item toc-auto-title">
             <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
@@ -2741,7 +2741,7 @@
         {% for column in page.toc_columns %}
           <div class="toc-col">
             {% if forloop.first %}
-              <span class="toc-arrow" aria-hidden="true"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M0 41H58L35 18H50L90 50L50 82H35L58 59H0Z"/></svg></span>
+              <span class="toc-arrow" aria-hidden="true">→</span>
               <div class="toc-group">
                 <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
               </div>
@@ -2760,7 +2760,7 @@
 
       {% else %}
         <div class="toc-col">
-          <span class="toc-arrow" aria-hidden="true"><svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M0 41H58L35 18H50L90 50L50 82H35L58 59H0Z"/></svg></span>
+          <span class="toc-arrow" aria-hidden="true">→</span>
           <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
 
           {% for section in page.sections %}
@@ -4813,6 +4813,26 @@
   extended by the exact number of pixels required for the final prose line to
   reach the email line. The (Fig. n) reference is deliberately excluded.
 */
+
+
+/* RESEARCH NAV ARROW — Geist arrowright glyph (U+2192), Regular */
+.toc-arrow,
+.mobile-toc-arrow{
+  width:auto !important;
+  height:auto !important;
+  line-height:1 !important;
+  font-family:"Geist", Arial, Helvetica, sans-serif !important;
+  font-size:14px !important;
+  font-weight:400 !important;
+  font-style:normal !important;
+  font-variation-settings:"wght" 400 !important;
+  font-synthesis:none !important;
+  letter-spacing:0 !important;
+}
+.toc-arrow svg,
+.mobile-toc-arrow svg{
+  display:none !important;
+}
 </style>
 
 <script id="research-abstract-footer-baseline-script">
