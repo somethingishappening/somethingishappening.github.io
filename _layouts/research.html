@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ page.title }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
+  <script>
+    /* Research opens from a deterministic top position. Do this before first paint
+       so the browser cannot briefly restore an old internal/window scroll state. */
+    document.documentElement.classList.add("research-initializing");
+    if("scrollRestoration" in history){ history.scrollRestoration = "manual"; }
+  </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
@@ -23,6 +29,10 @@
     }
 
     *{box-sizing:border-box}
+
+    /* Prevent a one-frame flash of the pre-aligned Research geometry. The class
+       is removed immediately after the opening state is synchronised below. */
+    html.research-initializing body.page-research .layout{visibility:hidden}
     html{scroll-behavior:smooth}
     body{
       margin:0;
@@ -3387,9 +3397,8 @@
     desktopArrowTarget = link;
 
     const rect = link.getBoundingClientRect();
-    const canvasScale = window.__harriCanvasScale || 1;
-    const x = (rect.left / canvasScale) - 20;
-    const y = (rect.top / canvasScale) + 1;
+    const x = rect.left - 20;
+    const y = rect.top + 1;
 
     desktopTocArrow.style.position = "fixed";
     desktopTocArrow.style.left = "0px";
@@ -3943,9 +3952,7 @@
         : (() => {
             const paperRect = paper.getBoundingClientRect();
             const targetRect = target.getBoundingClientRect();
-            const canvasScale = window.__harriCanvasScale || 1;
-            return paper.scrollTop +
-              ((targetRect.top - paperRect.top) / canvasScale);
+            return paper.scrollTop + (targetRect.top - paperRect.top);
           })();
 
       paper.scrollTo({
@@ -4050,7 +4057,6 @@
     }
 
     const stageRect = stage.getBoundingClientRect();
-    const canvasScale = window.__harriCanvasScale || 1;
     const fullFigureWidth = stage.clientWidth;
     if(fullFigureWidth <= 0) return;
 
@@ -4064,12 +4070,11 @@
 
     const captionStyles = getComputedStyle(caption);
     const captionMarginTop = parseFloat(captionStyles.marginTop) || 0;
-    const captionHeight =
-      (caption.getBoundingClientRect().height / canvasScale) + captionMarginTop;
+    const captionHeight = caption.getBoundingClientRect().height + captionMarginTop;
 
     const availableTotalHeight = Math.max(
       0,
-      ((window.innerHeight - stageRect.top) / canvasScale) - bottomPageMargin
+      window.innerHeight - stageRect.top - bottomPageMargin
     );
 
     const availableImageHeight = Math.max(
@@ -4173,12 +4178,16 @@
     }
   }
 
-  /* pageshow also runs when the browser restores a page from its back/forward
-     cache, which is the case that normally preserves an old scroll position. */
-  window.addEventListener("pageshow", function(){
-    requestAnimationFrame(function(){
-      requestAnimationFrame(resetPageVisitPosition);
-    });
+  /* Establish the opening position immediately, before the initializing class
+     is released. The old double-rAF reset was visible as a page-load jump. */
+  resetPageVisitPosition();
+
+  /* Back/forward cache can restore element scroll positions after the initial
+     parse. Reset synchronously on pageshow instead of waiting two frames. */
+  window.addEventListener("pageshow", function(event){
+    if(event.persisted){
+      resetPageVisitPosition();
+    }
   });
 })();
 
@@ -4649,7 +4658,6 @@
 
     if(!intro || !abstractCopy || !footer) return;
 
-    let raf = 0;
     let abstractMarker = null;
     let footerMarker = null;
 
@@ -4670,12 +4678,10 @@
             if(!node.nodeValue || !node.nodeValue.trim()){
               return NodeFilter.FILTER_REJECT;
             }
-
             const parent = node.parentElement;
             if(!parent || !visible(parent)){
               return NodeFilter.FILTER_REJECT;
             }
-
             return NodeFilter.FILTER_ACCEPT;
           }
         }
@@ -4704,12 +4710,16 @@
       marker.className = "research-abstract-baseline-marker";
       marker.dataset.role = role;
       marker.setAttribute("aria-hidden", "true");
-
       textNode.parentNode.insertBefore(marker, textNode.nextSibling);
       return marker;
     }
 
-    function ensureMarkers(){
+    function ensureMarkers(force){
+      if(force){
+        abstractMarker = null;
+        footerMarker = null;
+      }
+
       if(!abstractMarker || !abstractMarker.isConnected){
         abstractMarker = makeMarker(abstractCopy, "abstract");
       }
@@ -4728,94 +4738,76 @@
       return !!(abstractMarker && footerMarker);
     }
 
-    function measureAndAlign(){
-      cancelAnimationFrame(raf);
+    /* Do the complete baseline calculation in one layout cycle. The previous
+       implementation spread this over three requestAnimationFrame callbacks,
+       which let the browser paint the Abstract once and then visibly move it. */
+    function alignNow(forceMarkers){
+      if(window.innerWidth <= DESKTOP_BREAKPOINT){
+        intro.style.minHeight = "";
+        return;
+      }
 
-      raf = requestAnimationFrame(function(){
-        if(window.innerWidth <= DESKTOP_BREAKPOINT){
-          intro.style.minHeight = "";
-          return;
-        }
+      intro.style.minHeight = "100%";
+      if(!ensureMarkers(!!forceMarkers)) return;
 
-        /*
-          Always measure from the original v134 geometry first.
-          No transform or absolute positioning is introduced.
-        */
-        intro.style.minHeight = "100%";
+      let abstractBaseline = abstractMarker.getBoundingClientRect().top;
+      let footerBaseline = footerMarker.getBoundingClientRect().top;
+      let needed = Math.max(0, footerBaseline - abstractBaseline);
 
-        requestAnimationFrame(function(){
-          if(!ensureMarkers()) return;
+      intro.style.minHeight = needed > 0.25
+        ? "calc(100% + " + needed.toFixed(2) + "px)"
+        : "100%";
 
-          const abstractBaseline =
-            abstractMarker.getBoundingClientRect().top;
-          const footerBaseline =
-            footerMarker.getBoundingClientRect().top;
+      /* Force the new geometry now and absorb sub-pixel rounding immediately,
+         before the browser gets another frame to paint. */
+      abstractBaseline = abstractMarker.getBoundingClientRect().top;
+      footerBaseline = footerMarker.getBoundingClientRect().top;
+      const residual = footerBaseline - abstractBaseline;
 
-          /*
-            Only move the Abstract DOWN when it is above the footer baseline.
-            Increasing the wrapper's min-height grows the flexible Abstract
-            panel, and margin-top:auto places the Abstract lower naturally.
-          */
-          const needed = Math.max(
-            0,
-            footerBaseline - abstractBaseline
-          );
-
-          intro.style.minHeight =
-            needed > 0.25
-              ? "calc(100% + " + needed.toFixed(2) + "px)"
-              : "100%";
-
-          /*
-            One refinement pass absorbs sub-pixel font/layout rounding.
-          */
-          requestAnimationFrame(function(){
-            const residual =
-              footerMarker.getBoundingClientRect().top -
-              abstractMarker.getBoundingClientRect().top;
-
-            if(residual > 0.35){
-              const corrected = needed + residual;
-              intro.style.minHeight =
-                "calc(100% + " + corrected.toFixed(2) + "px)";
-            }
-          });
-        });
-      });
+      if(residual > 0.35){
+        needed += residual;
+        intro.style.minHeight =
+          "calc(100% + " + needed.toFixed(2) + "px)";
+      }
     }
 
-    measureAndAlign();
+    alignNow(true);
 
-    window.addEventListener(
-      "resize",
-      measureAndAlign,
-      {passive:true}
-    );
+    let resizeRaf = 0;
+    function scheduleAlign(){
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(function(){ alignNow(false); });
+    }
 
-    window.addEventListener(
-      "orientationchange",
-      measureAndAlign,
-      {passive:true}
-    );
+    window.addEventListener("resize", scheduleAlign, {passive:true});
+    window.addEventListener("orientationchange", scheduleAlign, {passive:true});
 
+    /* Recheck after the webfont settles. This is normally a no-op geometrically,
+       but keeps the exact footer baseline guarantee if font metrics differ. */
     if(document.fonts && document.fonts.ready){
       document.fonts.ready.then(function(){
-        abstractMarker = null;
-        footerMarker = null;
-        measureAndAlign();
-      });
+        alignNow(true);
+      }).catch(function(){});
     }
   }
 
   if(document.readyState === "loading"){
-    document.addEventListener(
-      "DOMContentLoaded",
-      start,
-      {once:true}
-    );
+    document.addEventListener("DOMContentLoaded", start, {once:true});
   }else{
     start();
   }
+})();
+</script>
+
+<script id="research-initial-paint-release">
+(function(){
+  function reveal(){
+    document.documentElement.classList.remove("research-initializing");
+  }
+
+  /* All synchronous Research geometry/reset work above has now run. Release on
+     the next frame so the first visible Research frame is already final. */
+  requestAnimationFrame(reveal);
 })();
 </script>
 
