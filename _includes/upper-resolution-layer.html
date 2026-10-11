@@ -1,6 +1,6 @@
 <style id="harri-upper-resolution-layer-v5">
 /*
-  HARRI.LA — UPPER-RESOLUTION LAYER v6.3 (Research measure continuity)
+  HARRI.LA — UPPER-RESOLUTION LAYER v6.4 (Research column proportion + baseline recovery)
   ------------------------------------
   This file is deliberately additive. The existing site remains the source of
   truth through 1680px wide and on every mobile/tablet breakpoint.
@@ -749,6 +749,37 @@
 @media (min-width:1681px){
   body.page-work .project-description{
     width:100% !important;
+    max-width:100% !important;
+  }
+}
+</style>
+
+<style id="harri-research-column-proportion-v6-4">
+/*
+  RESEARCH TEXT COLUMN — preserve the original column relationship
+  ---------------------------------------------------------------
+  At the 1680px reference, the 700px Research measure occupies about 96.5%
+  of the middle paper column. The previous high-resolution rules preserved a
+  constant em measure instead, which made the text progressively too narrow
+  relative to the actual middle column on ultrawide / 4K / 5K screens.
+
+  Keep the entire Research copy wrapper at the original 96.5% paper-column
+  proportion. Child paragraphs/lists then use the wrapper's full width.
+  This reduces the accidental extra wrapping that made the Abstract too tall
+  and lets the existing exact footer-baseline script align its last line again.
+
+  <=1680px and mobile are intentionally untouched.
+*/
+@media (min-width:1681px){
+  body.page-research .research-copy{
+    width:96.5% !important;
+    max-width:96.5% !important;
+  }
+
+  body.page-research .research-copy > p,
+  body.page-research .research-copy > ul,
+  body.page-research .research-copy ul,
+  body.page-research .research-copy ul > li{
     max-width:100% !important;
   }
 }
