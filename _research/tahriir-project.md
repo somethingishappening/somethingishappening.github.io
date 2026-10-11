@@ -30,7 +30,7 @@ abstract: >-
   since short vowels have inherited many of their manuscript agencies.
 
 
-  This research was funded by Kone Säätiö and Suomen Kulttuurirahasto (Fig. 1)
+  This research was funded by (Fig. 1) Kone Säätiö and Suomen Kulttuurirahasto.
 sections:
   - heading: The Dot
     heading_level: h1
@@ -390,15 +390,21 @@ sections:
 figures:
   - number: 1
     image: /assets/uploads/fig-1.jpg
+    display_size: large
+    display_alignment: left
     caption: this research project was funded by TAIKE and the Finnish Cultural
       Foundation
     alt: Arabic calligraphy manuscript detail
   - number: 2
     image: /assets/uploads/fig-5.gif
+    display_size: full
+    display_alignment: left
     caption: Portrait figure example. The image is reduced proportionally when
       necessary so the image and caption remain inside the viewport.
     alt: Portrait crop used to demonstrate Research figure fitting
   - image: /assets/uploads/research-demo-fig-3.png
+    display_size: full
+    display_alignment: left
     caption: A third figure demonstrates switching between references as the reader
       moves through the research text.
     alt: High-contrast crop used to demonstrate Research figure switching
