@@ -4650,14 +4650,21 @@
 <script id="research-abstract-footer-baseline-script">
 (function(){
   const DESKTOP_BREAKPOINT = 900;
+  const READY_EVENT = "harri:research-baseline-ready";
 
   function start(){
     const intro = document.querySelector(".research-intro-screen");
     const abstractCopy = document.querySelector(".research-abstract-copy");
     const footer = document.querySelector(".left-footer");
 
-    if(!intro || !abstractCopy || !footer) return;
+    if(!intro || !abstractCopy || !footer){
+      document.dispatchEvent(new Event(READY_EVENT));
+      return;
+    }
 
+    let raf1 = 0;
+    let raf2 = 0;
+    let raf3 = 0;
     let abstractMarker = null;
     let footerMarker = null;
 
@@ -4738,56 +4745,96 @@
       return !!(abstractMarker && footerMarker);
     }
 
-    /* Do the complete baseline calculation in one layout cycle. The previous
-       implementation spread this over three requestAnimationFrame callbacks,
-       which let the browser paint the Abstract once and then visibly move it. */
-    function alignNow(forceMarkers){
+    /*
+      Preserve the old exact three-pass alignment, but do it while the
+      Research layout is still hidden by html.research-initializing.
+      This keeps the email/last-line baseline exact without a visible jump.
+    */
+    function measureAndAlign(forceMarkers, done){
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      cancelAnimationFrame(raf3);
+
       if(window.innerWidth <= DESKTOP_BREAKPOINT){
         intro.style.minHeight = "";
+        if(done) done();
         return;
       }
 
       intro.style.minHeight = "100%";
-      if(!ensureMarkers(!!forceMarkers)) return;
 
-      let abstractBaseline = abstractMarker.getBoundingClientRect().top;
-      let footerBaseline = footerMarker.getBoundingClientRect().top;
-      let needed = Math.max(0, footerBaseline - abstractBaseline);
+      raf1 = requestAnimationFrame(function(){
+        if(!ensureMarkers(!!forceMarkers)){
+          if(done) done();
+          return;
+        }
 
-      intro.style.minHeight = needed > 0.25
-        ? "calc(100% + " + needed.toFixed(2) + "px)"
-        : "100%";
+        const abstractBaseline =
+          abstractMarker.getBoundingClientRect().top;
+        const footerBaseline =
+          footerMarker.getBoundingClientRect().top;
 
-      /* Force the new geometry now and absorb sub-pixel rounding immediately,
-         before the browser gets another frame to paint. */
-      abstractBaseline = abstractMarker.getBoundingClientRect().top;
-      footerBaseline = footerMarker.getBoundingClientRect().top;
-      const residual = footerBaseline - abstractBaseline;
+        let needed = Math.max(
+          0,
+          footerBaseline - abstractBaseline
+        );
 
-      if(residual > 0.35){
-        needed += residual;
         intro.style.minHeight =
-          "calc(100% + " + needed.toFixed(2) + "px)";
-      }
-    }
+          needed > 0.25
+            ? "calc(100% + " + needed.toFixed(2) + "px)"
+            : "100%";
 
-    alignNow(true);
+        raf2 = requestAnimationFrame(function(){
+          const residual =
+            footerMarker.getBoundingClientRect().top -
+            abstractMarker.getBoundingClientRect().top;
+
+          if(residual > 0.35){
+            needed += residual;
+            intro.style.minHeight =
+              "calc(100% + " + needed.toFixed(2) + "px)";
+          }
+
+          /*
+            One final frame confirms the corrected geometry before the layout
+            can be revealed. No geometry is changed in this final pass.
+          */
+          raf3 = requestAnimationFrame(function(){
+            if(done) done();
+          });
+        });
+      });
+    }
 
     let resizeRaf = 0;
     function scheduleAlign(){
       cancelAnimationFrame(resizeRaf);
-      resizeRaf = requestAnimationFrame(function(){ alignNow(false); });
+      resizeRaf = requestAnimationFrame(function(){
+        measureAndAlign(false);
+      });
     }
 
     window.addEventListener("resize", scheduleAlign, {passive:true});
     window.addEventListener("orientationchange", scheduleAlign, {passive:true});
 
-    /* Recheck after the webfont settles. This is normally a no-op geometrically,
-       but keeps the exact footer baseline guarantee if font metrics differ. */
+    function finishInitialAlignment(){
+      abstractMarker = null;
+      footerMarker = null;
+      measureAndAlign(true, function(){
+        document.dispatchEvent(new Event(READY_EVENT));
+      });
+    }
+
+    /*
+      Wait for final font metrics before the first visible Research frame.
+      This is what lets us keep both exact footer alignment and no load jump.
+    */
     if(document.fonts && document.fonts.ready){
-      document.fonts.ready.then(function(){
-        alignNow(true);
-      }).catch(function(){});
+      document.fonts.ready
+        .then(finishInitialAlignment)
+        .catch(finishInitialAlignment);
+    }else{
+      finishInitialAlignment();
     }
   }
 
@@ -4801,13 +4848,29 @@
 
 <script id="research-initial-paint-release">
 (function(){
+  let revealed = false;
+
   function reveal(){
+    if(revealed) return;
+    revealed = true;
     document.documentElement.classList.remove("research-initializing");
   }
 
-  /* All synchronous Research geometry/reset work above has now run. Release on
-     the next frame so the first visible Research frame is already final. */
-  requestAnimationFrame(reveal);
+  function revealOnNextFrame(){
+    requestAnimationFrame(reveal);
+  }
+
+  document.addEventListener(
+    "harri:research-baseline-ready",
+    revealOnNextFrame,
+    {once:true}
+  );
+
+  /*
+    Safety fallback only: the normal path is the baseline-ready event above.
+    This prevents an unusual font/API failure from leaving the page hidden.
+  */
+  setTimeout(revealOnNextFrame, 1800);
 })();
 </script>
 
