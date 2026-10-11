@@ -1,1 +1,1 @@
-Replace only _layouts/research.html. Keeps the current upper-resolution layer unchanged.
+Replace only _layouts/research.html. Restores the original Research Abstract flex/bottom-aligned layout, applies only a visual baseline nudge to the final prose line, and replaces the TOC arrow with the exact thick geometric arrow vector from the supplied reference. Keep the current upper-resolution-layer.html unchanged.
