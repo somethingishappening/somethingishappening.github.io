@@ -734,3 +734,79 @@
   }, {passive:true});
 })();
 </script>
+
+<style id="harri-navigation-hover-draw-animation">
+/*
+  Shared website-menu hover line.
+  Uses the exact same motion as Research body (Fig. X):
+  left-origin scaleX(0 -> 1), .16s ease.
+*/
+.site-nav .group-head > span:first-child,
+.site-nav .project-links a,
+.site-nav .standalone-nav-link,
+.site-nav .left-footer a{
+  position:relative !important;
+  text-decoration:none !important;
+}
+
+/* Keep the animated line fitted to the text rather than the full menu row. */
+.site-nav .group-head > span:first-child{
+  display:inline-block;
+}
+.site-nav .project-links a,
+.site-nav .standalone-nav-link,
+.site-nav .left-footer a{
+  width:max-content;
+  max-width:100%;
+}
+
+.site-nav .group-head > span:first-child::after,
+.site-nav .project-links a::after,
+.site-nav .standalone-nav-link::after,
+.site-nav .left-footer a::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-2px;
+  height:1px;
+  background:currentColor;
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .16s ease;
+  pointer-events:none;
+}
+
+.site-nav .group-head:hover > span:first-child::after,
+.site-nav .group-head:focus-visible > span:first-child::after,
+.site-nav .project-links a:hover::after,
+.site-nav .project-links a:focus-visible::after,
+.site-nav .standalone-nav-link:hover::after,
+.site-nav .standalone-nav-link:focus-visible::after,
+.site-nav .left-footer a:hover::after,
+.site-nav .left-footer a:focus-visible::after{
+  transform:scaleX(1);
+}
+
+/* Override older template-specific instant underlines. */
+.site-nav .project-links a:hover,
+.site-nav .project-links a:focus,
+.site-nav .standalone-nav-link:hover,
+.site-nav .standalone-nav-link:focus,
+.site-nav .left-footer a:hover,
+.site-nav .left-footer a:focus,
+.site-nav .group-head:hover,
+.site-nav .group-head:focus{
+  text-decoration:none !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .site-nav .group-head > span:first-child::after,
+  .site-nav .project-links a::after,
+  .site-nav .standalone-nav-link::after,
+  .site-nav .left-footer a::after{
+    transition:none;
+  }
+}
+</style>
+
