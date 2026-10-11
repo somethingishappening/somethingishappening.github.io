@@ -1,6 +1,6 @@
 <style id="harri-upper-resolution-layer-v5">
 /*
-  HARRI.LA — UPPER-RESOLUTION LAYER v5
+  HARRI.LA — UPPER-RESOLUTION LAYER v6.3 (Research measure continuity)
   ------------------------------------
   This file is deliberately additive. The existing site remains the source of
   truth through 1680px wide and on every mobile/tablet breakpoint.
@@ -279,6 +279,16 @@
     max-width:clamp(700px,min(41.666667vw,77.777778vh),1400px) !important;
   }
 
+  /* The Abstract wrapper used to remain capped at the baseline 700px even
+     while its type and paragraphs scaled up. That made the text block become
+     progressively taller on large/high-resolution screens and caused the
+     first-screen bottom alignment to switch unpredictably. Scale the wrapper
+     and list measure with the exact same ratio as the running text. */
+  body.page-research .research-abstract-copy,
+  body.page-research .research-copy ul{
+    max-width:clamp(700px,min(41.666667vw,77.777778vh),1400px) !important;
+  }
+
   body.page-research .toc{
     width:min(clamp(320px,min(19.047619vw,35.555556vh),640px),48%) !important;
     min-width:clamp(290px,min(17.261905vw,32.222222vh),580px) !important;
@@ -447,6 +457,10 @@
   body.page-research .paper p,
   body.page-research .research-copy ul > li{
     max-width:min(34.179688vw,60.763889vh) !important;         /* 1400 */
+  }
+  body.page-research .research-abstract-copy,
+  body.page-research .research-copy ul{
+    max-width:min(34.179688vw,60.763889vh) !important;         /* same proportional measure */
   }
   body.page-research .toc{
     width:min(min(15.625vw,27.777778vh),48%) !important;       /* 640 */
