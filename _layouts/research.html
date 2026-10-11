@@ -4668,8 +4668,10 @@
 (function(){
   const DESKTOP_BREAKPOINT = 900;
   const READY_EVENT = "harri:research-baseline-ready";
-  const EPSILON = 0.25;
-  const MAX_ALIGNMENT_PASSES = 5;
+  const EPSILON = 0.1;
+  const MAX_ALIGNMENT_PASSES = 6;
+  const PROSE_MARKER_CLASS = "research-prose-baseline-marker";
+  const FOOTER_MARKER_CLASS = "research-footer-baseline-marker";
 
   function start(){
     const intro = document.querySelector(".research-intro-screen");
@@ -4693,22 +4695,24 @@
              el.getClientRects().length > 0;
     }
 
+    function removeMarkers(root, cls){
+      root.querySelectorAll("." + cls).forEach(marker => {
+        const parent = marker.parentNode;
+        marker.remove();
+        if(parent && parent.normalize) parent.normalize();
+      });
+    }
+
     function lastTextNode(container, excludeSelector){
       const walker = document.createTreeWalker(
         container,
         NodeFilter.SHOW_TEXT,
         {
           acceptNode(node){
-            if(!node.nodeValue || !node.nodeValue.trim()){
-              return NodeFilter.FILTER_REJECT;
-            }
+            if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
             const parent = node.parentElement;
-            if(!parent || !visible(parent)){
-              return NodeFilter.FILTER_REJECT;
-            }
-            if(excludeSelector && parent.closest(excludeSelector)){
-              return NodeFilter.FILTER_REJECT;
-            }
+            if(!parent || !visible(parent)) return NodeFilter.FILTER_REJECT;
+            if(excludeSelector && parent.closest(excludeSelector)) return NodeFilter.FILTER_REJECT;
             return NodeFilter.FILTER_ACCEPT;
           }
         }
@@ -4724,21 +4728,37 @@
       return match ? match.index + 1 : (text || "").length;
     }
 
-    function lastRenderedLineRect(container, excludeSelector){
+    function insertBaselineMarker(container, excludeSelector, cls){
+      removeMarkers(container, cls);
+
       const node = lastTextNode(container, excludeSelector);
       if(!node) return null;
 
       const end = finalVisibleCharacterIndex(node.nodeValue || "");
       if(end <= 0) return null;
 
-      const range = document.createRange();
-      range.setStart(node, 0);
-      range.setEnd(node, end);
-
-      const rects = Array.from(range.getClientRects()).filter(
-        rect => rect.width > 0 || rect.height > 0
-      );
-      return rects.length ? rects[rects.length - 1] : null;
+      /* Split immediately after the last visible prose character. The marker is
+         inserted BEFORE any trailing whitespace and therefore cannot migrate
+         onto a following (Fig. n) line. A zero-size inline-block aligned to
+         `baseline` exposes the browser's real typographic baseline coordinate. */
+      const trailing = node.splitText(end);
+      const marker = document.createElement("span");
+      marker.className = cls;
+      marker.setAttribute("aria-hidden", "true");
+      marker.style.cssText = [
+        "display:inline-block",
+        "width:0",
+        "height:0",
+        "padding:0",
+        "margin:0",
+        "border:0",
+        "line-height:0",
+        "vertical-align:baseline",
+        "overflow:hidden",
+        "pointer-events:none"
+      ].join(";");
+      trailing.parentNode.insertBefore(marker, trailing);
+      return marker;
     }
 
     function lastVisibleFooterItem(){
@@ -4746,20 +4766,30 @@
       return items.length ? items[items.length - 1] : footer;
     }
 
-    function lineDifference(){
-      const abstractLine = lastRenderedLineRect(
+    function baselineDifference(){
+      const proseMarker = insertBaselineMarker(
         abstractCopy,
-        ".figure-ref"
+        ".figure-ref",
+        PROSE_MARKER_CLASS
       );
       const footerItem = lastVisibleFooterItem();
-      const footerLine = lastRenderedLineRect(footerItem, null);
+      const footerMarker = insertBaselineMarker(
+        footerItem,
+        null,
+        FOOTER_MARKER_CLASS
+      );
 
-      if(!abstractLine || !footerLine) return 0;
+      if(!proseMarker || !footerMarker) return 0;
 
-      /* Align the visible lower edge of the rendered prose line and email
-         line. This directly matches what is seen on screen even though the
-         two columns use different font sizes. */
-      return footerLine.bottom - abstractLine.bottom;
+      const proseBaseline = proseMarker.getBoundingClientRect().top;
+      const footerBaseline = footerMarker.getBoundingClientRect().top;
+      return footerBaseline - proseBaseline;
+    }
+
+    function cleanupMarkers(){
+      removeMarkers(abstractCopy, PROSE_MARKER_CLASS);
+      const footerItem = lastVisibleFooterItem();
+      if(footerItem) removeMarkers(footerItem, FOOTER_MARKER_CLASS);
     }
 
     function alignNow(done){
@@ -4767,13 +4797,12 @@
 
       if(window.innerWidth <= DESKTOP_BREAKPOINT){
         intro.style.minHeight = "";
+        cleanupMarkers();
         if(done) done();
         return;
       }
 
-      /* Start from the real resolved first-screen geometry, not from a
-         percentage-based guess. This is the key fix for cases where the
-         Abstract's natural content height is already taller than 100%. */
+      /* Resolve from the natural first-screen geometry on every pass. */
       intro.style.minHeight = "100%";
 
       alignRaf = requestAnimationFrame(function(){
@@ -4781,24 +4810,26 @@
         let targetHeight = baseHeight;
 
         for(let pass = 0; pass < MAX_ALIGNMENT_PASSES; pass++){
-          const residual = lineDifference();
+          const residual = baselineDifference();
           if(Math.abs(residual) <= EPSILON) break;
 
+          /* Increasing the intro height moves the auto-bottomed Abstract copy
+             down by the same amount. If the prose is already below the footer
+             baseline, keep the natural height rather than overlap the title. */
           targetHeight = Math.max(baseHeight, targetHeight + residual);
           intro.style.minHeight = targetHeight.toFixed(2) + "px";
           intro.getBoundingClientRect();
         }
 
         requestAnimationFrame(function(){
-          const finalResidual = lineDifference();
-          if(Math.abs(finalResidual) > EPSILON){
+          const finalResidual = baselineDifference();
+          if(finalResidual > EPSILON){
             const currentHeight = intro.getBoundingClientRect().height;
-            intro.style.minHeight = Math.max(
-              baseHeight,
-              currentHeight + finalResidual
-            ).toFixed(2) + "px";
+            intro.style.minHeight = (currentHeight + finalResidual).toFixed(2) + "px";
+            intro.getBoundingClientRect();
           }
 
+          cleanupMarkers();
           if(done) done();
         });
       });
@@ -4806,9 +4837,7 @@
 
     function scheduleAlign(){
       cancelAnimationFrame(resizeRaf);
-      resizeRaf = requestAnimationFrame(function(){
-        alignNow();
-      });
+      resizeRaf = requestAnimationFrame(function(){ alignNow(); });
     }
 
     window.addEventListener("resize", scheduleAlign, {passive:true});
@@ -4840,19 +4869,14 @@
     }
 
     if(document.fonts && document.fonts.ready){
-      document.fonts.ready
-        .then(finishInitialAlignment)
-        .catch(finishInitialAlignment);
+      document.fonts.ready.then(finishInitialAlignment).catch(finishInitialAlignment);
     }else{
       finishInitialAlignment();
     }
   }
 
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", start, {once:true});
-  }else{
-    start();
-  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, {once:true});
+  else start();
 })();
 </script>
 

@@ -1,18 +1,12 @@
-HARRI Research v6.7 stability fix
+HARRI.LA Research v6.8 — true cross-browser baseline fix
 
-Replace BOTH files together:
-- _layouts/research.html
-- _includes/upper-resolution-layer.html
+Replace only:
+  _layouts/research.html
 
-This package keeps the v6.5 responsive typography/scaling layer and adds:
-1. Direct rendered-line alignment between the Abstract's final prose line and the footer email line.
-2. Alignment based on the actual resolved intro height, including naturally-tall Abstract cases.
-3. Re-alignment after late font/layout size changes.
-4. Iterative Research figure fitting so caption reflow is re-measured after the image shrinks.
+Keep your current _includes/upper-resolution-layer.html unchanged.
 
-Unchanged:
-- mobile layout
-- 43.5vh Research figure hanging line
-- CMS figure size/alignment controls
-- Research navigation/arrow behavior
-- Work spacing fixes
+Change:
+- The final prose line and footer email are measured with zero-size inline baseline markers.
+- Markers are inserted immediately after the final visible character, before whitespace / (Fig. n).
+- This measures the browser's real typographic baseline rather than DOM Range line-box bottoms.
+- Existing Research scaling, figures, CMS controls, hanging line, navigation and mobile rules are unchanged.
