@@ -30,7 +30,7 @@ abstract: >-
   since short vowels have inherited many of their manuscript agencies.
 
 
-  This research was funded by (Fig. 1) Kone Säätiö and Suomen Kulttuurirahasto.
+  This research was funded by Kone Säätiö and Suomen Kulttuurirahasto (Fig. 1).
 sections:
   - heading: The Dot
     heading_level: h1
