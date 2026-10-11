@@ -2543,7 +2543,7 @@
         </div>
 
         <nav class="mobile-toc" aria-label="Article navigation">
-          <span class="mobile-toc-arrow" aria-hidden="true">→</span>
+          <span class="mobile-toc-arrow" aria-hidden="true"><svg class="research-nav-arrow-svg" viewBox="0 0 28.693333 16.586666" aria-hidden="true" focusable="false"><path d="M 0,70 H 205.195 V 54.3984 H 0 Z m 130.797,54.398 h 22.199 L 215.195,62.1953 153.199,0 h -22.203 l 62,61.9961 -62.199,62.4019" transform="matrix(0.13333333,0,0,-0.13333333,0,16.586667)" fill="currentColor"/></svg></span>
 
           {% if has_modern_navigation_settings or has_section_navigation %}
             <div class="mobile-toc-columns">
@@ -2690,7 +2690,7 @@
     <nav class="toc" aria-label="Table of contents">
       {% if has_modern_navigation_settings or has_section_navigation %}
         <div class="toc-col">
-          <span class="toc-arrow" aria-hidden="true">→</span>
+          <span class="toc-arrow" aria-hidden="true"><svg class="research-nav-arrow-svg" viewBox="0 0 28.693333 16.586666" aria-hidden="true" focusable="false"><path d="M 0,70 H 205.195 V 54.3984 H 0 Z m 130.797,54.398 h 22.199 L 215.195,62.1953 153.199,0 h -22.203 l 62,61.9961 -62.199,62.4019" transform="matrix(0.13333333,0,0,-0.13333333,0,16.586667)" fill="currentColor"/></svg></span>
 
           <div class="toc-auto-item toc-auto-title">
             <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
@@ -2741,7 +2741,7 @@
         {% for column in page.toc_columns %}
           <div class="toc-col">
             {% if forloop.first %}
-              <span class="toc-arrow" aria-hidden="true">→</span>
+              <span class="toc-arrow" aria-hidden="true"><svg class="research-nav-arrow-svg" viewBox="0 0 28.693333 16.586666" aria-hidden="true" focusable="false"><path d="M 0,70 H 205.195 V 54.3984 H 0 Z m 130.797,54.398 h 22.199 L 215.195,62.1953 153.199,0 h -22.203 l 62,61.9961 -62.199,62.4019" transform="matrix(0.13333333,0,0,-0.13333333,0,16.586667)" fill="currentColor"/></svg></span>
               <div class="toc-group">
                 <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
               </div>
@@ -2760,7 +2760,7 @@
 
       {% else %}
         <div class="toc-col">
-          <span class="toc-arrow" aria-hidden="true">→</span>
+          <span class="toc-arrow" aria-hidden="true"><svg class="research-nav-arrow-svg" viewBox="0 0 28.693333 16.586666" aria-hidden="true" focusable="false"><path d="M 0,70 H 205.195 V 54.3984 H 0 Z m 130.797,54.398 h 22.199 L 215.195,62.1953 153.199,0 h -22.203 l 62,61.9961 -62.199,62.4019" transform="matrix(0.13333333,0,0,-0.13333333,0,16.586667)" fill="currentColor"/></svg></span>
           <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
 
           {% for section in page.sections %}
@@ -3397,6 +3397,75 @@
     arrow.style.transform = value;
   }
 
+  /*
+    ARROW GEOMETRY
+    --------------
+    The supplied EPS outline has its arrow tip exactly at the vertical centre
+    of its own viewBox. We therefore centre the arrow box on the middle of the
+    target row's CAP HEIGHT rather than on the row's line box.
+
+    A zero-size inline-block inserted at the start of the link gives the real
+    browser baseline for that first navigation line. Canvas TextMetrics gives
+    the rendered cap height ("H") for that exact font/weight/size.
+  */
+  const arrowMetricCanvas = document.createElement("canvas");
+  const arrowMetricContext = arrowMetricCanvas.getContext("2d");
+  const EPS_ARROW_RATIO = 21.5196 / 12.44;
+
+  function firstLineBaselineY(link){
+    const marker = document.createElement("span");
+    marker.setAttribute("aria-hidden", "true");
+    marker.style.cssText = [
+      "display:inline-block",
+      "width:0",
+      "height:0",
+      "padding:0",
+      "margin:0",
+      "border:0",
+      "vertical-align:baseline",
+      "overflow:hidden"
+    ].join(";");
+
+    link.insertBefore(marker, link.firstChild);
+    const baselineY = marker.getBoundingClientRect().top;
+    marker.remove();
+    return baselineY;
+  }
+
+  function capHeightFor(link){
+    const style = getComputedStyle(link);
+    const fontSize = parseFloat(style.fontSize) || 13;
+
+    if(!arrowMetricContext) return fontSize * 0.72;
+
+    arrowMetricContext.font = [
+      style.fontStyle || "normal",
+      style.fontWeight || "400",
+      style.fontSize || `${fontSize}px`,
+      style.fontFamily || "sans-serif"
+    ].join(" ");
+
+    const metrics = arrowMetricContext.measureText("H");
+    return metrics.actualBoundingBoxAscent || fontSize * 0.72;
+  }
+
+  function sizeArrowForLink(arrow, link){
+    const style = getComputedStyle(link);
+    const fontSize = parseFloat(style.fontSize) || 13;
+    /* Keep the visual scale of the old 14px arrow at a 13px nav size. */
+    const width = fontSize * (14 / 13);
+    const height = width / EPS_ARROW_RATIO;
+
+    arrow.style.width = `${width.toFixed(3)}px`;
+    arrow.style.height = `${height.toFixed(3)}px`;
+
+    return {width, height, fontSize};
+  }
+
+  function capCenterY(link){
+    return firstLineBaselineY(link) - (capHeightFor(link) / 2);
+  }
+
   function moveDesktopArrow(link, force = false){
     if(!desktopTocArrow || !link || window.innerWidth <= 900) return;
 
@@ -3406,8 +3475,10 @@
     desktopArrowTarget = link;
 
     const rect = link.getBoundingClientRect();
-    const x = rect.left - 20;
-    const y = rect.top + 1;
+    const {width, height, fontSize} = sizeArrowForLink(desktopTocArrow, link);
+    const gap = fontSize * (6 / 13);
+    const x = rect.left - width - gap;
+    const y = capCenterY(link) - (height / 2);
 
     desktopTocArrow.style.position = "fixed";
     desktopTocArrow.style.left = "0px";
@@ -3431,11 +3502,13 @@
 
     const navRect = mobileToc.getBoundingClientRect();
     const linkRect = link.getBoundingClientRect();
+    const {width, height, fontSize} = sizeArrowForLink(mobileTocArrow, link);
+    const gap = Math.max(2, fontSize * 0.14);
 
     const x =
-      (linkRect.left - navRect.left) + mobileToc.scrollLeft - 16;
+      (linkRect.left - navRect.left) + mobileToc.scrollLeft - width - gap;
     const y =
-      (linkRect.top - navRect.top) + mobileToc.scrollTop + 1;
+      (capCenterY(link) - navRect.top) + mobileToc.scrollTop - (height / 2);
 
     mobileTocArrow.style.position = "absolute";
     mobileTocArrow.style.left = "0px";
@@ -4815,23 +4888,27 @@
 */
 
 
-/* RESEARCH NAV ARROW — Geist arrowright glyph (U+2192), Regular */
+/* RESEARCH NAV ARROW — exact outline supplied in nav arrow.eps.
+   The JS sizes this outline from the target row's font size and places the
+   arrow TIP on the vertical middle of that row's rendered cap height. */
 .toc-arrow,
 .mobile-toc-arrow{
-  width:auto !important;
+  width:14px !important;
   height:auto !important;
-  line-height:1 !important;
-  font-family:"Geist", Arial, Helvetica, sans-serif !important;
-  font-size:14px !important;
-  font-weight:400 !important;
-  font-style:normal !important;
-  font-variation-settings:"wght" 400 !important;
-  font-synthesis:none !important;
-  letter-spacing:0 !important;
+  aspect-ratio:21.5196 / 12.44;
+  line-height:0 !important;
+  font-size:0 !important;
+  color:currentColor;
+  overflow:visible !important;
 }
 .toc-arrow svg,
-.mobile-toc-arrow svg{
-  display:none !important;
+.mobile-toc-arrow svg,
+.research-nav-arrow-svg{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  overflow:visible !important;
+  fill:currentColor !important;
 }
 </style>
 
