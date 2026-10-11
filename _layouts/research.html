@@ -12,7 +12,7 @@
   </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
 
@@ -323,10 +323,16 @@
     .toc-arrow,
     .mobile-toc-arrow{
       position:absolute;
-      font-family:"Geist", Arial, Helvetica, sans-serif !important;
+      /* Use Geist Mono's own coding-arrow ligature instead of U+2192,
+         which may silently fall back to another font. */
+      font-family:"Geist Mono", monospace !important;
       font-weight:400 !important;
       font-style:normal !important;
-      width:14px;
+      font-feature-settings:"ss11" 1 !important;
+      font-variant-ligatures:contextual !important;
+      letter-spacing:0 !important;
+      white-space:nowrap;
+      width:1.35em;
       height:1em;
       line-height:1em;
       pointer-events:none;
@@ -2537,7 +2543,7 @@
         </div>
 
         <nav class="mobile-toc" aria-label="Article navigation">
-          <span class="mobile-toc-arrow" aria-hidden="true">→</span>
+          <span class="mobile-toc-arrow" aria-hidden="true">-&gt;</span>
 
           {% if has_modern_navigation_settings or has_section_navigation %}
             <div class="mobile-toc-columns">
@@ -2684,7 +2690,7 @@
     <nav class="toc" aria-label="Table of contents">
       {% if has_modern_navigation_settings or has_section_navigation %}
         <div class="toc-col">
-          <span class="toc-arrow" aria-hidden="true">→</span>
+          <span class="toc-arrow" aria-hidden="true">-&gt;</span>
 
           <div class="toc-auto-item toc-auto-title">
             <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
@@ -2735,7 +2741,7 @@
         {% for column in page.toc_columns %}
           <div class="toc-col">
             {% if forloop.first %}
-              <span class="toc-arrow" aria-hidden="true">→</span>
+              <span class="toc-arrow" aria-hidden="true">-&gt;</span>
               <div class="toc-group">
                 <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
               </div>
@@ -2754,7 +2760,7 @@
 
       {% else %}
         <div class="toc-col">
-          <span class="toc-arrow" aria-hidden="true">→</span>
+          <span class="toc-arrow" aria-hidden="true">-&gt;</span>
           <a class="toc-group-title" href="#abstract" data-section="abstract">Abstract</a>
 
           {% for section in page.sections %}
@@ -4813,17 +4819,20 @@
 (function(){
   const DESKTOP_BREAKPOINT = 900;
   const READY_EVENT = "harri:research-baseline-ready";
-  const EPSILON = 0.1;
+  const EPSILON = 0.05;
   const MAX_ALIGNMENT_PASSES = 6;
+  const MIN_TITLE_TO_COPY_GAP = 6;
   const PROSE_MARKER_CLASS = "research-prose-baseline-marker";
   const FOOTER_MARKER_CLASS = "research-footer-baseline-marker";
 
   function start(){
     const intro = document.querySelector(".research-intro-screen");
+    const panel = document.querySelector(".research-abstract-panel");
+    const heading = panel && panel.querySelector(":scope > h1");
     const abstractCopy = document.querySelector(".research-abstract-copy");
     const footer = document.querySelector(".left-footer");
 
-    if(!intro || !abstractCopy || !footer){
+    if(!intro || !panel || !heading || !abstractCopy || !footer){
       document.dispatchEvent(new Event(READY_EVENT));
       return;
     }
@@ -4841,6 +4850,7 @@
     }
 
     function removeMarkers(root, cls){
+      if(!root) return;
       root.querySelectorAll("." + cls).forEach(marker => {
         const parent = marker.parentNode;
         marker.remove();
@@ -4882,10 +4892,6 @@
       const end = finalVisibleCharacterIndex(node.nodeValue || "");
       if(end <= 0) return null;
 
-      /* Split immediately after the last visible prose character. The marker is
-         inserted BEFORE any trailing whitespace and therefore cannot migrate
-         onto a following (Fig. n) line. A zero-size inline-block aligned to
-         `baseline` exposes the browser's real typographic baseline coordinate. */
       const trailing = node.splitText(end);
       const marker = document.createElement("span");
       marker.className = cls;
@@ -4911,7 +4917,7 @@
       return items.length ? items[items.length - 1] : footer;
     }
 
-    function baselineDifference(){
+    function markerPair(){
       const proseMarker = insertBaselineMarker(
         abstractCopy,
         ".figure-ref",
@@ -4923,12 +4929,7 @@
         null,
         FOOTER_MARKER_CLASS
       );
-
-      if(!proseMarker || !footerMarker) return 0;
-
-      const proseBaseline = proseMarker.getBoundingClientRect().top;
-      const footerBaseline = footerMarker.getBoundingClientRect().top;
-      return footerBaseline - proseBaseline;
+      return { proseMarker, footerMarker, footerItem };
     }
 
     function cleanupMarkers(){
@@ -4937,41 +4938,63 @@
       if(footerItem) removeMarkers(footerItem, FOOTER_MARKER_CLASS);
     }
 
+    function baselineDifference(){
+      const pair = markerPair();
+      if(!pair.proseMarker || !pair.footerMarker) return 0;
+      return pair.footerMarker.getBoundingClientRect().top -
+             pair.proseMarker.getBoundingClientRect().top;
+    }
+
+    function setCopyMargin(px){
+      abstractCopy.style.setProperty("margin-top", px.toFixed(3) + "px", "important");
+    }
+
     function alignNow(done){
       cancelAnimationFrame(alignRaf);
 
       if(window.innerWidth <= DESKTOP_BREAKPOINT){
-        intro.style.minHeight = "";
+        abstractCopy.style.removeProperty("margin-top");
+        intro.style.removeProperty("min-height");
         cleanupMarkers();
         if(done) done();
         return;
       }
 
-      /* Resolve from the natural first-screen geometry on every pass. */
-      intro.style.minHeight = "100%";
+      /* Keep the first Research screen tied to the paper viewport. The copy is
+         aligned directly; we no longer grow the entire intro to chase the
+         footer baseline. */
+      intro.style.setProperty("min-height", "100%", "important");
+      setCopyMargin(0);
 
       alignRaf = requestAnimationFrame(function(){
-        const baseHeight = intro.getBoundingClientRect().height;
-        let targetHeight = baseHeight;
+        /* With margin-top:0, measure the earliest legal copy position. This
+           gives us a hard upper bound that prevents the Abstract from moving
+           into the project title. */
+        const naturalCopyTop = abstractCopy.getBoundingClientRect().top;
+        const headingBottom = heading.getBoundingClientRect().bottom;
+        const minimumMargin = (headingBottom + MIN_TITLE_TO_COPY_GAP) - naturalCopyTop;
 
+        let margin = 0;
+        let residual = baselineDifference();
+        margin = Math.max(minimumMargin, residual);
+        setCopyMargin(margin);
+
+        /* Margin changes move the prose baseline one-for-one. Re-measure a few
+           times to absorb sub-pixel rounding and late line-wrap changes. */
         for(let pass = 0; pass < MAX_ALIGNMENT_PASSES; pass++){
-          const residual = baselineDifference();
+          residual = baselineDifference();
           if(Math.abs(residual) <= EPSILON) break;
-
-          /* Increasing the intro height moves the auto-bottomed Abstract copy
-             down by the same amount. If the prose is already below the footer
-             baseline, keep the natural height rather than overlap the title. */
-          targetHeight = Math.max(baseHeight, targetHeight + residual);
-          intro.style.minHeight = targetHeight.toFixed(2) + "px";
-          intro.getBoundingClientRect();
+          margin = Math.max(minimumMargin, margin + residual);
+          setCopyMargin(margin);
+          abstractCopy.getBoundingClientRect();
         }
 
         requestAnimationFrame(function(){
-          const finalResidual = baselineDifference();
-          if(finalResidual > EPSILON){
-            const currentHeight = intro.getBoundingClientRect().height;
-            intro.style.minHeight = (currentHeight + finalResidual).toFixed(2) + "px";
-            intro.getBoundingClientRect();
+          residual = baselineDifference();
+          if(Math.abs(residual) > EPSILON){
+            margin = Math.max(minimumMargin, margin + residual);
+            setCopyMargin(margin);
+            abstractCopy.getBoundingClientRect();
           }
 
           cleanupMarkers();
