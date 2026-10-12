@@ -181,7 +181,7 @@ sections:
       colour (Fig. 11). This feature adds another layer of ornamentation and
       playfulness to the written text."
     nav_column: none
-  - heading: Modern Limitations
+  - heading: Typographic Limitations
     heading_level: h2
     body: >-
       The laborious development of the calligraphic script was not mirrored in
@@ -228,6 +228,7 @@ sections:
       layout, while the individual letters and their dots that make up the text
       block remain untouched.
     nav_column: left
+    nav_label: Modern Limitations
   - heading: Bounding Box
     heading_level: h3
     body: >-
@@ -387,6 +388,30 @@ sections:
       are limited to designers and users in Iran. They are not accessible to
       many working in Arabic typography and graphic design.
     nav_column: left
+  - heading: Short Vowels/Sound Marks
+    heading_level: h2
+    body: This research primarily**** addresses the loss of the dots in the
+      agencies. However, one cannot study or work on the Nuqat without examining
+      the typographic flexibilities of the short vowels. Short vowels, like the
+      Diacritics, are floating marks positioned above or below Arabic letters.
+      This section mainly follows the structure of the previous one. It starts
+      with the historical development of the marks, their assigned agencies, and
+      possible ways to simulate their immediacy in mainstream typesetting
+      environments.
+    nav_column: left
+  - heading: The Arabic Writing System, an Abjad
+    heading_level: h2
+    body: Arabic is a semi-Abjad or partially consonantal writing system. Unlike an
+      alphabetic scheme, an abjad system represents only consonants in writing.
+      The Arabic Writing system includes short (Fig. 17) and long vowels (Fig.
+      18). Still, only the latter are inscribed as regular letters in the
+      skeletal foundation of a word, making it a partial abjad rather than a
+      full alphabet. On the other hand, short vowels or Harakat, are either
+      inferred by the reader depending on the context of the text they are
+      reciting or inscribed as small markings above the letters they
+      phonetically follow.
+    nav_column: none
+    nav_label: An abjad script
 figures:
   - number: 1
     image: /assets/uploads/fig-1.jpg
