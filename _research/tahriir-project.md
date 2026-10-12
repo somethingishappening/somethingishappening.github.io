@@ -592,7 +592,7 @@ sections:
       attempt to move, scale, and colour Sound Marks using Adobe InDesign. The
       experiments generated positive outcomes. However, modern software
       limitations can pose obstacles in certain cases.
-    nav_column: none
+    nav_column: left
     nav_label: Limitations/Possibilities
 figures:
   - number: 1
