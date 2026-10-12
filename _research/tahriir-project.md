@@ -181,7 +181,7 @@ sections:
       colour (Fig. 11). This feature adds another layer of ornamentation and
       playfulness to the written text."
     nav_column: none
-  - heading: Typographic Limitations
+  - heading: Modern Limitations
     heading_level: h2
     body: >-
       The laborious development of the calligraphic script was not mirrored in
