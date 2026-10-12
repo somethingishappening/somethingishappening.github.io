@@ -2483,6 +2483,8 @@
   .mobile-inline-figure .figure-box{
     width:var(--mobile-research-image-fit, 100%) !important;
     max-width:100% !important;
+    margin-left:var(--mobile-research-image-margin-left, 0) !important;
+    margin-right:var(--mobile-research-image-margin-right, auto) !important;
   }
 
   .mobile-inline-figure figcaption{
@@ -2926,14 +2928,42 @@
       ? fig.display_alignment
       : "left";
 
+    const requestedMobileSize = Object.prototype.hasOwnProperty.call(
+      figureDisplayWidths,
+      fig.mobile_display_size
+    )
+      ? fig.mobile_display_size
+      : "inherit";
+
+    const mobileDisplaySize = requestedMobileSize === "inherit"
+      ? displaySize
+      : requestedMobileSize;
+
+    const requestedMobileAlignment = ["left", "center", "right"].includes(
+      fig.mobile_display_alignment
+    )
+      ? fig.mobile_display_alignment
+      : "inherit";
+
+    const mobileDisplayAlignment = requestedMobileAlignment === "inherit"
+      ? displayAlignment
+      : requestedMobileAlignment;
+
+    const desktopSrc = cmsAssetPath(fig.image || "");
+    const explicitMobileSrc = cmsAssetPath(fig.mobile_image || "");
+
     figures[`fig${number}`] = {
       label: `Fig. ${number}`,
-      src: cmsAssetPath(fig.image || ""),
+      src: desktopSrc,
+      mobileSrc: explicitMobileSrc || desktopSrc,
       alt: fig.alt || `Figure ${number}`,
       caption: fig.caption || "",
       displaySize,
       widthPercent: figureDisplayWidths[displaySize],
-      displayAlignment
+      displayAlignment,
+      mobileDisplaySize,
+      mobileWidthPercent: figureDisplayWidths[mobileDisplaySize],
+      mobileDisplayAlignment
     };
   });
 
@@ -3006,24 +3036,40 @@
       const number = key.replace(/\D/g, "");
       const inline = document.createElement("figure");
       inline.className = "mobile-inline-figure";
-      inline.dataset.figureSize = fig.displaySize || "full";
-      inline.dataset.figureAlignment = fig.displayAlignment || "left";
-      /* On mobile this outer width is the original CMS allocation.
-         Caption width stays tied to this allocation even if the image box
-         is later reduced independently to fit. */
-      inline.style.width = `${fig.widthPercent || 100}%`;
+      inline.dataset.figureSize = fig.mobileDisplaySize || fig.displaySize || "full";
+      inline.dataset.figureAlignment = fig.mobileDisplayAlignment || fig.displayAlignment || "left";
+
+      /* MOBILE FIGURE ALLOCATION
+         The mobile CMS size controls the outer figure/caption allocation.
+         The image box may become narrower independently without narrowing
+         the caption. Mobile values fall back to the desktop values. */
+      inline.style.width = `${fig.mobileWidthPercent || fig.widthPercent || 100}%`;
       inline.style.setProperty("--mobile-research-image-fit", "100%");
 
-      if((fig.displayAlignment || "left") === "center"){
+      const mobileAlignment =
+        fig.mobileDisplayAlignment || fig.displayAlignment || "left";
+
+      if(mobileAlignment === "center"){
         inline.style.marginLeft = "auto";
         inline.style.marginRight = "auto";
-      }else if((fig.displayAlignment || "left") === "right"){
+      }else if(mobileAlignment === "right"){
         inline.style.marginLeft = "auto";
         inline.style.marginRight = "0";
       }else{
         inline.style.marginLeft = "0";
         inline.style.marginRight = "auto";
       }
+
+      /* If the image itself is later reduced inside its allocation, keep the
+         image justified according to the mobile control as well. */
+      inline.style.setProperty(
+        "--mobile-research-image-margin-left",
+        mobileAlignment === "left" ? "0" : "auto"
+      );
+      inline.style.setProperty(
+        "--mobile-research-image-margin-right",
+        mobileAlignment === "right" ? "0" : "auto"
+      );
 
       inline.innerHTML = `
         <div class="figure-box">
@@ -3853,11 +3899,13 @@
     const key = img.dataset.mobileImage;
     const fig = figures[key];
 
-    if(fig && fig.src){
+    const mobileSrc = fig ? (fig.mobileSrc || fig.src || "") : "";
+
+    if(fig && mobileSrc){
       img.loading = "lazy";
       img.decoding = "async";
       if("fetchPriority" in img) img.fetchPriority = "low";
-      img.src = fig.src;
+      img.src = mobileSrc;
       img.alt = fig.alt || fig.label;
       img.style.display = "block";
     }else{
@@ -3884,8 +3932,12 @@
     lightboxLabel.textContent = fig.label || "";
     lightboxCaption.textContent = fig.caption ? `, ${fig.caption}` : "";
 
-    if(fig.src){
-      lightboxImage.src = fig.src;
+    const lightboxSrc = window.innerWidth <= 900
+      ? (fig.mobileSrc || fig.src || "")
+      : (fig.src || "");
+
+    if(lightboxSrc){
+      lightboxImage.src = lightboxSrc;
       lightboxImage.alt = fig.alt || fig.label || "";
       lightboxImage.style.display = "block";
       lightboxPlaceholder.hidden = true;
