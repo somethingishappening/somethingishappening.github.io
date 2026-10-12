@@ -399,6 +399,7 @@ sections:
       possible ways to simulate their immediacy in mainstream typesetting
       environments.
     nav_column: left
+    nav_label: Short Vowels and Marks
   - heading: The Arabic Writing System, an Abjad
     heading_level: h2
     body: Arabic is a semi-Abjad or partially consonantal writing system. Unlike an
