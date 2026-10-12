@@ -4937,11 +4937,155 @@
 }
 </style>
 
-{%- comment -%}
-  Use the EXACT same bottom-baseline alignment system as the Work template.
-  No Research-specific baseline algorithm lives here anymore.
-{%- endcomment -%}
-{% include desktop-baseline-alignment.html target=".research-abstract-copy" %}
+<style id="research-flow-safe-baseline-style">
+/* Research has article sections after the Abstract, so unlike Work we must not
+   baseline-align the Abstract with transform: translateY(): transforms do not
+   reserve document-flow space and can overlap following sections after resize. */
+@media (min-width:901px){
+  .research-abstract-copy{
+    transform:none !important;
+  }
+}
+</style>
+
+<script id="research-flow-safe-baseline-script">
+(function(){
+  const DESKTOP_MIN = 901;
+  const intro = document.querySelector('.research-intro-screen');
+  const panel = document.querySelector('.research-abstract-panel');
+  const copy = document.querySelector('.research-abstract-copy');
+  const footer = document.querySelector('.left-footer');
+  const paper = document.querySelector('.paper');
+  if(!intro || !panel || !copy || !footer || !paper) return;
+
+  let raf1 = 0;
+  let raf2 = 0;
+  let targetMarker = null;
+  let footerMarker = null;
+
+  function visible(el){
+    if(!el) return false;
+    const cs = getComputedStyle(el);
+    return cs.display !== 'none' && cs.visibility !== 'hidden' && el.getClientRects().length > 0;
+  }
+
+  function removeMarker(marker){
+    if(marker && marker.isConnected) marker.remove();
+  }
+
+  function lastProseTextNode(container){
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+      acceptNode(node){
+        if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        const parent = node.parentElement;
+        if(!parent || !visible(parent)) return NodeFilter.FILTER_REJECT;
+        if(parent.closest('.figure-ref')) return NodeFilter.FILTER_REJECT;
+        if(parent.closest('.harri-research-flow-marker')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    let last = null;
+    while(walker.nextNode()) last = walker.currentNode;
+    return last;
+  }
+
+  function lastVisibleFooterItem(){
+    const items = Array.from(footer.children).filter(visible);
+    return items.length ? items[items.length - 1] : footer;
+  }
+
+  function markerAtVisibleTextEnd(textNode, role){
+    if(!textNode) return null;
+    const raw = textNode.nodeValue || '';
+    const trimmed = raw.replace(/\s+$/u, '');
+    const offset = trimmed.length;
+    const marker = document.createElement('span');
+    marker.className = 'harri-research-flow-marker';
+    marker.dataset.role = role;
+    marker.setAttribute('aria-hidden','true');
+    marker.style.cssText = 'display:inline-block;width:0;height:0;margin:0;padding:0;border:0;overflow:hidden;vertical-align:baseline;line-height:0;font-size:0;pointer-events:none;';
+
+    if(offset >= raw.length){
+      textNode.parentNode.insertBefore(marker, textNode.nextSibling);
+    }else{
+      const tail = textNode.splitText(offset);
+      textNode.parentNode.insertBefore(marker, tail);
+    }
+    return marker;
+  }
+
+  function rebuildMarkers(){
+    removeMarker(targetMarker);
+    removeMarker(footerMarker);
+    targetMarker = markerAtVisibleTextEnd(lastProseTextNode(copy), 'target');
+    const footerItem = lastVisibleFooterItem();
+    footerMarker = markerAtVisibleTextEnd(lastProseTextNode(footerItem), 'footer');
+  }
+
+  function resetFlowAlignment(){
+    copy.style.removeProperty('transform');
+    intro.style.removeProperty('min-height');
+    panel.style.removeProperty('padding-bottom');
+  }
+
+  function alignPass(pass){
+    if(window.innerWidth < DESKTOP_MIN){
+      resetFlowAlignment();
+      removeMarker(targetMarker); targetMarker = null;
+      removeMarker(footerMarker); footerMarker = null;
+      return;
+    }
+
+    if(!targetMarker || !targetMarker.isConnected || !footerMarker || !footerMarker.isConnected){
+      rebuildMarkers();
+    }
+    if(!targetMarker || !footerMarker) return;
+
+    const targetBaseline = targetMarker.getBoundingClientRect().top;
+    const footerBaseline = footerMarker.getBoundingClientRect().top;
+    const delta = footerBaseline - targetBaseline;
+
+    /* Only extend the first-screen flow downward. This reserves real space for
+       the moved Abstract and therefore can never overlap later article sections.
+       If the Abstract is intrinsically too tall for the footer baseline, normal
+       flow wins rather than forcing an overlap. */
+    if(delta > 0.35){
+      const currentHeight = intro.getBoundingClientRect().height;
+      intro.style.minHeight = Math.ceil(currentHeight + delta) + 'px';
+    }
+
+    if(pass < 3 && Math.abs(delta) > 0.35){
+      requestAnimationFrame(function(){ alignPass(pass + 1); });
+    }
+  }
+
+  function alignNow(){
+    cancelAnimationFrame(raf1);
+    cancelAnimationFrame(raf2);
+    raf1 = requestAnimationFrame(function(){
+      /* Every resize begins from clean natural flow; no stale geometry survives. */
+      resetFlowAlignment();
+      rebuildMarkers();
+      raf2 = requestAnimationFrame(function(){ alignPass(0); });
+    });
+  }
+
+  let resizeTimer = 0;
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(alignNow, 45);
+  }, {passive:true});
+  window.addEventListener('orientationchange', alignNow, {passive:true});
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(alignNow).catch(alignNow);
+  }else{
+    alignNow();
+  }
+
+  window.addEventListener('load', alignNow, {once:true});
+})();
+</script>
 
 </body>
 </html>
