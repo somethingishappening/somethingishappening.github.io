@@ -388,7 +388,7 @@ sections:
       are limited to designers and users in Iran. They are not accessible to
       many working in Arabic typography and graphic design.
     nav_column: left
-  - heading: Short Vowels/Sound Marks
+  - heading: Short Vowel Marks
     heading_level: h1
     body: This research primarily**** addresses the loss of the dots in the
       agencies. However, one cannot study or work on the Nuqat without examining
@@ -702,13 +702,13 @@ sections:
       always retained independence from their host Rasms. For this reason,
       designers and type users can manipulate them in ways that do not translate
       to dots.
-    nav_column: left
+    nav_column: none
 figures:
   - number: 1
     image: /assets/uploads/fig-1.jpg
     display_size: large
     display_alignment: left
-    caption: this research project was funded by TAIKE and the Finnish Cultural
+    caption: This research project was funded by TAIKE and the Finnish Cultural
       Foundation
     alt: Arabic calligraphy manuscript detail
   - number: 2
