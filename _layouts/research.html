@@ -2472,7 +2472,16 @@
 }
 
 @media (max-width:900px){
+  /* MOBILE RESEARCH FIGURES
+     Keep the caption tied to the original CMS allocation, not to any
+     later image-only fit/shrink. The outer inline figure is the allocated
+     CMS area; the image box may become narrower inside it independently. */
   .mobile-inline-figure{
+    max-width:100% !important;
+  }
+
+  .mobile-inline-figure .figure-box{
+    width:var(--mobile-research-image-fit, 100%) !important;
     max-width:100% !important;
   }
 
@@ -2999,7 +3008,11 @@
       inline.className = "mobile-inline-figure";
       inline.dataset.figureSize = fig.displaySize || "full";
       inline.dataset.figureAlignment = fig.displayAlignment || "left";
+      /* On mobile this outer width is the original CMS allocation.
+         Caption width stays tied to this allocation even if the image box
+         is later reduced independently to fit. */
       inline.style.width = `${fig.widthPercent || 100}%`;
+      inline.style.setProperty("--mobile-research-image-fit", "100%");
 
       if((fig.displayAlignment || "left") === "center"){
         inline.style.marginLeft = "auto";

@@ -1,10 +1,12 @@
-Replace these files in the repository:
-  _layouts/research.html
-  _includes/nav.html
+HARRI.LA — Research mobile caption allocation rule
 
-Changes only:
-- Research body (Fig. X) underline moved optically closer to the baseline.
-- Underline thickness remains the original 1 CSS px.
-- Animated menu underline applies only to project names (.project-links and Harrilanpuisto standalone project link).
-- Section/category labels and footer links never underline.
-- Menu underline uses the same .16s left-origin draw animation and baseline distance as (Fig. X).
+Replace only:
+  _layouts/research.html
+
+Change is mobile-only (<=900px):
+- the mobile inline figure's outer width remains the original CMS allocation
+- the caption remains 100% of that original CMS allocation
+- the image box can be reduced independently via --mobile-research-image-fit
+- desktop/laptop Research figure fitting is unchanged
+
+Based on v6.12-4 project-only-underlines.
