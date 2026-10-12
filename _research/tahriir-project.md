@@ -389,7 +389,7 @@ sections:
       many working in Arabic typography and graphic design.
     nav_column: left
   - heading: Short Vowels/Sound Marks
-    heading_level: h2
+    heading_level: h1
     body: This research primarily**** addresses the loss of the dots in the
       agencies. However, one cannot study or work on the Nuqat without examining
       the typographic flexibilities of the short vowels. Short vowels, like the
