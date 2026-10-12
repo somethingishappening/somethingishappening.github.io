@@ -4958,8 +4958,10 @@
   const paper = document.querySelector('.paper');
   if(!intro || !panel || !copy || !footer || !paper) return;
 
-  let raf1 = 0;
-  let raf2 = 0;
+  let alignGeneration = 0;
+  let settleTimer = 0;
+  let rafA = 0;
+  let rafB = 0;
   let targetMarker = null;
   let footerMarker = null;
 
@@ -5028,7 +5030,9 @@
     panel.style.removeProperty('padding-bottom');
   }
 
-  function alignPass(pass){
+  function measureAndAlign(generation){
+    if(generation !== alignGeneration) return;
+
     if(window.innerWidth < DESKTOP_MIN){
       resetFlowAlignment();
       removeMarker(targetMarker); targetMarker = null;
@@ -5036,54 +5040,73 @@
       return;
     }
 
-    if(!targetMarker || !targetMarker.isConnected || !footerMarker || !footerMarker.isConnected){
-      rebuildMarkers();
-    }
+    /* Always measure from the natural, unmodified Research flow. */
+    resetFlowAlignment();
+    rebuildMarkers();
     if(!targetMarker || !footerMarker) return;
 
+    /* Force Safari to commit the reset before any new height is calculated. */
+    const naturalHeight = intro.getBoundingClientRect().height;
     const targetBaseline = targetMarker.getBoundingClientRect().top;
     const footerBaseline = footerMarker.getBoundingClientRect().top;
     const delta = footerBaseline - targetBaseline;
 
-    /* Only extend the first-screen flow downward. This reserves real space for
-       the moved Abstract and therefore can never overlap later article sections.
-       If the Abstract is intrinsically too tall for the footer baseline, normal
-       flow wins rather than forcing an overlap. */
-    if(delta > 0.35){
-      const currentHeight = intro.getBoundingClientRect().height;
-      intro.style.minHeight = Math.ceil(currentHeight + delta) + 'px';
-    }
+    if(generation !== alignGeneration) return;
 
-    if(pass < 3 && Math.abs(delta) > 0.35){
-      requestAnimationFrame(function(){ alignPass(pass + 1); });
+    /* The natural flex layout already bottom-aligns the Abstract, so a valid
+       correction is small. Reject a stale/unstable Safari measurement instead
+       of allowing it to create a giant first-screen gap. */
+    const maxSafeCorrection = Math.max(64, paper.clientHeight * 0.22);
+    if(Number.isFinite(delta) && delta > 0.35 && delta <= maxSafeCorrection){
+      intro.style.minHeight = Math.ceil(naturalHeight + delta) + 'px';
     }
   }
 
-  function alignNow(){
-    cancelAnimationFrame(raf1);
-    cancelAnimationFrame(raf2);
-    raf1 = requestAnimationFrame(function(){
-      /* Every resize begins from clean natural flow; no stale geometry survives. */
+  function runAfterViewportSettles(){
+    const generation = ++alignGeneration;
+    cancelAnimationFrame(rafA);
+    cancelAnimationFrame(rafB);
+
+    rafA = requestAnimationFrame(function(){
+      if(generation !== alignGeneration) return;
+      /* First frame: commit the new Safari viewport + clean flow. */
       resetFlowAlignment();
-      rebuildMarkers();
-      raf2 = requestAnimationFrame(function(){ alignPass(0); });
+      void intro.offsetHeight;
+
+      rafB = requestAnimationFrame(function(){
+        if(generation !== alignGeneration) return;
+        /* Second frame: all measurements belong to this viewport only. */
+        measureAndAlign(generation);
+      });
     });
   }
 
-  let resizeTimer = 0;
-  window.addEventListener('resize', function(){
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(alignNow, 45);
-  }, {passive:true});
-  window.addEventListener('orientationchange', alignNow, {passive:true});
+  function onResize(){
+    /* Remove any height written for the previous viewport immediately. */
+    ++alignGeneration;
+    cancelAnimationFrame(rafA);
+    cancelAnimationFrame(rafB);
+    clearTimeout(settleTimer);
+    resetFlowAlignment();
 
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(alignNow).catch(alignNow);
-  }else{
-    alignNow();
+    /* Safari updates layout viewport metrics later than Chrome while the window
+       is being dragged. Wait until the resize has settled before measuring. */
+    settleTimer = setTimeout(runAfterViewportSettles, 140);
   }
 
-  window.addEventListener('load', alignNow, {once:true});
+  window.addEventListener('resize', onResize, {passive:true});
+  window.addEventListener('orientationchange', onResize, {passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', onResize, {passive:true});
+  }
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(runAfterViewportSettles).catch(runAfterViewportSettles);
+  }else{
+    runAfterViewportSettles();
+  }
+
+  window.addEventListener('load', runAfterViewportSettles, {once:true});
 })();
 </script>
 
