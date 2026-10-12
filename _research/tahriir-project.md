@@ -410,8 +410,190 @@ sections:
       inferred by the reader depending on the context of the text they are
       reciting or inscribed as small markings above the letters they
       phonetically follow.
-    nav_column: none
+    nav_column: left
     nav_label: An abjad script
+  - heading: Historical Overview
+    heading_level: h2
+    body: >-
+      Arabic had no vowel marks in its early stages of writing. Short-vowel
+      pronunciation depended on the reader's interpretation, making reading
+      prone to error and subjective renditions. Al-Kurdy (1939) states that
+      introducing vowel marks helped maintain proper pronunciation and convey
+      the intended meaning in accordance with proper Arabic. The Syriacs first
+      developed this feature after embracing Christianity, vocalising their
+      texts when copying the Holly texts (al-Kurdy, 1939, p. 75).
+
+
+      The first century of the Hijri calendar [Circa seventh century AD] saw the
+      introduction of short-vowel marks to the Arabic script by Abou Al Aswad Al
+      Douali (Massoudy, 2010, p. 47). The marks took the form and appearance of
+      circular red orbs drawn above or below the letters they followed (Fig.
+      19). A dot above the baseline indicated a Fatha, a mark at the baseline’s
+      level was Damma, and a sphere below the baseline marked a Kasra (Nemeth et
+      al., 2023, p. 380).
+
+
+      In the second century of the Hijri calendar [Circa eighth century AD],
+      Alkhalil bin Ahmed Al-Farahidi abandoned the circular short-vowel system
+      in favour of the marks used today (Fig. 20) (Massoudy, 2010, p. 48).
+      Al-Farahidi’s marks transcended their intended use for vocalisation and
+      assumed an additional ornamental role in scripts such as Naskh, Thuluth,
+      and Diwani (Al-Ḥusayny, 2003, p. 24). (refer to the Ornaments and space
+      fillers section in this chapter)
+
+
+      Currently, Harakat are not placed on every letter in Arabic texts. Fully
+      vocalised Arabic texts are rare (outside religious texts); partial
+      vocalisation is more common, and marks appear sparingly in long texts,
+      used only when necessary for readability and pronunciation. The unmarked
+      short vowels are left for the reader to infer from the text's context.
+    nav_column: left
+  - heading: Short Vowel Agency
+    heading_level: h2
+    body: >-
+      Much like the agencies for diacritics, calligraphers had specific
+      allowances for short-vowel marks. Scribes managed the marks’ positions,
+      colours, and sizes. This immediacy created rhythm, contrast, and
+      liveliness. This feature is available but not completely functional in
+      mainstream Arabic fonts and typesetting tools.
+
+
+      Calligraphers maintained control over the placement of the short vowels.
+      The agency associated with the vowel marks is similar to that of the
+      diacritics. The positional relationship between a mark and its base letter
+      is flexible, depending on the form and size of the character it adjusts;
+      surrounding letters can also affect positioning (Nemeth et al., 2023, p.
+      381). Scribes used the Harakat to create harmony and rhythm in written
+      texts and manage the space around the words (Fig. 21). This agency,
+      especially in larger scripts, may reflect the Harakat’s inscription with a
+      different pen than the main letters, giving the scribe the freedom and
+      immediacy to position them freely and independently in ways that balance
+      negative space and produce a dynamic composition after the writing is
+      complete.
+
+
+      The independence of the marks survived the transition from calligraphy to
+      analogue and then digital typesetting. Currently, every mark and vowel has
+      a Unicode, which assigns it an individual glyph or bounding box (Fig. 14).
+      The third chapter, Solution and Process, explains the bounding box in a
+      subsection with the same name. Software such as InDesign recognises the
+      independent nature of marks in Arabic typography and allows you to modify
+      their positions (Fig. 22)
+    nav_column: left
+  - heading: Marks in different colours
+    heading_level: h3
+    body: >-
+      Short vowels were originally written in coloured inks. Red (Fig. 43)
+      denoted vocalisations until the fifth and sixth centuries of the Hijri
+      calendar, the eleventh and twelfth centuries AD; this practice survived
+      longer in the Muslim West (Déroche et al., 2006, p. 224). The colouring of
+      the Harakat was not limited to red but appeared in multiple other colours
+      and tints (Fig. 23) (Fig. 24) (Gacek, 2009, p. 290).
+
+
+      Colouring vowel marks is possible in modern typographic text. This
+      agency’s survival stems from the fact that every short vowel has its own
+      Unicode and is considered a letter. Refer to the Limitations and
+      Possibilities in Type and Typography section of this dissertation for more
+      information on how to achieve diacritic colouring.
+    nav_column: none
+  - heading: Marks are Thinner than the main letters
+    heading_level: h3
+    body: >-
+      Visual references indicate that short vowels in large scripts were written
+      in a thinner pen than the Qalamus used to transcribe letters. This
+      statement is particularly true for scripts such as Thuluth and Muhaqqaq.
+      This visual reference (Fig. 25) showcases two script styles in the same
+      calligraphic layout. The first line, executed in the Thuluth script, a
+      form of writing typically reserved for display pieces of text, hosts vowel
+      marks written in a thinner nib than the nib used to write the text. This
+      section features very large, extended Fathas, a feature analysed in the
+      Sizing and Scaling Short Vowels section of this passage.
+
+
+      The second, or bottom, part of the artwork is composed in the Naskh script
+      (Fig. 25). Naskh is considered the book hand of the Islamic East (Gacek,
+      2009, p. 162). The provided visual reference, among many others, presents
+      this hand adorned with Harakat written in the same Qalamus as the main
+      letters. However, the marks are not given the same weight as the main
+      letters. The Harakat, or Tashkiil, are written with the side of the
+      Qalamus, whose thickness can range from one-third to two-thirds the width
+      of the pen’s nib (Ja’far, 1987, p. 131). The Fathas of the Naskhi
+      composition came in multiple lengths, a feature analysed in the Sizing and
+      Scaling Short Vowels section of this passage.
+
+
+      Modern Arabic-type design conventions follow the calligraphic norms for
+      short-vowel rendering. The Harakat adorning modern fonts are rendered in a
+      thinner “virtual nib.” This feature reduces noise and creates harmony and
+      visual balance (Fig. 14).
+    nav_column: none
+  - heading: Sizing And Scaling Short Vowels
+    heading_level: h3
+    body: >-
+      Certain marks enjoy specific visual treatments that others do not. As
+      mentioned in the previous section, Fathas in the Thuluth and Naskh scripts
+      enjoy the occasional extension, a statement verified by Nemeth (2023),
+      noting the optional modification of Arabic marks, like enlarging the
+      Fatha, that can present an impressive visual instrument (Nemeth et al.,
+      2023, p. 381). This feature creates visual balance and compensates for the
+      negative space left by the main letters, bringing life to a text and
+      reducing its static monotony (Fig. 26).
+
+
+      In the Thuluth style, the Fathas (◌َ) and Dammas (ُ◌) can appear executed
+      with the main pen. The bold, long Fatha is a remarkable testament to the
+      calligrapher's agency in composing a text; the scribe could instantly add
+      dynamic movement and richness by rendering the short vowel with the pen
+      reserved for the words.
+
+
+      Modern typographic practice lacks agency for scaling and resizing short
+      vowels. Some fonts include longer Fathas as predefined alternate glyphs;
+      however, few designers know they exist. As for the precise scaling and
+      control over this mark, it does not exist for the designer or typographer
+      setting it.
+    nav_column: none
+  - heading: Ornaments and space fillers
+    heading_level: h3
+    body: The Harakat added a layer of visual noise over the main letters. This
+      change gave the marks an additional visual and decorative role beyond
+      their initial function of easing legibility. Short vowels hold an
+      ornamental role meant to embellish the writing. Al-Ḥusayny (2003) notes
+      that the cosmetic function of the Harakat, particularly in larger scripts,
+      [Thuluth], is to compensate for the negative space left by the hefty
+      characters. The short vowels balance the white spaces, give aesthetic form
+      and structure to the writing, and help maintain coherence between its
+      different components (Al-Ḥusayny, 2003, p. 69) (Fig. 21).
+    nav_column: none
+  - heading: Limitations and Possibilities In Modern Typography
+    heading_level: h2
+    body: >-
+      The transition of short vowels from calligraphy to typography did not
+      mirror that of diacritics. These two elements of the Arabic language
+      system fundamentally differ in function and visual representation.
+      Therefore, it is logical that the treatment of the Harakat differed from
+      that of the dots in typographic application.
+
+
+      Harakat are essentially miniature letters in their own right. Metal type
+      respected this property, as short vowels were cast as independent type
+      units and later positioned by the typesetter over the characters they
+      followed. This method of producing short vowels as singular entities is
+      used in current digital type-making and typesetting, with each mark having
+      its own bounding box. The marks' autonomy allows modifications unavailable
+      to Arabic diacritics. Advanced typesetting software that recognises the
+      distinct Unicode of Arabic short vowels can handle them, giving designers
+      more agency.
+
+
+      The following experiments showcase the possible agencies in Adobe
+      InDesign, a mainstream typesetting software. The following investigations
+      attempt to move, scale, and colour Sound Marks using Adobe InDesign. The
+      experiments generated positive outcomes. However, modern software
+      limitations can pose obstacles in certain cases.
+    nav_column: none
+    nav_label: Limitations/Possibilities
 figures:
   - number: 1
     image: /assets/uploads/fig-1.jpg
