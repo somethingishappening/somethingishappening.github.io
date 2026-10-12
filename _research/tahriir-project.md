@@ -595,6 +595,114 @@ sections:
       limitations can pose obstacles in certain cases.
     nav_column: left
     nav_label: Limitations/Possibilities
+  - heading: Experimenting With Commercial Fonts And Typesetting Environments.
+    heading_level: h3
+    body: >-
+      The following typographic experiments were conducted on Adobe InDesign.
+      The text used is a selection of the Arabic preamble of The Declaration of
+      Human Rights, typeset with Lyon Arabic, designed by Khajag Apelian and
+      Wael Morcos for Commercial Type.
+
+
+      For the following experiments to succeed, you need an Arabic-supporting
+      version of Adobe InDesign. Furthermore, the Harakat throughout the text
+      were added to the original copy using Mishkal, an online tool hosted at
+      the following website: https: //tahadz.com/mishkal.
+    nav_column: none
+  - heading: Moving One Mark
+    heading_level: h3
+    body: >-
+      Select the desired mark in the given text.  
+
+      Modify the mark’s coordinates to the desired location in the Character
+      window (Fig. 22).
+    nav_column: none
+  - heading: Moving One Mark Throughout The Text
+    heading_level: h3
+    body: >-
+      • Go to “Edit”, then “Find / Change” and type the desired mark, in this
+      case the Shadda (ّ◌), in both the “Find what” and “Change to” tabs.
+
+
+      • Click on “Change Format,” go to “Middle East Character Formats.” Under
+      “Diacritic Positioning,” in “Additional Adjustment,” enter the desired
+      Horizontal and Vertical coordinates; in this case, 400 units vertically
+      (Fig. 27), then click “OK.”
+
+
+      • The “Find / Change” window will now show the format changes in the
+      “Change Format” tab. Click on “Change All”—This will apply the new mark
+      position to the entire text block (Fig. 28).
+
+
+      Note that with a Shadda and a vowel above or below it, the mark cluster
+      does not seem to move in unison. The Shadda moves only when no other vowel
+      or mark accompanies it.
+    nav_column: none
+  - heading: Scaling Marks Throughout The Text
+    heading_level: h3
+    body: >-
+      Modifying the size of the Short vowels, in this case the Fathas, was
+      difficult to reproduce. However, with some math, we can produce a Fatha
+      that is identical in size to the base character proportions (Fig. 29).
+
+
+      • Go to “Edit”, then “Find / Change” and type the Fatha (◌َ) in both the
+      “Find what” and “Change to” tabs.
+
+
+      • Click on “Change Format,” then “Character Colour.” Set the fill colour
+      (in this case, left black), then click “OK.”
+
+
+      • Click on “Change Format,” go to “Advanced Character Formats,” and type
+      in a new size increment in the “Horizontal Scale” and “Vertical Scale”
+      tabs. In this experiment’s case, type 400%, then click “OK.”
+
+
+      • The “Find / Change” window will now show the format changes in the
+      “Change Format” tab. Click on “Change All”—This will apply the new Fatha
+      size and colour to the entire text block (Fig. 30).
+
+
+      • The downside is that it may break some contextual alternates and
+      ligatures throughout the text. Example underlined in blue (Fig. 30).
+
+
+      Note that another way to modify the Harakat, specifically the extension of
+      the Fatha, is to use the outlining method described in the “Limitations In
+      Modern Typography” section of the Chapter dedicated to the Diacritics.
+      However, current OpenType technology gives Short Vowels more agency than
+      Diacritics. Hence, applying outlining methods would be counterintuitive.
+    nav_column: none
+  - heading: Modifying Mark Colours Throughout The Text
+    heading_level: h3
+    body: >-
+      • Go to “Edit”, then “Find / Change”, and type the desired mark, in this
+      case the Damma (ُ◌), in both the “Find what” and “Change to” tabs.
+
+
+      • Click on “Change Format,” then “Character Colour.” Define the stroke and
+      fill colours, in this case, a red fill and a yellow stroke, then click
+      “OK.”
+
+
+      • The “Find / Change” window will now show the format changes in the
+      “Change Format” tab. Click on “Change All”—This will apply the new mark
+      colours to the entire text block (Fig. 31).
+
+
+      Note that the Dammas that are paired with the Shaddas were not altered in
+      the process. This is because of the same Unicode system discussed in the
+      previous set of instructions.
+    nav_column: none
+  - heading: Concluding The Chapter
+    heading_level: h2
+    body: The history of the short vowels differs from that of the dots. The Harakat
+      always retained independence from their host Rasms. For this reason,
+      designers and type users can manipulate them in ways that do not translate
+      to dots.
+    nav_column: left
 figures:
   - number: 1
     image: /assets/uploads/fig-1.jpg
