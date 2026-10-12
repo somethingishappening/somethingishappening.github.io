@@ -163,13 +163,21 @@ content:
         type: number
         description: 'Enter the number used in your text. Example: enter 3 for (Fig. 3). Older figures without a number continue to use their list order.'
       - name: image
-        label: Image
+        label: Desktop / default image
         type: image
         options:
           media: images
           rename: safe
+        description: Main figure image used on desktop/laptop. It is also used on phones when Mobile image is left blank.
+      - name: mobile_image
+        label: Mobile image (optional)
+        type: image
+        options:
+          media: images
+          rename: safe
+        description: Optional phone-specific version of this figure. Leave blank to use the Desktop / default image.
       - name: display_size
-        label: Display size on page
+        label: Desktop display size
         type: select
         default: full
         options:
@@ -182,9 +190,26 @@ content:
             label: 50%
           - name: small
             label: 33%
-        description: Controls how wide this figure appears on the Research page. Existing figures without a setting remain full width. The expanded lightbox always uses the full available size.
+        description: Controls how wide this figure appears on desktop/laptop. Existing figures without a setting remain full width.
+      - name: mobile_display_size
+        label: Mobile display size
+        type: select
+        default: inherit
+        options:
+          values:
+          - name: inherit
+            label: Same as desktop
+          - name: full
+            label: 100% — Full mobile content width
+          - name: large
+            label: 75%
+          - name: medium
+            label: 50%
+          - name: small
+            label: 33%
+        description: Controls this figure's allocated width on phones. Same as desktop inherits Desktop display size. The caption keeps this allocated width even if the mobile image itself is narrower.
       - name: display_alignment
-        label: Alignment in figure area
+        label: Desktop justification
         type: select
         default: left
         options:
@@ -195,7 +220,22 @@ content:
             label: Center
           - name: right
             label: Right
-        description: Controls where the figure sits inside its designated figure area. Existing figures remain left aligned unless you choose another alignment.
+        description: Controls where the desktop/laptop figure sits inside its designated figure area. Existing figures remain left aligned unless you choose another alignment.
+      - name: mobile_display_alignment
+        label: Mobile justification
+        type: select
+        default: inherit
+        options:
+          values:
+          - name: inherit
+            label: Same as desktop
+          - name: left
+            label: Left
+          - name: center
+            label: Center
+          - name: right
+            label: Right
+        description: Controls the phone figure justification independently. Same as desktop inherits Desktop justification.
       - name: caption
         label: Caption
         type: text
