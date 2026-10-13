@@ -1,12 +1,17 @@
-HARRI.LA Research — figure numeral + body reference typography update
+HARRI.LA — Sitewide IBM Plex Sans Arabic consistency fix
 
-Replace:
-  _layouts/research.html
+Replace only:
+  _includes/arabic-typography.html
 
-Changes only:
-  • Caption "Fig. X" numerals use OpenType lining + tabular figures (lnum + tnum)
-    on both desktop and mobile.
-  • Body "(Fig. X)" returns to its original bold-era size: .76em.
-  • Body "(Fig. X)" remains Geist Regular / weight 400.
-  • Existing red color, underline animation, interaction, figure layout,
-    mobile caption width, EPS nav arrow, and all other Research behavior remain unchanged.
+What this does:
+  • Latin typography remains Geist.
+  • Arabic text anywhere on the site is rendered in IBM Plex Sans Arabic.
+  • Works for mixed Arabic/Latin sentences by wrapping only the Arabic run.
+  • Works for Research, Work, About, Harrilanpuisto, CV, captions and navigation.
+  • Handles all Arabic greetings, not only one hard-coded greeting.
+  • Handles dynamically injected CMS/JavaScript content and later text changes.
+  • Predominantly Arabic blocks automatically receive RTL direction.
+  • No layout/template/CMS fields are changed.
+
+All current layouts already include arabic-typography.html and already load
+IBM Plex Sans Arabic from Google Fonts, so no other files need replacing.
