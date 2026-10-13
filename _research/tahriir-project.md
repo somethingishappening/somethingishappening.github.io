@@ -927,6 +927,7 @@ figures:
 
       Retrieved from the Library of Congress (Qurʼan not identified).
   - number: 25
+    image: /assets/uploads/fig-25.jpg
     display_size: full
     display_alignment: left
     caption: |-
