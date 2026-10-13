@@ -2473,10 +2473,10 @@
 
 @media (max-width:900px){
   /* MOBILE RESEARCH FIGURES
-     Keep the caption tied to the original CMS allocation, not to any
-     later image-only fit/shrink. The outer inline figure is the allocated
-     CMS area; the image box may become narrower inside it independently. */
+     The outer figure and caption always use the full article width.
+     The CMS mobile size controls only the image box within that area. */
   .mobile-inline-figure{
+    width:100% !important;
     max-width:100% !important;
   }
 
@@ -2488,8 +2488,10 @@
   }
 
   .mobile-inline-figure figcaption{
+    display:block !important;
     width:100% !important;
-    max-width:100% !important;
+    max-width:none !important;
+    box-sizing:border-box !important;
   }
 }
 
@@ -3039,29 +3041,26 @@
       inline.dataset.figureSize = fig.mobileDisplaySize || fig.displaySize || "full";
       inline.dataset.figureAlignment = fig.mobileDisplayAlignment || fig.displayAlignment || "left";
 
-      /* MOBILE FIGURE ALLOCATION
-         The mobile CMS size controls the outer figure/caption allocation.
-         The image box may become narrower independently without narrowing
-         the caption. Mobile values fall back to the desktop values. */
-      inline.style.width = `${fig.mobileWidthPercent || fig.widthPercent || 100}%`;
-      inline.style.setProperty("--mobile-research-image-fit", "100%");
+      /* MOBILE FIGURE AREA
+         The figure/caption always keeps the full mobile reading width.
+         The CMS mobile size controls ONLY the image width inside that area.
+         This prevents captions from becoming narrow/wrapping merely because
+         the image is shown at 75%, 50% or 33%. */
+      inline.style.width = "100%";
+      inline.style.maxWidth = "100%";
+      inline.style.setProperty(
+        "--mobile-research-image-fit",
+        `${fig.mobileWidthPercent || fig.widthPercent || 100}%`
+      );
 
       const mobileAlignment =
         fig.mobileDisplayAlignment || fig.displayAlignment || "left";
 
-      if(mobileAlignment === "center"){
-        inline.style.marginLeft = "auto";
-        inline.style.marginRight = "auto";
-      }else if(mobileAlignment === "right"){
-        inline.style.marginLeft = "auto";
-        inline.style.marginRight = "0";
-      }else{
-        inline.style.marginLeft = "0";
-        inline.style.marginRight = "auto";
-      }
+      inline.style.marginLeft = "0";
+      inline.style.marginRight = "0";
 
-      /* If the image itself is later reduced inside its allocation, keep the
-         image justified according to the mobile control as well. */
+      /* Justification applies to the image box inside the full-width figure.
+         The caption remains full-width below it. */
       inline.style.setProperty(
         "--mobile-research-image-margin-left",
         mobileAlignment === "left" ? "0" : "auto"
