@@ -746,6 +746,7 @@ figures:
       The different Arabic Dot groups.
       Figure illustrated by the author.
   - number: 6
+    image: /assets/uploads/fig-6.jpg
     display_size: full
     display_alignment: left
     caption: >-
