@@ -1,23 +1,19 @@
 ---
-title: Designs for a Cooler Planet
+title: Beirut Design Week 2018
+menu_title: Beirut Design Week
 nav_order: 1
-project_type: Exhibition Design
-title_line_1: Designs for
-title_line_2: a Cooler Planet
+project_type: Visual communication
+title_line_1: Beirut Design Week 2018
 description: >-
-  The visual identity shows what a hypothetical but very probable Life 1.5 way
-  of life could look like. The future can appear scary and bleak in media and
-  science fiction novels, movies, and television series, so we intended our
-  project to show what a beautiful, abundant 1.5 lifestyle could be. We embraced
-  the ideals of repurposing, remixing, and building upon existing infrastructure
-  and materials; those ideals became the core of our concept, its aesthetics,
-  and its limitations. These core ideas helped us convey that sustainability
-  does not mean scarcity and that hidden potential and beauty exist in what
-  people consider waste. We built the exhibition’s visual identity and meeting
-  point using cardboard found around the university.
+  2018's theme was "Design and the City," so we collected data that the city
+  offered us, like iconic architectural facades, hidden patterns, lost textures,
+  traces of people, etc. The result was a dynamic visual identity: a flexible
+  grid that contains different video crops and a bold typographic treatment that
+  interacts with the video stills. The project included posters, videos, and
+  multiple publications: a magazine, a directory, and a program guide.
 
 
-  Designed with Milja Komulainen in collaboration with Baldur Heraldson.
+  Designed with Claude Nassar under the creative direction of Khajag Apelian.
 gallery:
   - type: image
     image: /assets/uploads/bdw18-poster-180527page1-1.jpg
