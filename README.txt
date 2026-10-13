@@ -1,11 +1,12 @@
-HARRI.LA Research — mobile caption full-width fix
+HARRI.LA Research — figure numeral + body reference typography update
 
 Replace:
   _layouts/research.html
 
-Mobile behavior:
-  • Figure/caption area always spans 100% of the mobile article width.
-  • Mobile CMS size controls ONLY the image width (100/75/50/33%).
-  • Mobile justification controls ONLY the smaller image's left/center/right position.
-  • Caption remains full article width, so it does not wrap simply because the image is small.
-  • Desktop/laptop figure behavior is unchanged.
+Changes only:
+  • Caption "Fig. X" numerals use OpenType lining + tabular figures (lnum + tnum)
+    on both desktop and mobile.
+  • Body "(Fig. X)" returns to its original bold-era size: .76em.
+  • Body "(Fig. X)" remains Geist Regular / weight 400.
+  • Existing red color, underline animation, interaction, figure layout,
+    mobile caption width, EPS nav arrow, and all other Research behavior remain unchanged.

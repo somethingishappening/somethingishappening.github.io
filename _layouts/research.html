@@ -415,6 +415,8 @@
       display:block;
       width:max-content;
       font-weight:400;
+      font-variant-numeric:lining-nums tabular-nums;
+      font-feature-settings:"lnum" 1, "tnum" 1;
       text-decoration:underline;
       text-underline-offset:2px;
       margin:0 0 2px;
@@ -1096,6 +1098,8 @@
       .mobile-inline-figure figcaption strong{
         display:inline;
         font-weight:400;
+        font-variant-numeric:lining-nums tabular-nums;
+        font-feature-settings:"lnum" 1, "tnum" 1;
         text-decoration:underline;
         text-underline-offset:2px;
         margin:0;
@@ -4965,11 +4969,12 @@
 </style>
 
 <style id="research-figure-reference-body-style">
-/* (Fig. X) in body copy = normal Research running text, red only. */
+/* (Fig. X) in body copy:
+   restore the original bold-era size (.76em), but keep Geist Regular. */
 .figure-ref{
   font-family:inherit !important;
-  font-size:1em !important;
-  line-height:inherit !important;
+  font-size:.76em !important;
+  line-height:1 !important;
   font-weight:400 !important;
   letter-spacing:inherit !important;
   padding:0 !important;
