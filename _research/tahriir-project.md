@@ -740,6 +740,7 @@ figures:
 
       Retrieved from The Metropolitan Museum of Art collection (unavailable).
   - number: 5
+    image: /assets/uploads/fig-5.gif
     display_size: full
     display_alignment: left
     caption: |-
