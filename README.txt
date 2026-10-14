@@ -1,18 +1,19 @@
-HARRI.LA — Artistic Work navigation visibility toggle
+HARRI.LA — IBM Plex Sans Arabic sitewide v2
 
-Replace:
-  .pages.yml
-  _includes/nav.html
+Replace only:
+  _includes/arabic-typography.html
 
-Then in Pages CMS:
-  General / Site settings
-  -> Show Artistic Work in navigation
+Why v1 could miss text:
+  It relied too much on recognizing larger Arabic phrases/blocks.
 
-ON  = Artistic Work appears normally.
-OFF = Artistic Work is hidden from both desktop and mobile navigation.
+v2 behavior:
+  • Every contiguous Arabic-script run is explicitly wrapped.
+  • Each Arabic run receives IBM Plex Sans Arabic with an inline !important
+    declaration, so template-level Geist rules cannot override it.
+  • Mixed Arabic/Latin paragraphs retain normal mixed-script order.
+  • Predominantly Arabic paragraphs receive RTL direction.
+  • IBM Plex Sans Arabic is loaded by this include itself.
+  • Dynamic CMS/JavaScript content and rotating greetings are reprocessed.
+  • Latin text remains Geist.
 
-The Artistic Work project files are NOT deleted.
-
-Renaming Design Work remains available in:
-  General / Site settings
-  -> Design Work section name
+No layout, CMS, figure, scaling, navigation or typography sizes are changed.

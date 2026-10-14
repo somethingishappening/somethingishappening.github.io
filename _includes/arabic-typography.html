@@ -1,66 +1,72 @@
-<style id="harri-arabic-typography">
+<style id="harri-arabic-typography-v2">
 /*
-  SITE-WIDE SCRIPT-AWARE TYPOGRAPHY
+  HARRI.LA — SCRIPT-AWARE ARABIC TYPOGRAPHY
 
-  Latin stays Geist.
-  Every Arabic run is explicitly wrapped/marked and rendered with
-  IBM Plex Sans Arabic, including mixed-language text and content
-  injected later by the CMS or by JavaScript.
+  Geist remains the Latin typeface.
+  Every rendered Arabic run is explicitly assigned IBM Plex Sans Arabic.
 */
-:root{
-  --harri-latin-font:"Geist", Arial, Helvetica, sans-serif;
-  --harri-arabic-font:"IBM Plex Sans Arabic", Arial, sans-serif;
-}
-
-/* Keep the normal site stack intact, with IBM Plex Arabic available
-   immediately after Geist for glyph fallback. */
-html,
-body,
-button,
-input,
-textarea,
-select,
-option{
-  font-family:"Geist", "IBM Plex Sans Arabic", Arial, Helvetica, sans-serif;
-}
-
-/* Anything positively identified as Arabic always uses IBM Plex Arabic. */
-.arabic-inline,
-.arabic-block,
+.harri-arabic-run,
 [lang="ar"],
-[lang^="ar-"],
-[dir="rtl"].arabic-block,
-.welcome.is-arabic-welcome{
-  font-family:var(--harri-arabic-font) !important;
+[lang^="ar-"]{
+  font-family:"IBM Plex Sans Arabic", sans-serif !important;
+  font-synthesis:none;
 }
 
-/* Mixed-language Arabic runs remain isolated so direction does not disturb
-   neighbouring Latin punctuation/text. */
-.arabic-inline{
+.harri-arabic-run{
   unicode-bidi:isolate;
-  direction:rtl;
 }
 
-/* Predominantly Arabic blocks get proper RTL paragraph direction. */
-.arabic-block{
+/* Fully/predominantly Arabic blocks receive RTL paragraph direction.
+   Mixed-language paragraphs are NOT reversed. */
+.harri-arabic-block{
+  font-family:"IBM Plex Sans Arabic", sans-serif !important;
   direction:rtl;
   unicode-bidi:isolate;
 }
 </style>
 
-<script id="harri-arabic-typography-script">
+<script id="harri-arabic-typography-v2-script">
 (function(){
   "use strict";
 
+  /* Load IBM Plex Sans Arabic independently of the individual layout files. */
+  function ensureArabicFont(){
+    if(document.querySelector('link[data-harri-ibm-plex-arabic]')) return;
+
+    const existing = Array.from(
+      document.querySelectorAll('link[rel="stylesheet"]')
+    ).some(function(link){
+      return (link.href || "").includes("IBM+Plex+Sans+Arabic");
+    });
+
+    if(existing) return;
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href =
+      "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap";
+    link.setAttribute("data-harri-ibm-plex-arabic", "true");
+    document.head.appendChild(link);
+  }
+
+  ensureArabicFont();
+
+  /*
+    Arabic-script characters:
+    Arabic, Arabic Supplement, Arabic Extended-A,
+    Arabic Presentation Forms A/B.
+  */
   const ARABIC_CHAR =
     /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
 
   /*
-    One Arabic run plus Arabic combining marks, spaces, Arabic/Latin digits
-    and punctuation that naturally belongs to the run.
+    Deliberately simple and robust:
+    wrap each contiguous Arabic-script run. Spaces stay outside the spans,
+    which avoids accidentally absorbing nearby Latin words while still
+    guaranteeing that every Arabic glyph uses IBM Plex Sans Arabic.
   */
   const ARABIC_RUN =
-    /([\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF][\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u064B-\u065F\u0670\u06D6-\u06ED\u200C\u200D\u0640\s،؛؟«»٪٫٬0-9٠-٩۰-۹\-–—()!؟.:،]*[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF])/g;
+    /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u200C\u200D\u0640]+/g;
 
   const SKIP_TAGS = new Set([
     "SCRIPT","STYLE","NOSCRIPT","TEXTAREA","INPUT","SELECT","OPTION",
@@ -73,25 +79,101 @@ option{
     return ARABIC_CHAR.test(text || "");
   }
 
-  function predominantlyArabic(text){
-    const chars = (text || "").match(
-      /[A-Za-z\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/g
-    ) || [];
+  function isPredominantlyArabic(text){
+    const chars = Array.from(text || "").filter(function(ch){
+      return /[A-Za-z]/.test(ch) || ARABIC_CHAR.test(ch);
+    });
 
     if(!chars.length) return false;
 
-    let arabicCount = 0;
+    let arabic = 0;
     chars.forEach(function(ch){
-      if(ARABIC_CHAR.test(ch)) arabicCount++;
+      if(ARABIC_CHAR.test(ch)) arabic++;
     });
 
-    return arabicCount / chars.length > 0.6;
+    return arabic / chars.length > 0.6;
+  }
+
+  function wrapArabicRuns(root){
+    if(!root) return;
+
+    const walker = document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node){
+          const text = node.nodeValue || "";
+          if(!hasArabic(text)) return NodeFilter.FILTER_REJECT;
+
+          const parent = node.parentElement;
+          if(!parent || SKIP_TAGS.has(parent.tagName)){
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          if(parent.closest(".harri-arabic-run")){
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+
+    const nodes = [];
+    while(walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(function(node){
+      const text = node.nodeValue || "";
+      ARABIC_RUN.lastIndex = 0;
+
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+      let match;
+      let changed = false;
+
+      while((match = ARABIC_RUN.exec(text))){
+        changed = true;
+
+        if(match.index > lastIndex){
+          fragment.appendChild(
+            document.createTextNode(text.slice(lastIndex, match.index))
+          );
+        }
+
+        const span = document.createElement("span");
+        span.className = "harri-arabic-run";
+        span.lang = "ar";
+        span.dir = "rtl";
+        span.textContent = match[0];
+
+        /* Inline declaration is intentional: it wins even if a template has
+           a more specific Geist declaration with !important elsewhere. */
+        span.style.setProperty(
+          "font-family",
+          '"IBM Plex Sans Arabic", sans-serif',
+          "important"
+        );
+
+        fragment.appendChild(span);
+        lastIndex = match.index + match[0].length;
+      }
+
+      if(!changed) return;
+
+      if(lastIndex < text.length){
+        fragment.appendChild(
+          document.createTextNode(text.slice(lastIndex))
+        );
+      }
+
+      node.parentNode.replaceChild(fragment, node);
+    });
   }
 
   function markArabicBlocks(root){
     if(!root || !root.querySelectorAll) return;
 
-    const selectors = [
+    const selector = [
       "p","li","figcaption",
       "h1","h2","h3","h4","h5","h6",
       ".welcome",
@@ -108,109 +190,28 @@ option{
 
     const elements = [];
 
-    if(root.nodeType === 1 && root.matches && root.matches(selectors)){
+    if(root.nodeType === 1 && root.matches && root.matches(selector)){
       elements.push(root);
     }
 
-    root.querySelectorAll(selectors).forEach(function(el){
+    root.querySelectorAll(selector).forEach(function(el){
       elements.push(el);
     });
 
     elements.forEach(function(el){
-      if(el.closest("script, style, textarea, code, pre, svg")) return;
+      if(el.closest("script,style,textarea,code,pre,svg")) return;
 
       const text = (el.textContent || "").trim();
+      const shouldBeArabic = hasArabic(text) && isPredominantlyArabic(text);
 
-      /*
-        Remove stale Arabic block state first. This matters for dynamic
-        greetings which switch back and forth between Latin and Arabic.
-      */
-      if(!text || !predominantlyArabic(text)){
-        if(el.classList.contains("arabic-block")){
-          el.classList.remove("arabic-block");
-          if(el.getAttribute("lang") === "ar") el.removeAttribute("lang");
-          if(el.getAttribute("dir") === "rtl") el.removeAttribute("dir");
-        }
-        return;
-      }
+      el.classList.toggle("harri-arabic-block", shouldBeArabic);
 
-      el.classList.add("arabic-block");
-      el.lang = "ar";
-      el.dir = "rtl";
-    });
-  }
-
-  function wrapArabicTextNodes(root){
-    if(!root) return;
-
-    const walker = document.createTreeWalker(
-      root,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode(node){
-          const value = node.nodeValue || "";
-          if(!value || !hasArabic(value)){
-            return NodeFilter.FILTER_REJECT;
-          }
-
-          const parent = node.parentElement;
-          if(!parent || SKIP_TAGS.has(parent.tagName)){
-            return NodeFilter.FILTER_REJECT;
-          }
-
-          /*
-            Already handled Arabic must never be wrapped repeatedly.
-          */
-          if(parent.closest(".arabic-inline, [lang='ar'], [lang^='ar-']")){
-            return NodeFilter.FILTER_REJECT;
-          }
-
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      }
-    );
-
-    const nodes = [];
-    while(walker.nextNode()) nodes.push(walker.currentNode);
-
-    nodes.forEach(function(node){
-      const text = node.nodeValue || "";
-      ARABIC_RUN.lastIndex = 0;
-
-      if(!ARABIC_RUN.test(text)){
-        ARABIC_RUN.lastIndex = 0;
-        return;
-      }
-
-      ARABIC_RUN.lastIndex = 0;
-
-      const frag = document.createDocumentFragment();
-      let last = 0;
-      let match;
-
-      while((match = ARABIC_RUN.exec(text))){
-        if(match.index > last){
-          frag.appendChild(
-            document.createTextNode(text.slice(last, match.index))
-          );
-        }
-
-        const bdi = document.createElement("bdi");
-        bdi.className = "arabic-inline";
-        bdi.lang = "ar";
-        bdi.dir = "rtl";
-        bdi.textContent = match[0];
-        frag.appendChild(bdi);
-
-        last = match.index + match[0].length;
-      }
-
-      if(last < text.length){
-        frag.appendChild(document.createTextNode(text.slice(last)));
-      }
-
-      if(node.parentNode){
-        node.parentNode.replaceChild(frag, node);
+      if(shouldBeArabic){
+        el.lang = "ar";
+        el.dir = "rtl";
+      }else{
+        if(el.getAttribute("lang") === "ar") el.removeAttribute("lang");
+        if(el.getAttribute("dir") === "rtl") el.removeAttribute("dir");
       }
     });
   }
@@ -220,28 +221,41 @@ option{
 
     processing = true;
     try{
-      wrapArabicTextNodes(root);
+      wrapArabicRuns(root);
       markArabicBlocks(root.nodeType === 1 ? root : document.body);
     }finally{
       processing = false;
     }
   }
 
-  function run(){
-    process(document.body);
+  function processPage(){
+    if(document.body) process(document.body);
+
+    /* Re-run after the webfont resolves so any font-metric-dependent layout
+       code sees the real IBM Plex Arabic metrics. */
+    if(document.fonts && document.fonts.load){
+      document.fonts
+        .load('400 16px "IBM Plex Sans Arabic"')
+        .then(function(){
+          if(document.body) process(document.body);
+          window.dispatchEvent(new Event("resize"));
+        })
+        .catch(function(){});
+    }
   }
 
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", run, {once:true});
+    document.addEventListener("DOMContentLoaded", processPage, {once:true});
   }else{
-    run();
+    processPage();
   }
 
   /*
-    Catch CMS-injected content, figure captions, navigation updates and
-    greeting text changes. characterData is intentionally observed as well,
-    because some browser/JS updates change an existing text node instead of
-    replacing it.
+    Covers:
+      • CMS-rendered content
+      • changing greetings
+      • dynamically created captions/navigation
+      • later JavaScript text replacements
   */
   if("MutationObserver" in window){
     const observer = new MutationObserver(function(mutations){
@@ -269,7 +283,7 @@ option{
       roots.forEach(process);
     });
 
-    function beginObserving(){
+    function observe(){
       if(!document.body) return;
       observer.observe(document.body, {
         childList:true,
@@ -279,13 +293,9 @@ option{
     }
 
     if(document.body){
-      beginObserving();
+      observe();
     }else{
-      document.addEventListener(
-        "DOMContentLoaded",
-        beginObserving,
-        {once:true}
-      );
+      document.addEventListener("DOMContentLoaded", observe, {once:true});
     }
   }
 })();
