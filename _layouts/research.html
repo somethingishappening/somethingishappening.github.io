@@ -2008,34 +2008,47 @@ min-width:0}
 
 
 
-/* NUMBERED LISTS — custom counter markers.
-   This avoids native marker clipping while keeping tabular lining figures. */
+/* NUMBERED LISTS — same typography/rhythm as Research bullets.
+   Custom counters prevent browser marker clipping.
+   Only the numeric marker uses tabular lining figures. */
+.research-copy ol,
 .paper ol,
 .article-body ol,
 .research-article ol{
   counter-reset:harri-ordered-list;
   list-style:none;
-  margin:0 0 1em;
+  margin:0 0 14px !important;
   padding:0;
-  font:inherit;
-  line-height:inherit;
+  max-width:700px;
   font-variant-numeric:normal;
   font-feature-settings:normal;
 }
 
+.research-copy ol > li,
 .paper ol > li,
 .article-body ol > li,
 .research-article ol > li{
   counter-increment:harri-ordered-list;
   position:relative;
-  margin:0;
+  display:list-item;
+  margin:0 0 14px !important;
   padding:0 0 0 1.55em;
-  font:inherit;
-  line-height:inherit;
+  font-family:inherit;
+  font-size:18px;
+  line-height:1.2;
+  font-weight:400;
   font-variant-numeric:normal;
   font-feature-settings:normal;
 }
 
+.research-copy ol > li:last-child,
+.paper ol > li:last-child,
+.article-body ol > li:last-child,
+.research-article ol > li:last-child{
+  margin-bottom:0 !important;
+}
+
+.research-copy ol > li::before,
 .paper ol > li::before,
 .article-body ol > li::before,
 .research-article ol > li::before{
@@ -2049,23 +2062,43 @@ min-width:0}
   overflow:visible;
   font-family:"Geist", Arial, Helvetica, sans-serif;
   font-size:1em;
-  line-height:inherit;
+  line-height:1.2;
   font-weight:400;
   font-variant-numeric:lining-nums tabular-nums;
   font-feature-settings:"lnum" 1, "tnum" 1;
 }
 
-.paper ol > li + li,
-.article-body ol > li + li,
-.research-article ol > li + li{
-  margin-top:0;
-}
-
-@media (max-width:900px){
+@media (min-width:901px) and (max-width:1180px){
+  .research-copy ol > li,
   .paper ol > li,
   .article-body ol > li,
   .research-article ol > li{
+    font-size:17px;
+  }
+}
+
+@media (max-width:900px){
+  .research-copy ol,
+  .paper ol,
+  .article-body ol,
+  .research-article ol{
+    max-width:none;
+  }
+
+  .research-copy ol > li,
+  .paper ol > li,
+  .article-body ol > li,
+  .research-article ol > li{
+    font-size:17px;
+    line-height:1.16;
     padding-left:1.55em;
+  }
+
+  .research-copy ol > li::before,
+  .paper ol > li::before,
+  .article-body ol > li::before,
+  .research-article ol > li::before{
+    line-height:1.16;
   }
 }
 

@@ -1,13 +1,14 @@
-HARRI.LA — Research desktop hierarchy consistency fix
+HARRI.LA Research — numbered list typography/rhythm fix
 
-Replace only:
-  _includes/upper-resolution-layer.html
+Replace:
+  _layouts/research.html
 
-What this fixes:
-  • Research H2 remains the same size as body text and bold.
-  • Research H3 remains the same size as body text, regular, underlined.
-  • The spacing before/after H2 and H3 now scales proportionally with type.
-  • This prevents the hierarchy from becoming compressed on high-resolution screens.
-  • Mobile is untouched.
-  • Research running-text size, figures, captions, arrows, CMS controls,
-    numbered lists and all other website behavior are unchanged.
+Fix:
+  • Numbered-list text now matches Research running/bullet text:
+      desktop: 18px / 1.2
+      narrower desktop: 17px / 1.2
+      mobile: 17px / 1.16
+  • List-item vertical spacing now matches bullet-list rhythm (14px).
+  • Only the 1. 2. 3. marker uses tabular lining numerals.
+  • Numbers inside list text remain normal Geist numerals.
+  • Custom counters remain, so markers are not cropped.
