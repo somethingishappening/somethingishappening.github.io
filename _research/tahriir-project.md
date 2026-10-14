@@ -844,7 +844,7 @@ figures:
       Edited by the author.
   - number: 12
     image: /assets/uploads/fig-12.png
-    display_size: full
+    display_size: large
     mobile_display_size: medium
     display_alignment: left
     mobile_display_alignment: inherit
