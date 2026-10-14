@@ -1,19 +1,11 @@
-HARRI.LA — IBM Plex Sans Arabic sitewide v2
+HARRI.LA Research — tabular lining numerals only on figure labels
 
-Replace only:
-  _includes/arabic-typography.html
+Replace:
+  _layouts/research.html
 
-Why v1 could miss text:
-  It relied too much on recognizing larger Arabic phrases/blocks.
-
-v2 behavior:
-  • Every contiguous Arabic-script run is explicitly wrapped.
-  • Each Arabic run receives IBM Plex Sans Arabic with an inline !important
-    declaration, so template-level Geist rules cannot override it.
-  • Mixed Arabic/Latin paragraphs retain normal mixed-script order.
-  • Predominantly Arabic paragraphs receive RTL direction.
-  • IBM Plex Sans Arabic is loaded by this include itself.
-  • Dynamic CMS/JavaScript content and rotating greetings are reprocessed.
-  • Latin text remains Geist.
-
-No layout, CMS, figure, scaling, navigation or typography sizes are changed.
+Change:
+  • Normal running text numbers use the default Geist numeral style.
+  • Normal figure-caption body text numbers use the default Geist numeral style.
+  • Only body "(Fig. X)" uses lining + tabular numerals (lnum + tnum).
+  • Only caption "Fig. X" uses lining + tabular numerals (lnum + tnum).
+  • All other Research typography/layout/figure behavior is unchanged.

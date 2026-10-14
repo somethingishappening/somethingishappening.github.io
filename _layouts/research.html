@@ -190,7 +190,10 @@
 
 
     /* PAPER */
-    .paper{min-width:0}
+    .paper{
+  font-variant-numeric:normal;
+  font-feature-settings:normal;
+min-width:0}
     .project-title{
       font-size:27px;
       line-height:1;
@@ -240,7 +243,9 @@
       vertical-align:baseline;
       position:relative;
       top:-.02em;
-    }
+      font-variant-numeric:lining-nums tabular-nums !important;
+  font-feature-settings:"lnum" 1, "tnum" 1 !important;
+}
 
     .figure-ref::after{
       content:"";
@@ -405,6 +410,9 @@
     }
 
     .figure-caption{
+
+      font-variant-numeric:normal;
+      font-feature-settings:normal;
       width:190px;
       margin-top:9px;
       font-size:12px;
@@ -1088,6 +1096,9 @@
       }
 
       .mobile-inline-figure figcaption{
+
+    font-variant-numeric:normal !important;
+    font-feature-settings:normal !important;
         width:100%;
         max-width:none;
         margin-top:8px;
@@ -2051,6 +2062,9 @@
   }
 
   .research-abstract-copy{
+  font-variant-numeric:normal;
+  font-feature-settings:normal;
+
     flex:0 0 auto;
     min-height:min-content;
     margin-top:auto;
