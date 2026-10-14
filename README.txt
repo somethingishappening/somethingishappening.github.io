@@ -1,11 +1,12 @@
-HARRI.LA Research — tabular lining numerals only on figure labels
+HARRI.LA Research — numbered-list support
 
 Replace:
   _layouts/research.html
 
-Change:
-  • Normal running text numbers use the default Geist numeral style.
-  • Normal figure-caption body text numbers use the default Geist numeral style.
-  • Only body "(Fig. X)" uses lining + tabular numerals (lnum + tnum).
-  • Only caption "Fig. X" uses lining + tabular numerals (lnum + tnum).
-  • All other Research typography/layout/figure behavior is unchanged.
+Behavior:
+  • Ordered lists (1. 2. 3.) use the same running-text size, leading,
+    indentation and spacing logic as bullet lists.
+  • Only the numeric list marker uses OpenType lining + tabular numerals.
+  • Numbers inside the list text remain normal Geist numerals.
+  • Existing (Fig. X) and caption Fig. X numeral rules are unchanged.
+  • Desktop and mobile are both covered.

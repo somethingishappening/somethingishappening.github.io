@@ -572,7 +572,48 @@ min-width:0}
     }
 
 
-    @media (min-width:901px){
+    
+
+/* NUMBERED LISTS — same behavior as bullet lists.
+   Only the numeric marker uses tabular lining figures. */
+.paper ol,
+.article-body ol,
+.research-article ol{
+  margin:0 0 1em;
+  padding-left:1.2em;
+  list-style-position:outside;
+  font:inherit;
+  line-height:inherit;
+  font-variant-numeric:normal;
+  font-feature-settings:normal;
+}
+
+.paper ol li,
+.article-body ol li,
+.research-article ol li{
+  margin:0;
+  padding:0;
+  font:inherit;
+  line-height:inherit;
+  font-variant-numeric:normal;
+  font-feature-settings:normal;
+}
+
+.paper ol li::marker,
+.article-body ol li::marker,
+.research-article ol li::marker{
+  font-family:"Geist", Arial, Helvetica, sans-serif;
+  font-weight:400;
+  font-variant-numeric:lining-nums tabular-nums;
+  font-feature-settings:"lnum" 1, "tnum" 1;
+}
+
+.paper ol li + li,
+.article-body ol li + li,
+.research-article ol li + li{
+  margin-top:0;
+}
+@media (min-width:901px){
       .group-head{
         font-size:20px;
         line-height:21px;
@@ -2000,6 +2041,18 @@ min-width:0}
 .mobile-toc-auto-title > a{font-weight:700 !important;line-height:1.04 !important;}
 .toc-auto-subtitle > a,
 .mobile-toc-auto-subtitle > a{font-weight:400 !important;}
+
+
+
+@media (max-width:900px){
+  .paper ol,
+  .article-body ol,
+  .research-article ol{
+    padding-left:1.2em;
+    margin-top:0;
+    margin-bottom:1em;
+  }
+}
 
 </style>
 {% include browser-consistency.html %}
