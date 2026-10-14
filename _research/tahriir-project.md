@@ -280,14 +280,11 @@ sections:
       1. Start by selecting the text block and outlining the type by selecting
       “Type” and then “Create Outlines.”
 
-
       2. Next, select the shape you want to edit using the Direct Selection
       Tool.
 
-
       3. Cut the dot by clicking on “Edit”, then “Cut”, or by right-clicking and
       selecting “Cut.”
-
 
       4. Paste the character back in place by clicking on “Edit” then “Paste In
       Place” or by right-clicking and selecting “Paste In Place.”
@@ -310,18 +307,14 @@ sections:
       1. Transfer the text block to vector editing software, such as Adobe
       Illustrator.
 
-
       2. Outline the text by clicking on “Object,” then “Expand...” Or by
       selecting “Type” and then “Create Outlines.”
-
 
       3. Click the chosen diacritic group twice to enter the individual
       selection mode—this step is valid if the designer requires the global
       modification of diacritics of one specific letter.
 
-
       4. Start a global edit by clicking “Select” and then “Start Global Edit.”
-
 
       5. Click the diacritic you want to change again and alter it. The changes
       will be automatically applied to the rest.
@@ -343,14 +336,11 @@ sections:
       element in the text an individual component—but also damaging the closed
       counters of the typeface (Fig. 16).
 
-
       2. Select the diacritic group you wish to alter and start a global edit by
       clicking “Select” and then “Start Global Edit.”
 
-
       3. Make the modifications necessary—The changes will be automatically
       applied to the rest.
-
 
       4. Repair the damage from the first step by going through the whole text
       and subtracting the closed counters from their characters.
@@ -624,12 +614,10 @@ sections:
       1. Go to “Edit”, then “Find / Change” and type the desired mark, in this
       case the Shadda (ّ◌), in both the “Find what” and “Change to” tabs.
 
-
       2. Click on “Change Format,” go to “Middle East Character Formats.” Under
       “Diacritic Positioning,” in “Additional Adjustment,” enter the desired
       Horizontal and Vertical coordinates; in this case, 400 units vertically
       (Fig. 27), then click “OK.”
-
 
       3. The “Find / Change” window will now show the format changes in the
       “Change Format” tab. Click on “Change All”—This will apply the new mark
@@ -651,20 +639,16 @@ sections:
       1. Go to “Edit”, then “Find / Change” and type the Fatha (◌َ) in both the
       “Find what” and “Change to” tabs.
 
-
       2. Click on “Change Format,” then “Character Colour.” Set the fill colour
       (in this case, left black), then click “OK.”
-
 
       3. Click on “Change Format,” go to “Advanced Character Formats,” and type
       in a new size increment in the “Horizontal Scale” and “Vertical Scale”
       tabs. In this experiment’s case, type 400%, then click “OK.”
 
-
       4. The “Find / Change” window will now show the format changes in the
       “Change Format” tab. Click on “Change All”—This will apply the new Fatha
       size and colour to the entire text block (Fig. 30).
-
 
       5. The downside is that it may break some contextual alternates and
       ligatures throughout the text. Example underlined in blue (Fig. 30).
@@ -682,11 +666,9 @@ sections:
       1. Go to “Edit”, then “Find / Change”, and type the desired mark, in this
       case the Damma (ُ◌), in both the “Find what” and “Change to” tabs.
 
-
       2. Click on “Change Format,” then “Character Colour.” Define the stroke
       and fill colours, in this case, a red fill and a yellow stroke, then click
       “OK.”
-
 
       3. The “Find / Change” window will now show the format changes in the
       “Change Format” tab. Click on “Change All”—This will apply the new mark
@@ -1012,7 +994,7 @@ figures:
     mobile_display_alignment: center
     caption: “Diacritic Positioning” in the “Middle East Character Formats.”
   - number: 28
-    image: /assets/uploads/fig-28.jpg
+    image: /assets/uploads/fig-28-1.jpg
     display_size: full
     mobile_display_size: inherit
     display_alignment: left
@@ -1034,7 +1016,7 @@ figures:
       Typeface in use: Lyon Arabic by Commercial Type, designed by Khajag
       Apelian and Wael Morcos.
   - number: 30
-    image: /assets/uploads/fig-30.jpg
+    image: /assets/uploads/fig-30-1.jpg
     display_size: full
     mobile_display_size: inherit
     display_alignment: left
@@ -1045,7 +1027,7 @@ figures:
       Typeface in use: Lyon Arabic by Commercial Type, designed by Khajag
       Apelian and Wael Morcos.
   - number: 31
-    image: /assets/uploads/31.jpg
+    image: /assets/uploads/31-1.jpg
     display_size: full
     mobile_display_size: inherit
     display_alignment: left
