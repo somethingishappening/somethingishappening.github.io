@@ -648,7 +648,7 @@ sections:
 
       4. The “Find / Change” window will now show the format changes in the
       “Change Format” tab. Click on “Change All”—This will apply the new Fatha
-      size and colour to the entire text block (Fig. 30).
+      size and colour to the entire text block.
 
       5. The downside is that it may break some contextual alternates and
       ligatures throughout the text. Example underlined in blue (Fig. 30).
@@ -934,7 +934,7 @@ figures:
       Retrieved from the McGill Islamic Studies Library (Munis zādah, 1286).
   - number: 22
     image: /assets/uploads/fig-22-2.png
-    display_size: full
+    display_size: medium
     mobile_display_size: inherit
     display_alignment: left
     mobile_display_alignment: inherit
