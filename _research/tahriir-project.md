@@ -934,7 +934,7 @@ figures:
       Retrieved from the McGill Islamic Studies Library (Munis zādah, 1286).
   - number: 22
     image: /assets/uploads/fig-22-2.png
-    display_size: medium
+    display_size: large
     mobile_display_size: inherit
     display_alignment: left
     mobile_display_alignment: inherit
