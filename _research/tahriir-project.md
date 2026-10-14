@@ -705,16 +705,21 @@ sections:
     nav_column: none
 figures:
   - number: 1
-    image: /assets/uploads/fig-1.jpg
-    display_size: large
+    image: /assets/uploads/fig-1-1.jpg
+    mobile_image: /assets/uploads/fig-1mobile-1.jpg
+    display_size: medium
+    mobile_display_size: full
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: This research project was funded by TAIKE and the Finnish Cultural
       Foundation
     alt: Arabic calligraphy manuscript detail
   - number: 2
     image: /assets/uploads/fig-2.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Thuluth Calligraphic piece with circular diacritics, marked in yellow,
       used to compensate for limited space. Retrieved from Qawā’id al-Khaṭ
@@ -724,7 +729,9 @@ figures:
   - number: 3
     image: /assets/uploads/fig-3-1.png
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       The Sultan Baybars’ Qur’an with circular diacritics. The dots are colored
       differently from their base characters. 
@@ -733,7 +740,9 @@ figures:
   - number: 4
     image: /assets/uploads/fig-4.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Qur’anic manuscript leaf; the text is fully dotted with golden-outlined
       circles.
@@ -742,14 +751,18 @@ figures:
   - number: 5
     image: /assets/uploads/fig-5.gif
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: |-
       The different Arabic Dot groups.
       Figure illustrated by the author.
   - number: 6
     image: /assets/uploads/fig-6.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Calligraphic composition showcasing a vertical two-dot diacritic group,
       marked in blue.
@@ -760,7 +773,9 @@ figures:
   - number: 7
     image: /assets/uploads/fig-7.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Calligraphic composition showcasing three dots arranged horizontally over
       the letter “Shiin”, marked in blue.
@@ -771,7 +786,9 @@ figures:
   - number: 8
     image: /assets/uploads/fig-8.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       The “Basmala” executed by different calligraphers with the Thuluth
       calligraphic style. Each calligrapher interpreted the position of the
@@ -784,7 +801,9 @@ figures:
   - number: 9
     image: /assets/uploads/fig-9.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       The visual showcases a calligraphic composition in which the calligrapher
       demonstrated agency by positioning the diacritics differently to achieve
@@ -798,7 +817,9 @@ figures:
   - number: 10
     image: /assets/uploads/fig-10.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Diwani Jeli calligraphic composition with ornamental diacritics, marked in
       blue.
@@ -809,7 +830,9 @@ figures:
   - number: 11
     image: /assets/uploads/fig-11.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     alt: >-
       Phrase taken from The Sultan Baybars’ Qur’an. The circular diacritics are
       colored differently from their base characters (gold leaf).
@@ -820,18 +843,24 @@ figures:
   - number: 12
     image: /assets/uploads/fig-12.png
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: Arabic metal characters existed with their corresponding diacritics. A
       norm that carried over into modern ways of producing Arabic letters.
   - number: 13
     image: /assets/uploads/fig-13.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: The bounding box as visualised by Glyphs App.
   - number: 14
     image: /assets/uploads/fig-14.png
     display_size: medium
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Short vowels exist independently of their host letters because each mark
       has its own bounding box.
@@ -841,7 +870,9 @@ figures:
   - number: 15
     image: /assets/uploads/fig-15.png
     display_size: medium
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Diacritics detached and manipulated with the Direct Selection Tool. Grey
       marks are in their default positions.
@@ -851,7 +882,9 @@ figures:
   - number: 16
     image: /assets/uploads/fig-16.png
     display_size: medium
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Damaged closed counters. Counters will detach and become their own shapes.
 
@@ -860,7 +893,9 @@ figures:
   - number: 17
     image: /assets/uploads/fig-17.gif
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       The basic Arabic short vowels. In order of appearance: A, U, I.
 
@@ -869,7 +904,9 @@ figures:
   - number: 18
     image: /assets/uploads/fig-18.png
     display_size: medium
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Arabic long vowels. In order of appearance: AA, UU, II.
 
@@ -878,7 +915,9 @@ figures:
   - number: 19
     image: /assets/uploads/fig-19.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Qur’anic Folio from the Abbasid era; the red dots are not consonantal
       diacritics but short vowels.
@@ -887,14 +926,18 @@ figures:
   - number: 20
     image: /assets/uploads/fig-20.png
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: |-
       Arabic calligraphy piece employing the final forms of the short vowels.
       Courtesy of El-Nimer Collection (George, 2017, p. 75).
   - number: 21
     image: /assets/uploads/fig-21.gif
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Hadith calligraphic compositions that showcase the rhythm and liveliness
       added by the short vowels. The original composition is 
@@ -907,12 +950,16 @@ figures:
   - number: 22
     image: /assets/uploads/fig-22-2.png
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: InDesign recognises diacritic agency and allows diacritics to move.
   - number: 23
     image: /assets/uploads/fig-23.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Arabic Manuscript leaf executed in the maghribi script, adorned with
       circular diacritics.
@@ -921,7 +968,9 @@ figures:
   - number: 24
     image: /assets/uploads/fig-24.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Arabic Manuscript leaf executed in the Eastern Kufi script, adorned with
       circular diacritics with gold leaf.
@@ -930,14 +979,18 @@ figures:
   - number: 25
     image: /assets/uploads/fig-25.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: |-
       Hadith calligraphic artwork executed in the Thuluth and Naskh scripts.
       Retrieved from the McGill Islamic Studies Library (Zuhdī, 1205).
   - number: 26
     image: /assets/uploads/fig-26.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       The visual showcases a calligraphic composition, in which the calligrapher
       demonstrated their agency by using the letter pen to draw a bold and long
@@ -951,12 +1004,16 @@ figures:
   - number: 27
     image: /assets/uploads/fig-27.png
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: “Diacritic Positioning” in the “Middle East Character Formats.”
   - number: 28
     image: /assets/uploads/fig-28.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       The changes are applied in the main text box.
 
@@ -965,7 +1022,9 @@ figures:
   - number: 29
     image: /assets/uploads/fig-29.png
     display_size: medium
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       Scaling the Fatha to the proportions of the main characters.
 
@@ -974,7 +1033,9 @@ figures:
   - number: 30
     image: /assets/uploads/fig-30.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       The changes are applied in the main text box.
 
@@ -983,7 +1044,9 @@ figures:
   - number: 31
     image: /assets/uploads/31.jpg
     display_size: full
+    mobile_display_size: inherit
     display_alignment: left
+    mobile_display_alignment: inherit
     caption: >-
       The changes are applied in the main text box.
 
