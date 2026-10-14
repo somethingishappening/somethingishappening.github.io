@@ -727,7 +727,8 @@ figures:
 
       Edited by the author.
   - number: 3
-    image: /assets/uploads/fig-3-1.png
+    image: /assets/uploads/fig-3-2.png
+    mobile_image: /assets/uploads/fig-3mobile.png
     display_size: full
     mobile_display_size: inherit
     display_alignment: left
@@ -739,6 +740,7 @@ figures:
       Retrieved from the British Library collection (ibn al-Wahid, 1306).
   - number: 4
     image: /assets/uploads/fig-4.jpg
+    mobile_image: /assets/uploads/fig-4mobile.jpg
     display_size: full
     mobile_display_size: inherit
     display_alignment: left
@@ -843,7 +845,7 @@ figures:
   - number: 12
     image: /assets/uploads/fig-12.png
     display_size: full
-    mobile_display_size: inherit
+    mobile_display_size: medium
     display_alignment: left
     mobile_display_alignment: inherit
     caption: Arabic metal characters existed with their corresponding diacritics. A
@@ -851,16 +853,16 @@ figures:
   - number: 13
     image: /assets/uploads/fig-13.jpg
     display_size: full
-    mobile_display_size: inherit
+    mobile_display_size: small
     display_alignment: left
-    mobile_display_alignment: inherit
+    mobile_display_alignment: center
     caption: The bounding box as visualised by Glyphs App.
   - number: 14
     image: /assets/uploads/fig-14.png
     display_size: medium
-    mobile_display_size: inherit
+    mobile_display_size: large
     display_alignment: left
-    mobile_display_alignment: inherit
+    mobile_display_alignment: center
     caption: >-
       Short vowels exist independently of their host letters because each mark
       has its own bounding box.
@@ -872,7 +874,7 @@ figures:
     display_size: medium
     mobile_display_size: inherit
     display_alignment: left
-    mobile_display_alignment: inherit
+    mobile_display_alignment: center
     caption: >-
       Diacritics detached and manipulated with the Direct Selection Tool. Grey
       marks are in their default positions.
@@ -884,7 +886,7 @@ figures:
     display_size: medium
     mobile_display_size: inherit
     display_alignment: left
-    mobile_display_alignment: inherit
+    mobile_display_alignment: center
     caption: >-
       Damaged closed counters. Counters will detach and become their own shapes.
 
@@ -906,7 +908,7 @@ figures:
     display_size: medium
     mobile_display_size: inherit
     display_alignment: left
-    mobile_display_alignment: inherit
+    mobile_display_alignment: center
     caption: >-
       Arabic long vowels. In order of appearance: AA, UU, II.
 
@@ -1003,10 +1005,10 @@ figures:
       Edited by the author.
   - number: 27
     image: /assets/uploads/fig-27.png
-    display_size: full
+    display_size: medium
     mobile_display_size: inherit
     display_alignment: left
-    mobile_display_alignment: inherit
+    mobile_display_alignment: center
     caption: “Diacritic Positioning” in the “Middle East Character Formats.”
   - number: 28
     image: /assets/uploads/fig-28.jpg
@@ -1024,7 +1026,7 @@ figures:
     display_size: medium
     mobile_display_size: inherit
     display_alignment: left
-    mobile_display_alignment: inherit
+    mobile_display_alignment: center
     caption: >-
       Scaling the Fatha to the proportions of the main characters.
 
