@@ -1,11 +1,13 @@
-HARRI.LA Research — numbered-list crop fix
+HARRI.LA — Research desktop hierarchy consistency fix
 
-Replace:
-  _layouts/research.html
+Replace only:
+  _includes/upper-resolution-layer.html
 
-Changes:
-  • Replaces native ordered-list markers with custom CSS counters.
-  • 1. 2. 3. still use OpenType lining + tabular numerals.
-  • Explicit marker width + overflow:visible prevents clipping.
-  • List text keeps normal Geist numerals.
-  • Bullet lists and all other Research behavior remain unchanged.
+What this fixes:
+  • Research H2 remains the same size as body text and bold.
+  • Research H3 remains the same size as body text, regular, underlined.
+  • The spacing before/after H2 and H3 now scales proportionally with type.
+  • This prevents the hierarchy from becoming compressed on high-resolution screens.
+  • Mobile is untouched.
+  • Research running-text size, figures, captions, arrows, CMS controls,
+    numbered lists and all other website behavior are unchanged.

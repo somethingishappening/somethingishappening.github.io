@@ -812,3 +812,50 @@
   }
 }
 </style>
+
+
+<style id="harri-research-desktop-hierarchy-lock-v6-14">
+/*
+  RESEARCH DESKTOP TYPOGRAPHIC HIERARCHY LOCK
+  -------------------------------------------
+  Keep the hierarchy identical at every desktop resolution:
+
+  running text = reference size
+  H2           = same size, bold
+  H3           = same size, regular + underline
+
+  The previous fixed 26px / 12px heading margins became proportionally
+  smaller as the high-resolution layer enlarged the type. Express those
+  distances in em so the visual hierarchy stays identical while scaling.
+
+  Baseline reference:
+    26 / 18 = 1.444444em top
+    12 / 18 = 0.666667em bottom
+
+  Mobile remains untouched.
+*/
+@media (min-width:901px){
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    margin-top:1.444444em !important;
+    margin-bottom:.666667em !important;
+    letter-spacing:0 !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2{
+    font-weight:700 !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    font-weight:400 !important;
+    text-decoration:underline !important;
+    text-decoration-thickness:1px !important;
+    text-underline-offset:2px !important;
+  }
+}
+</style>
+
