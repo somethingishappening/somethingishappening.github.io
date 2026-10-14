@@ -277,18 +277,19 @@ sections:
   - heading: "Alteration Using the Direct Selection Tool "
     heading_level: h3
     body: >-
-      • Start by selecting the text block and outlining the type by selecting
+      1. Start by selecting the text block and outlining the type by selecting
       “Type” and then “Create Outlines.”
 
 
-      • Next, select the shape you want to edit using the Direct Selection Tool.
+      2. Next, select the shape you want to edit using the Direct Selection
+      Tool.
 
 
-      • Cut the dot by clicking on “Edit”, then “Cut”, or by right-clicking and
+      3. Cut the dot by clicking on “Edit”, then “Cut”, or by right-clicking and
       selecting “Cut.”
 
 
-      • Paste the character back in place by clicking on “Edit” then “Paste In
+      4. Paste the character back in place by clicking on “Edit” then “Paste In
       Place” or by right-clicking and selecting “Paste In Place.”
 
 
@@ -306,23 +307,23 @@ sections:
       one letter throughout a text.
 
 
-      • Transfer the text block to vector editing software, such as Adobe
+      1. Transfer the text block to vector editing software, such as Adobe
       Illustrator.
 
 
-      • Outline the text by clicking on “Object,” then “Expand...” Or by
+      2. Outline the text by clicking on “Object,” then “Expand...” Or by
       selecting “Type” and then “Create Outlines.”
 
 
-      • Click the chosen diacritic group twice to enter the individual selection
-      mode—this step is valid if the designer requires the global modification
-      of diacritics of one specific letter.
+      3. Click the chosen diacritic group twice to enter the individual
+      selection mode—this step is valid if the designer requires the global
+      modification of diacritics of one specific letter.
 
 
-      • Start a global edit by clicking “Select” and then “Start Global Edit.”
+      4. Start a global edit by clicking “Select” and then “Start Global Edit.”
 
 
-      • Click the diacritic you want to change again and alter it. The changes
+      5. Click the diacritic you want to change again and alter it. The changes
       will be automatically applied to the rest.
 
 
@@ -338,20 +339,20 @@ sections:
       instructions:
 
 
-      • Select “Object,” then “Compound Path,” and then “Release,” making every
+      1. Select “Object,” then “Compound Path,” and then “Release,” making every
       element in the text an individual component—but also damaging the closed
       counters of the typeface (Fig. 16).
 
 
-      • Select the diacritic group you wish to alter and start a global edit by
+      2. Select the diacritic group you wish to alter and start a global edit by
       clicking “Select” and then “Start Global Edit.”
 
 
-      • Make the modifications necessary—The changes will be automatically
+      3. Make the modifications necessary—The changes will be automatically
       applied to the rest.
 
 
-      • Repair the damage from the first step by going through the whole text
+      4. Repair the damage from the first step by going through the whole text
       and subtracting the closed counters from their characters.
 
 
@@ -620,17 +621,17 @@ sections:
   - heading: Moving One Mark Throughout The Text
     heading_level: h3
     body: >-
-      • Go to “Edit”, then “Find / Change” and type the desired mark, in this
+      1. Go to “Edit”, then “Find / Change” and type the desired mark, in this
       case the Shadda (ّ◌), in both the “Find what” and “Change to” tabs.
 
 
-      • Click on “Change Format,” go to “Middle East Character Formats.” Under
+      2. Click on “Change Format,” go to “Middle East Character Formats.” Under
       “Diacritic Positioning,” in “Additional Adjustment,” enter the desired
       Horizontal and Vertical coordinates; in this case, 400 units vertically
       (Fig. 27), then click “OK.”
 
 
-      • The “Find / Change” window will now show the format changes in the
+      3. The “Find / Change” window will now show the format changes in the
       “Change Format” tab. Click on “Change All”—This will apply the new mark
       position to the entire text block (Fig. 28).
 
@@ -647,25 +648,25 @@ sections:
       that is identical in size to the base character proportions (Fig. 29).
 
 
-      • Go to “Edit”, then “Find / Change” and type the Fatha (◌َ) in both the
+      1. Go to “Edit”, then “Find / Change” and type the Fatha (◌َ) in both the
       “Find what” and “Change to” tabs.
 
 
-      • Click on “Change Format,” then “Character Colour.” Set the fill colour
+      2. Click on “Change Format,” then “Character Colour.” Set the fill colour
       (in this case, left black), then click “OK.”
 
 
-      • Click on “Change Format,” go to “Advanced Character Formats,” and type
+      3. Click on “Change Format,” go to “Advanced Character Formats,” and type
       in a new size increment in the “Horizontal Scale” and “Vertical Scale”
       tabs. In this experiment’s case, type 400%, then click “OK.”
 
 
-      • The “Find / Change” window will now show the format changes in the
+      4. The “Find / Change” window will now show the format changes in the
       “Change Format” tab. Click on “Change All”—This will apply the new Fatha
       size and colour to the entire text block (Fig. 30).
 
 
-      • The downside is that it may break some contextual alternates and
+      5. The downside is that it may break some contextual alternates and
       ligatures throughout the text. Example underlined in blue (Fig. 30).
 
 
@@ -678,16 +679,16 @@ sections:
   - heading: Modifying Mark Colours Throughout The Text
     heading_level: h3
     body: >-
-      • Go to “Edit”, then “Find / Change”, and type the desired mark, in this
+      1. Go to “Edit”, then “Find / Change”, and type the desired mark, in this
       case the Damma (ُ◌), in both the “Find what” and “Change to” tabs.
 
 
-      • Click on “Change Format,” then “Character Colour.” Define the stroke and
-      fill colours, in this case, a red fill and a yellow stroke, then click
+      2. Click on “Change Format,” then “Character Colour.” Define the stroke
+      and fill colours, in this case, a red fill and a yellow stroke, then click
       “OK.”
 
 
-      • The “Find / Change” window will now show the format changes in the
+      3. The “Find / Change” window will now show the format changes in the
       “Change Format” tab. Click on “Change All”—This will apply the new mark
       colours to the entire text block (Fig. 31).
 
