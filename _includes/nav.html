@@ -92,6 +92,11 @@
           </div>
         </section>
 
+        {% assign artistic_nav_hidden = false %}
+        {% if site.data.site.artistic_work_visible == false %}
+          {% assign artistic_nav_hidden = true %}
+        {% endif %}
+        {% unless artistic_nav_hidden %}
         <section class="nav-group">
           <button
             class="group-head"
@@ -112,6 +117,7 @@
             </div>
           </div>
         </section>
+        {% endunless %}
 
         {% assign harrilanpuisto_image_count = site.data.harrilanpuisto.media | size %}
         {% if site.data.harrilanpuisto.enabled and harrilanpuisto_image_count > 0 %}
@@ -734,72 +740,3 @@
   }, {passive:true});
 })();
 </script>
-
-<style id="harri-navigation-hover-draw-animation">
-/*
-  Animated underline for PROJECT NAMES ONLY.
-  Category/section labels and footer items never receive a hover underline.
-  Motion matches Research (Fig. X): left-origin scaleX(0 -> 1), .16s ease.
-*/
-.site-nav .project-links a,
-.site-nav .standalone-nav-link{
-  position:relative !important;
-  text-decoration:none !important;
-  width:max-content;
-  max-width:100%;
-}
-
-.site-nav .project-links a::after,
-.site-nav .standalone-nav-link::after{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:.10em;
-  height:1px;
-  background:currentColor;
-  transform:scaleX(0);
-  transform-origin:left;
-  transition:transform .16s ease;
-  pointer-events:none;
-}
-
-.site-nav .project-links a:hover::after,
-.site-nav .project-links a:focus-visible::after,
-.site-nav .standalone-nav-link:hover::after,
-.site-nav .standalone-nav-link:focus-visible::after{
-  transform:scaleX(1);
-}
-
-/* Never underline navigation SECTION labels or footer links. */
-.site-nav .group-head,
-.site-nav .group-head > span:first-child,
-.site-nav .left-footer a{
-  text-decoration:none !important;
-}
-.site-nav .group-head > span:first-child::after,
-.site-nav .left-footer a::after{
-  content:none !important;
-  display:none !important;
-}
-
-/* Override older template-specific instant underlines on project names too. */
-.site-nav .project-links a:hover,
-.site-nav .project-links a:focus,
-.site-nav .standalone-nav-link:hover,
-.site-nav .standalone-nav-link:focus,
-.site-nav .group-head:hover,
-.site-nav .group-head:focus,
-.site-nav .left-footer a:hover,
-.site-nav .left-footer a:focus{
-  text-decoration:none !important;
-}
-
-@media (prefers-reduced-motion:reduce){
-  .site-nav .project-links a::after,
-  .site-nav .standalone-nav-link::after{
-    transition:none;
-  }
-}
-</style>
-
