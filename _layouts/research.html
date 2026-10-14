@@ -574,45 +574,6 @@ min-width:0}
 
     
 
-/* NUMBERED LISTS — same behavior as bullet lists.
-   Only the numeric marker uses tabular lining figures. */
-.paper ol,
-.article-body ol,
-.research-article ol{
-  margin:0 0 1em;
-  padding-left:1.2em;
-  list-style-position:outside;
-  font:inherit;
-  line-height:inherit;
-  font-variant-numeric:normal;
-  font-feature-settings:normal;
-}
-
-.paper ol li,
-.article-body ol li,
-.research-article ol li{
-  margin:0;
-  padding:0;
-  font:inherit;
-  line-height:inherit;
-  font-variant-numeric:normal;
-  font-feature-settings:normal;
-}
-
-.paper ol li::marker,
-.article-body ol li::marker,
-.research-article ol li::marker{
-  font-family:"Geist", Arial, Helvetica, sans-serif;
-  font-weight:400;
-  font-variant-numeric:lining-nums tabular-nums;
-  font-feature-settings:"lnum" 1, "tnum" 1;
-}
-
-.paper ol li + li,
-.article-body ol li + li,
-.research-article ol li + li{
-  margin-top:0;
-}
 @media (min-width:901px){
       .group-head{
         font-size:20px;
@@ -2044,13 +2005,67 @@ min-width:0}
 
 
 
+
+
+
+/* NUMBERED LISTS — custom counter markers.
+   This avoids native marker clipping while keeping tabular lining figures. */
+.paper ol,
+.article-body ol,
+.research-article ol{
+  counter-reset:harri-ordered-list;
+  list-style:none;
+  margin:0 0 1em;
+  padding:0;
+  font:inherit;
+  line-height:inherit;
+  font-variant-numeric:normal;
+  font-feature-settings:normal;
+}
+
+.paper ol > li,
+.article-body ol > li,
+.research-article ol > li{
+  counter-increment:harri-ordered-list;
+  position:relative;
+  margin:0;
+  padding:0 0 0 1.55em;
+  font:inherit;
+  line-height:inherit;
+  font-variant-numeric:normal;
+  font-feature-settings:normal;
+}
+
+.paper ol > li::before,
+.article-body ol > li::before,
+.research-article ol > li::before{
+  content:counter(harri-ordered-list) ".";
+  position:absolute;
+  left:0;
+  top:0;
+  width:1.25em;
+  text-align:left;
+  white-space:nowrap;
+  overflow:visible;
+  font-family:"Geist", Arial, Helvetica, sans-serif;
+  font-size:1em;
+  line-height:inherit;
+  font-weight:400;
+  font-variant-numeric:lining-nums tabular-nums;
+  font-feature-settings:"lnum" 1, "tnum" 1;
+}
+
+.paper ol > li + li,
+.article-body ol > li + li,
+.research-article ol > li + li{
+  margin-top:0;
+}
+
 @media (max-width:900px){
-  .paper ol,
-  .article-body ol,
-  .research-article ol{
-    padding-left:1.2em;
-    margin-top:0;
-    margin-bottom:1em;
+  .paper ol > li,
+  .article-body ol > li,
+  .research-article ol > li{
+    padding-left:1.55em;
   }
 }
 

@@ -1,12 +1,11 @@
-HARRI.LA Research — numbered-list support
+HARRI.LA Research — numbered-list crop fix
 
 Replace:
   _layouts/research.html
 
-Behavior:
-  • Ordered lists (1. 2. 3.) use the same running-text size, leading,
-    indentation and spacing logic as bullet lists.
-  • Only the numeric list marker uses OpenType lining + tabular numerals.
-  • Numbers inside the list text remain normal Geist numerals.
-  • Existing (Fig. X) and caption Fig. X numeral rules are unchanged.
-  • Desktop and mobile are both covered.
+Changes:
+  • Replaces native ordered-list markers with custom CSS counters.
+  • 1. 2. 3. still use OpenType lining + tabular numerals.
+  • Explicit marker width + overflow:visible prevents clipping.
+  • List text keeps normal Geist numerals.
+  • Bullet lists and all other Research behavior remain unchanged.
