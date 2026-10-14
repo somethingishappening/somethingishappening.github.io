@@ -694,6 +694,11 @@ content:
       type: string
       required: true
       description: Changes this section name everywhere in the website navigation.
+    - name: artistic_work_visible
+      label: Show Artistic Work in navigation
+      type: boolean
+      default: true
+      description: Turn this off to hide the entire Artistic Work section from the website navigation on desktop and mobile. The Artistic Work projects are not deleted and can be shown again later.
     - name: harrilanpuisto_label
       label: Harrilanpuisto section name
       type: string
