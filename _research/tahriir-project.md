@@ -829,7 +829,7 @@ figures:
   - number: 12
     image: /assets/uploads/fig-12.png
     display_size: medium
-    mobile_display_size: medium
+    mobile_display_size: large
     display_alignment: left
     mobile_display_alignment: center
     caption: Arabic metal characters existed with their corresponding diacritics. A
