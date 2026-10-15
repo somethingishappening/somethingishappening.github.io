@@ -1,7 +1,7 @@
 ---
 title: MalignBenign
 nav_order: 2
-project_type: Album cover art
+project_type: Album Cover Art
 title_line_1: MalignBenign
 description: >-
   MalignBenign is an Experimental Electronic EP by the Lebanese music producer
