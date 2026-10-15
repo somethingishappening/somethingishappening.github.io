@@ -35,22 +35,20 @@ bio: I’m Harri, or so my friends call me. I am a designer and experimental
 mini_cv_sections:
   - title: Education
     entries:
-      - text: >-
-          PhD Doctoral Programme in Arts, Design and Architecture (in
-          Progress)   
-
+      - text: |-
+          PhD Doctoral Programme in Arts, Design and Architecture (Ongoing)  
           [Aalto University](https://www.aalto.fi/)
       - text: |-
-          MA Visual Communication Design   
+          MA Visual Communication Design  
           [Aalto University](https://www.aalto.fi/)
       - text: |-
-          Arabic calligraphy sessions with Lebanese calligrapher Ali Assi   
+          Arabic calligraphy sessions with Lebanese calligrapher Ali Assi  
           Hamra Beirut
       - text: |-
-          [Arabic Type Design Program](https://www.arabictypedesign.com)   
+          [Arabic Type Design Program](https://www.arabictypedesign.com)  
           American University of Beirut
       - text: |-
-          BA in Graphic Design   
+          BA in Graphic Design  
           [Notre Dame University Louaize](https://www.ndu.edu.lb)
   - title: Research and Art Grants
     entries:
@@ -68,16 +66,16 @@ mini_cv_sections:
   - title: Lectures and Talks
     entries:
       - text: |-
-          Guest lecture for BA Class (Koe Kieli) on Arabic Typography, 2023   
-          [Aalto University](https://www.aalto.fi/)
+          Guest lecture for BA Class (Koe Kieli) on Arabic Typography,  
+          [Aalto University](https://www.aalto.fi/) 2023
       - text: |-
-          PechaKucha with with Milja Komulainen and Baldur Heraldson   
+          PechaKucha with with Milja Komulainen and Baldur Heraldson  
           Helsinki Design Week 2022
       - text: >-
-          Taught a BA typography class with Arja Karhumaa and Heikki Lotvonen,
-          2022   
+          Taught a BA typography class with Arja Karhumaa and Heikki
+          Lotvonen,   
 
-          [Aalto University](https://www.aalto.fi/)
+          [Aalto University](https://www.aalto.fi/) 2022
 surprise_images:
   - image: /assets/uploads/about-surprise.jpg
 ---
