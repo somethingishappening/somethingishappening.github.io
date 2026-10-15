@@ -81,4 +81,6 @@ mini_cv_sections:
           [Aalto University](https://www.aalto.fi/) 2022
 surprise_images:
   - image: /assets/uploads/about-surprise.jpg
+  - image: /assets/uploads/aa.png
+    link_url: https://saadkhurshid.com
 ---
