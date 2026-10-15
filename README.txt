@@ -1,57 +1,32 @@
-HARRI.LA — restore approved desktop scaling + Research Abstract no-jump
+HARRI.LA — About bio midpoint + Mini-CV bottom-space fix
 
-REPLACE ONLY:
-  _includes/upper-resolution-layer.html
-  _layouts/research.html
+Replace ONLY:
+  _layouts/about.html
 
-ABOUT / RESOLUTION RESTORATION
-This returns to the earlier accepted scaling architecture:
+BIO
+• Desktop bio still uses the page's existing intended font size.
+• Its final text baseline still aligns to the footer.
+• New hard rule: the TOP of the bio may never rise above 50% of the viewport.
+• If the preferred font size would violate that rule, JavaScript reduces the
+  font size only as much as necessary.
+• The largest font size that fits is selected.
+• Recalculates on viewport resize/orientation change.
+• Mobile is unchanged.
+• Bio is measured while optically hidden on first load, so the fitting itself
+  is not shown as a visible jump.
 
-1. 901–1680px
-   • upper-resolution layer does NOT scale the layout at all
-   • original page layouts are the source of truth
-   • fixes regressions at:
-       1280×800
-       1280×832
-       1440×900
-       1512×982
-       1680×1050
+MINI-CV
+• The hidden surprise image now uses display:none until it is genuinely
+  revealed, so it occupies ZERO invisible space below the CV.
+• Desktop CV bottom padding is zero, removing the remaining artificial tail.
+• Once the visitor genuinely reaches the end, the surprise image can still
+  reveal normally.
+• No About content or CMS settings changed.
 
-2. Above 1680px
-   • preserves the established 1680×900 reference scaling
-   • horizontal shell follows viewport width
-   • type/vertical rhythm follows the limiting width/height scale
-   • existing 4K cap and 4096→5120 continuation are preserved
-   • fixes/returns the previously working behavior at:
-       1728×1117
-       1920×1200
-       3840×2160
-       4096×2304
-       5120×2880
-
-3. Preserved later fixes
-   • Research high-resolution hierarchy rules
-   • Research column-proportion fixes
-   • Work high-resolution copy-width correction
-   • Harrilanpuisto natural-height/gap fix
-   • no v6.16 About/CV override remains
-
-RESEARCH ABSTRACT
-• preserves current v6.12.14 Research layout/features
-• preserves optional image links
-• preserves last-prose-line baseline target (Fig. refs are ignored)
-• preserves Abstract -> scrollTop 0 behavior
-• preserves Safari resize safety logic
-• on initial navigation:
-    - Abstract stays optically hidden while measurable
-    - waits for actual font metrics
-    - calculates final footer baseline once
-    - reveals directly in final position
-• no fade and no visible correction jump
-
-UNCHANGED
+NOT CHANGED
+• _includes/upper-resolution-layer.html
+• navigation
+• Research
+• Work
+• Harrilanpuisto
 • .pages.yml
-• About layout file/content/game
-• Work layout
-• Harrilanpuisto layout/masonry
-• mobile <=900px
