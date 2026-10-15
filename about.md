@@ -35,30 +35,49 @@ bio: I’m Harri, or so my friends call me. I am a designer and experimental
 mini_cv_sections:
   - title: Education
     entries:
-      - text: PhD Doctoral Programme in Arts, Design and Architecture (in Progress)
+      - text: >-
+          PhD Doctoral Programme in Arts, Design and Architecture (in
+          Progress)   
+
           [Aalto University](https://www.aalto.fi/)
-      - text: MA Visual Communication Design Aalto University
-      - text: Arabic calligraphy sessions with Lebanese calligrapher Ali Assi Hamra
-          Beirut
-      - text: Arabic Type Design Program American University of Beirut
-      - text: BA in Graphic Design Notre Dame University Louaize.
+      - text: |-
+          MA Visual Communication Design   
+          [Aalto University](https://www.aalto.fi/)
+      - text: |-
+          Arabic calligraphy sessions with Lebanese calligrapher Ali Assi   
+          Hamra Beirut
+      - text: |-
+          [Arabic Type Design Program](https://www.arabictypedesign.com)   
+          American University of Beirut
+      - text: |-
+          BA in Graphic Design   
+          [Notre Dame University Louaize](https://www.ndu.edu.lb)
   - title: Research and Art Grants
     entries:
-      - text: Taike Artist grant for 2025 One year fulltime
-      - text: SKR Uusimaa regional grant 2024 8 months part time
+      - text: |-
+          Taike Artist grant for 2025  
+          One year fulltime
+      - text: |-
+          SKR Uusimaa regional grant 2024  
+          8 months part time
       - text: Grafia OY working grant 2023
   - title: Published Work
     entries:
-      - text: Project published in Slanted Magazine’s 2025 Experimental Typography
-          issue.
+      - text: Project published in Slanted Magazine’s 2025 [Experimental Typography
+          issue](https://www.slanted.de/product/slanted-experimental-type-3-0/).
   - title: Lectures and Talks
     entries:
-      - text: Guest lecture for BA Class (Koe Kieli) on Arabic Typography Aalto
-          University, 2023
-      - text: PechaKucha with with Milja Komulainen and Baldur Heraldson Helsinki Design
-          Week 2022
-      - text: Taught a BA typography class with Arja Karhumaa and Heikki Lotvonen Aalto
-          University, 2022
+      - text: |-
+          Guest lecture for BA Class (Koe Kieli) on Arabic Typography, 2023   
+          [Aalto University](https://www.aalto.fi/)
+      - text: |-
+          PechaKucha with with Milja Komulainen and Baldur Heraldson   
+          Helsinki Design Week 2022
+      - text: >-
+          Taught a BA typography class with Arja Karhumaa and Heikki Lotvonen,
+          2022   
+
+          [Aalto University](https://www.aalto.fi/)
 surprise_images:
   - image: /assets/uploads/about-surprise.jpg
 ---
