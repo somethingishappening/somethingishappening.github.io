@@ -17,7 +17,7 @@ morning_greeting_messages:
   - Godmorgon!
   - Bonjour!
   - Huamenta!
-ascii_click_count: 3
+ascii_click_count: 5
 ascii_messages:
   - text: (╯°□°）╯︵ ┻━┻
     color: "#FF0000"
