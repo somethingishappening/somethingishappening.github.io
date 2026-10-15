@@ -70,7 +70,7 @@ content:
     - name: research_type
       label: Research project type / descriptor
       type: string
-      description: "Small text shown above the large Research project title, like the project type in the Work template. Examples: Typographic Research, Visual Research, Publication, Research Project."
+      description: Small text shown above the large Research project title, like the project type in the Work template. Examples: Typographic Research, Visual Research, Publication, Research Project.
     - name: headline_line_1
       label: Displayed project title — line 1
       type: string
@@ -163,79 +163,11 @@ content:
         type: number
         description: 'Enter the number used in your text. Example: enter 3 for (Fig. 3). Older figures without a number continue to use their list order.'
       - name: image
-        label: Desktop / default image
+        label: Image
         type: image
         options:
           media: images
           rename: safe
-        description: Main figure image used on desktop/laptop. It is also used on phones when Mobile image is left blank.
-      - name: mobile_image
-        label: Mobile image (optional)
-        type: image
-        options:
-          media: images
-          rename: safe
-        description: Optional phone-specific version of this figure. Leave blank to use the Desktop / default image.
-      - name: display_size
-        label: Desktop display size
-        type: select
-        default: full
-        options:
-          values:
-          - name: full
-            label: 100% — Full figure column
-          - name: large
-            label: 75%
-          - name: medium
-            label: 50%
-          - name: small
-            label: 33%
-        description: Controls how wide this figure appears on desktop/laptop. Existing figures without a setting remain full width.
-      - name: mobile_display_size
-        label: Mobile display size
-        type: select
-        default: inherit
-        options:
-          values:
-          - name: inherit
-            label: Same as desktop
-          - name: full
-            label: 100% — Full mobile content width
-          - name: large
-            label: 75%
-          - name: medium
-            label: 50%
-          - name: small
-            label: 33%
-        description: Controls this figure's allocated width on phones. Same as desktop inherits Desktop display size. The caption keeps this allocated width even if the mobile image itself is narrower.
-      - name: display_alignment
-        label: Desktop justification
-        type: select
-        default: left
-        options:
-          values:
-          - name: left
-            label: Left
-          - name: center
-            label: Center
-          - name: right
-            label: Right
-        description: Controls where the desktop/laptop figure sits inside its designated figure area. Existing figures remain left aligned unless you choose another alignment.
-      - name: mobile_display_alignment
-        label: Mobile justification
-        type: select
-        default: inherit
-        options:
-          values:
-          - name: inherit
-            label: Same as desktop
-          - name: left
-            label: Left
-          - name: center
-            label: Center
-          - name: right
-            label: Right
-        description: Controls the phone figure justification independently. Same as desktop inherits Desktop justification.
       - name: caption
         label: Caption
         type: text
@@ -243,10 +175,6 @@ content:
         label: Alt text
         type: text
         description: Briefly describe the image for accessibility.
-      - name: link_url
-        label: Image link (optional)
-        type: string
-        description: Optional URL opened in a new tab when this figure image is clicked. Leave blank to keep the normal figure lightbox.
     - name: toc_columns
       label: Legacy Project Overview data
       type: object
@@ -325,10 +253,6 @@ content:
           label: Alt text
           type: text
           description: Briefly describe the image for accessibility.
-        - name: link_url
-          label: Image link (optional)
-          type: string
-          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox behavior.
       - name: video
         label: Video
         fields:
@@ -425,10 +349,6 @@ content:
           label: Alt text
           type: text
           description: Briefly describe the image for accessibility.
-        - name: link_url
-          label: Image link (optional)
-          type: string
-          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox behavior.
       - name: video
         label: Video
         fields:
@@ -525,10 +445,6 @@ content:
           label: Alt text
           type: text
           description: Briefly describe the image for accessibility.
-        - name: link_url
-          label: Image link (optional)
-          type: string
-          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox behavior.
       - name: video
         label: Video
         fields:
@@ -590,23 +506,6 @@ content:
       - name: alt
         label: Alt text
         type: text
-      - name: link_url
-        label: Image link (optional)
-        type: string
-        description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal Harrilanpuisto lightbox.
-      - name: desktop_columns
-        label: Desktop width
-        type: select
-        default: one
-        options:
-          values:
-          - name: one
-            label: 1 column
-          - name: two
-            label: 2 columns
-          - name: three
-            label: 3 columns
-        description: Choose whether this image uses 1, 2, or all 3 Harrilanpuisto columns on desktop. Mobile remains full width.
       - name: caption
         label: Lightbox caption
         type: text
@@ -637,19 +536,6 @@ content:
       - name: alt
         label: Accessibility label
         type: text
-      - name: desktop_columns
-        label: Desktop width
-        type: select
-        default: one
-        options:
-          values:
-          - name: one
-            label: 1 column
-          - name: two
-            label: 2 columns
-          - name: three
-            label: 3 columns
-        description: Choose whether this video uses 1, 2, or all 3 Harrilanpuisto columns on desktop. Mobile remains full width.
       - name: caption
         label: Lightbox caption
         type: text
@@ -740,11 +626,6 @@ content:
       type: string
       required: true
       description: Changes this section name everywhere in the website navigation.
-    - name: artistic_work_visible
-      label: Show Artistic Work in navigation
-      type: boolean
-      default: true
-      description: Turn this off to hide the entire Artistic Work section from the website navigation on desktop and mobile. The Artistic Work projects are not deleted and can be shown again later.
     - name: harrilanpuisto_label
       label: Harrilanpuisto section name
       type: string
@@ -790,24 +671,12 @@ content:
       label: Greeting phrases
       type: string
       list: true
-      description: The About greeting randomly uses these phrases.
-    - name: greeting_interval_seconds
-      label: Seconds between greeting changes
-      type: number
-      default: 30
-      required: true
-      description: "Choose the delay between automatic greeting changes. Example: 30 means every 30 seconds."
+      description: The About greeting randomly uses these phrases and changes every 30 seconds.
     - name: morning_greeting_messages
       label: Morning-only greeting phrases
       type: string
       list: true
       description: These phrases are added to the About greeting rotation only from 12:00 AM (midnight) until 11:59 AM, using the visitor's local device time.
-    - name: ascii_click_count
-      label: Clicks before ASCII appears
-      type: number
-      default: 10
-      required: true
-      description: Choose how many greeting clicks/taps are needed before the fullscreen ASCII face appears.
     - name: ascii_messages
       label: Fullscreen ASCII faces
       type: object
@@ -816,7 +685,7 @@ content:
         collapsible:
           collapsed: true
           summary: '{text}'
-      description: Add, remove, reorder, or recolor the ASCII faces used by the fullscreen easter egg. The click threshold is controlled by the setting above. Their display order is randomized automatically.
+      description: Add, remove, reorder, or recolor the ASCII faces used by the 10th-click fullscreen easter egg. Their display order is randomized automatically.
       fields:
       - name: text
         label: ASCII
@@ -887,7 +756,3 @@ content:
         label: Alt text
         type: text
         description: Briefly describe the image for accessibility.
-      - name: link_url
-        label: Image link (optional)
-        type: string
-        description: Optional URL opened in a new tab when this surprise image is clicked.
