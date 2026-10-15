@@ -243,6 +243,10 @@ content:
         label: Alt text
         type: text
         description: Briefly describe the image for accessibility.
+      - name: link_url
+        label: Image link (optional)
+        type: string
+        description: Optional URL opened in a new tab when the figure image is clicked. Leave blank to keep the normal figure lightbox behavior.
     - name: toc_columns
       label: Legacy Project Overview data
       type: object
@@ -321,6 +325,10 @@ content:
           label: Alt text
           type: text
           description: Briefly describe the image for accessibility.
+        - name: link_url
+          label: Image link (optional)
+          type: string
+          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal image/lightbox behavior.
       - name: video
         label: Video
         fields:
@@ -417,6 +425,10 @@ content:
           label: Alt text
           type: text
           description: Briefly describe the image for accessibility.
+        - name: link_url
+          label: Image link (optional)
+          type: string
+          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal image/lightbox behavior.
       - name: video
         label: Video
         fields:
@@ -513,6 +525,10 @@ content:
           label: Alt text
           type: text
           description: Briefly describe the image for accessibility.
+        - name: link_url
+          label: Image link (optional)
+          type: string
+          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal image/lightbox behavior.
       - name: video
         label: Video
         fields:
@@ -574,6 +590,10 @@ content:
       - name: alt
         label: Alt text
         type: text
+      - name: link_url
+        label: Image link (optional)
+        type: string
+        description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal Harrilanpuisto lightbox behavior.
       - name: desktop_columns
         label: Desktop width
         type: select
@@ -770,12 +790,24 @@ content:
       label: Greeting phrases
       type: string
       list: true
-      description: The About greeting randomly uses these phrases and changes every 30 seconds.
+      description: The About greeting randomly uses these phrases.
+    - name: greeting_interval_seconds
+      label: Seconds between automatic greetings
+      type: number
+      default: 30
+      required: true
+      description: Controls how many seconds pass before the About greeting automatically changes. Example: 30 means every 30 seconds.
     - name: morning_greeting_messages
       label: Morning-only greeting phrases
       type: string
       list: true
       description: These phrases are added to the About greeting rotation only from 12:00 AM (midnight) until 11:59 AM, using the visitor's local device time.
+    - name: ascii_click_count
+      label: Clicks before fullscreen ASCII appears
+      type: number
+      default: 10
+      required: true
+      description: Choose how many clicks/taps on the About greeting happen before the fullscreen ASCII face appears. Minimum effective value is 1.
     - name: ascii_messages
       label: Fullscreen ASCII faces
       type: object
@@ -784,7 +816,7 @@ content:
         collapsible:
           collapsed: true
           summary: '{text}'
-      description: Add, remove, reorder, or recolor the ASCII faces used by the 10th-click fullscreen easter egg. Their display order is randomized automatically.
+      description: Add, remove, reorder, or recolor the ASCII faces used by the fullscreen easter egg. The click threshold is controlled by the setting above. Their display order is randomized automatically.
       fields:
       - name: text
         label: ASCII
@@ -855,3 +887,7 @@ content:
         label: Alt text
         type: text
         description: Briefly describe the image for accessibility.
+      - name: link_url
+        label: Image link (optional)
+        type: string
+        description: Optional URL opened in a new tab when this surprise image is clicked.
