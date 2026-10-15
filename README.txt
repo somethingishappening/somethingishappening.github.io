@@ -1,23 +1,13 @@
-Harri.la — surprise image behavior only
+SURPRISE IMAGE BEHAVIOR ONLY
 
-Replace ONLY:
-  _layouts/about.html
+Replace only: _layouts/about.html
 
-Source baseline:
-  harri-about-cv-stable-size-v3/_layouts/about.html
+Base: exact harri-about-cv-stable-size-v3 About layout.
+Changed only surprise-image reveal behavior:
+- preserves all CV typography/sizing/spacing
+- preserves current CMS image selection and links
+- loads surprise image while hidden (needed for CMS URL images)
+- uses existing v57 0.12s opacity + translateY(8px) ease-out reveal
+- once revealed, it stays visible for that About visit, avoiding the CMS image-load scroll-height race
 
-Changed behavior only:
-- Removed the later display:none/display:block override for .cv-surprise.
-- Restored the v57 end-of-CV reveal logic.
-- Surprise remains opacity:0 / visibility:hidden / translateY(8px) until the end.
-- At the end it eases to opacity:1 / translateY(0) using the existing v57 0.12s ease-out transition.
-- Moving away from the end hides it again, matching v57.
-
-Unchanged:
-- Mini-CV typography, sizing, spacing, and content
-- CMS fields and random surprise-image selection
-- Surprise-image optional link support
-- Greeting/game
-- Navigation
-- Biography
-- All other layouts and files
+No other layout, navigation, greeting, CMS field, or content logic changed.

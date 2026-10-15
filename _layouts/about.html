@@ -820,6 +820,15 @@ html.nav-state-syncing .nav-group *{
     margin-bottom:0 !important;
   }
 
+  body.page-about .cv-surprise:not(.revealed):not(.revealing){
+    display:none !important;
+  }
+
+  body.page-about .cv-surprise.revealing,
+  body.page-about .cv-surprise.revealed{
+    display:block !important;
+  }
+
   /*
     When the visible Mini-CV is shorter than its available column, JavaScript
     distributes the unused height BETWEEN CV sections rather than leaving an
@@ -1443,6 +1452,12 @@ html.nav-state-syncing .nav-group *{
     cvSurprise.dataset.linkUrl = choice.link || "";
   }
 
+  // The v57 demo used an embedded image, so it was already loaded before reveal.
+  // CMS surprise images are URLs; load this one eagerly while it is still hidden so
+  // the old reveal animation cannot lose its scroll boundary when the image loads.
+  if(cvSurpriseImage){
+    cvSurpriseImage.loading = 'eager';
+  }
   chooseSurpriseImage();
 
   if(cvSurprise){
@@ -1454,10 +1469,15 @@ html.nav-state-syncing .nav-group *{
     });
   }
 
-  // Mini-CV surprise: match the approved v57 behavior exactly.
-  // It remains invisible until the visitor reaches the very end, then eases in.
+  // The surprise must never reserve invisible space below the Mini-CV.
+  // It is display:none until the visitor genuinely reaches the end, then it
+  // stays revealed for the rest of that page visit.
+  let cvHasUserScrolled = false;
+  let cvSurpriseRevealed = false;
+
   function updateCvSurprise(){
-    if(!cvColumn || !cvSurprise) return;
+    if(!cvColumn || !cvSurprise || cvSurpriseRevealed) return;
+    if(!cvHasUserScrolled) return;
 
     let atEnd = false;
 
@@ -1466,29 +1486,51 @@ html.nav-state-syncing .nav-group *{
         cvColumn.scrollTop + cvColumn.clientHeight >=
         cvColumn.scrollHeight - 3;
     }else{
-      const rect = cvSurprise.getBoundingClientRect();
       const pageBottom =
         window.scrollY + window.innerHeight >=
         document.documentElement.scrollHeight - 3;
-
-      atEnd = pageBottom && rect.top < window.innerHeight;
+      atEnd = pageBottom;
     }
 
-    cvSurprise.classList.toggle('revealed', atEnd);
-    cvSurprise.setAttribute('aria-hidden', String(!atEnd));
+    if(!atEnd) return;
+
+    cvSurpriseRevealed = true;
+    cvSurprise.classList.add('revealing');
+    cvSurprise.setAttribute('aria-hidden','false');
+
+    // First paint at the v57 hidden state (opacity 0, translateY(8px)), then
+    // apply .revealed so its existing .12s ease-out transition actually runs.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        cvSurprise.classList.add('revealed');
+        cvSurprise.classList.remove('revealing');
+      });
+    });
+    requestAnimationFrame(scheduleBioFit);
   }
 
   if(cvColumn){
-    cvColumn.addEventListener('scroll', updateCvSurprise, {passive:true});
+    cvColumn.addEventListener('scroll',function(){
+      if(window.innerWidth > 900 && cvColumn.scrollTop > 1){
+        cvHasUserScrolled = true;
+      }
+      updateCvSurprise();
+    },{passive:true});
   }
-  window.addEventListener('scroll', updateCvSurprise, {passive:true});
-  window.addEventListener('resize', updateCvSurprise);
+  window.addEventListener('scroll',function(){
+    if(window.innerWidth <= 900 && window.scrollY > 1){
+      cvHasUserScrolled = true;
+    }
+    updateCvSurprise();
+  },{passive:true});
+  window.addEventListener('resize',updateCvSurprise);
   window.addEventListener('pageshow',function(){
+    cvHasUserScrolled = false;
+    cvSurpriseRevealed = false;
     if(cvSurprise){
-      cvSurprise.classList.remove('revealed');
+      cvSurprise.classList.remove('revealed','revealing');
       cvSurprise.setAttribute('aria-hidden','true');
     }
-    requestAnimationFrame(updateCvSurprise);
   });
   requestAnimationFrame(updateCvSurprise);
 
@@ -1635,7 +1677,7 @@ html.nav-state-syncing .nav-group *{
 
     const surprise = document.querySelector(".cv-surprise");
     if(surprise){
-      surprise.classList.remove("revealed");
+      surprise.classList.remove("revealed","revealing");
       surprise.setAttribute("aria-hidden","true");
     }
 
