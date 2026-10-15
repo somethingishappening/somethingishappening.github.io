@@ -809,12 +809,9 @@ html.nav-state-syncing .nav-group *{
     margin-bottom:0 !important;
   }
 
-  body.page-about .cv-surprise:not(.revealed):not(.revealing){
-    display:none !important;
-  }
-
-  body.page-about .cv-surprise.revealing,
-  body.page-about .cv-surprise.revealed{
+  /* Surprise image always keeps its place in the CV, but stays invisible
+     until the visitor reaches the true bottom of the CV. */
+  body.page-about .cv-surprise{
     display:block !important;
   }
 
@@ -1484,33 +1481,12 @@ html.nav-state-syncing .nav-group *{
     if(!atEnd) return;
 
     cvSurpriseRevealed = true;
-    cvSurprise.classList.add('revealing');
     cvSurprise.setAttribute('aria-hidden','false');
 
-    // Use the exact Research figure timing on the image itself. Web Animations
-    // guarantees that the opacity-0 frame is actually painted before opacity 1,
-    // avoiding browsers collapsing both class changes into a single frame.
-    if(cvSurpriseImage && typeof cvSurpriseImage.animate === 'function'){
-      cvSurpriseImage.getAnimations().forEach((animation) => animation.cancel());
-      cvSurpriseImage.style.opacity = '0';
-      void cvSurpriseImage.offsetWidth;
-
-      const revealAnimation = cvSurpriseImage.animate(
-        [{opacity:0},{opacity:1}],
-        {duration:240,easing:'ease',fill:'forwards'}
-      );
-
-      revealAnimation.addEventListener('finish',() => {
-        cvSurprise.classList.add('revealed');
-        cvSurprise.classList.remove('revealing');
-        cvSurpriseImage.style.removeProperty('opacity');
-      },{once:true});
-    }else{
-      requestAnimationFrame(() => {
-        cvSurprise.classList.add('revealed');
-        cvSurprise.classList.remove('revealing');
-      });
-    }
+    // The image has already been sitting at opacity 0 while the visitor scrolls.
+    // Reaching the true bottom adds only the revealed state, so the browser
+    // performs the same 0.24s ease opacity transition used by Research figures.
+    cvSurprise.classList.add('revealed');
     requestAnimationFrame(scheduleBioFit);
   }
 
@@ -1533,7 +1509,7 @@ html.nav-state-syncing .nav-group *{
     cvHasUserScrolled = false;
     cvSurpriseRevealed = false;
     if(cvSurprise){
-      cvSurprise.classList.remove('revealed','revealing');
+      cvSurprise.classList.remove('revealed');
       cvSurprise.setAttribute('aria-hidden','true');
     }
   });
