@@ -153,10 +153,14 @@ button{font:inherit;color:inherit}
   margin:0;
   opacity:1;
   transition:opacity .24s ease;
-  will-change:opacity;
 }
-.cv-surprise.surprise-hidden img{
+.cv-surprise.surprise-changing img{
   opacity:0;
+}
+@media (prefers-reduced-motion:reduce){
+  .cv-surprise img{
+    transition:none !important;
+  }
 }
 
 
@@ -810,7 +814,8 @@ html.nav-state-syncing .nav-group *{
     margin-bottom:0 !important;
   }
 
-  /* Keep the surprise image in the CV layout while it is transparent. */
+  /* Surprise remains in the CV layout while visually hidden so its
+     opacity can animate exactly like the Research figure preview. */
   body.page-about .cv-surprise{
     display:block !important;
   }
@@ -907,7 +912,7 @@ html.nav-state-syncing .nav-group *{
 
     {% if page.surprise_images and page.surprise_images.size > 0 %}
       {% assign first_surprise = page.surprise_images | first %}
-      <figure class="cv-surprise surprise-hidden" id="cvSurprise" aria-hidden="true">
+      <figure class="cv-surprise surprise-changing" id="cvSurprise" aria-hidden="true">
         <img
           id="cvSurpriseImage"
           src="{{ first_surprise.image | relative_url }}"
@@ -928,7 +933,7 @@ html.nav-state-syncing .nav-group *{
         </div>
       </figure>
     {% elsif page.surprise_image %}
-      <figure class="cv-surprise surprise-hidden" id="cvSurprise" aria-hidden="true">
+      <figure class="cv-surprise surprise-changing" id="cvSurprise" aria-hidden="true">
         <img
           id="cvSurpriseImage"
           src="{{ page.surprise_image | relative_url }}"
@@ -1412,6 +1417,10 @@ html.nav-state-syncing .nav-group *{
   };
 
   // Mini-CV surprise.
+  // Reveal animation intentionally mirrors the Research figure preview:
+  // the image starts in a changing/opacity-0 state, then the class is
+  // removed two rendered frames after the bottom trigger so opacity can
+  // transition to 1 with the same .24s ease.
   const cvColumn = document.querySelector('.cv-column');
   const cvSurprise = document.getElementById('cvSurprise');
   const cvSurpriseImage = document.getElementById('cvSurpriseImage');
@@ -1438,10 +1447,6 @@ html.nav-state-syncing .nav-group *{
     cvSurprise.dataset.linkUrl = choice.link || "";
   }
 
-  if(cvSurpriseImage){
-    /* The fade must begin only after the chosen CMS image has real pixels. */
-    cvSurpriseImage.loading = 'eager';
-  }
   chooseSurpriseImage();
 
   if(cvSurprise){
@@ -1453,63 +1458,71 @@ html.nav-state-syncing .nav-group *{
     });
   }
 
-  // Mini-CV surprise: the image occupies its normal place at opacity 0.
-  // It may reveal only after a genuine user traversal reaches the true bottom.
   let cvHasUserScrolled = false;
   let cvSurpriseRevealed = false;
-  let cvSurpriseRevealQueued = false;
+  let cvSurpriseRevealToken = 0;
 
-  function cvIsAtTrueBottom(){
-    if(!cvColumn || !cvSurprise) return false;
-
-    if(window.innerWidth > 900){
-      return (
-        cvColumn.scrollTop + cvColumn.clientHeight >=
-        cvColumn.scrollHeight - 3
-      );
-    }
-
-    return (
-      window.scrollY + window.innerHeight >=
-      document.documentElement.scrollHeight - 3
-    );
+  function resetCvSurpriseAnimation(){
+    cvSurpriseRevealToken += 1;
+    cvSurpriseRevealed = false;
+    if(!cvSurprise) return;
+    cvSurprise.classList.remove('revealed');
+    cvSurprise.classList.add('surprise-changing');
+    cvSurprise.setAttribute('aria-hidden','true');
   }
 
   function revealCvSurprise(){
-    if(cvSurpriseRevealed || cvSurpriseRevealQueued) return;
-    if(!cvHasUserScrolled || !cvIsAtTrueBottom()) return;
-    if(!cvSurpriseImage || !cvSurpriseImage.complete || cvSurpriseImage.naturalWidth <= 0) return;
+    if(!cvSurprise || cvSurpriseRevealed) return;
 
-    cvSurpriseRevealQueued = true;
+    /* Do not animate an empty/lazy image. Re-check the real bottom after
+       the image loads, because its intrinsic height can extend scrollHeight. */
+    if(cvSurpriseImage && (!cvSurpriseImage.complete || !cvSurpriseImage.naturalWidth)){
+      return;
+    }
+
+    cvSurpriseRevealed = true;
+    const token = ++cvSurpriseRevealToken;
+
+    cvSurprise.classList.add('revealed');
+    cvSurprise.classList.add('surprise-changing');
     cvSurprise.setAttribute('aria-hidden','false');
 
-    /* Match the Research figure reveal: keep the image invisible for a
-       rendered frame, then remove the hidden state on the following frame. */
+    /* Same first-figure sequence as Research: keep the new image at
+       opacity 0, allow layout/paint to settle, then remove the changing
+       class on the following frame so the .24s opacity transition runs. */
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        if(!cvHasUserScrolled || !cvIsAtTrueBottom()) {
-          cvSurpriseRevealQueued = false;
-          cvSurprise.setAttribute('aria-hidden','true');
-          return;
-        }
-
-        cvSurpriseRevealed = true;
-        cvSurpriseRevealQueued = false;
-        cvSurprise.classList.remove('surprise-hidden');
-        cvSurprise.classList.add('revealed');
-        requestAnimationFrame(scheduleBioFit);
+        if(token !== cvSurpriseRevealToken) return;
+        cvSurprise.classList.remove('surprise-changing');
       });
     });
   }
 
   function updateCvSurprise(){
     if(!cvColumn || !cvSurprise || cvSurpriseRevealed) return;
-    if(!cvHasUserScrolled || !cvIsAtTrueBottom()) return;
-    revealCvSurprise();
+    if(!cvHasUserScrolled) return;
+
+    let atEnd = false;
+
+    if(window.innerWidth > 900){
+      atEnd =
+        cvColumn.scrollTop + cvColumn.clientHeight >=
+        cvColumn.scrollHeight - 3;
+    }else{
+      atEnd =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 3;
+    }
+
+    if(atEnd){
+      revealCvSurprise();
+    }
   }
 
   if(cvSurpriseImage){
-    cvSurpriseImage.addEventListener('load', updateCvSurprise, {passive:true});
+    /* The image is part of the scroll geometry from the start. When its
+       intrinsic size becomes available, re-check where the true bottom is. */
+    cvSurpriseImage.addEventListener('load',updateCvSurprise,{passive:true});
   }
 
   if(cvColumn){
@@ -1529,13 +1542,7 @@ html.nav-state-syncing .nav-group *{
   window.addEventListener('resize',updateCvSurprise);
   window.addEventListener('pageshow',function(){
     cvHasUserScrolled = false;
-    cvSurpriseRevealed = false;
-    cvSurpriseRevealQueued = false;
-    if(cvSurprise){
-      cvSurprise.classList.remove('revealed');
-      cvSurprise.classList.add('surprise-hidden');
-      cvSurprise.setAttribute('aria-hidden','true');
-    }
+    resetCvSurpriseAnimation();
   });
   requestAnimationFrame(updateCvSurprise);
 
@@ -1683,7 +1690,7 @@ html.nav-state-syncing .nav-group *{
     const surprise = document.querySelector(".cv-surprise");
     if(surprise){
       surprise.classList.remove("revealed");
-      surprise.classList.add("surprise-hidden");
+      surprise.classList.add("surprise-changing");
       surprise.setAttribute("aria-hidden","true");
     }
 

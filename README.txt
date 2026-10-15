@@ -1,9 +1,6 @@
-Replace only:
-  _layouts/about.html
+Surprise-image-only rewrite.
 
-Change scope:
-- Surprise image behavior only.
-- Image remains in its normal CV position at opacity 0.
-- Reveal is allowed only after genuine user scrolling reaches the true bottom.
-- Reveal waits until the chosen CMS image has loaded, then uses the Research figure two-frame opacity .24s ease sequence.
-- CV typography, sizing, spacing, navigation, bio, greeting/game, CMS structure, and all other templates are unchanged.
+Base: harri-about-cv-stable-size-v3/_layouts/about.html
+Changed only the surprise image CSS/markup/reveal/reset behavior.
+The reveal uses the same opacity .24s ease + two-requestAnimationFrame changing-class pattern as the Research figure preview.
+No CV typography, sizing, spacing, biography, navigation, greeting, CMS fields, or other layouts were changed.
