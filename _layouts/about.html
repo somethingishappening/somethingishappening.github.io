@@ -1356,6 +1356,7 @@ html.nav-state-syncing .nav-group *{
     greeting.style.removeProperty('font-size');
     sizeGreetingZone();
     requestAnimationFrame(() => placeGreeting(false));
+    scheduleAutomaticGreeting();
   };
 
   // Mini-CV surprise.
@@ -1471,7 +1472,18 @@ html.nav-state-syncing .nav-group *{
     if(!delta) return;
 
     event.preventDefault();
+
+    if(delta > 0){
+      /*
+        A real downward wheel/trackpad gesture counts as user traversal.
+        This also covers tall screens where the CV content fits exactly and
+        scrollTop therefore cannot become > 0.
+      */
+      cvHasUserScrolled = true;
+    }
+
     cvColumn.scrollTop += delta;
+    updateCvSurprise();
   },{passive:false});
 
   /*
@@ -1481,12 +1493,15 @@ html.nav-state-syncing .nav-group *{
     the vertical midpoint. If the copy needs more than the lower half of the
     centre column, reduce ONLY as much as necessary from the shared site scale.
   */
-  const aboutCopy = document.querySelector('.about-copy');
-  const aboutCenter = document.querySelector('.center');
+  /*
+    Reuse the `center` and `aboutCopy` references declared earlier in this
+    same About controller. Redeclaring `aboutCopy` here caused a syntax error
+    that prevented the greeting game AND surprise image from initializing.
+  */
   let bioFitFrame = 0;
 
   function fitAboutBiography(){
-    if(!aboutCopy || !aboutCenter || window.innerWidth <= 900){
+    if(!aboutCopy || !center || window.innerWidth <= 900){
       if(aboutCopy) aboutCopy.style.removeProperty('font-size');
       return;
     }
@@ -1494,7 +1509,7 @@ html.nav-state-syncing .nav-group *{
     aboutCopy.style.removeProperty('font-size');
 
     const baseSize = parseFloat(getComputedStyle(aboutCopy).fontSize) || 40;
-    const availableHeight = Math.max(1, aboutCenter.clientHeight * 0.5);
+    const availableHeight = Math.max(1, center.clientHeight * 0.5);
 
     // Already fits the lower half: keep the shared global size untouched.
     if(aboutCopy.getBoundingClientRect().height <= availableHeight + 0.5){

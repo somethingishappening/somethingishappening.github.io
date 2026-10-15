@@ -2643,6 +2643,52 @@ min-width:0}
 
 </style>
   {% include upper-resolution-layer.html %}
+
+<style id="research-list-body-lock-v7-1">
+/*
+  RESEARCH LIST TYPOGRAPHY
+  Both unordered and ordered list text inherit the exact same computed
+  font-size and leading as the surrounding Research body copy at every
+  resolution. Ordered-list marker numerals keep their tabular lining figures.
+*/
+.research-copy ul,
+.research-copy ol,
+.paper ol,
+.article-body ol,
+.research-article ol{
+  font-size:var(--harri-u-body,18px) !important;
+  line-height:1.2 !important;
+}
+
+.research-copy ul > li,
+.research-copy ol > li,
+.paper ol > li,
+.article-body ol > li,
+.research-article ol > li{
+  font-size:inherit !important;
+  line-height:inherit !important;
+}
+
+.research-copy ol > li::before,
+.paper ol > li::before,
+.article-body ol > li::before,
+.research-article ol > li::before{
+  font-size:1em !important;
+  line-height:inherit !important;
+}
+
+@media (max-width:900px){
+  .research-copy ul,
+  .research-copy ol,
+  .paper ol,
+  .article-body ol,
+  .research-article ol{
+    font-size:17px !important;
+    line-height:1.16 !important;
+  }
+}
+</style>
+
 </head>
 <body class="page-research">
 
@@ -3668,7 +3714,12 @@ min-width:0}
 
     const rect = link.getBoundingClientRect();
     const {width, height, fontSize} = sizeArrowForLink(desktopTocArrow, link);
-    const gap = fontSize * (6 / 13);
+    /*
+      Keep a stable optical gutter between the exact EPS arrow and the text.
+      Reference state: 8px gap at a 13px TOC size. Because it derives from
+      the rendered TOC font size, the spacing scales consistently everywhere.
+    */
+    const gap = Math.max(4, fontSize * (8 / 13));
     const x = rect.left - width - gap;
     const y = capCenterY(link) - (height / 2);
 
@@ -3695,7 +3746,7 @@ min-width:0}
     const navRect = mobileToc.getBoundingClientRect();
     const linkRect = link.getBoundingClientRect();
     const {width, height, fontSize} = sizeArrowForLink(mobileTocArrow, link);
-    const gap = Math.max(2, fontSize * 0.14);
+    const gap = Math.max(3, fontSize * 0.24);
 
     const x =
       (linkRect.left - navRect.left) + mobileToc.scrollLeft - width - gap;
@@ -5240,25 +5291,52 @@ min-width:0}
       return;
     }
 
-    /* Always measure from the natural, unmodified Research flow. */
+    /*
+      Always begin from the natural Research flow. The Abstract can need a
+      correction in EITHER direction after responsive scaling:
+        delta > 0 : final prose baseline is too high -> lengthen intro.
+        delta < 0 : final prose baseline is too low  -> add panel bottom inset.
+    */
     resetFlowAlignment();
     rebuildMarkers();
     if(!targetMarker || !footerMarker) return;
 
-    /* Force Safari to commit the reset before any new height is calculated. */
     const naturalHeight = intro.getBoundingClientRect().height;
-    const targetBaseline = targetMarker.getBoundingClientRect().top;
-    const footerBaseline = footerMarker.getBoundingClientRect().top;
-    const delta = footerBaseline - targetBaseline;
+    const maxSafeCorrection = Math.max(96, paper.clientHeight * 0.42);
 
-    if(generation !== alignGeneration) return;
+    function currentDelta(){
+      const targetBaseline = targetMarker.getBoundingClientRect().top;
+      const footerBaseline = footerMarker.getBoundingClientRect().top;
+      return footerBaseline - targetBaseline;
+    }
 
-    /* The natural flex layout already bottom-aligns the Abstract, so a valid
-       correction is small. Reject a stale/unstable Safari measurement instead
-       of allowing it to create a giant first-screen gap. */
-    const maxSafeCorrection = Math.max(64, paper.clientHeight * 0.22);
-    if(Number.isFinite(delta) && delta > 0.35 && delta <= maxSafeCorrection){
-      intro.style.minHeight = Math.ceil(naturalHeight + delta) + 'px';
+    let grownBy = 0;
+    let liftedBy = 0;
+
+    /*
+      A few synchronous correction passes eliminate fractional-line and Safari
+      rounding error. No transforms are used, so following article sections
+      remain in normal document flow.
+    */
+    for(let pass=0; pass<4; pass+=1){
+      if(generation !== alignGeneration) return;
+
+      const delta = currentDelta();
+      if(!Number.isFinite(delta) || Math.abs(delta) <= 0.35) break;
+      if(Math.abs(delta) > maxSafeCorrection) break;
+
+      if(delta > 0){
+        grownBy += delta;
+        intro.style.minHeight =
+          Math.ceil(naturalHeight + grownBy) + 'px';
+      }else{
+        liftedBy += -delta;
+        panel.style.paddingBottom =
+          Math.ceil(liftedBy) + 'px';
+      }
+
+      /* Commit this pass before re-measuring. */
+      void intro.offsetHeight;
     }
   }
 
@@ -5282,15 +5360,16 @@ min-width:0}
   }
 
   function onResize(){
-    /* Remove any height written for the previous viewport immediately. */
+    /*
+      Keep the previous valid alignment visible while the viewport is moving.
+      Once Safari/Chrome settles, runAfterViewportSettles() replaces it with
+      the alignment for the new geometry.
+    */
     ++alignGeneration;
     cancelAnimationFrame(rafA);
     cancelAnimationFrame(rafB);
     clearTimeout(settleTimer);
-    resetFlowAlignment();
 
-    /* Safari updates layout viewport metrics later than Chrome while the window
-       is being dragged. Wait until the resize has settled before measuring. */
     settleTimer = setTimeout(runAfterViewportSettles, 140);
   }
 
