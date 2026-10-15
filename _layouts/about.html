@@ -151,11 +151,12 @@ button{font:inherit;color:inherit}
   width:100%;
   height:auto;
   margin:0;
-  opacity:0;
-  transition:opacity .24s ease;
-}
-.cv-surprise.revealed img{
   opacity:1;
+  transition:opacity .24s ease;
+  will-change:opacity;
+}
+.cv-surprise.surprise-hidden img{
+  opacity:0;
 }
 
 
@@ -809,8 +810,7 @@ html.nav-state-syncing .nav-group *{
     margin-bottom:0 !important;
   }
 
-  /* Surprise image always keeps its place in the CV, but stays invisible
-     until the visitor reaches the true bottom of the CV. */
+  /* Keep the surprise image in the CV layout while it is transparent. */
   body.page-about .cv-surprise{
     display:block !important;
   }
@@ -907,7 +907,7 @@ html.nav-state-syncing .nav-group *{
 
     {% if page.surprise_images and page.surprise_images.size > 0 %}
       {% assign first_surprise = page.surprise_images | first %}
-      <figure class="cv-surprise" id="cvSurprise" aria-hidden="true">
+      <figure class="cv-surprise surprise-hidden" id="cvSurprise" aria-hidden="true">
         <img
           id="cvSurpriseImage"
           src="{{ first_surprise.image | relative_url }}"
@@ -928,7 +928,7 @@ html.nav-state-syncing .nav-group *{
         </div>
       </figure>
     {% elsif page.surprise_image %}
-      <figure class="cv-surprise" id="cvSurprise" aria-hidden="true">
+      <figure class="cv-surprise surprise-hidden" id="cvSurprise" aria-hidden="true">
         <img
           id="cvSurpriseImage"
           src="{{ page.surprise_image | relative_url }}"
@@ -1438,10 +1438,8 @@ html.nav-state-syncing .nav-group *{
     cvSurprise.dataset.linkUrl = choice.link || "";
   }
 
-  // The v57 demo used an embedded image, so it was already loaded before reveal.
-  // CMS surprise images are URLs; load this one eagerly while it is still hidden so
-  // the old reveal animation cannot lose its scroll boundary when the image loads.
   if(cvSurpriseImage){
+    /* The fade must begin only after the chosen CMS image has real pixels. */
     cvSurpriseImage.loading = 'eager';
   }
   chooseSurpriseImage();
@@ -1455,39 +1453,63 @@ html.nav-state-syncing .nav-group *{
     });
   }
 
-  // The surprise must never reserve invisible space below the Mini-CV.
-  // It is display:none until the visitor genuinely reaches the end, then it
-  // stays revealed for the rest of that page visit.
+  // Mini-CV surprise: the image occupies its normal place at opacity 0.
+  // It may reveal only after a genuine user traversal reaches the true bottom.
   let cvHasUserScrolled = false;
   let cvSurpriseRevealed = false;
+  let cvSurpriseRevealQueued = false;
+
+  function cvIsAtTrueBottom(){
+    if(!cvColumn || !cvSurprise) return false;
+
+    if(window.innerWidth > 900){
+      return (
+        cvColumn.scrollTop + cvColumn.clientHeight >=
+        cvColumn.scrollHeight - 3
+      );
+    }
+
+    return (
+      window.scrollY + window.innerHeight >=
+      document.documentElement.scrollHeight - 3
+    );
+  }
+
+  function revealCvSurprise(){
+    if(cvSurpriseRevealed || cvSurpriseRevealQueued) return;
+    if(!cvHasUserScrolled || !cvIsAtTrueBottom()) return;
+    if(!cvSurpriseImage || !cvSurpriseImage.complete || cvSurpriseImage.naturalWidth <= 0) return;
+
+    cvSurpriseRevealQueued = true;
+    cvSurprise.setAttribute('aria-hidden','false');
+
+    /* Match the Research figure reveal: keep the image invisible for a
+       rendered frame, then remove the hidden state on the following frame. */
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if(!cvHasUserScrolled || !cvIsAtTrueBottom()) {
+          cvSurpriseRevealQueued = false;
+          cvSurprise.setAttribute('aria-hidden','true');
+          return;
+        }
+
+        cvSurpriseRevealed = true;
+        cvSurpriseRevealQueued = false;
+        cvSurprise.classList.remove('surprise-hidden');
+        cvSurprise.classList.add('revealed');
+        requestAnimationFrame(scheduleBioFit);
+      });
+    });
+  }
 
   function updateCvSurprise(){
     if(!cvColumn || !cvSurprise || cvSurpriseRevealed) return;
-    if(!cvHasUserScrolled) return;
+    if(!cvHasUserScrolled || !cvIsAtTrueBottom()) return;
+    revealCvSurprise();
+  }
 
-    let atEnd = false;
-
-    if(window.innerWidth > 900){
-      atEnd =
-        cvColumn.scrollTop + cvColumn.clientHeight >=
-        cvColumn.scrollHeight - 3;
-    }else{
-      const pageBottom =
-        window.scrollY + window.innerHeight >=
-        document.documentElement.scrollHeight - 3;
-      atEnd = pageBottom;
-    }
-
-    if(!atEnd) return;
-
-    cvSurpriseRevealed = true;
-    cvSurprise.setAttribute('aria-hidden','false');
-
-    // The image has already been sitting at opacity 0 while the visitor scrolls.
-    // Reaching the true bottom adds only the revealed state, so the browser
-    // performs the same 0.24s ease opacity transition used by Research figures.
-    cvSurprise.classList.add('revealed');
-    requestAnimationFrame(scheduleBioFit);
+  if(cvSurpriseImage){
+    cvSurpriseImage.addEventListener('load', updateCvSurprise, {passive:true});
   }
 
   if(cvColumn){
@@ -1508,8 +1530,10 @@ html.nav-state-syncing .nav-group *{
   window.addEventListener('pageshow',function(){
     cvHasUserScrolled = false;
     cvSurpriseRevealed = false;
+    cvSurpriseRevealQueued = false;
     if(cvSurprise){
       cvSurprise.classList.remove('revealed');
+      cvSurprise.classList.add('surprise-hidden');
       cvSurprise.setAttribute('aria-hidden','true');
     }
   });
@@ -1658,7 +1682,8 @@ html.nav-state-syncing .nav-group *{
 
     const surprise = document.querySelector(".cv-surprise");
     if(surprise){
-      surprise.classList.remove("revealed","revealing");
+      surprise.classList.remove("revealed");
+      surprise.classList.add("surprise-hidden");
       surprise.setAttribute("aria-hidden","true");
     }
 
