@@ -14,6 +14,9 @@ greeting_messages:
 greeting_interval_seconds: 5
 morning_greeting_messages:
   - صباحو!
+  - Godmorgon!
+  - Bonjour!
+  - Huamenta!
 ascii_click_count: 3
 ascii_messages:
   - text: (╯°□°）╯︵ ┻━┻
