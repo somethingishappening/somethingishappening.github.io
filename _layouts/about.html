@@ -145,26 +145,28 @@ button{font:inherit;color:inherit}
 .cv-surprise{
   width:100%;
   margin:34px 0 0;
-  pointer-events:none;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(8px);
+  transition:
+    opacity .12s ease-out,
+    transform .12s ease-out,
+    visibility 0s linear .12s;
+}
+.cv-surprise.revealed{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+  transition:
+    opacity .12s ease-out,
+    transform .12s ease-out,
+    visibility 0s;
 }
 .cv-surprise img{
   display:block;
   width:100%;
   height:auto;
   margin:0;
-  opacity:0;
-  transition:opacity .24s ease;
-}
-.cv-surprise.revealed{
-  pointer-events:auto;
-}
-.cv-surprise.revealed img{
-  opacity:1;
-}
-@media (prefers-reduced-motion:reduce){
-  .cv-surprise img{
-    transition:none !important;
-  }
 }
 
 
@@ -818,11 +820,6 @@ html.nav-state-syncing .nav-group *{
     margin-bottom:0 !important;
   }
 
-  /* Keep the surprise in the CV scroll geometry while its image is opacity 0. */
-  body.page-about .cv-surprise{
-    display:block !important;
-  }
-
   /*
     When the visible Mini-CV is shorter than its available column, JavaScript
     distributes the unused height BETWEEN CV sections rather than leaving an
@@ -1420,9 +1417,6 @@ html.nav-state-syncing .nav-group *{
   };
 
   // Mini-CV surprise.
-  // The selected CMS image is preloaded first, exactly like a Research figure.
-  // It remains in the CV layout at opacity 0; reaching the true bottom then
-  // fades the image to opacity 1 with the Research figure timing/easing.
   const cvColumn = document.querySelector('.cv-column');
   const cvSurprise = document.getElementById('cvSurprise');
   const cvSurpriseImage = document.getElementById('cvSurpriseImage');
@@ -1436,94 +1430,33 @@ html.nav-state-syncing .nav-group *{
         .filter((item) => item.src)
     : [];
 
-  let cvSurpriseReady = false;
-  let cvSurpriseLoadToken = 0;
-  let cvHasUserScrolled = false;
-  let cvSurpriseRevealed = false;
+  function chooseSurpriseImage(){
+    if(!cvSurpriseImage || !cvSurpriseChoices.length) return;
 
-  function prepareSurpriseImage(){
-    if(!cvSurprise || !cvSurpriseImage) return;
+    const choice =
+      cvSurpriseChoices.length === 1
+        ? cvSurpriseChoices[0]
+        : cvSurpriseChoices[Math.floor(Math.random() * cvSurpriseChoices.length)];
 
-    const fallback = {
-      src: cvSurpriseImage.getAttribute('src') || '',
-      alt: cvSurpriseImage.getAttribute('alt') || '',
-      link: cvSurprise.dataset.linkUrl || ''
-    };
-
-    const choice = cvSurpriseChoices.length
-      ? (
-          cvSurpriseChoices.length === 1
-            ? cvSurpriseChoices[0]
-            : cvSurpriseChoices[Math.floor(Math.random() * cvSurpriseChoices.length)]
-        )
-      : fallback;
-
-    if(!choice.src) return;
-
-    const token = ++cvSurpriseLoadToken;
-    cvSurpriseReady = false;
-    cvSurprise.dataset.linkUrl = choice.link || '';
-    cvSurpriseImage.alt = choice.alt || '';
-
-    /* Research-style preload: know the final image before it can reveal. */
-    const preload = new Image();
-
-    preload.onload = () => {
-      if(token !== cvSurpriseLoadToken) return;
-
-      /* Preserve the loaded image's intrinsic ratio while it is opacity 0,
-         so the CV's true scroll bottom is stable before the reveal. */
-      if(preload.naturalWidth && preload.naturalHeight){
-        cvSurpriseImage.setAttribute('width', String(preload.naturalWidth));
-        cvSurpriseImage.setAttribute('height', String(preload.naturalHeight));
-      }
-
-      cvSurpriseImage.src = choice.src;
-      cvSurpriseImage.alt = choice.alt || '';
-      cvSurpriseReady = true;
-      requestAnimationFrame(updateCvSurprise);
-    };
-
-    preload.onerror = () => {
-      if(token !== cvSurpriseLoadToken) return;
-      cvSurpriseImage.src = choice.src;
-      cvSurpriseImage.alt = choice.alt || '';
-      cvSurpriseReady = true;
-      requestAnimationFrame(updateCvSurprise);
-    };
-
-    preload.src = choice.src;
+    cvSurpriseImage.src = choice.src;
+    cvSurpriseImage.alt = choice.alt;
+    cvSurprise.dataset.linkUrl = choice.link || "";
   }
+
+  chooseSurpriseImage();
 
   if(cvSurprise){
-    cvSurprise.addEventListener('click', (event) => {
-      const url = (cvSurprise.dataset.linkUrl || '').trim();
+    cvSurprise.addEventListener("click", (event) => {
+      const url = (cvSurprise.dataset.linkUrl || "").trim();
       if(!url) return;
       event.preventDefault();
-      window.open(url, '_blank', 'noopener,noreferrer');
+      window.open(url, "_blank", "noopener,noreferrer");
     });
   }
 
-  function revealCvSurprise(){
-    if(!cvSurprise || cvSurpriseRevealed || !cvSurpriseReady) return;
-
-    cvSurpriseRevealed = true;
-    cvSurprise.setAttribute('aria-hidden','false');
-
-    /* Same first-figure paint sequence as Research: the image is already
-       opacity 0, then two frames later it transitions to opacity 1. */
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if(!cvSurpriseRevealed) return;
-        cvSurprise.classList.add('revealed');
-        requestAnimationFrame(scheduleBioFit);
-      });
-    });
-  }
-
+  // Mini-CV surprise: hidden until the user reaches the very end.
   function updateCvSurprise(){
-    if(!cvColumn || !cvSurprise || cvSurpriseRevealed) return;
-    if(!cvHasUserScrolled || !cvSurpriseReady) return;
+    if(!cvColumn || !cvSurprise) return;
 
     let atEnd = false;
 
@@ -1539,36 +1472,15 @@ html.nav-state-syncing .nav-group *{
       atEnd = pageBottom && rect.top < window.innerHeight;
     }
 
-    if(atEnd){
-      revealCvSurprise();
-    }
+    cvSurprise.classList.toggle('revealed', atEnd);
+    cvSurprise.setAttribute('aria-hidden', String(!atEnd));
   }
-
-  prepareSurpriseImage();
 
   if(cvColumn){
-    cvColumn.addEventListener('scroll',function(){
-      if(window.innerWidth > 900 && cvColumn.scrollTop > 1){
-        cvHasUserScrolled = true;
-      }
-      updateCvSurprise();
-    },{passive:true});
+    cvColumn.addEventListener('scroll', updateCvSurprise, {passive:true});
   }
-  window.addEventListener('scroll',function(){
-    if(window.innerWidth <= 900 && window.scrollY > 1){
-      cvHasUserScrolled = true;
-    }
-    updateCvSurprise();
-  },{passive:true});
-  window.addEventListener('resize',updateCvSurprise);
-  window.addEventListener('pageshow',function(){
-    cvHasUserScrolled = false;
-    cvSurpriseRevealed = false;
-    if(cvSurprise){
-      cvSurprise.classList.remove('revealed');
-      cvSurprise.setAttribute('aria-hidden','true');
-    }
-  });
+  window.addEventListener('scroll', updateCvSurprise, {passive:true});
+  window.addEventListener('resize', updateCvSurprise);
   requestAnimationFrame(updateCvSurprise);
 
   // Desktop About: wheel/trackpad scrolling anywhere controls Mini-CV.
@@ -1590,19 +1502,12 @@ html.nav-state-syncing .nav-group *{
     const delta = normalizeWheelDelta(event);
     if(!delta) return;
 
+    /*
+      Desktop About has no page-level vertical scroll. Any wheel/trackpad
+      gesture anywhere on the page controls the Mini-CV column instead.
+    */
     event.preventDefault();
-
-    if(delta > 0){
-      /*
-        A real downward wheel/trackpad gesture counts as user traversal.
-        This also covers tall screens where the CV content fits exactly and
-        scrollTop therefore cannot become > 0.
-      */
-      cvHasUserScrolled = true;
-    }
-
     cvColumn.scrollTop += delta;
-    updateCvSurprise();
   },{passive:false});
 
   /*
