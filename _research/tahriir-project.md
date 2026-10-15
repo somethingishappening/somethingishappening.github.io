@@ -691,7 +691,7 @@ figures:
   - number: 1
     image: /assets/uploads/fig-1-1.jpg
     mobile_image: /assets/uploads/fig-1mobile-1.jpg
-    display_size: small
+    display_size: large
     mobile_display_size: full
     display_alignment: left
     mobile_display_alignment: inherit
@@ -739,7 +739,7 @@ figures:
     display_size: full
     mobile_display_size: inherit
     display_alignment: left
-    mobile_display_alignment: inherit
+    mobile_display_alignment: center
     caption: |-
       The different Arabic Dot groups.
       Figure illustrated by the author.
@@ -831,7 +831,7 @@ figures:
     display_size: medium
     mobile_display_size: medium
     display_alignment: left
-    mobile_display_alignment: inherit
+    mobile_display_alignment: center
     caption: Arabic metal characters existed with their corresponding diacritics. A
       norm that carried over into modern ways of producing Arabic letters.
   - number: 13
@@ -938,7 +938,7 @@ figures:
     display_size: large
     mobile_display_size: inherit
     display_alignment: left
-    mobile_display_alignment: inherit
+    mobile_display_alignment: center
     caption: InDesign recognises diacritic agency and allows diacritics to move.
   - number: 23
     image: /assets/uploads/fig-23.jpg
