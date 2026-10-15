@@ -574,6 +574,19 @@ content:
       - name: alt
         label: Alt text
         type: text
+      - name: desktop_columns
+        label: Desktop width
+        type: select
+        default: one
+        options:
+          values:
+          - name: one
+            label: 1 column
+          - name: two
+            label: 2 columns
+          - name: three
+            label: 3 columns
+        description: Choose whether this image uses 1, 2, or all 3 Harrilanpuisto columns on desktop. Mobile remains full width.
       - name: caption
         label: Lightbox caption
         type: text
@@ -604,6 +617,19 @@ content:
       - name: alt
         label: Accessibility label
         type: text
+      - name: desktop_columns
+        label: Desktop width
+        type: select
+        default: one
+        options:
+          values:
+          - name: one
+            label: 1 column
+          - name: two
+            label: 2 columns
+          - name: three
+            label: 3 columns
+        description: Choose whether this video uses 1, 2, or all 3 Harrilanpuisto columns on desktop. Mobile remains full width.
       - name: caption
         label: Lightbox caption
         type: text
