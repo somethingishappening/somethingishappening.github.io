@@ -820,12 +820,26 @@ html.nav-state-syncing .nav-group *{
     margin-bottom:0 !important;
   }
 
-  body.page-about .cv-surprise:not(.revealed){
+  body.page-about .cv-surprise:not(.revealed):not(.revealing){
     display:none !important;
   }
 
+  body.page-about .cv-surprise.revealing,
   body.page-about .cv-surprise.revealed{
     display:block !important;
+  }
+
+  body.page-about .cv-surprise.revealing{
+    opacity:0 !important;
+    visibility:visible !important;
+    transform:none !important;
+  }
+
+  body.page-about .cv-surprise.revealed{
+    opacity:1 !important;
+    visibility:visible !important;
+    transform:none !important;
+    transition:opacity .55s cubic-bezier(.22,1,.36,1) !important;
   }
 
   /*
@@ -1488,8 +1502,14 @@ html.nav-state-syncing .nav-group *{
     if(!atEnd) return;
 
     cvSurpriseRevealed = true;
-    cvSurprise.classList.add('revealed');
+    cvSurprise.classList.add('revealing');
     cvSurprise.setAttribute('aria-hidden','false');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        cvSurprise.classList.add('revealed');
+        cvSurprise.classList.remove('revealing');
+      });
+    });
     requestAnimationFrame(scheduleBioFit);
   }
 
@@ -1512,7 +1532,7 @@ html.nav-state-syncing .nav-group *{
     cvHasUserScrolled = false;
     cvSurpriseRevealed = false;
     if(cvSurprise){
-      cvSurprise.classList.remove('revealed');
+      cvSurprise.classList.remove('revealed','revealing');
       cvSurprise.setAttribute('aria-hidden','true');
     }
   });
