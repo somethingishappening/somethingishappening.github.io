@@ -11,8 +11,10 @@ greeting_messages:
   - Ben salut!
   - Hi there!
   - مرحبا!
+greeting_interval_seconds: 3
 morning_greeting_messages:
   - صباحو!
+ascii_click_count: 3
 ascii_messages:
   - text: (╯°□°）╯︵ ┻━┻
     color: "#FF0000"
@@ -71,10 +73,8 @@ mini_cv_sections:
       - text: |-
           PechaKucha with with Milja Komulainen and Baldur Heraldson  
           Helsinki Design Week 2022
-      - text: >-
-          Taught a BA typography class with Arja Karhumaa and Heikki
-          Lotvonen,   
-
+      - text: |-
+          Taught a BA typography class with Arja Karhumaa and Heikki Lotvonen,  
           [Aalto University](https://www.aalto.fi/) 2022
 surprise_images:
   - image: /assets/uploads/about-surprise.jpg
