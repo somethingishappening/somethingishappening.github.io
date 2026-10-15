@@ -7,6 +7,18 @@
   <script>
     /* Keep Research opening at the deterministic top position. */
     if("scrollRestoration" in history){ history.scrollRestoration = "manual"; }
+
+    /*
+      The Abstract baseline is finalized after the browser has committed the
+      first desktop viewport. Mark that very short opening measurement window
+      before first paint so the visitor never sees the intermediate geometry.
+    */
+    if(window.innerWidth >= 901){
+      document.documentElement.classList.add("research-opening-stabilizing");
+      window.setTimeout(function(){
+        document.documentElement.classList.remove("research-opening-stabilizing");
+      },1000);
+    }
   </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,6 +39,18 @@
     }
 
     *{box-sizing:border-box}
+
+    /*
+      Research opening-state stabilizer.
+      Visibility only: the final layout is still calculated by the existing
+      baseline-alignment logic. This prevents the intermediate Abstract
+      position from flashing for one or two frames on navigation.
+    */
+    @media (min-width:901px){
+      html.research-opening-stabilizing .research-intro-screen{
+        visibility:hidden !important;
+      }
+    }
 
     /* Prevent a one-frame flash of the pre-aligned Research geometry. The class
        is removed immediately after the opening state is synchronised below. */
@@ -5213,6 +5237,10 @@ min-width:0}
     panel.style.removeProperty('padding-bottom');
   }
 
+  function revealStableOpening(){
+    document.documentElement.classList.remove('research-opening-stabilizing');
+  }
+
   function measureAndAlign(generation){
     if(generation !== alignGeneration) return;
 
@@ -5220,13 +5248,17 @@ min-width:0}
       resetFlowAlignment();
       removeMarker(targetMarker); targetMarker = null;
       removeMarker(footerMarker); footerMarker = null;
+      revealStableOpening();
       return;
     }
 
     /* Always measure from the natural, unmodified Research flow. */
     resetFlowAlignment();
     rebuildMarkers();
-    if(!targetMarker || !footerMarker) return;
+    if(!targetMarker || !footerMarker){
+      revealStableOpening();
+      return;
+    }
 
     /* Force Safari to commit the reset before any new height is calculated. */
     const naturalHeight = intro.getBoundingClientRect().height;
@@ -5243,6 +5275,8 @@ min-width:0}
     if(Number.isFinite(delta) && delta > 0.35 && delta <= maxSafeCorrection){
       intro.style.minHeight = Math.ceil(naturalHeight + delta) + 'px';
     }
+
+    revealStableOpening();
   }
 
   function runAfterViewportSettles(){
