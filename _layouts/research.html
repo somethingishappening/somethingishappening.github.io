@@ -5,20 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ page.title }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
   <script>
-    /* Keep Research opening at the deterministic top position. */
-    if("scrollRestoration" in history){ history.scrollRestoration = "manual"; }
-
     /*
-      The Abstract baseline is finalized after the browser has committed the
-      first desktop viewport. Mark that very short opening measurement window
-      before first paint so the visitor never sees the intermediate geometry.
+      Research opens from a deterministic top position.
+      On desktop the Abstract is withheld optically until its baseline has
+      been measured, so no intermediate position can flash on screen.
     */
     if(window.innerWidth >= 901){
-      document.documentElement.classList.add("research-opening-stabilizing");
-      window.setTimeout(function(){
-        document.documentElement.classList.remove("research-opening-stabilizing");
-      },1000);
+      document.documentElement.classList.add("research-initializing");
     }
+    if("scrollRestoration" in history){ history.scrollRestoration = "manual"; }
   </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,19 +36,17 @@
     *{box-sizing:border-box}
 
     /*
-      Research opening-state stabilizer.
-      Visibility only: the final layout is still calculated by the existing
-      baseline-alignment logic. This prevents the intermediate Abstract
-      position from flashing for one or two frames on navigation.
+      OPENING ABSTRACT STABILIZER
+      Opacity only: the element stays fully measurable while hidden.
+      There is deliberately NO transition/fade.
     */
     @media (min-width:901px){
-      html.research-opening-stabilizing .research-intro-screen{
-        visibility:hidden !important;
+      html.research-initializing .research-intro-screen{
+        opacity:0 !important;
+        pointer-events:none !important;
       }
     }
 
-    /* Prevent a one-frame flash of the pre-aligned Research geometry. The class
-       is removed immediately after the opening state is synchronised below. */
     html{scroll-behavior:smooth}
     body{
       margin:0;
@@ -5237,10 +5230,6 @@ min-width:0}
     panel.style.removeProperty('padding-bottom');
   }
 
-  function revealStableOpening(){
-    document.documentElement.classList.remove('research-opening-stabilizing');
-  }
-
   function measureAndAlign(generation){
     if(generation !== alignGeneration) return;
 
@@ -5248,17 +5237,13 @@ min-width:0}
       resetFlowAlignment();
       removeMarker(targetMarker); targetMarker = null;
       removeMarker(footerMarker); footerMarker = null;
-      revealStableOpening();
       return;
     }
 
     /* Always measure from the natural, unmodified Research flow. */
     resetFlowAlignment();
     rebuildMarkers();
-    if(!targetMarker || !footerMarker){
-      revealStableOpening();
-      return;
-    }
+    if(!targetMarker || !footerMarker) return;
 
     /* Force Safari to commit the reset before any new height is calculated. */
     const naturalHeight = intro.getBoundingClientRect().height;
@@ -5275,8 +5260,6 @@ min-width:0}
     if(Number.isFinite(delta) && delta > 0.35 && delta <= maxSafeCorrection){
       intro.style.minHeight = Math.ceil(naturalHeight + delta) + 'px';
     }
-
-    revealStableOpening();
   }
 
   function runAfterViewportSettles(){
@@ -5317,13 +5300,49 @@ min-width:0}
     window.visualViewport.addEventListener('resize', onResize, {passive:true});
   }
 
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(runAfterViewportSettles).catch(runAfterViewportSettles);
-  }else{
-    runAfterViewportSettles();
+  /*
+    INITIAL OPENING
+    ---------------
+    The previous regression scheduled the first Abstract correction across
+    later animation frames, which allowed the browser to paint the natural
+    position first and then visibly move it.
+
+    For the first visit we wait for the actual font metrics, calculate the
+    final footer/Abstract baseline while the intro is optically hidden, and
+    reveal it immediately afterward. No fade and no post-paint correction.
+  */
+  let initialReleased = false;
+
+  function initialAlignAndReveal(){
+    if(initialReleased) return;
+    initialReleased = true;
+
+    clearTimeout(initialFallback);
+    ++alignGeneration;
+    cancelAnimationFrame(rafA);
+    cancelAnimationFrame(rafB);
+    clearTimeout(settleTimer);
+
+    const generation = alignGeneration;
+
+    resetFlowAlignment();
+    void intro.offsetHeight;
+    measureAndAlign(generation);
+
+    document.documentElement.classList.remove('research-initializing');
   }
 
-  window.addEventListener('load', runAfterViewportSettles, {once:true});
+  const initialFallback = setTimeout(initialAlignAndReveal, 1200);
+
+  if(window.innerWidth < DESKTOP_MIN){
+    initialAlignAndReveal();
+  }else if(document.fonts && document.fonts.ready){
+    document.fonts.ready
+      .then(initialAlignAndReveal)
+      .catch(initialAlignAndReveal);
+  }else{
+    initialAlignAndReveal();
+  }
 })();
 </script>
 
