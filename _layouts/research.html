@@ -2689,6 +2689,20 @@ min-width:0}
 }
 </style>
 
+
+<style id="research-first-screen-abstract-lock-v7-2">
+@media (min-width:901px){
+  .paper > .research-intro-screen,
+  .research-intro-screen{
+    min-height:100% !important;
+  }
+
+  .research-abstract-copy{
+    will-change:transform;
+  }
+}
+</style>
+
 </head>
 <body class="page-research">
 
@@ -5292,52 +5306,28 @@ min-width:0}
     }
 
     /*
-      Always begin from the natural Research flow. The Abstract can need a
-      correction in EITHER direction after responsive scaling:
-        delta > 0 : final prose baseline is too high -> lengthen intro.
-        delta < 0 : final prose baseline is too low  -> add panel bottom inset.
+      FIRST-SCREEN RULE
+      -----------------
+      Never lengthen the intro screen to chase the footer baseline. The
+      Abstract must remain inside the first Research viewport. We therefore
+      align the copy optically inside that fixed first screen.
     */
     resetFlowAlignment();
     rebuildMarkers();
     if(!targetMarker || !footerMarker) return;
 
-    const naturalHeight = intro.getBoundingClientRect().height;
-    const maxSafeCorrection = Math.max(96, paper.clientHeight * 0.42);
+    const targetBaseline = targetMarker.getBoundingClientRect().top;
+    const footerBaseline = footerMarker.getBoundingClientRect().top;
+    const delta = footerBaseline - targetBaseline;
 
-    function currentDelta(){
-      const targetBaseline = targetMarker.getBoundingClientRect().top;
-      const footerBaseline = footerMarker.getBoundingClientRect().top;
-      return footerBaseline - targetBaseline;
-    }
-
-    let grownBy = 0;
-    let liftedBy = 0;
+    if(generation !== alignGeneration || !Number.isFinite(delta)) return;
 
     /*
-      A few synchronous correction passes eliminate fractional-line and Safari
-      rounding error. No transforms are used, so following article sections
-      remain in normal document flow.
+      Footer is itself inside the visible viewport, so translating by the exact
+      baseline delta cannot create extra document height. This also works in
+      both directions and preserves the next article section position.
     */
-    for(let pass=0; pass<4; pass+=1){
-      if(generation !== alignGeneration) return;
-
-      const delta = currentDelta();
-      if(!Number.isFinite(delta) || Math.abs(delta) <= 0.35) break;
-      if(Math.abs(delta) > maxSafeCorrection) break;
-
-      if(delta > 0){
-        grownBy += delta;
-        intro.style.minHeight =
-          Math.ceil(naturalHeight + grownBy) + 'px';
-      }else{
-        liftedBy += -delta;
-        panel.style.paddingBottom =
-          Math.ceil(liftedBy) + 'px';
-      }
-
-      /* Commit this pass before re-measuring. */
-      void intro.offsetHeight;
-    }
+    copy.style.transform = `translateY(${delta.toFixed(3)}px)`;
   }
 
   function runAfterViewportSettles(){

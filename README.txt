@@ -1,48 +1,33 @@
-HARRI.LA — v7.1 interaction + Research correction
+HARRI.LA — v7.2 Abstract first-screen + Mini-CV fill
 
 Replace ONLY:
   _layouts/about.html
   _layouts/research.html
 
-ABOUT
-• Restores the greeting click game.
-• Restores the fullscreen ASCII event.
-• Restores automatic greeting timing.
-• Restores the Mini-CV surprise image.
-• Root cause fixed: the v7 About file declared `aboutCopy` twice in the same
-  JavaScript scope, causing the entire About controller to fail parsing.
-• About JavaScript is syntax-validated in this package.
-• A real downward wheel/trackpad gesture now counts as CV traversal even when
-  the visible CV happens to fit exactly in a tall viewport, so the surprise
-  remains reachable without appearing automatically.
-• Existing unified responsive scaling and bio-fit rule are preserved.
-
 RESEARCH ABSTRACT
-• Keeps flow-safe alignment (no transforms).
-• Aligns the last actual Abstract prose baseline to the last visible footer
-  baseline in BOTH directions.
-• If Abstract is too high, intro height increases.
-• If Abstract is too low, Abstract panel bottom inset moves it upward.
-• Uses up to four tiny correction passes for fractional/Safari rounding.
-• Old valid alignment stays visible until resize has settled.
-• Initial hidden-until-settled behavior remains.
+• No alignment code is allowed to increase the first-screen height anymore.
+• The intro remains a one-screen composition.
+• Last actual Abstract prose baseline is measured against the last visible footer baseline.
+• The Abstract copy is translated by exactly that difference inside the fixed first screen.
+• Works upward or downward without changing document flow or pushing the article down.
+• Initial hidden-until-settled behavior remains, so there is no opening jump.
+• Existing list-size and navigation-arrow fixes are preserved.
 
-RESEARCH LISTS
-• Bullet and numbered-list text now inherit the exact body-text size and
-  leading at every desktop resolution.
-• Mobile remains 17px / 1.16.
-• Only ordered-list marker numerals retain lining + tabular numeral features.
-
-RESEARCH SIDE-NAV ARROW
-• Keeps the exact supplied EPS arrow.
-• Desktop reference gap is now 8px at a 13px TOC size and scales with TOC text.
-• Mobile gutter is also slightly increased.
-• Existing cap-height vertical alignment remains unchanged.
+ABOUT / MINI-CV
+• Unified v7 site scaling remains unchanged.
+• Bio stays bottom-aligned and never rises above the midpoint.
+• If the visible Mini-CV ends above the bottom, the unused height is distributed
+  between CV sections, so the final visible CV entry reaches the bottom line.
+• No fake padding is placed below the final CV item.
+• CV typography remains unchanged.
+• When the CV needs this expansion, the large bio reduces slightly (max 8%)
+  for visual balance, then its existing midpoint-fit rule still applies.
+• If the CV already fills/overflows the column, no vertical stretching is added.
+• Surprise image and greeting game remain active.
+• When surprise image appears, the CV balance is recalculated automatically.
 
 UNCHANGED
-• unified v7 scaling system
+• _includes/upper-resolution-layer.html
 • .pages.yml
-• navigation file
-• Work layout
-• Harrilanpuisto layout
-• Research figure controls / hanging line
+• Work / Harrilanpuisto / navigation
+• mobile layout
