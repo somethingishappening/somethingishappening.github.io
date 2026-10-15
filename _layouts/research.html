@@ -2733,7 +2733,7 @@ min-width:0}
   */
   body.page-research .research-intro-screen{
     height:auto !important;
-    min-height:100% !important;
+    min-height:var(--harri-research-intro-height, 100%) !important;
   }
 
   /*
@@ -5393,6 +5393,22 @@ min-width:0}
     return children.length ? children[children.length - 1] : null;
   }
 
+  /*
+    Deterministic first-screen height.
+    Percentage min-heights inside the internally scrolling .paper can be
+    resolved before/after font + unified-scale settling on different reloads.
+    Use the actual visible paper height instead, in pixels.
+  */
+  function syncIntroHeight(){
+    if(window.innerWidth < DESKTOP_MIN){
+      intro.style.removeProperty('--harri-research-intro-height');
+      return;
+    }
+
+    const visiblePaperHeight = Math.max(1, paper.clientHeight || Math.round(paper.getBoundingClientRect().height));
+    intro.style.setProperty('--harri-research-intro-height', visiblePaperHeight + 'px');
+  }
+
   function reset(){
     intro.style.height = '';
     intro.style.minHeight = '';
@@ -5418,8 +5434,9 @@ min-width:0}
       Keep the Abstract inside exactly one paper viewport.
       Do not grow the intro and do not transform the copy.
     */
+    syncIntroHeight();
     intro.style.height = 'auto';
-    intro.style.minHeight = '100%';
+    intro.style.minHeight = '';
     copy.style.removeProperty('transform');
 
     const last = lastAbstractBlock();
@@ -5487,6 +5504,7 @@ min-width:0}
       if(currentGeneration !== generation) return;
 
       reset();
+      syncIntroHeight();
       void intro.offsetHeight;
 
       rafB = requestAnimationFrame(function(){
@@ -5500,7 +5518,19 @@ min-width:0}
     cancelAnimationFrame(rafA);
     cancelAnimationFrame(rafB);
     clearTimeout(settleTimer);
-    settleTimer = setTimeout(run,140);
+
+    /*
+      During first paint, a visualViewport/scale resize can arrive between
+      fontsReady() and reveal(). Running the normal resize path there used to
+      cancel the initial reveal and made refresh behaviour timing-dependent.
+    */
+    settleTimer = setTimeout(function(){
+      if(initialReleased){
+        run();
+      }else{
+        initialRun();
+      }
+    },140);
   }
 
   /*
@@ -5531,6 +5561,7 @@ min-width:0}
 
     rafA = requestAnimationFrame(function(){
       reset();
+      syncIntroHeight();
       void intro.offsetHeight;
 
       rafB = requestAnimationFrame(function(){
@@ -5560,10 +5591,33 @@ min-width:0}
   window.addEventListener('resize',onResize,{passive:true});
   window.addEventListener('orientationchange',onResize,{passive:true});
   window.addEventListener('harri:desktop-scale',onResize);
+  window.addEventListener('load',function(){
+    if(initialReleased){
+      run();
+    }else{
+      initialRun();
+    }
+  },{once:true});
 
   if(window.visualViewport){
     window.visualViewport.addEventListener('resize',onResize,{passive:true});
   }
+
+  if('ResizeObserver' in window){
+    const paperObserver = new ResizeObserver(function(){
+      onResize();
+    });
+    paperObserver.observe(paper);
+  }
+
+  /* Never leave the first Research screen optically withheld because a
+     resize/font event happened at the same moment as the initial measurement. */
+  setTimeout(function(){
+    if(!initialReleased){
+      syncIntroHeight();
+      reveal();
+    }
+  },1800);
 })();
 </script>
 

@@ -1,17 +1,15 @@
-HARRI.LA — RESEARCH ABSTRACT FIT RETRY
+HARRI.LA — RESEARCH ABSTRACT DETERMINISTIC FIRST-SCREEN FIX
 
-Replace only:
+Replace ONLY:
   _layouts/research.html
 
-Source:
-  Exact last-good v7.4 Research template.
+What changed:
+- The desktop Research intro no longer relies on a percentage min-height resolving
+  at a particular moment during font / unified-scale / viewport settling.
+- It measures the actual visible .paper height and uses that as the intro min-height.
+- Short abstracts remain bottom-aligned within the first Research screen.
+- Long abstracts expand naturally and are never pushed below the first screen.
+- Initial resize/visualViewport events can no longer cancel the initial reveal.
+- A ResizeObserver keeps the first-screen height synchronized with the real paper area.
 
-Only two functional changes were made:
-1. Desktop Research intro CSS: height:100% -> height:auto, while keeping min-height:100%.
-2. The Research baseline-alignment JavaScript now applies height:auto instead of restoring height:100%.
-
-Effect:
-- If the title + Abstract fit in one Research viewport, the existing bottom-aligned first-screen appearance remains.
-- If they do not fit, the intro may grow naturally so the Abstract begins after the title instead of being pushed below the visible first screen.
-
-No navigation, typography, figure, column, CMS, mobile, Work, About, or Harrilanpuisto files are changed.
+Nothing else is included or replaced.
