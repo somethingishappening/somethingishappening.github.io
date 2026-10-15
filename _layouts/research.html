@@ -3757,12 +3757,16 @@ min-width:0}
     const style = getComputedStyle(link);
     const fontSize = parseFloat(style.fontSize) || 13;
 
-    /* Exact EPS glyph stays 14 CSS px wide at every resolution. */
-    const width = 14;
+    /*
+      Scale the exact EPS arrow from the rendered TOC type.
+      Reference state remains 14px wide at 13px TOC type; every smaller or
+      larger desktop/TV state now changes the arrow by the same ratio.
+    */
+    const width = 14 * (fontSize / 13);
     const height = width / EPS_ARROW_RATIO;
 
-    arrow.style.width = `${width}px`;
-    arrow.style.height = `${height.toFixed(3)}px`;
+    arrow.style.setProperty('--research-arrow-width', `${width.toFixed(3)}px`);
+    arrow.style.setProperty('--research-arrow-height', `${height.toFixed(3)}px`);
 
     return {width, height, fontSize};
   }
@@ -3784,7 +3788,7 @@ min-width:0}
       Reference state: 8px gap at a 13px TOC size. Because it derives from
       the rendered TOC font size, the spacing scales consistently everywhere.
     */
-    const gap = Math.max(8, fontSize * (6 / 13));
+    const gap = fontSize * (8 / 13);
     const x = rect.left - width - gap;
     const y = capCenterY(link) - (height / 2);
 
@@ -5213,13 +5217,13 @@ min-width:0}
 
 <style id="research-nav-arrow-eps-style">
 /* RESEARCH NAV ARROW — exact outline supplied in nav arrow.eps.
-   Existing JS sizes the outline from the target row and aligns its tip to
-   the middle of that row's rendered cap height. */
+   JS scales the outline from the target row's rendered TOC font size and
+   aligns its tip to the middle of that row's rendered cap height. */
 .toc-arrow,
 .mobile-toc-arrow{
-  width:14px !important;
-  height:auto !important;
-  aspect-ratio:21.5196 / 12.44;
+  width:var(--research-arrow-width,14px) !important;
+  height:var(--research-arrow-height,8.087px) !important;
+  aspect-ratio:auto !important;
   line-height:0 !important;
   font-size:0 !important;
   color:currentColor;
