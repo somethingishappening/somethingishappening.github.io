@@ -842,6 +842,59 @@ html.nav-state-syncing .nav-group *{
 }
 </style>
 
+
+<style id="harri-cv-research-body-source-v7-4">
+/*
+  MINI-CV = RESEARCH BODY TYPOGRAPHY
+  ----------------------------------
+  There is no separate desktop CV type breakpoint anymore.
+  Both templates consume the same unified body-size and spacing variables.
+*/
+@media (min-width:901px){
+  body.page-about .cv-section h2,
+  body.page-about .cv-item,
+  body.page-about .cv-item p{
+    font-size:var(--harri-u-body,18px) !important;
+    line-height:1.2 !important;
+    letter-spacing:0 !important;
+  }
+
+  body.page-about .cv-section h2{
+    font-weight:700 !important;
+    margin:0 0 var(--harri-u-space-12,12px) !important;
+  }
+
+  body.page-about .cv-item{
+    margin:0 0 var(--harri-u-space-14,14px) !important;
+  }
+
+  body.page-about .cv-item:last-child{
+    margin-bottom:0 !important;
+  }
+
+  body.page-about .cv-item p{
+    margin:0 !important;
+  }
+
+  body.page-about .cv-section{
+    margin-bottom:var(--harri-u-space-26,26px) !important;
+  }
+
+  body.page-about .cv-section:last-of-type{
+    margin-bottom:0 !important;
+  }
+}
+
+@media (max-width:900px){
+  body.page-about .cv-section h2,
+  body.page-about .cv-item,
+  body.page-about .cv-item p{
+    font-size:17px !important;
+    line-height:1.16 !important;
+  }
+}
+</style>
+
 </head>
 <body class="page-about">
 <div class="about-layout">
@@ -1513,83 +1566,28 @@ html.nav-state-syncing .nav-group *{
   */
   let bioFitFrame = 0;
 
-  function visibleCvSections(){
-    if(!cvColumn) return [];
-    return Array.from(cvColumn.querySelectorAll('.cv-section')).filter((section)=>{
-      return getComputedStyle(section).display !== 'none';
-    });
-  }
-
-  function balanceMiniCvHeight(){
-    if(!cvColumn || window.innerWidth <= 900){
-      document.documentElement.style.removeProperty('--harri-cv-fill-gap');
-      return 0;
-    }
-
-    // Always measure the natural CV first.
-    document.documentElement.style.setProperty('--harri-cv-fill-gap','0px');
-    void cvColumn.offsetHeight;
-
-    const sections = visibleCvSections();
-    if(!sections.length) return 0;
-
-    const columnRect = cvColumn.getBoundingClientRect();
-    const lastRect = sections[sections.length - 1].getBoundingClientRect();
-    const naturalBottom = lastRect.bottom - columnRect.top;
-    const available = cvColumn.clientHeight;
-    const shortfall = Math.max(0, available - naturalBottom);
-    const gaps = Math.max(0, sections.length - 1);
-
-    if(shortfall <= 1 || gaps === 0){
-      return 0;
-    }
-
-    /*
-      Fill exactly through inter-section rhythm. This makes the final visible
-      CV entry land on the bottom line without fabricating padding below it.
-    */
-    const extraPerGap = shortfall / gaps;
-    document.documentElement.style.setProperty(
-      '--harri-cv-fill-gap',
-      extraPerGap.toFixed(3) + 'px'
-    );
-
-    return shortfall / Math.max(1, available);
-  }
-
   function fitAboutBiography(){
     if(!aboutCopy || !center || window.innerWidth <= 900){
       if(aboutCopy) aboutCopy.style.removeProperty('font-size');
-      document.documentElement.style.removeProperty('--harri-cv-fill-gap');
       return;
     }
 
+    /*
+      Start from the globally scaled About bio size.
+      Only reduce it if necessary to keep the first bio line at or below
+      the vertical midpoint of the centre column.
+    */
     aboutCopy.style.removeProperty('font-size');
 
-    const cvShortfallRatio = balanceMiniCvHeight();
-    const globalSize = parseFloat(getComputedStyle(aboutCopy).fontSize) || 40;
-
-    /*
-      If the CV needed vertical expansion, reduce the large bio slightly for
-      visual balance. This is deliberately modest: maximum 8%.
-    */
-    const visualReduction = Math.min(0.08, cvShortfallRatio * 0.32);
-    const balancedBaseSize = globalSize * (1 - visualReduction);
-    aboutCopy.style.setProperty(
-      'font-size',
-      balancedBaseSize.toFixed(3) + 'px',
-      'important'
-    );
-
+    const baseSize = parseFloat(getComputedStyle(aboutCopy).fontSize) || 40;
     const availableHeight = Math.max(1, center.clientHeight * 0.5);
 
-    // The bio may never rise above the midpoint.
     if(aboutCopy.getBoundingClientRect().height <= availableHeight + 0.5){
       return;
     }
 
-    let low = Math.max(10, balancedBaseSize * 0.45);
-    let high = balancedBaseSize;
+    let low = Math.max(10, baseSize * 0.45);
+    let high = baseSize;
 
     for(let i=0;i<18;i+=1){
       const mid = (low + high) / 2;

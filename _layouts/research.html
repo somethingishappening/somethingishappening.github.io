@@ -2703,6 +2703,50 @@ min-width:0}
 }
 </style>
 
+
+<style id="harri-research-body-and-abstract-lock-v7-4">
+@media (min-width:901px){
+  /*
+    Research body is the typography source used by Mini-CV as well.
+  */
+  body.page-research .paper p,
+  body.page-research .research-copy ul,
+  body.page-research .research-copy ol,
+  body.page-research .research-copy ul > li,
+  body.page-research .research-copy ol > li{
+    font-size:var(--harri-u-body,18px) !important;
+    line-height:1.2 !important;
+  }
+
+  body.page-research .paper p{
+    margin:0 0 var(--harri-u-space-14,14px) !important;
+  }
+
+  body.page-research .research-copy ul > li,
+  body.page-research .research-copy ol > li{
+    margin-bottom:var(--harri-u-space-14,14px) !important;
+  }
+
+  /*
+    First Research screen is exactly one paper viewport.
+    It can never be extended by baseline alignment.
+  */
+  body.page-research .research-intro-screen{
+    height:100% !important;
+    min-height:100% !important;
+  }
+
+  /*
+    The natural bottom-alignment should not include a trailing paragraph gap.
+    This gets the final prose baseline extremely close to the footer baseline
+    before the tiny residual JS correction.
+  */
+  body.page-research .research-abstract-copy > :last-child{
+    margin-bottom:0 !important;
+  }
+}
+</style>
+
 </head>
 <body class="page-research">
 
@@ -3546,9 +3590,17 @@ min-width:0}
     if(!sections.length) return "";
 
     const paperRect = paperScroller.getBoundingClientRect();
+    const siteScale = Math.max(
+      0.1,
+      parseFloat(
+        getComputedStyle(document.documentElement)
+          .getPropertyValue('--harri-site-scale')
+      ) || 1
+    );
+
     const readingLine = window.innerWidth <= 900
       ? 145
-      : paperRect.top + 72;
+      : paperRect.top + (72 * siteScale);
 
     let current = sections[0].id;
 
@@ -3704,11 +3756,12 @@ min-width:0}
   function sizeArrowForLink(arrow, link){
     const style = getComputedStyle(link);
     const fontSize = parseFloat(style.fontSize) || 13;
-    /* Keep the visual scale of the old 14px arrow at a 13px nav size. */
-    const width = fontSize * (14 / 13);
+
+    /* Exact EPS glyph stays 14 CSS px wide at every resolution. */
+    const width = 14;
     const height = width / EPS_ARROW_RATIO;
 
-    arrow.style.width = `${width.toFixed(3)}px`;
+    arrow.style.width = `${width}px`;
     arrow.style.height = `${height.toFixed(3)}px`;
 
     return {width, height, fontSize};
@@ -3721,8 +3774,6 @@ min-width:0}
   function moveDesktopArrow(link, force = false){
     if(!desktopTocArrow || !link || window.innerWidth <= 900) return;
 
-    if(!force && desktopArrowTarget === link) return;
-
     const changedTarget = desktopArrowTarget !== link;
     desktopArrowTarget = link;
 
@@ -3733,7 +3784,7 @@ min-width:0}
       Reference state: 8px gap at a 13px TOC size. Because it derives from
       the rendered TOC font size, the spacing scales consistently everywhere.
     */
-    const gap = Math.max(4, fontSize * (8 / 13));
+    const gap = Math.max(8, fontSize * (6 / 13));
     const x = rect.left - width - gap;
     const y = capCenterY(link) - (height / 2);
 
@@ -3751,8 +3802,6 @@ min-width:0}
 
   function moveMobileArrow(link, force = false){
     if(!mobileTocArrow || !mobileToc || !link) return;
-
-    if(!force && mobileArrowTarget === link) return;
 
     const changedTarget = mobileArrowTarget !== link;
     mobileArrowTarget = link;
@@ -3809,6 +3858,7 @@ min-width:0}
 
   function updateTextNavigation(){
     setActiveNavigationForSection(currentSectionId());
+    positionNavigationArrows();
   }
 
   function positionNavigationArrows(){
@@ -3867,6 +3917,15 @@ min-width:0}
       }
     }, {passive:true});
   }
+
+  window.addEventListener("harri:desktop-scale", () => {
+    desktopArrowTarget = null;
+    mobileArrowTarget = null;
+    requestAnimationFrame(() => {
+      updateTextNavigation();
+      positionNavigationArrows();
+    });
+  });
 
   window.addEventListener("resize", () => {
     updateTextNavigation();
@@ -5217,13 +5276,13 @@ min-width:0}
 (function(){
   const DESKTOP_MIN = 901;
   const intro = document.querySelector('.research-intro-screen');
-  const panel = document.querySelector('.research-abstract-panel');
   const copy = document.querySelector('.research-abstract-copy');
   const footer = document.querySelector('.left-footer');
   const paper = document.querySelector('.paper');
-  if(!intro || !panel || !copy || !footer || !paper) return;
 
-  let alignGeneration = 0;
+  if(!intro || !copy || !footer || !paper) return;
+
+  let generation = 0;
   let settleTimer = 0;
   let rafA = 0;
   let rafB = 0;
@@ -5233,7 +5292,16 @@ min-width:0}
   function visible(el){
     if(!el) return false;
     const cs = getComputedStyle(el);
-    return cs.display !== 'none' && cs.visibility !== 'hidden' && el.getClientRects().length > 0;
+
+    /*
+      During the initial no-jump measurement the Research intro is intentionally
+      visibility:hidden. It is still fully laid out and measurable, so do not
+      treat `visibility:hidden` as absent here.
+    */
+    return (
+      cs.display !== 'none' &&
+      el.getClientRects().length > 0
+    );
   }
 
   function removeMarker(marker){
@@ -5241,16 +5309,33 @@ min-width:0}
   }
 
   function lastProseTextNode(container){
-    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
-      acceptNode(node){
-        if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-        const parent = node.parentElement;
-        if(!parent || !visible(parent)) return NodeFilter.FILTER_REJECT;
-        if(parent.closest('.figure-ref')) return NodeFilter.FILTER_REJECT;
-        if(parent.closest('.harri-research-flow-marker')) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
+    const walker = document.createTreeWalker(
+      container,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node){
+          if(!node.nodeValue || !node.nodeValue.trim()){
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          const parent = node.parentElement;
+          if(!parent || !visible(parent)){
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          if(parent.closest('.figure-ref')){
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          if(parent.closest('.harri-research-flow-marker')){
+            return NodeFilter.FILTER_REJECT;
+          }
+
+          return NodeFilter.FILTER_ACCEPT;
+        }
       }
-    });
+    );
+
     let last = null;
     while(walker.nextNode()) last = walker.currentNode;
     return last;
@@ -5262,15 +5347,20 @@ min-width:0}
   }
 
   function markerAtVisibleTextEnd(textNode, role){
-    if(!textNode) return null;
+    if(!textNode || !textNode.parentNode) return null;
+
     const raw = textNode.nodeValue || '';
-    const trimmed = raw.replace(/\s+$/u, '');
+    const trimmed = raw.replace(/\s+$/u,'');
     const offset = trimmed.length;
+
     const marker = document.createElement('span');
     marker.className = 'harri-research-flow-marker';
     marker.dataset.role = role;
     marker.setAttribute('aria-hidden','true');
-    marker.style.cssText = 'display:inline-block;width:0;height:0;margin:0;padding:0;border:0;overflow:hidden;vertical-align:baseline;line-height:0;font-size:0;pointer-events:none;';
+    marker.style.cssText =
+      'display:inline-block;width:0;height:0;margin:0;padding:0;' +
+      'border:0;overflow:hidden;vertical-align:baseline;line-height:0;' +
+      'font-size:0;pointer-events:none;';
 
     if(offset >= raw.length){
       textNode.parentNode.insertBefore(marker, textNode.nextSibling);
@@ -5278,175 +5368,201 @@ min-width:0}
       const tail = textNode.splitText(offset);
       textNode.parentNode.insertBefore(marker, tail);
     }
+
     return marker;
   }
 
   function rebuildMarkers(){
     removeMarker(targetMarker);
     removeMarker(footerMarker);
-    targetMarker = markerAtVisibleTextEnd(lastProseTextNode(copy), 'target');
+
+    targetMarker = markerAtVisibleTextEnd(
+      lastProseTextNode(copy),
+      'target'
+    );
+
     const footerItem = lastVisibleFooterItem();
-    footerMarker = markerAtVisibleTextEnd(lastProseTextNode(footerItem), 'footer');
+    footerMarker = markerAtVisibleTextEnd(
+      lastProseTextNode(footerItem),
+      'footer'
+    );
   }
 
-  function resetFlowAlignment(){
+  function lastAbstractBlock(){
+    const children = Array.from(copy.children).filter(visible);
+    return children.length ? children[children.length - 1] : null;
+  }
+
+  function reset(){
+    intro.style.height = '';
+    intro.style.minHeight = '';
     copy.style.removeProperty('transform');
-    intro.style.removeProperty('min-height');
-    panel.style.removeProperty('padding-bottom');
+
+    const last = lastAbstractBlock();
+    if(last){
+      last.style.removeProperty('margin-bottom');
+    }
   }
 
-  function measureAndAlign(generation){
-    if(generation !== alignGeneration) return;
+  function align(currentGeneration){
+    if(currentGeneration !== generation) return;
 
     if(window.innerWidth < DESKTOP_MIN){
-      resetFlowAlignment();
+      reset();
       removeMarker(targetMarker); targetMarker = null;
       removeMarker(footerMarker); footerMarker = null;
       return;
     }
 
     /*
-      FIRST-SCREEN RULE
-      -----------------
-      Never lengthen the intro screen to chase the footer baseline. The
-      Abstract must remain inside the first Research viewport. We therefore
-      align the copy optically inside that fixed first screen.
+      Keep the Abstract inside exactly one paper viewport.
+      Do not grow the intro and do not transform the copy.
     */
-    resetFlowAlignment();
+    intro.style.height = '100%';
+    intro.style.minHeight = '100%';
+    copy.style.removeProperty('transform');
+
+    const last = lastAbstractBlock();
+    if(!last) return;
+
+    /*
+      Remove the Research paragraph's normal trailing gap first.
+      Because .research-abstract-copy is bottom-aligned by flexbox, this moves
+      the last prose baseline down naturally without adding document height.
+    */
+    last.style.setProperty('margin-bottom','0px','important');
+    void intro.offsetHeight;
+
     rebuildMarkers();
     if(!targetMarker || !footerMarker) return;
 
-    const targetBaseline = targetMarker.getBoundingClientRect().top;
-    const footerBaseline = footerMarker.getBoundingClientRect().top;
-    const delta = footerBaseline - targetBaseline;
+    const bodySize =
+      parseFloat(getComputedStyle(copy).fontSize) ||
+      parseFloat(getComputedStyle(last).fontSize) ||
+      18;
 
-    if(generation !== alignGeneration || !Number.isFinite(delta)) return;
+    const maxResidualCorrection = Math.max(4, bodySize * 0.35);
 
     /*
-      Footer is itself inside the visible viewport, so translating by the exact
-      baseline delta cannot create extra document height. This also works in
-      both directions and preserves the next article section position.
+      Tiny residual correction:
+      changing only the final block's bottom margin shifts the entire
+      bottom-aligned Abstract copy while preserving normal document flow.
+      Positive footer-target delta -> small negative margin -> copy moves down.
+      Negative delta -> small positive margin -> copy moves up.
     */
-    copy.style.transform = `translateY(${delta.toFixed(3)}px)`;
+    let correction = 0;
+
+    for(let pass=0; pass<3; pass+=1){
+      if(currentGeneration !== generation) return;
+
+      const target = targetMarker.getBoundingClientRect().top;
+      const foot = footerMarker.getBoundingClientRect().top;
+      const residual = foot - target;
+
+      if(!Number.isFinite(residual) || Math.abs(residual) <= 0.25){
+        break;
+      }
+
+      if(Math.abs(residual) > maxResidualCorrection){
+        break;
+      }
+
+      correction -= residual;
+      last.style.setProperty(
+        'margin-bottom',
+        correction.toFixed(3) + 'px',
+        'important'
+      );
+
+      void intro.offsetHeight;
+    }
   }
 
-  function runAfterViewportSettles(){
-    const generation = ++alignGeneration;
+  function run(){
+    const currentGeneration = ++generation;
     cancelAnimationFrame(rafA);
     cancelAnimationFrame(rafB);
 
     rafA = requestAnimationFrame(function(){
-      if(generation !== alignGeneration) return;
-      /* First frame: commit the new Safari viewport + clean flow. */
-      resetFlowAlignment();
+      if(currentGeneration !== generation) return;
+
+      reset();
       void intro.offsetHeight;
 
       rafB = requestAnimationFrame(function(){
-        if(generation !== alignGeneration) return;
-        /* Second frame: all measurements belong to this viewport only. */
-        measureAndAlign(generation);
+        align(currentGeneration);
       });
     });
   }
 
   function onResize(){
-    /*
-      Keep the previous valid alignment visible while the viewport is moving.
-      Once Safari/Chrome settles, runAfterViewportSettles() replaces it with
-      the alignment for the new geometry.
-    */
-    ++alignGeneration;
+    ++generation;
     cancelAnimationFrame(rafA);
     cancelAnimationFrame(rafB);
     clearTimeout(settleTimer);
-
-    settleTimer = setTimeout(runAfterViewportSettles, 140);
-  }
-
-  window.addEventListener('resize', onResize, {passive:true});
-  window.addEventListener('harri:desktop-scale', onResize);
-  window.addEventListener('orientationchange', onResize, {passive:true});
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize', onResize, {passive:true});
+    settleTimer = setTimeout(run,140);
   }
 
   /*
-    INITIAL OPENING
-    ---------------
-    The previous regression scheduled the first Abstract correction across
-    later animation frames, which allowed the browser to paint the natural
-    position first and then visibly move it.
-
-    For the first visit we wait for the actual font metrics, calculate the
-    final footer/Abstract baseline while the intro is optically hidden, and
-    reveal it immediately afterward. No fade and no post-paint correction.
+    Initial page entry stays invisible until fonts and the baseline correction
+    are committed, so there is no visible Abstract jump.
   */
   let initialReleased = false;
 
-  function releaseInitialResearch(){
+  function reveal(){
     if(initialReleased) return;
     initialReleased = true;
 
     window.scrollTo(0,0);
     paper.scrollTop = 0;
 
-    /*
-      One extra frame after the final min-height has been written guarantees
-      that the visitor's first visible Research frame already contains the
-      settled Abstract geometry.
-    */
     requestAnimationFrame(function(){
       document.documentElement.classList.remove('research-initializing');
     });
   }
 
-  function initialAlignAndReveal(){
+  function initialRun(){
     if(initialReleased) return;
 
-    clearTimeout(initialFallback);
-    ++alignGeneration;
+    const currentGeneration = ++generation;
     cancelAnimationFrame(rafA);
     cancelAnimationFrame(rafB);
     clearTimeout(settleTimer);
 
-    if(window.innerWidth < DESKTOP_MIN){
-      resetFlowAlignment();
-      releaseInitialResearch();
-      return;
-    }
-
-    const generation = alignGeneration;
-
-    /*
-      Frame 1: remove any stale inline geometry and force a clean layout.
-      Frame 2: perform the exact footer-baseline alignment.
-      Frame 3: reveal after that geometry has been committed.
-    */
     rafA = requestAnimationFrame(function(){
-      if(generation !== alignGeneration) return;
-
-      resetFlowAlignment();
+      reset();
       void intro.offsetHeight;
 
       rafB = requestAnimationFrame(function(){
-        if(generation !== alignGeneration) return;
-
-        measureAndAlign(generation);
-        releaseInitialResearch();
+        align(currentGeneration);
+        reveal();
       });
     });
   }
 
-  const initialFallback = setTimeout(initialAlignAndReveal, 1400);
+  const fallback = setTimeout(function(){
+    initialRun();
+  },1400);
+
+  function fontsReady(){
+    clearTimeout(fallback);
+    initialRun();
+  }
 
   if(window.innerWidth < DESKTOP_MIN){
-    initialAlignAndReveal();
+    initialRun();
   }else if(document.fonts && document.fonts.ready){
-    document.fonts.ready
-      .then(initialAlignAndReveal)
-      .catch(initialAlignAndReveal);
+    document.fonts.ready.then(fontsReady).catch(fontsReady);
   }else{
-    initialAlignAndReveal();
+    initialRun();
+  }
+
+  window.addEventListener('resize',onResize,{passive:true});
+  window.addEventListener('orientationchange',onResize,{passive:true});
+  window.addEventListener('harri:desktop-scale',onResize);
+
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',onResize,{passive:true});
   }
 })();
 </script>
