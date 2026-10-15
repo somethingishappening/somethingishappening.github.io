@@ -2,7 +2,7 @@
 title: Beirut Design Week 2018
 menu_title: Beirut Design Week
 nav_order: 1
-project_type: Visual communication
+project_type: Visual Communication
 title_line_1: Beirut Design Week 2018
 description: >-
   2018's theme was "Design and the City," so we collected data that the city
