@@ -1,22 +1,17 @@
-HARRI.LA — RESEARCH ABSTRACT VISIBILITY FIX ONLY
+HARRI.LA — RESEARCH ABSTRACT FIT RETRY
 
-Replace exactly this file in GitHub:
+Replace only:
   _layouts/research.html
 
 Source:
-  last-good v7.4 restore state
+  Exact last-good v7.4 Research template.
 
-Only code change:
-  Research desktop intro height changes from fixed height:100% to height:auto,
-  while keeping min-height:100%.
+Only two functional changes were made:
+1. Desktop Research intro CSS: height:100% -> height:auto, while keeping min-height:100%.
+2. The Research baseline-alignment JavaScript now applies height:auto instead of restoring height:100%.
 
 Effect:
-  - If title + Abstract fit in the first Research viewport, existing first-screen
-    bottom alignment remains unchanged.
-  - If the real browser viewport/zoom/font metrics make the content taller,
-    the intro can grow naturally instead of pushing the Abstract below the
-    visible reading area.
+- If the title + Abstract fit in one Research viewport, the existing bottom-aligned first-screen appearance remains.
+- If they do not fit, the intro may grow naturally so the Abstract begins after the title instead of being pushed below the visible first screen.
 
-Untouched:
-  navigation, Research figures, 43.5vh hanging line, typography, columns,
-  Work, About, Artistic Work, Harrilanpuisto, CMS configuration/content.
+No navigation, typography, figure, column, CMS, mobile, Work, About, or Harrilanpuisto files are changed.
