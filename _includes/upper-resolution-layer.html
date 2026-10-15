@@ -830,19 +830,48 @@
   }
 
   /* ---------- Work + Harrilanpuisto ---------- */
-  body.page-work .project-type,
+  /*
+    Work typography follows the Research hierarchy at every desktop
+    resolution, including the fitted Mini-CV/Research multiplier.
+    Work layout/media geometry remains independent and unchanged.
+  */
+  body.page-work .project-type{
+    font-size:var(--harri-fit-project-type,var(--harri-u-project-type)) !important;
+    line-height:1 !important;
+    margin-bottom:var(--harri-u-space-24) !important;
+  }
+
+  body.page-work .project-info h1{
+    font-size:var(--harri-fit-h1,var(--harri-u-h1)) !important;
+    line-height:.95 !important;
+    max-width:var(--harri-u-work-title-max) !important;
+  }
+
+  body.page-work .project-description{
+    font-size:var(--harri-fit-body,var(--harri-u-body)) !important;
+    line-height:1.2 !important;
+    max-width:var(--harri-u-work-copy-max) !important;
+  }
+
+  body.page-work .project-description p,
+  body.page-work .project-description li,
+  body.page-work .project-description h2,
+  body.page-work .project-description h3{
+    font-size:inherit !important;
+    line-height:inherit !important;
+  }
+
+  /* Harrilanpuisto stays exactly on its existing typography rules. */
   body.page-harrilanpuisto .project-type{
     font-size:var(--harri-u-project-type) !important;
     margin-bottom:var(--harri-u-space-24) !important;
   }
 
-  body.page-work .project-info h1,
   body.page-harrilanpuisto .project-info h1{
     font-size:var(--harri-u-h1) !important;
     max-width:var(--harri-u-work-title-max) !important;
   }
 
-  body.page-work .project-description,
   body.page-harrilanpuisto .project-description{
     font-size:var(--harri-u-body) !important;
     max-width:var(--harri-u-work-copy-max) !important;
