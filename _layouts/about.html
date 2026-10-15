@@ -12,7 +12,7 @@
 :root{
   --page-pad-x:18px;
   --page-pad-top:32px;
-  --page-pad-bottom:26px;
+  --page-pad-bottom:25px;
   --left-w:220px;
   --right-w:300px;
   --gap:28px;
@@ -138,50 +138,28 @@ button{font:inherit;color:inherit}
 .cv-column::-webkit-scrollbar-thumb{background:transparent;border-radius:8px}
 .cv-title{font-size:27px;line-height:1;font-weight:750;letter-spacing:-.025em;margin:0 0 28px}
 .cv-section{margin:0 0 26px}
-.cv-section h2{font-size:24px;line-height:1.05;font-weight:750;letter-spacing:-.015em;margin:0 0 14px}
-.cv-item{font-size:18px;line-height:1.15;margin:0 0 14px}
+.cv-section h2{font-size:23px;line-height:1.02;font-weight:750;letter-spacing:-.025em;margin:0 0 14px}
+.cv-item{font-size:14px;line-height:17.12px;margin:0 0 10px}
 .cv-item:last-child{margin-bottom:0}
-
-/* MINI-CV VIEWPORT FIT
-   On desktop, only when the CV would otherwise be shorter than its viewport,
-   the entire CV content (type + spacing) is uniformly enlarged. The internal
-   width is compensated before scaling so the result still occupies the same
-   right-hand column width. The surprise image is kept outside this shell. */
-.cv-fit-shell{
-  position:relative;
-  width:100%;
-  min-width:0;
-}
-.cv-fit-content{
-  width:100%;
-  min-width:0;
-  transform-origin:top left;
-  will-change:transform;
-}
-@media (max-width:900px){
-  .cv-fit-shell{height:auto !important;}
-  .cv-fit-content{
-    width:100% !important;
-    transform:none !important;
-  }
-}
 
 .cv-surprise{
   width:100%;
-  margin:0;
+  margin:34px 0 0;
   opacity:0;
   visibility:hidden;
-  transform:none;
+  transform:translateY(8px);
   transition:
     opacity .12s ease-out,
+    transform .12s ease-out,
     visibility 0s linear .12s;
 }
 .cv-surprise.revealed{
   opacity:1;
   visibility:visible;
-  transform:none;
+  transform:translateY(0);
   transition:
     opacity .12s ease-out,
+    transform .12s ease-out,
     visibility 0s;
 }
 .cv-surprise img{
@@ -194,17 +172,12 @@ button{font:inherit;color:inherit}
 
 /* MOBILE / TABLET */
 .mobile-menu-button{display:none}
-@media (max-width:1180px) and (min-width:901px){
-  .cv-item{font-size:17px;line-height:1.15}
-}
-
 @media (max-width:1100px) and (min-width:901px){
   :root{--gap:22px;--right-w:270px}
   .about-copy{font-size:32px}
   .about-greeting{font-size:46px}
   .cv-title{font-size:25px}
-  .cv-section h2{font-size:24px;line-height:1.05}
-  .cv-item{font-size:17px;line-height:1.15}
+  .cv-section h2{font-size:21px}
 }
 @media (max-width:900px){
   html,body{overflow:auto;height:auto;min-height:100%}
@@ -317,14 +290,10 @@ button{font:inherit;color:inherit}
   }
   .cv-column{height:auto;overflow:visible;padding:24px 0 30px;border-top:1px solid #111}
   .cv-title{font-size:26px}
-  .cv-section h2{
-    font-size:23px;
-    line-height:1.05;
-  }
   .cv-item{
-    font-size:17px;
-    line-height:1.16;
-    margin-bottom:14px;
+    font-size:16px;
+    line-height:20.24px;
+    margin-bottom:12px;
   }
 }
 @media (prefers-reduced-motion:reduce){
@@ -364,11 +333,9 @@ button{font:inherit;color:inherit}
 /* MOBILE MINI-CV — preserve the same readable text measure as the CV column */
 @media (max-width:900px){
   .cv-column > .cv-title,
-  .cv-column > .cv-section,
-  .cv-fit-content > .cv-title,
-  .cv-fit-content > .cv-section{
-    width:100%;
-    max-width:100%;
+  .cv-column > .cv-section{
+    width:min(100%, var(--right-w));
+    max-width:var(--right-w);
   }
 
   .cv-item{
@@ -408,7 +375,6 @@ nav a:focus,
 @media (min-width:901px){
   .cv-column{
     padding-top:0 !important;
-    padding-bottom:0 !important;
   }
   .cv-title{
     margin-top:0 !important;
@@ -428,6 +394,9 @@ html.nav-state-syncing .nav-group *{
 
 
 /* MINI-CV INLINE LINKS */
+.cv-item p{
+  margin:0;
+}
 .cv-item a{
   color:inherit;
   text-decoration:none;
@@ -436,6 +405,15 @@ html.nav-state-syncing .nav-group *{
 .cv-item a:hover,
 .cv-item a:focus{
   text-decoration:none;
+}
+
+
+/* FOOTER BASELINE
+   The footer block remains bottom-anchored. Therefore its last visible row
+   always sits on the same baseline. If both configurable items are hidden,
+   About becomes that last row and occupies the former email baseline. */
+.left-footer{
+  margin-top:auto;
 }
 
 
@@ -737,8 +715,186 @@ html.nav-state-syncing .nav-group *{
   font-family:"Geist",Arial,Helvetica,sans-serif !important;
 }
 
+
+
+/* DESKTOP TOP ALIGNMENT — Mini-CV begins on the same top line as Harri.la. */
+@media (min-width:901px){
+  .cv-column{
+    padding-top:0 !important;
+  }
+}
+
+
+
+/* ABOUT DESCRIPTIVE TEXT — DESCENDER VISIBILITY FIX
+   Keep the exact footer-baseline alignment from v134, but let the final
+   biography line paint into the existing bottom padding so glyph descenders
+   (g, y, p, j, etc.) are never clipped by the centre column. */
+@media (min-width:901px){
+  .center{
+    overflow:visible !important;
+  }
+  .about-copy{
+    overflow:visible !important;
+  }
+}
+
+
+
+/* MINI-CV TYPOGRAPHY — match Research without changing CV alignment.
+   Titles use the Research H2 type treatment, but keep the CV's own zero
+   top margin so the first title remains aligned with the top of the column. */
+.cv-section h2{
+  font-size:18px !important;
+  line-height:1.15 !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+  margin:0 0 12px !important;
+}
+
+/* Match Research running text exactly on wide desktop. */
+.cv-item{
+  font-size:18px !important;
+  line-height:1.2 !important;
+}
+
+/* Research drops both H2 and running text to 17px on narrower desktops. */
+@media (min-width:901px) and (max-width:1180px){
+  .cv-section h2{
+    font-size:17px !important;
+    line-height:1.15 !important;
+  }
+
+  .cv-item{
+    font-size:17px !important;
+    line-height:1.2 !important;
+  }
+}
+
+/* Match the Research mobile type sizes/leading while preserving CV spacing. */
+@media (max-width:900px){
+  .cv-section h2{
+    font-size:17px !important;
+    line-height:1.16 !important;
+    margin:0 0 12px !important;
+  }
+
+  .cv-item{
+    font-size:17px !important;
+    line-height:1.16 !important;
+  }
+}
+
 </style>
   {% include browser-consistency.html %}
+  {% include arabic-typography.html %}
+  {% include upper-resolution-layer.html %}
+
+<style id="harri-about-bio-cv-fit-v7">
+@media (min-width:901px){
+  /*
+    The biography owns the lower half of the centre column.
+    Its bottom edge stays on the established bottom line; JavaScript only
+    reduces its font size when needed so its top never crosses 50%.
+  */
+  body.page-about .center{
+    position:relative !important;
+  }
+
+  body.page-about .about-copy{
+    position:absolute !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    width:100% !important;
+  }
+
+  /* No invisible bottom reservation in the Mini-CV. */
+  body.page-about .cv-column{
+    padding-bottom:0 !important;
+  }
+
+  body.page-about .cv-section:last-of-type{
+    margin-bottom:0 !important;
+  }
+
+  body.page-about .cv-surprise:not(.revealed){
+    display:none !important;
+  }
+
+  body.page-about .cv-surprise.revealed{
+    display:block !important;
+  }
+
+  /*
+    When the visible Mini-CV is shorter than its available column, JavaScript
+    distributes the unused height BETWEEN CV sections rather than leaving an
+    empty band below the last entry. Typography itself stays unchanged.
+  */
+  body.page-about .cv-section:not(:last-of-type){
+    margin-bottom:calc(
+      var(--harri-u-space-26,26px) +
+      var(--harri-cv-fill-gap,0px)
+    ) !important;
+  }
+}
+</style>
+
+
+<style id="harri-cv-research-body-source-v7-4">
+/*
+  MINI-CV = RESEARCH BODY TYPOGRAPHY
+  ----------------------------------
+  There is no separate desktop CV type breakpoint anymore.
+  Both templates consume the same unified body-size and spacing variables.
+*/
+@media (min-width:901px){
+  body.page-about .cv-section h2,
+  body.page-about .cv-item,
+  body.page-about .cv-item p{
+    font-size:var(--harri-u-body,18px) !important;
+    line-height:1.2 !important;
+    letter-spacing:0 !important;
+  }
+
+  body.page-about .cv-section h2{
+    font-weight:700 !important;
+    margin:0 0 var(--harri-u-space-12,12px) !important;
+  }
+
+  body.page-about .cv-item{
+    margin:0 0 var(--harri-u-space-14,14px) !important;
+  }
+
+  body.page-about .cv-item:last-child{
+    margin-bottom:0 !important;
+  }
+
+  body.page-about .cv-item p{
+    margin:0 !important;
+  }
+
+  body.page-about .cv-section{
+    margin-bottom:var(--harri-u-space-26,26px) !important;
+  }
+
+  body.page-about .cv-section:last-of-type{
+    margin-bottom:0 !important;
+  }
+}
+
+@media (max-width:900px){
+  body.page-about .cv-section h2,
+  body.page-about .cv-item,
+  body.page-about .cv-item p{
+    font-size:17px !important;
+    line-height:1.16 !important;
+  }
+}
+</style>
+
 </head>
 <body class="page-about">
 <div class="about-layout">
@@ -748,6 +904,7 @@ html.nav-state-syncing .nav-group *{
     <div class="greeting-zone" id="greetingZone" aria-live="polite">
       <div class="about-greeting" id="aboutGreeting"></div>
     </div>
+
     <p class="about-copy">{{ page.bio | escape | newline_to_br }}</p>
   </main>
 
@@ -777,6 +934,7 @@ html.nav-state-syncing .nav-group *{
               <span
                 data-surprise-src="{{ item.image | relative_url }}"
                 data-surprise-alt="{{ item.alt | default: '' | escape }}"
+                data-surprise-link="{{ item.link_url | default: '' | escape }}"
               ></span>
             {% endif %}
           {% endfor %}
@@ -803,6 +961,22 @@ html.nav-state-syncing .nav-group *{
   const configuredMessages = {{ page.greeting_messages | jsonify }};
   const configuredMorningMessages = {{ page.morning_greeting_messages | jsonify }};
   const configuredAsciiMessages = {{ page.ascii_messages | jsonify }};
+  const configuredGreetingIntervalSeconds = Number({{ page.greeting_interval_seconds | default: 30 | jsonify }});
+  const configuredAsciiClickCount = Number({{ page.ascii_click_count | default: 10 | jsonify }});
+  const greetingIntervalMs = Math.max(
+    1,
+    Number.isFinite(configuredGreetingIntervalSeconds)
+      ? configuredGreetingIntervalSeconds
+      : 30
+  ) * 1000;
+  const asciiClickThreshold = Math.max(
+    1,
+    Math.round(
+      Number.isFinite(configuredAsciiClickCount)
+        ? configuredAsciiClickCount
+        : 10
+    )
+  );
 
   const regularMessages =
     Array.isArray(configuredMessages) && configuredMessages.length
@@ -889,6 +1063,7 @@ html.nav-state-syncing .nav-group *{
   function availableGreetingMessages(){
     const hour = new Date().getHours();
     const isMorning = hour >= 0 && hour < 12;
+
     return isMorning
       ? regularMessages.concat(morningOnlyMessages)
       : regularMessages.slice();
@@ -896,6 +1071,7 @@ html.nav-state-syncing .nav-group *{
 
   function nextMessage(){
     const available = availableGreetingMessages();
+
     if(!available.length) return '';
     if(available.length === 1) return available[0];
 
@@ -969,6 +1145,7 @@ html.nav-state-syncing .nav-group *{
   let desktopGameClickCount = 0;
   let desktopGreetingFullscreen = false;
   let desktopFullscreenTimeout = null;
+  let automaticGreetingTimeout = null;
 
   function baseGreetingSize(){
     return window.innerWidth <= 900 ? 70.875 : 54;
@@ -1057,7 +1234,9 @@ html.nav-state-syncing .nav-group *{
     greeting.style.left = '50%';
     greeting.style.top = '50%';
 
-    requestAnimationFrame(fitFullscreenGreetingToViewport);
+    // Fit while the greeting is still hidden by .changing so the visitor
+    // never sees a one-frame jump from the previous greeting size.
+    fitFullscreenGreetingToViewport();
   }
 
   function exitFullscreenGreeting(){
@@ -1097,6 +1276,27 @@ html.nav-state-syncing .nav-group *{
     }
   }
 
+  function clearAutomaticGreetingTimer(){
+    if(automaticGreetingTimeout){
+      clearTimeout(automaticGreetingTimeout);
+      automaticGreetingTimeout = null;
+    }
+  }
+
+  function scheduleAutomaticGreeting(){
+    clearAutomaticGreetingTimer();
+
+    automaticGreetingTimeout = setTimeout(() => {
+      automaticGreetingTimeout = null;
+
+      if(!desktopGreetingFullscreen){
+        changeGreeting(true,false);
+      }
+
+      scheduleAutomaticGreeting();
+    },greetingIntervalMs);
+  }
+
   function activateGreetingGame(){
     // While the giant state is visible, extra clicks do not interrupt its
     // fixed five-second duration.
@@ -1105,8 +1305,9 @@ html.nav-state-syncing .nav-group *{
     }
 
     desktopGameClickCount += 1;
+    clearAutomaticGreetingTimer();
 
-    if(desktopGameClickCount === 10){
+    if(desktopGameClickCount >= asciiClickThreshold){
       showFullscreenGreeting();
 
       if(desktopFullscreenTimeout){
@@ -1125,6 +1326,7 @@ html.nav-state-syncing .nav-group *{
           desktopGameClickCount = 0;
           lastGameSize = null;
           changeGreeting(false,true);
+          scheduleAutomaticGreeting();
         },180);
       },5000);
 
@@ -1132,6 +1334,7 @@ html.nav-state-syncing .nav-group *{
     }
 
     changeGreeting(true,true);
+    scheduleAutomaticGreeting();
   }
 
   function changeGreeting(animate=true,gameMove=false){
@@ -1168,7 +1371,7 @@ html.nav-state-syncing .nav-group *{
   changeGreeting(false);
 
   // Secret game: normal activations randomize phrase, position and size.
-  // Activation #10 shows the next fullscreen ASCII face for five seconds.
+  // The CMS-selected activation count shows the next fullscreen ASCII face for five seconds.
   greeting.addEventListener('click',activateGreetingGame);
   greeting.addEventListener('keydown',(event) => {
     if(event.key === 'Enter' || event.key === ' '){
@@ -1177,11 +1380,10 @@ html.nav-state-syncing .nav-group *{
     }
   });
 
-  // Automatic rotation pauses during the five-second fullscreen ASCII state.
-  setInterval(() => {
-    if(desktopGreetingFullscreen) return;
-    changeGreeting(true,false);
-  },30000);
+  // Automatic rotation is a controlled one-shot timer. Manual game clicks
+  // and the ASCII state restart it, so an automatic change can never collide
+  // with the game animation.
+  scheduleAutomaticGreeting();
 
   window.addEventListener('resize',() => {
     if(desktopGreetingFullscreen){
@@ -1199,7 +1401,6 @@ html.nav-state-syncing .nav-group *{
     greeting.style.left = Math.min(left,maxX)+'px';
     greeting.style.top = Math.min(top,maxY)+'px';
   });
-
 
   // Returning to About starts a fresh desktop click sequence.
   window.HarriAboutReset = function(){
@@ -1220,13 +1421,10 @@ html.nav-state-syncing .nav-group *{
     greeting.style.removeProperty('font-size');
     sizeGreetingZone();
     requestAnimationFrame(() => placeGreeting(false));
+    scheduleAutomaticGreeting();
   };
 
-  // Mini-CV fit + surprise.
-  // The visible CV must never end in empty space on tall desktop viewports.
-  // If its natural content is shorter than the CV viewport, scale the entire
-  // CV content proportionally until it fills that height. The surprise image
-  // stays outside the fitted content and can only appear after a real scroll.
+  // Mini-CV surprise.
   const cvColumn = document.querySelector('.cv-column');
   const cvSurprise = document.getElementById('cvSurprise');
   const cvSurpriseImage = document.getElementById('cvSurpriseImage');
@@ -1234,7 +1432,8 @@ html.nav-state-syncing .nav-group *{
     ? Array.from(cvSurprise.querySelectorAll('[data-surprise-src]'))
         .map((node) => ({
           src: node.getAttribute('data-surprise-src') || '',
-          alt: node.getAttribute('data-surprise-alt') || ''
+          alt: node.getAttribute('data-surprise-alt') || '',
+          link: node.getAttribute('data-surprise-link') || ''
         }))
         .filter((item) => item.src)
     : [];
@@ -1249,340 +1448,80 @@ html.nav-state-syncing .nav-group *{
 
     cvSurpriseImage.src = choice.src;
     cvSurpriseImage.alt = choice.alt;
+    cvSurprise.dataset.linkUrl = choice.link || "";
   }
 
   chooseSurpriseImage();
 
-  let cvSurpriseArmed = false;
-  let cvFitRaf = 0;
-
-  function ensureCvFitShell(){
-    if(!cvColumn || !cvSurprise) return null;
-
-    let shell = cvColumn.querySelector('.cv-fit-shell');
-    let content = shell && shell.querySelector('.cv-fit-content');
-    if(shell && content) return {shell,content};
-
-    shell = document.createElement('div');
-    shell.className = 'cv-fit-shell';
-    content = document.createElement('div');
-    content.className = 'cv-fit-content';
-
-    const movable = [...cvColumn.children].filter(node => node !== cvSurprise);
-    cvColumn.insertBefore(shell, cvSurprise);
-    shell.appendChild(content);
-    movable.forEach(node => content.appendChild(node));
-
-    return {shell,content};
-  }
-
-  function measureCvVisualHeight(content, scale, columnWidth){
-    const safeScale = Math.max(1, scale);
-    content.style.width = `${columnWidth / safeScale}px`;
-    content.style.transform = `scale(${safeScale})`;
-    return content.scrollHeight * safeScale;
-  }
-
-  function fitCvToViewport(){
-    if(!cvColumn || !cvSurprise) return;
-
-    const fitted = ensureCvFitShell();
-    if(!fitted) return;
-    const {shell,content} = fitted;
-
-    if(window.innerWidth <= 900){
-      shell.style.height = '';
-      content.style.width = '';
-      content.style.transform = '';
-      return;
-    }
-
-    const targetHeight = Math.max(0, cvColumn.clientHeight);
-    const columnWidth = Math.max(1, cvColumn.clientWidth);
-
-    // Measure the Research-matched CV at its natural size first.
-    content.style.width = `${columnWidth}px`;
-    content.style.transform = 'none';
-    shell.style.height = 'auto';
-
-    const naturalHeight = content.scrollHeight;
-
-    if(naturalHeight >= targetHeight - 1){
-      shell.style.height = `${naturalHeight}px`;
-      return;
-    }
-
-    // Find the smallest uniform enlargement that makes the CV occupy the
-    // full available height. Width compensation keeps it inside its column.
-    let lo = 1;
-    let hi = 1.08;
-    const MAX_SCALE = 3;
-
-    while(hi < MAX_SCALE &&
-          measureCvVisualHeight(content, hi, columnWidth) < targetHeight){
-      lo = hi;
-      hi = Math.min(MAX_SCALE, hi * 1.18);
-    }
-
-    for(let i=0;i<22;i++){
-      const mid = (lo + hi) / 2;
-      const visualHeight = measureCvVisualHeight(content, mid, columnWidth);
-      if(visualHeight < targetHeight){
-        lo = mid;
-      }else{
-        hi = mid;
-      }
-    }
-
-    const scale = hi;
-    const visualHeight = measureCvVisualHeight(content, scale, columnWidth);
-
-    // The shell participates in normal scrolling at the transformed height.
-    // Keep it at least as tall as the viewport so the hidden surprise can
-    // never be considered "already reached" on page load.
-    shell.style.height = `${Math.max(targetHeight, visualHeight)}px`;
-  }
-
-  function scheduleCvFit(){
-    cancelAnimationFrame(cvFitRaf);
-    cvFitRaf = requestAnimationFrame(() => {
-      fitCvToViewport();
-      updateCvSurprise();
+  if(cvSurprise){
+    cvSurprise.addEventListener("click", (event) => {
+      const url = (cvSurprise.dataset.linkUrl || "").trim();
+      if(!url) return;
+      event.preventDefault();
+      window.open(url, "_blank", "noopener,noreferrer");
     });
   }
 
-  function updateCvSurprise(){
-    if(!cvColumn || !cvSurprise) return;
+  // The surprise must never reserve invisible space below the Mini-CV.
+  // It is display:none until the visitor genuinely reaches the end, then it
+  // stays revealed for the rest of that page visit.
+  let cvHasUserScrolled = false;
+  let cvSurpriseRevealed = false;
 
-    let shouldReveal = false;
+  function updateCvSurprise(){
+    if(!cvColumn || !cvSurprise || cvSurpriseRevealed) return;
+    if(!cvHasUserScrolled) return;
+
+    let atEnd = false;
 
     if(window.innerWidth > 900){
-      // Reveal exactly when the user scrolls past the fitted CV content.
-      // Before that moment, there is no hidden-image-sized blank area.
-      const columnRect = cvColumn.getBoundingClientRect();
-      const surpriseRect = cvSurprise.getBoundingClientRect();
-      const surpriseTop =
-        cvColumn.scrollTop + (surpriseRect.top - columnRect.top);
-      const viewportBottom = cvColumn.scrollTop + cvColumn.clientHeight;
-      shouldReveal = cvSurpriseArmed && viewportBottom >= surpriseTop - 1;
+      atEnd =
+        cvColumn.scrollTop + cvColumn.clientHeight >=
+        cvColumn.scrollHeight - 3;
     }else{
-      const rect = cvSurprise.getBoundingClientRect();
-      shouldReveal =
-        cvSurpriseArmed &&
-        rect.top <= window.innerHeight &&
-        rect.bottom >= 0;
+      const pageBottom =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 3;
+      atEnd = pageBottom;
     }
 
-    cvSurprise.classList.toggle('revealed', shouldReveal);
-    cvSurprise.setAttribute('aria-hidden', String(!shouldReveal));
+    if(!atEnd) return;
+
+    cvSurpriseRevealed = true;
+    cvSurprise.classList.add('revealed');
+    cvSurprise.setAttribute('aria-hidden','false');
+    requestAnimationFrame(scheduleBioFit);
   }
 
   if(cvColumn){
-    cvColumn.addEventListener('scroll', () => {
-      if(cvColumn.scrollTop > 2) cvSurpriseArmed = true;
+    cvColumn.addEventListener('scroll',function(){
+      if(window.innerWidth > 900 && cvColumn.scrollTop > 1){
+        cvHasUserScrolled = true;
+      }
       updateCvSurprise();
-    }, {passive:true});
-
-    cvColumn.addEventListener('wheel', event => {
-      if(event.deltaY > 0) cvSurpriseArmed = true;
-    }, {passive:true});
+    },{passive:true});
   }
-
-  window.addEventListener('scroll', () => {
-    if(window.scrollY > 2) cvSurpriseArmed = true;
+  window.addEventListener('scroll',function(){
+    if(window.innerWidth <= 900 && window.scrollY > 1){
+      cvHasUserScrolled = true;
+    }
     updateCvSurprise();
-  }, {passive:true});
-
-  window.addEventListener('resize', scheduleCvFit);
-
-  const previousAboutReset = window.HarriAboutReset;
-  window.HarriAboutReset = function(){
-    cvSurpriseArmed = false;
+  },{passive:true});
+  window.addEventListener('resize',updateCvSurprise);
+  window.addEventListener('pageshow',function(){
+    cvHasUserScrolled = false;
+    cvSurpriseRevealed = false;
     if(cvSurprise){
       cvSurprise.classList.remove('revealed');
       cvSurprise.setAttribute('aria-hidden','true');
     }
-    if(typeof previousAboutReset === 'function'){
-      previousAboutReset();
-    }
-    scheduleCvFit();
-  };
-
-  requestAnimationFrame(scheduleCvFit);
-
-  // Accordions.
-  document.querySelectorAll('.group-head').forEach(button => {
-    const panel = button.nextElementSibling;
-    const toggle = button.querySelector('.group-toggle');
-    function set(open, animate){
-      button.setAttribute('aria-expanded',String(open));
-      if(toggle) toggle.textContent = open ? '−' : '+';
-      if(!panel) return;
-      if(!animate){
-        panel.classList.toggle('open',open);
-        panel.style.height = open ? panel.scrollHeight+'px' : '0px';
-        return;
-      }
-      const start = panel.getBoundingClientRect().height;
-      panel.style.height = start+'px';
-      void panel.offsetHeight;
-      panel.classList.toggle('open',open);
-      panel.style.height = open ? panel.scrollHeight+'px' : '0px';
-    }
-    set(button.getAttribute('aria-expanded')==='true',false);
-    button.addEventListener('click',() => set(button.getAttribute('aria-expanded')!=='true',true));
   });
+  requestAnimationFrame(updateCvSurprise);
 
-  // Mobile main menu — opening and closing both animate through CSS.
-  const left = document.querySelector('.left');
-  const mobileButton = document.querySelector('.mobile-menu-button');
-  if(mobileButton){
-    mobileButton.addEventListener('click',() => {
-      const open = !left.classList.contains('menu-open');
-      left.classList.toggle('menu-open',open);
-      mobileButton.setAttribute('aria-expanded',String(open));
-      mobileButton.setAttribute('aria-label',open ? 'Close project menu' : 'Open project menu');
-      mobileButton.textContent = open ? '×' : '☰';
-    });
-  }
-
-  function collectNavigationState(){
-    const state = {};
-    document.querySelectorAll('.group-head').forEach(button => {
-      const label = button.querySelector('span:first-child');
-      if(label) state[label.textContent.trim()] = button.getAttribute('aria-expanded')==='true';
-    });
-    return state;
-  }
-
-  function applyNavigationState(state){
-    if(!state) return;
-    document.querySelectorAll('.group-head').forEach(button => {
-      const label = button.querySelector('span:first-child');
-      if(!label || !Object.prototype.hasOwnProperty.call(state,label.textContent.trim())) return;
-      const open = Boolean(state[label.textContent.trim()]);
-      const panel = button.nextElementSibling;
-      const toggle = button.querySelector('.group-toggle');
-      button.setAttribute('aria-expanded',String(open));
-      if(toggle) toggle.textContent = open ? '−' : '+';
-      if(panel){
-        panel.classList.toggle('open',open);
-        panel.style.height = open ? panel.scrollHeight+'px' : '0px';
-      }
-    });
-  }
-  window.HarriApplyNavigationState = applyNavigationState;
-  window.addEventListener('message',event => {
-    if(event.data && event.data.type==='harri-apply-nav-state') applyNavigationState(event.data.state||{});
-  });
-
-  document.addEventListener('click',event => {
-    const link = event.target.closest('a[data-route]');
-    if(!link) return;
-    event.preventDefault();
-    const route = link.dataset.route;
-    const navState = collectNavigationState();
-    try{ window.parent.postMessage({type:'harri-route',route,navState},'*'); }catch(e){}
-    try{ window.top.location.hash = route; }catch(e){}
-  });
-})();
-
-  // Always reset the mobile hamburger menu when crossing into desktop width.
-  let wasMobileViewport = window.innerWidth <= 900;
-  window.addEventListener("resize", () => {
-    const isMobileViewport = window.innerWidth <= 900;
-
-    if(wasMobileViewport && !isMobileViewport){
-      const mobileLeft = document.querySelector(".left");
-      const mobileMenuButton = document.querySelector(".mobile-menu-button");
-
-      if(mobileLeft){
-        mobileLeft.classList.remove("menu-open");
-      }
-
-      if(mobileMenuButton){
-        mobileMenuButton.setAttribute("aria-expanded","false");
-        mobileMenuButton.setAttribute("aria-label","Open project menu");
-
-        const glyph = mobileMenuButton.querySelector(".hamburger-glyph");
-        if(glyph){
-          glyph.textContent = "☰";
-        }else{
-          mobileMenuButton.textContent = "☰";
-        }
-      }
-    }
-
-    wasMobileViewport = isMobileViewport;
-  });
-
-</script>
-
-<script>
-(function(){
-  function reportMainNavigationState(){
-    if(window.innerWidth <= 900) return;
-
-    const state = {};
-    document.querySelectorAll('.group-head').forEach(function(button){
-      const label = button.querySelector('span:first-child');
-      if(!label) return;
-      state[label.textContent.trim()] =
-        button.getAttribute('aria-expanded') === 'true';
-    });
-
-    try{
-      window.parent.postMessage({
-        type:'harri-nav-state',
-        state:state
-      },'*');
-    }catch(e){}
-  }
-
-  document.querySelectorAll('.group-head').forEach(function(button){
-    button.addEventListener('click',function(){
-      requestAnimationFrame(reportMainNavigationState);
-    });
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  /* Placeholder project titles have no route yet.
-     They must do absolutely nothing until the CMS assigns a real data-route.
-     As soon as data-route exists, this guard no longer applies and the link
-     automatically behaves like every other project link. */
-  document.addEventListener("click",function(event){
-    const link = event.target.closest &&
-      event.target.closest(".project-links a, a.project-link");
-
-    if(!link) return;
-
-    const hasRoute =
-      link.hasAttribute("data-route") &&
-      String(link.getAttribute("data-route") || "").trim() !== "";
-
-    if(!hasRoute){
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-    }
-  },true);
-})();
-</script>
-
-
-<script>
-(function(){
-  const cvColumn = document.querySelector('.cv-column');
-  if(!cvColumn) return;
-
+  // Desktop About: wheel/trackpad scrolling anywhere controls Mini-CV.
   function normalizeWheelDelta(event){
     let delta = event.deltaY;
 
-    // deltaMode: 0=pixels, 1=lines, 2=pages
     if(event.deltaMode === 1){
       delta *= 16;
     }else if(event.deltaMode === 2){
@@ -1593,114 +1532,162 @@ html.nav-state-syncing .nav-group *{
   }
 
   document.addEventListener('wheel',function(event){
-    if(window.innerWidth <= 900) return;
+    if(window.innerWidth <= 900 || !cvColumn) return;
 
     const delta = normalizeWheelDelta(event);
     if(!delta) return;
 
-    /*
-      Desktop About has no page-level vertical scroll. Any wheel/trackpad
-      gesture anywhere on the page controls the Mini-CV column instead.
-    */
     event.preventDefault();
+
+    if(delta > 0){
+      /*
+        A real downward wheel/trackpad gesture counts as user traversal.
+        This also covers tall screens where the CV content fits exactly and
+        scrollTop therefore cannot become > 0.
+      */
+      cvHasUserScrolled = true;
+    }
+
     cvColumn.scrollTop += delta;
+    updateCvSurprise();
   },{passive:false});
+
+  /*
+    DESKTOP BIO FIT
+    ----------------
+    Keep the biography bottom-aligned. Its first line is never allowed above
+    the vertical midpoint. If the copy needs more than the lower half of the
+    centre column, reduce ONLY as much as necessary from the shared site scale.
+  */
+  /*
+    Reuse the `center` and `aboutCopy` references declared earlier in this
+    same About controller. Redeclaring `aboutCopy` here caused a syntax error
+    that prevented the greeting game AND surprise image from initializing.
+  */
+  let bioFitFrame = 0;
+
+  function fitAboutBiography(){
+    if(!aboutCopy || !center || window.innerWidth <= 900){
+      if(aboutCopy) aboutCopy.style.removeProperty('font-size');
+      return;
+    }
+
+    /*
+      Start from the globally scaled About bio size.
+      Only reduce it if necessary to keep the first bio line at or below
+      the vertical midpoint of the centre column.
+    */
+    aboutCopy.style.removeProperty('font-size');
+
+    const baseSize = parseFloat(getComputedStyle(aboutCopy).fontSize) || 40;
+    const availableHeight = Math.max(1, center.clientHeight * 0.5);
+
+    if(aboutCopy.getBoundingClientRect().height <= availableHeight + 0.5){
+      return;
+    }
+
+    let low = Math.max(10, baseSize * 0.45);
+    let high = baseSize;
+
+    for(let i=0;i<18;i+=1){
+      const mid = (low + high) / 2;
+      aboutCopy.style.setProperty('font-size', mid + 'px', 'important');
+
+      if(aboutCopy.getBoundingClientRect().height <= availableHeight){
+        low = mid;
+      }else{
+        high = mid;
+      }
+    }
+
+    aboutCopy.style.setProperty(
+      'font-size',
+      Math.max(10, Math.floor(low * 100) / 100) + 'px',
+      'important'
+    );
+  }
+
+  function scheduleBioFit(){
+    cancelAnimationFrame(bioFitFrame);
+    bioFitFrame = requestAnimationFrame(fitAboutBiography);
+  }
+
+  window.addEventListener('resize',scheduleBioFit,{passive:true});
+  window.addEventListener('harri:desktop-scale',scheduleBioFit);
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(scheduleBioFit).catch(scheduleBioFit);
+  }
+
+  window.addEventListener('load',scheduleBioFit,{once:true});
+  scheduleBioFit();
 })();
 </script>
-
 
 <script>
-
-/* Stable measured-height controller for About's mobile main menu. */
+/* RESET PAGE POSITION ON EVERY RETURN
+   Browsing away and returning starts the page from its original content
+   position. Navigation accordion choices are intentionally not changed. */
 (function(){
-  const leftNav = document.querySelector('.left');
-  const menuButton = document.querySelector('.mobile-menu-button');
-  const nav = leftNav ? leftNav.querySelector('nav') : null;
-  const footer = leftNav ? leftNav.querySelector('.left-footer') : null;
-  if(!leftNav || !menuButton || !nav || !footer) return;
-  let cleanupTimer = 0;
-
-  function setButton(open){
-    menuButton.setAttribute('aria-expanded', String(open));
-    menuButton.setAttribute('aria-label', open ? 'Close project menu' : 'Open project menu');
-    const glyph = menuButton.querySelector('.hamburger-glyph');
-    if(glyph) glyph.textContent = open ? '×' : '☰';
-    else menuButton.textContent = open ? '×' : '☰';
+  if("scrollRestoration" in history){
+    history.scrollRestoration = "manual";
   }
 
-  function setMenu(open, animate=true){
-    clearTimeout(cleanupTimer);
-    if(window.innerWidth > 900){
-      leftNav.classList.remove('menu-open');
-      nav.style.removeProperty('height');
-      footer.style.removeProperty('height');
-      setButton(false);
-      return;
+  function resetPageVisitPosition(){
+    window.scrollTo(0,0);
+    document.documentElement.scrollTop = 0;
+    if(document.body) document.body.scrollTop = 0;
+
+    document.querySelectorAll(".paper, .cv-column, .media-column").forEach(function(el){
+      el.scrollTop = 0;
+      el.scrollLeft = 0;
+    });
+
+    document.querySelectorAll(".lightbox, .figure-lightbox").forEach(function(box){
+      box.classList.remove("open");
+      box.setAttribute("aria-hidden","true");
+    });
+
+    if(document.body){
+      document.body.classList.remove("lightbox-open");
     }
 
-    if(!animate){
-      leftNav.classList.toggle('menu-open', open);
-      nav.style.height = open ? 'auto' : '0px';
-      footer.style.height = open ? 'auto' : '0px';
-      setButton(open);
-      return;
+    document.querySelectorAll("video").forEach(function(video){
+      try{
+        video.pause();
+        video.currentTime = 0;
+      }catch(e){}
+    });
+
+    const surprise = document.querySelector(".cv-surprise");
+    if(surprise){
+      surprise.classList.remove("revealed");
+      surprise.setAttribute("aria-hidden","true");
     }
 
-    if(open){
-      nav.style.height = '0px';
-      footer.style.height = '0px';
-      leftNav.classList.add('menu-open');
-      setButton(true);
-      requestAnimationFrame(() => {
-        const navTarget = nav.scrollHeight;
-        const footerTarget = footer.scrollHeight;
-        requestAnimationFrame(() => {
-          nav.style.height = navTarget + 'px';
-          footer.style.height = footerTarget + 'px';
-        });
-      });
-      cleanupTimer = setTimeout(() => {
-        if(leftNav.classList.contains('menu-open')){
-          nav.style.height = 'auto';
-          footer.style.height = 'auto';
-        }
-      }, 470);
-    }else{
-      nav.style.height = nav.getBoundingClientRect().height + 'px';
-      footer.style.height = footer.getBoundingClientRect().height + 'px';
-      void nav.offsetHeight;
-      leftNav.classList.remove('menu-open');
-      setButton(false);
-      requestAnimationFrame(() => {
-        nav.style.height = '0px';
-        footer.style.height = '0px';
-      });
+    if(document.activeElement && typeof document.activeElement.blur === "function"){
+      document.activeElement.blur();
     }
+
+    const paper = document.querySelector(".paper");
+    if(paper){
+      paper.dispatchEvent(new Event("scroll"));
+    }
+
+    window.dispatchEvent(new Event("scroll"));
   }
 
-  menuButton.addEventListener('click', function(event){
-    if(window.innerWidth > 900) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    setMenu(!leftNav.classList.contains('menu-open'), true);
-  }, true);
-
-  document.querySelectorAll('.left nav a').forEach(function(link){
-    link.addEventListener('click', function(){
-      if(window.innerWidth <= 900 && leftNav.classList.contains('menu-open')) setMenu(false, true);
-    }, true);
-  });
-
-  window.addEventListener('resize', function(){
-    if(window.innerWidth > 900) setMenu(false, false);
-    else if(leftNav.classList.contains('menu-open')){
-      nav.style.height = 'auto';
-      footer.style.height = 'auto';
-    }
+  /* pageshow also runs when the browser restores a page from its back/forward
+     cache, which is the case that normally preserves an old scroll position. */
+  window.addEventListener("pageshow", function(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(resetPageVisitPosition);
+    });
   });
 })();
-
 </script>
+
+
 
 <script>
 (function(){
@@ -1801,6 +1788,6 @@ html.nav-state-syncing .nav-group *{
   showHeader();
 })();
 </script>
-
+{% include desktop-baseline-alignment.html target=".about-copy" %}
 </body>
 </html>
