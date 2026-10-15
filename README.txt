@@ -1,33 +1,47 @@
-HARRI.LA — v7.2 Abstract first-screen + Mini-CV fill
+HARRI.LA — v7.3 CV rebalance + Abstract + arrow lock
 
-Replace ONLY:
+REPLACE ONLY:
   _layouts/about.html
   _layouts/research.html
 
-RESEARCH ABSTRACT
-• No alignment code is allowed to increase the first-screen height anymore.
-• The intro remains a one-screen composition.
-• Last actual Abstract prose baseline is measured against the last visible footer baseline.
-• The Abstract copy is translated by exactly that difference inside the fixed first screen.
-• Works upward or downward without changing document flow or pushing the article down.
-• Initial hidden-until-settled behavior remains, so there is no opening jump.
-• Existing list-size and navigation-arrow fixes are preserved.
-
 ABOUT / MINI-CV
-• Unified v7 site scaling remains unchanged.
-• Bio stays bottom-aligned and never rises above the midpoint.
-• If the visible Mini-CV ends above the bottom, the unused height is distributed
-  between CV sections, so the final visible CV entry reaches the bottom line.
-• No fake padding is placed below the final CV item.
-• CV typography remains unchanged.
-• When the CV needs this expansion, the large bio reduces slightly (max 8%)
-  for visual balance, then its existing midpoint-fit rule still applies.
-• If the CV already fills/overflows the column, no vertical stretching is added.
-• Surprise image and greeting game remain active.
-• When surprise image appears, the CV balance is recalculated automatically.
+• Keeps unified v7 site scaling unchanged.
+• When the Mini-CV genuinely underfills its viewport:
+    1. the CV/right column widens;
+    2. the centre bio column automatically becomes narrower;
+    3. the large bio reduces modestly for balance;
+    4. any remaining vertical underfill is distributed between the actual
+       CV sections, so the last section reaches the bottom.
+• No padding or fake spacer is placed below the final CV item.
+• If the CV already fills or overflows the viewport, the original column width
+  and scrolling behavior are preserved.
+• Surprise image and greeting-click game are preserved.
+
+RESEARCH ABSTRACT
+• Intro height is explicitly locked to exactly one visible paper viewport.
+• Alignment can never lengthen the first screen.
+• Last real Abstract prose baseline is matched to the last visible footer
+  baseline with up to four sub-pixel residual passes.
+• Alignment uses a transform only on Abstract copy, so the following article
+  section is never pushed down.
+• Existing hidden-until-settled initial paint behavior is preserved.
+
+RESEARCH SIDE-NAV ARROW
+• Exact EPS arrow retained.
+• Arrow width is now a constant 14 CSS px at every resolution.
+• Arrow gap has an 8px minimum and can increase with larger TOC text.
+• Reading threshold now follows the unified site scale.
+• Arrow coordinates are recomputed even when the active section is unchanged.
+• Arrow is explicitly refreshed after unified desktop scaling.
+• Existing hidden-section H2 fallback remains.
+
+RESEARCH LISTS
+• Existing v7.1 body-size list lock remains intact.
 
 UNCHANGED
 • _includes/upper-resolution-layer.html
 • .pages.yml
-• Work / Harrilanpuisto / navigation
-• mobile layout
+• Work
+• Harrilanpuisto
+• shared navigation/menu underline
+• mobile breakpoint / mobile layout

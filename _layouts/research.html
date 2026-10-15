@@ -3546,9 +3546,17 @@ min-width:0}
     if(!sections.length) return "";
 
     const paperRect = paperScroller.getBoundingClientRect();
+    const siteScale = Math.max(
+      0.1,
+      parseFloat(
+        getComputedStyle(document.documentElement)
+          .getPropertyValue('--harri-site-scale')
+      ) || 1
+    );
+
     const readingLine = window.innerWidth <= 900
       ? 145
-      : paperRect.top + 72;
+      : paperRect.top + (72 * siteScale);
 
     let current = sections[0].id;
 
@@ -3704,11 +3712,15 @@ min-width:0}
   function sizeArrowForLink(arrow, link){
     const style = getComputedStyle(link);
     const fontSize = parseFloat(style.fontSize) || 13;
-    /* Keep the visual scale of the old 14px arrow at a 13px nav size. */
-    const width = fontSize * (14 / 13);
+
+    /*
+      One constant EPS arrow size at every resolution.
+      Navigation text can scale; the arrow glyph itself remains identical.
+    */
+    const width = 14;
     const height = width / EPS_ARROW_RATIO;
 
-    arrow.style.width = `${width.toFixed(3)}px`;
+    arrow.style.width = `${width}px`;
     arrow.style.height = `${height.toFixed(3)}px`;
 
     return {width, height, fontSize};
@@ -3721,8 +3733,6 @@ min-width:0}
   function moveDesktopArrow(link, force = false){
     if(!desktopTocArrow || !link || window.innerWidth <= 900) return;
 
-    if(!force && desktopArrowTarget === link) return;
-
     const changedTarget = desktopArrowTarget !== link;
     desktopArrowTarget = link;
 
@@ -3733,7 +3743,7 @@ min-width:0}
       Reference state: 8px gap at a 13px TOC size. Because it derives from
       the rendered TOC font size, the spacing scales consistently everywhere.
     */
-    const gap = Math.max(4, fontSize * (8 / 13));
+    const gap = Math.max(8, fontSize * (6 / 13));
     const x = rect.left - width - gap;
     const y = capCenterY(link) - (height / 2);
 
@@ -3751,8 +3761,6 @@ min-width:0}
 
   function moveMobileArrow(link, force = false){
     if(!mobileTocArrow || !mobileToc || !link) return;
-
-    if(!force && mobileArrowTarget === link) return;
 
     const changedTarget = mobileArrowTarget !== link;
     mobileArrowTarget = link;
@@ -3809,6 +3817,7 @@ min-width:0}
 
   function updateTextNavigation(){
     setActiveNavigationForSection(currentSectionId());
+    positionNavigationArrows();
   }
 
   function positionNavigationArrows(){
@@ -3867,6 +3876,15 @@ min-width:0}
       }
     }, {passive:true});
   }
+
+  window.addEventListener("harri:desktop-scale", () => {
+    desktopArrowTarget = null;
+    mobileArrowTarget = null;
+    requestAnimationFrame(() => {
+      updateTextNavigation();
+      positionNavigationArrows();
+    });
+  });
 
   window.addEventListener("resize", () => {
     updateTextNavigation();
@@ -5291,6 +5309,7 @@ min-width:0}
 
   function resetFlowAlignment(){
     copy.style.removeProperty('transform');
+    intro.style.removeProperty('height');
     intro.style.removeProperty('min-height');
     panel.style.removeProperty('padding-bottom');
   }
@@ -5306,28 +5325,43 @@ min-width:0}
     }
 
     /*
-      FIRST-SCREEN RULE
-      -----------------
-      Never lengthen the intro screen to chase the footer baseline. The
-      Abstract must remain inside the first Research viewport. We therefore
-      align the copy optically inside that fixed first screen.
+      HARD FIRST-SCREEN GEOMETRY
+      --------------------------
+      The intro is exactly one visible .paper viewport. It is never extended
+      to achieve baseline alignment.
     */
     resetFlowAlignment();
+
+    const viewportHeight = Math.max(1, paperScroller.clientHeight);
+    intro.style.height = viewportHeight + 'px';
+    intro.style.minHeight = viewportHeight + 'px';
+
+    void intro.offsetHeight;
     rebuildMarkers();
     if(!targetMarker || !footerMarker) return;
 
-    const targetBaseline = targetMarker.getBoundingClientRect().top;
-    const footerBaseline = footerMarker.getBoundingClientRect().top;
-    const delta = footerBaseline - targetBaseline;
-
-    if(generation !== alignGeneration || !Number.isFinite(delta)) return;
+    let shift = 0;
 
     /*
-      Footer is itself inside the visible viewport, so translating by the exact
-      baseline delta cannot create extra document height. This also works in
-      both directions and preserves the next article section position.
+      Apply the exact footer-baseline delta, then absorb tiny residual error.
+      This transform does not change document height, so the next section stays
+      immediately after the first Research screen.
     */
-    copy.style.transform = `translateY(${delta.toFixed(3)}px)`;
+    for(let pass = 0; pass < 4; pass += 1){
+      if(generation !== alignGeneration) return;
+
+      const targetBaseline = targetMarker.getBoundingClientRect().top;
+      const footerBaseline = footerMarker.getBoundingClientRect().top;
+      const residual = footerBaseline - targetBaseline;
+
+      if(!Number.isFinite(residual) || Math.abs(residual) <= 0.25){
+        break;
+      }
+
+      shift += residual;
+      copy.style.transform = `translateY(${shift.toFixed(3)}px)`;
+      void copy.offsetHeight;
+    }
   }
 
   function runAfterViewportSettles(){
