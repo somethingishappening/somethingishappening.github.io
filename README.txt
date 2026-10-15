@@ -1,32 +1,70 @@
-HARRI.LA — About bio midpoint + Mini-CV bottom-space fix
+HARRI.LA — unified resolution system v7
 
-Replace ONLY:
+REPLACE ONLY:
+  _includes/upper-resolution-layer.html
   _layouts/about.html
+  _layouts/research.html
 
-BIO
-• Desktop bio still uses the page's existing intended font size.
-• Its final text baseline still aligns to the footer.
-• New hard rule: the TOP of the bio may never rise above 50% of the viewport.
-• If the preferred font size would violate that rule, JavaScript reduces the
-  font size only as much as necessary.
-• The largest font size that fits is selected.
-• Recalculates on viewport resize/orientation change.
-• Mobile is unchanged.
-• Bio is measured while optically hidden on first load, so the fitting itself
-  is not shown as a visible jump.
+CORE RULE
+All desktop templates use ONE scale derived from the 1680×900 reference.
+Typography and the main structural shell shrink/grow together.
 
-MINI-CV
-• The hidden surprise image now uses display:none until it is genuinely
-  revealed, so it occupies ZERO invisible space below the CV.
-• Desktop CV bottom padding is zero, removing the remaining artificial tail.
-• Once the visitor genuinely reaches the end, the surprise image can still
-  reveal normally.
-• No About content or CMS settings changed.
+Scale examples:
+  1280×800  -> 0.7619×
+  1366×768  -> 0.8131×
+  1440×900  -> 0.8571×
+  1512×982  -> 0.9000×
+  1680×1050 -> 1.0000×
+  1728×1117 -> 1.0286×
+  1920×1200 -> 1.1429×
+  3840×2160 -> capped at 2.0000×
+  4096×2304 -> 2.0000× checkpoint
+  5120×2880 -> 2.5000× continuation
 
-NOT CHANGED
-• _includes/upper-resolution-layer.html
-• navigation
-• Research
-• Work
-• Harrilanpuisto
-• .pages.yml
+ABOUT
+  • Bio remains bottom-aligned.
+  • Bio can NEVER begin above the middle of the centre column.
+  • If necessary, only the bio is reduced further until it fits the lower half.
+  • Mini-CV width and typography use the same global scale.
+  • Last CV section has no trailing margin.
+  • Hidden surprise image uses display:none, so it reserves ZERO blank space.
+  • Surprise image becomes part of the document only after the visitor really
+    reaches the end, then stays revealed for that page visit.
+
+SITEWIDE TYPOGRAPHY
+The same scale controls:
+  • Harri.la brand
+  • welcome/greeting sizes
+  • navigation section labels
+  • project links
+  • footer
+  • project type/title
+  • main H1 sizes
+  • Work/Artistic/Harrilanpuisto descriptions
+  • Research chapter/H2/H3/body/TOC/caption
+  • Mini-CV body and headings
+
+SITEWIDE STRUCTURE
+The same scale controls:
+  • left column
+  • About right/CV column
+  • page padding
+  • main grid gap
+  • major title/copy max-widths
+
+RESEARCH ABSTRACT
+  • stays invisible but measurable while initial geometry settles
+  • waits for fonts
+  • clean-layout frame
+  • baseline-alignment frame
+  • reveal frame only after the final geometry is committed
+  • no fade and no visible correction jump
+  • re-aligns after the shared resolution scale changes
+
+UNCHANGED
+  • mobile <=900px
+  • CMS
+  • Work layout file
+  • Harrilanpuisto layout / 3-column masonry
+  • Research figure controls and 43.5vh hanging line
+  • menu underline behavior

@@ -3,14 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script>
-  if(window.innerWidth > 900){
-    document.documentElement.classList.add("about-bio-fitting");
-    window.setTimeout(function(){
-      document.documentElement.classList.remove("about-bio-fitting");
-    },1200);
-  }
-</script>
 <title>{{ page.title | default: "About" }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -131,17 +123,6 @@ button{font:inherit;color:inherit}
   font-weight:400;
 }
 
-/*
-  ABOUT BIO HARD CONSTRAINT
-  During the first desktop measurement pass the bio stays optically hidden.
-  It remains in layout and fully measurable; there is no fade.
-*/
-@media (min-width:901px){
-  html.about-bio-fitting .about-copy{
-    visibility:hidden !important;
-  }
-}
-
 /* MINI CV — the only independently scrollable page column */
 .cv-column{
   min-width:0;
@@ -162,18 +143,24 @@ button{font:inherit;color:inherit}
 .cv-item:last-child{margin-bottom:0}
 
 .cv-surprise{
-  display:none;
   width:100%;
   margin:34px 0 0;
   opacity:0;
   visibility:hidden;
   transform:translateY(8px);
+  transition:
+    opacity .12s ease-out,
+    transform .12s ease-out,
+    visibility 0s linear .12s;
 }
 .cv-surprise.revealed{
-  display:block;
   opacity:1;
   visibility:visible;
   transform:translateY(0);
+  transition:
+    opacity .12s ease-out,
+    transform .12s ease-out,
+    visibility 0s;
 }
 .cv-surprise img{
   display:block;
@@ -388,7 +375,6 @@ nav a:focus,
 @media (min-width:901px){
   .cv-column{
     padding-top:0 !important;
-    padding-bottom:0 !important;
   }
   .cv-title{
     margin-top:0 !important;
@@ -803,6 +789,47 @@ html.nav-state-syncing .nav-group *{
   {% include browser-consistency.html %}
   {% include arabic-typography.html %}
   {% include upper-resolution-layer.html %}
+
+<style id="harri-about-bio-cv-fit-v7">
+@media (min-width:901px){
+  /*
+    The biography owns the lower half of the centre column.
+    Its bottom edge stays on the established bottom line; JavaScript only
+    reduces its font size when needed so its top never crosses 50%.
+  */
+  body.page-about .center{
+    position:relative !important;
+  }
+
+  body.page-about .about-copy{
+    position:absolute !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    width:100% !important;
+  }
+
+  /* No invisible bottom reservation in the Mini-CV. */
+  body.page-about .cv-column{
+    padding-bottom:0 !important;
+  }
+
+  body.page-about .cv-section:last-of-type{
+    margin-bottom:0 !important;
+  }
+
+  body.page-about .cv-surprise:not(.revealed){
+    display:none !important;
+  }
+
+  body.page-about .cv-surprise.revealed{
+    display:block !important;
+  }
+}
+</style>
+
 </head>
 <body class="page-about">
 <div class="about-layout">
@@ -1369,33 +1396,34 @@ html.nav-state-syncing .nav-group *{
     });
   }
 
-  // The surprise must never appear merely because the CV happens to fit
-  // inside a tall viewport. It becomes eligible only after the visitor has
-  // actually scrolled the CV/page away from its initial position.
+  // The surprise must never reserve invisible space below the Mini-CV.
+  // It is display:none until the visitor genuinely reaches the end, then it
+  // stays revealed for the rest of that page visit.
   let cvHasUserScrolled = false;
+  let cvSurpriseRevealed = false;
 
   function updateCvSurprise(){
-    if(!cvColumn || !cvSurprise) return;
+    if(!cvColumn || !cvSurprise || cvSurpriseRevealed) return;
+    if(!cvHasUserScrolled) return;
 
     let atEnd = false;
 
-    if(cvHasUserScrolled){
-      if(window.innerWidth > 900){
-        atEnd =
-          cvColumn.scrollTop + cvColumn.clientHeight >=
-          cvColumn.scrollHeight - 3;
-      }else{
-        const rect = cvSurprise.getBoundingClientRect();
-        const pageBottom =
-          window.scrollY + window.innerHeight >=
-          document.documentElement.scrollHeight - 3;
-
-        atEnd = pageBottom && rect.top < window.innerHeight;
-      }
+    if(window.innerWidth > 900){
+      atEnd =
+        cvColumn.scrollTop + cvColumn.clientHeight >=
+        cvColumn.scrollHeight - 3;
+    }else{
+      const pageBottom =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 3;
+      atEnd = pageBottom;
     }
 
-    cvSurprise.classList.toggle('revealed',atEnd);
-    cvSurprise.setAttribute('aria-hidden',String(!atEnd));
+    if(!atEnd) return;
+
+    cvSurpriseRevealed = true;
+    cvSurprise.classList.add('revealed');
+    cvSurprise.setAttribute('aria-hidden','false');
   }
 
   if(cvColumn){
@@ -1415,6 +1443,7 @@ html.nav-state-syncing .nav-group *{
   window.addEventListener('resize',updateCvSurprise);
   window.addEventListener('pageshow',function(){
     cvHasUserScrolled = false;
+    cvSurpriseRevealed = false;
     if(cvSurprise){
       cvSurprise.classList.remove('revealed');
       cvSurprise.setAttribute('aria-hidden','true');
@@ -1444,6 +1473,69 @@ html.nav-state-syncing .nav-group *{
     event.preventDefault();
     cvColumn.scrollTop += delta;
   },{passive:false});
+
+  /*
+    DESKTOP BIO FIT
+    ----------------
+    Keep the biography bottom-aligned. Its first line is never allowed above
+    the vertical midpoint. If the copy needs more than the lower half of the
+    centre column, reduce ONLY as much as necessary from the shared site scale.
+  */
+  const aboutCopy = document.querySelector('.about-copy');
+  const aboutCenter = document.querySelector('.center');
+  let bioFitFrame = 0;
+
+  function fitAboutBiography(){
+    if(!aboutCopy || !aboutCenter || window.innerWidth <= 900){
+      if(aboutCopy) aboutCopy.style.removeProperty('font-size');
+      return;
+    }
+
+    aboutCopy.style.removeProperty('font-size');
+
+    const baseSize = parseFloat(getComputedStyle(aboutCopy).fontSize) || 40;
+    const availableHeight = Math.max(1, aboutCenter.clientHeight * 0.5);
+
+    // Already fits the lower half: keep the shared global size untouched.
+    if(aboutCopy.getBoundingClientRect().height <= availableHeight + 0.5){
+      return;
+    }
+
+    let low = Math.max(10, baseSize * 0.45);
+    let high = baseSize;
+
+    for(let i=0;i<18;i+=1){
+      const mid = (low + high) / 2;
+      aboutCopy.style.setProperty('font-size', mid + 'px', 'important');
+
+      if(aboutCopy.getBoundingClientRect().height <= availableHeight){
+        low = mid;
+      }else{
+        high = mid;
+      }
+    }
+
+    aboutCopy.style.setProperty(
+      'font-size',
+      Math.max(10, Math.floor(low * 100) / 100) + 'px',
+      'important'
+    );
+  }
+
+  function scheduleBioFit(){
+    cancelAnimationFrame(bioFitFrame);
+    bioFitFrame = requestAnimationFrame(fitAboutBiography);
+  }
+
+  window.addEventListener('resize',scheduleBioFit,{passive:true});
+  window.addEventListener('harri:desktop-scale',scheduleBioFit);
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(scheduleBioFit).catch(scheduleBioFit);
+  }
+
+  window.addEventListener('load',scheduleBioFit,{once:true});
+  scheduleBioFit();
 })();
 </script>
 
@@ -1611,233 +1703,6 @@ html.nav-state-syncing .nav-group *{
   showHeader();
 })();
 </script>
-
-<style id="harri-about-midpoint-fit-style">
-.harri-about-baseline-marker{
-  display:inline-block !important;
-  width:0 !important;
-  height:0 !important;
-  margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
-  overflow:hidden !important;
-  vertical-align:baseline !important;
-  line-height:0 !important;
-  font-size:0 !important;
-  pointer-events:none !important;
-}
-</style>
-
-<script id="harri-about-midpoint-fit">
-(function(){
-  "use strict";
-
-  const DESKTOP_MIN = 901;
-  const target = document.querySelector(".about-copy");
-  const footer = document.querySelector(".left-footer");
-
-  if(!target || !footer){
-    document.documentElement.classList.remove("about-bio-fitting");
-    return;
-  }
-
-  let frame = 0;
-  let targetMarker = null;
-  let footerMarker = null;
-
-  function visible(el){
-    if(!el) return false;
-    const style = getComputedStyle(el);
-    return (
-      style.display !== "none" &&
-      style.visibility !== "hidden" &&
-      el.getClientRects().length > 0
-    );
-  }
-
-  function lastVisibleFooterItem(){
-    const items = Array.from(footer.children).filter(visible);
-    return items.length ? items[items.length - 1] : null;
-  }
-
-  function lastTextNode(container){
-    const walker = document.createTreeWalker(
-      container,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode(node){
-          if(!node.nodeValue || !node.nodeValue.trim()){
-            return NodeFilter.FILTER_REJECT;
-          }
-
-          const parent = node.parentElement;
-          if(!parent || !visible(parent)){
-            return NodeFilter.FILTER_REJECT;
-          }
-
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      }
-    );
-
-    let last = null;
-    while(walker.nextNode()){
-      last = walker.currentNode;
-    }
-    return last;
-  }
-
-  function makeMarker(container, role){
-    const old = container.querySelector(
-      '.harri-about-baseline-marker[data-role="' + role + '"]'
-    );
-    if(old) old.remove();
-
-    const textNode = lastTextNode(container);
-    if(!textNode) return null;
-
-    const marker = document.createElement("span");
-    marker.className = "harri-about-baseline-marker";
-    marker.dataset.role = role;
-    marker.setAttribute("aria-hidden","true");
-    textNode.parentNode.insertBefore(marker, textNode.nextSibling);
-    return marker;
-  }
-
-  function rebuildMarkers(){
-    if(targetMarker && targetMarker.isConnected) targetMarker.remove();
-    if(footerMarker && footerMarker.isConnected) footerMarker.remove();
-
-    targetMarker = makeMarker(target,"bio");
-
-    const footerItem = lastVisibleFooterItem();
-    footerMarker = footerItem ? makeMarker(footerItem,"footer") : null;
-
-    return !!(targetMarker && footerMarker);
-  }
-
-  function setFontSize(px){
-    target.style.setProperty("font-size", px.toFixed(3) + "px", "important");
-  }
-
-  function measureAlignedTop(){
-    if(!targetMarker || !footerMarker) return Infinity;
-
-    target.style.removeProperty("transform");
-
-    const natural = target.getBoundingClientRect();
-    const targetBaseline = targetMarker.getBoundingClientRect().top;
-    const footerBaseline = footerMarker.getBoundingClientRect().top;
-    const delta = footerBaseline - targetBaseline;
-
-    return {
-      top: natural.top + delta,
-      delta,
-      footerBaseline
-    };
-  }
-
-  function fit(){
-    cancelAnimationFrame(frame);
-
-    frame = requestAnimationFrame(function(){
-      if(window.innerWidth < DESKTOP_MIN){
-        target.style.removeProperty("font-size");
-        target.style.removeProperty("transform");
-        document.documentElement.classList.remove("about-bio-fitting");
-        return;
-      }
-
-      /*
-        Read the page's own intended font size first. This preserves every
-        existing normal/high-resolution rule and only shrinks when the
-        midpoint constraint actually requires it.
-      */
-      target.style.removeProperty("font-size");
-      target.style.removeProperty("transform");
-
-      const preferredSize = parseFloat(getComputedStyle(target).fontSize) || 40;
-      const midpoint = window.innerHeight * 0.5;
-
-      if(!rebuildMarkers()){
-        document.documentElement.classList.remove("about-bio-fitting");
-        return;
-      }
-
-      setFontSize(preferredSize);
-
-      let preferred = measureAlignedTop();
-
-      /*
-        If the preferred typography already begins at/below 50vh, keep it.
-        Otherwise find the LARGEST font size that satisfies:
-            aligned bio top >= viewport midpoint
-        This means the type changes only as much as necessary.
-      */
-      if(preferred.top < midpoint){
-        let low = Math.min(10, preferredSize);
-        let high = preferredSize;
-
-        setFontSize(low);
-        let lowMeasure = measureAlignedTop();
-
-        /*
-          Extremely short desktop windows are rare, but the rule is absolute:
-          keep reducing until the midpoint constraint can be met.
-        */
-        while(lowMeasure.top < midpoint && low > 4){
-          low *= 0.8;
-          setFontSize(low);
-          lowMeasure = measureAlignedTop();
-        }
-
-        for(let i = 0; i < 18; i++){
-          const mid = (low + high) / 2;
-          setFontSize(mid);
-
-          const measured = measureAlignedTop();
-
-          if(measured.top >= midpoint){
-            low = mid;
-          }else{
-            high = mid;
-          }
-        }
-
-        setFontSize(low);
-      }
-
-      const finalMeasure = measureAlignedTop();
-
-      if(Number.isFinite(finalMeasure.delta)){
-        target.style.transform =
-          "translateY(" + finalMeasure.delta.toFixed(2) + "px)";
-      }
-
-      document.documentElement.classList.remove("about-bio-fitting");
-    });
-  }
-
-  function scheduleFit(){
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(fit);
-  }
-
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(fit).catch(fit);
-  }else{
-    fit();
-  }
-
-  window.addEventListener("resize",scheduleFit,{passive:true});
-  window.addEventListener("orientationchange",scheduleFit,{passive:true});
-  window.addEventListener("pageshow",scheduleFit);
-
-  if(window.visualViewport){
-    window.visualViewport.addEventListener("resize",scheduleFit,{passive:true});
-  }
-})();
-</script>
-
+{% include desktop-baseline-alignment.html target=".about-copy" %}
 </body>
 </html>

@@ -608,3 +608,437 @@
 }
 </style>
 
+
+<style id="harri-unified-desktop-scale-v7">
+/*
+  HARRI.LA — UNIFIED DESKTOP SCALE v7
+  -----------------------------------
+  One reference composition: 1680 × 900.
+
+  All desktop typography and the main structural shell use the SAME scale.
+  This prevents About, Work, Research and Harrilanpuisto from drifting apart
+  at 1280 / 1366 / 1440 / 1512 / 1680 / 1728 / 1920 / 4K / 5K.
+
+  4096 × 2304 remains the established 2× checkpoint.
+  5120 × 2880 continues from it at 2.5× rather than jumping to ~3.05×.
+*/
+:root{
+  --harri-u-pad-x:18px;
+  --harri-u-pad-top:32px;
+  --harri-u-pad-bottom:26px;
+  --harri-u-about-pad-bottom:25px;
+  --harri-u-left:220px;
+  --harri-u-about-right:300px;
+  --harri-u-gap:28px;
+
+  --harri-u-brand:27px;
+  --harri-u-welcome-height:148px;
+  --harri-u-welcome-type:28px;
+  --harri-u-nav:17px;
+  --harri-u-nav-line:18.7px;
+  --harri-u-toggle:20px;
+  --harri-u-toggle-width:22px;
+  --harri-u-footer:13px;
+
+  --harri-u-project-type:27px;
+  --harri-u-h1:54px;
+  --harri-u-chapter:24px;
+  --harri-u-body:18px;
+  --harri-u-toc:13px;
+  --harri-u-caption:12px;
+
+  --harri-u-about-greeting:54px;
+  --harri-u-about-bio:40px;
+  --harri-u-about-nav-top:148px;
+  --harri-u-about-greeting-top:145px;
+  --harri-u-about-greeting-height:275px;
+
+  --harri-u-space-3:3px;
+  --harri-u-space-5:5px;
+  --harri-u-space-8:8px;
+  --harri-u-space-10:10px;
+  --harri-u-space-12:12px;
+  --harri-u-space-13:13px;
+  --harri-u-space-14:14px;
+  --harri-u-space-18:18px;
+  --harri-u-space-24:24px;
+  --harri-u-space-26:26px;
+  --harri-u-space-34:34px;
+
+  --harri-u-work-title-max:610px;
+  --harri-u-research-title-max:680px;
+  --harri-u-copy-max:700px;
+  --harri-u-work-copy-max:660px;
+}
+
+/* DESKTOP ONLY. Mobile keeps the existing dedicated mobile design. */
+@media (min-width:901px){
+
+  /* ---------- shared page shell ---------- */
+  body.page-about .about-layout{
+    --page-pad-x:var(--harri-u-pad-x) !important;
+    --page-pad-top:var(--harri-u-pad-top) !important;
+    --page-pad-bottom:var(--harri-u-about-pad-bottom) !important;
+    --left-w:var(--harri-u-left) !important;
+    --right-w:var(--harri-u-about-right) !important;
+    --gap:var(--harri-u-gap) !important;
+  }
+
+  body.page-work .layout,
+  body.page-research .layout,
+  body.page-harrilanpuisto .layout{
+    grid-template-columns:
+      var(--harri-u-left)
+      minmax(0,745fr)
+      minmax(0,660fr) !important;
+    gap:var(--harri-u-gap) !important;
+    padding:
+      var(--harri-u-pad-top)
+      var(--harri-u-pad-x)
+      var(--harri-u-pad-bottom) !important;
+  }
+
+  /* ---------- shared navigation ---------- */
+  body.page-about .brand,
+  body.page-work .brand,
+  body.page-research .brand,
+  body.page-harrilanpuisto .brand{
+    font-size:var(--harri-u-brand) !important;
+  }
+
+  body.page-work .welcome-zone,
+  body.page-research .welcome-zone,
+  body.page-harrilanpuisto .welcome-zone{
+    flex-basis:var(--harri-u-welcome-height) !important;
+    height:var(--harri-u-welcome-height) !important;
+    min-height:var(--harri-u-welcome-height) !important;
+  }
+
+  body.page-work .welcome,
+  body.page-research .welcome,
+  body.page-harrilanpuisto .welcome{
+    font-size:var(--harri-u-welcome-type) !important;
+  }
+
+  body.page-about .group-head,
+  body.page-work .group-head,
+  body.page-research .group-head,
+  body.page-harrilanpuisto .group-head,
+  body.page-about .project-links a,
+  body.page-work .project-links a,
+  body.page-research .project-links a,
+  body.page-harrilanpuisto .project-links a,
+  body.page-about .harrilanpuisto-link,
+  body.page-about .standalone-nav-link,
+  body.page-work .standalone-nav-link,
+  body.page-research .standalone-nav-link,
+  body.page-harrilanpuisto .standalone-nav-link{
+    font-size:var(--harri-u-nav) !important;
+    line-height:var(--harri-u-nav-line) !important;
+  }
+
+  body.page-about .group-toggle,
+  body.page-work .group-toggle,
+  body.page-research .group-toggle,
+  body.page-harrilanpuisto .group-toggle{
+    width:var(--harri-u-toggle-width) !important;
+    flex-basis:var(--harri-u-toggle-width) !important;
+    font-size:var(--harri-u-toggle) !important;
+    line-height:var(--harri-u-nav-line) !important;
+  }
+
+  body.page-about .left-footer,
+  body.page-work .left-footer,
+  body.page-research .left-footer,
+  body.page-harrilanpuisto .left-footer{
+    font-size:var(--harri-u-footer) !important;
+    line-height:1.15 !important;
+  }
+
+  body.page-about .nav-group,
+  body.page-work .nav-group,
+  body.page-research .nav-group,
+  body.page-harrilanpuisto .nav-group{
+    margin-bottom:var(--harri-u-space-5) !important;
+  }
+
+  body.page-about .project-links.open,
+  body.page-work .project-links:not(.collapsed),
+  body.page-research .project-links:not(.collapsed),
+  body.page-harrilanpuisto .project-links:not(.collapsed){
+    margin-top:var(--harri-u-space-8) !important;
+  }
+
+  body.page-about .project-links-inner,
+  body.page-work .project-links-inner,
+  body.page-research .project-links-inner,
+  body.page-harrilanpuisto .project-links-inner{
+    gap:var(--harri-u-space-3) !important;
+    padding-bottom:var(--harri-u-space-13) !important;
+  }
+
+  /* ---------- About ---------- */
+  body.page-about .left nav{
+    margin-top:var(--harri-u-about-nav-top) !important;
+  }
+
+  body.page-about .greeting-zone{
+    top:var(--harri-u-about-greeting-top) !important;
+    height:var(--harri-u-about-greeting-height) !important;
+  }
+
+  body.page-about .about-greeting{
+    font-size:var(--harri-u-about-greeting) !important;
+  }
+
+  body.page-about .about-copy{
+    font-size:var(--harri-u-about-bio) !important;
+    line-height:1.18 !important;
+  }
+
+  body.page-about .cv-column{
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+  }
+
+  body.page-about .cv-section h2,
+  body.page-about .cv-item{
+    font-size:var(--harri-u-body) !important;
+  }
+
+  body.page-about .cv-section h2{
+    line-height:1.15 !important;
+    margin:0 0 var(--harri-u-space-12) !important;
+  }
+
+  body.page-about .cv-item{
+    line-height:1.2 !important;
+    margin-bottom:var(--harri-u-space-10) !important;
+  }
+
+  body.page-about .cv-section{
+    margin-bottom:var(--harri-u-space-26) !important;
+  }
+
+  body.page-about .cv-section:last-of-type{
+    margin-bottom:0 !important;
+  }
+
+  body.page-about .cv-surprise{
+    margin-top:var(--harri-u-space-34) !important;
+  }
+
+  /*
+    Crucial: an unrevealed surprise image occupies ZERO layout space.
+    This removes the large blank strip beneath the visible Mini-CV.
+  */
+  body.page-about .cv-surprise:not(.revealed){
+    display:none !important;
+  }
+
+  body.page-about .cv-surprise.revealed{
+    display:block !important;
+  }
+
+  /* ---------- Work + Harrilanpuisto ---------- */
+  body.page-work .project-type,
+  body.page-harrilanpuisto .project-type{
+    font-size:var(--harri-u-project-type) !important;
+    margin-bottom:var(--harri-u-space-24) !important;
+  }
+
+  body.page-work .project-info h1,
+  body.page-harrilanpuisto .project-info h1{
+    font-size:var(--harri-u-h1) !important;
+    max-width:var(--harri-u-work-title-max) !important;
+  }
+
+  body.page-work .project-description,
+  body.page-harrilanpuisto .project-description{
+    font-size:var(--harri-u-body) !important;
+    max-width:var(--harri-u-work-copy-max) !important;
+  }
+
+  /* ---------- Research ---------- */
+  body.page-research .project-title{
+    font-size:var(--harri-u-project-type) !important;
+    margin-bottom:var(--harri-u-space-24) !important;
+  }
+
+  body.page-research .paper h1{
+    font-size:var(--harri-u-h1) !important;
+    max-width:var(--harri-u-research-title-max) !important;
+    margin-bottom:var(--harri-u-space-18) !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h1.chapter-heading{
+    font-size:var(--harri-u-chapter) !important;
+    line-height:1.05 !important;
+    margin:
+      var(--harri-u-space-26)
+      0
+      var(--harri-u-space-12) !important;
+    max-width:var(--harri-u-copy-max) !important;
+  }
+
+  body.page-research .paper p,
+  body.page-research .research-abstract-copy,
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3,
+  body.page-research .paper ul,
+  body.page-research .paper ol{
+    font-size:var(--harri-u-body) !important;
+  }
+
+  body.page-research .paper p,
+  body.page-research .research-abstract-copy{
+    line-height:1.2 !important;
+    max-width:var(--harri-u-copy-max) !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    line-height:1.2 !important;
+    margin:
+      var(--harri-u-space-26)
+      0
+      var(--harri-u-space-12) !important;
+  }
+
+  body.page-research .toc,
+  body.page-research .toc a{
+    font-size:var(--harri-u-toc) !important;
+  }
+
+  body.page-research .figure-caption{
+    font-size:var(--harri-u-caption) !important;
+  }
+}
+</style>
+
+<script id="harri-unified-desktop-scale-script-v7">
+(function(){
+  "use strict";
+
+  const BASE_W = 1680;
+  const BASE_H = 900;
+  const FOUR_K_W = 4096;
+  const FOUR_K_H = 2304;
+
+  const base = {
+    "pad-x":18,
+    "pad-top":32,
+    "pad-bottom":26,
+    "about-pad-bottom":25,
+    "left":220,
+    "about-right":300,
+    "gap":28,
+
+    "brand":27,
+    "welcome-height":148,
+    "welcome-type":28,
+    "nav":17,
+    "nav-line":18.7,
+    "toggle":20,
+    "toggle-width":22,
+    "footer":13,
+
+    "project-type":27,
+    "h1":54,
+    "chapter":24,
+    "body":18,
+    "toc":13,
+    "caption":12,
+
+    "about-greeting":54,
+    "about-bio":40,
+    "about-nav-top":148,
+    "about-greeting-top":145,
+    "about-greeting-height":275,
+
+    "space-3":3,
+    "space-5":5,
+    "space-8":8,
+    "space-10":10,
+    "space-12":12,
+    "space-13":13,
+    "space-14":14,
+    "space-18":18,
+    "space-24":24,
+    "space-26":26,
+    "space-34":34,
+
+    "work-title-max":610,
+    "research-title-max":680,
+    "copy-max":700,
+    "work-copy-max":660
+  };
+
+  let raf = 0;
+
+  function desktopScale(){
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    if(w <= 900) return 1;
+
+    /*
+      The reference shrinks uniformly below 1680×900.
+      Growth is capped at the established 2× 4K checkpoint.
+      Beyond the checkpoint the old 4096 -> 5120 continuation is preserved.
+    */
+    if(w > FOUR_K_W && h > FOUR_K_H){
+      return 2 * Math.min(w / FOUR_K_W, h / FOUR_K_H);
+    }
+
+    return Math.min(2, Math.min(w / BASE_W, h / BASE_H));
+  }
+
+  function apply(){
+    raf = 0;
+
+    if(window.innerWidth <= 900){
+      document.documentElement.style.removeProperty("--harri-site-scale");
+      Object.keys(base).forEach((key)=>{
+        document.documentElement.style.removeProperty("--harri-u-" + key);
+      });
+      return;
+    }
+
+    const scale = desktopScale();
+    const root = document.documentElement;
+
+    root.style.setProperty("--harri-site-scale", String(scale));
+
+    Object.entries(base).forEach(([key,value])=>{
+      root.style.setProperty(
+        "--harri-u-" + key,
+        (value * scale).toFixed(4) + "px"
+      );
+    });
+
+    window.dispatchEvent(
+      new CustomEvent("harri:desktop-scale", {detail:{scale}})
+    );
+  }
+
+  function schedule(){
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(apply);
+  }
+
+  apply();
+
+  window.addEventListener("resize",schedule,{passive:true});
+  window.addEventListener("orientationchange",schedule,{passive:true});
+
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize",schedule,{passive:true});
+  }
+})();
+</script>
+

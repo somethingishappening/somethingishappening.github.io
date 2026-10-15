@@ -42,7 +42,7 @@
     */
     @media (min-width:901px){
       html.research-initializing .research-intro-screen{
-        opacity:0 !important;
+        visibility:hidden !important;
         pointer-events:none !important;
       }
     }
@@ -5295,6 +5295,7 @@ min-width:0}
   }
 
   window.addEventListener('resize', onResize, {passive:true});
+  window.addEventListener('harri:desktop-scale', onResize);
   window.addEventListener('orientationchange', onResize, {passive:true});
   if(window.visualViewport){
     window.visualViewport.addEventListener('resize', onResize, {passive:true});
@@ -5313,9 +5314,25 @@ min-width:0}
   */
   let initialReleased = false;
 
-  function initialAlignAndReveal(){
+  function releaseInitialResearch(){
     if(initialReleased) return;
     initialReleased = true;
+
+    window.scrollTo(0,0);
+    paper.scrollTop = 0;
+
+    /*
+      One extra frame after the final min-height has been written guarantees
+      that the visitor's first visible Research frame already contains the
+      settled Abstract geometry.
+    */
+    requestAnimationFrame(function(){
+      document.documentElement.classList.remove('research-initializing');
+    });
+  }
+
+  function initialAlignAndReveal(){
+    if(initialReleased) return;
 
     clearTimeout(initialFallback);
     ++alignGeneration;
@@ -5323,16 +5340,35 @@ min-width:0}
     cancelAnimationFrame(rafB);
     clearTimeout(settleTimer);
 
+    if(window.innerWidth < DESKTOP_MIN){
+      resetFlowAlignment();
+      releaseInitialResearch();
+      return;
+    }
+
     const generation = alignGeneration;
 
-    resetFlowAlignment();
-    void intro.offsetHeight;
-    measureAndAlign(generation);
+    /*
+      Frame 1: remove any stale inline geometry and force a clean layout.
+      Frame 2: perform the exact footer-baseline alignment.
+      Frame 3: reveal after that geometry has been committed.
+    */
+    rafA = requestAnimationFrame(function(){
+      if(generation !== alignGeneration) return;
 
-    document.documentElement.classList.remove('research-initializing');
+      resetFlowAlignment();
+      void intro.offsetHeight;
+
+      rafB = requestAnimationFrame(function(){
+        if(generation !== alignGeneration) return;
+
+        measureAndAlign(generation);
+        releaseInitialResearch();
+      });
+    });
   }
 
-  const initialFallback = setTimeout(initialAlignAndReveal, 1200);
+  const initialFallback = setTimeout(initialAlignAndReveal, 1400);
 
   if(window.innerWidth < DESKTOP_MIN){
     initialAlignAndReveal();
