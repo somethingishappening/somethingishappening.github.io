@@ -1,5 +1,10 @@
-Replace only: _layouts/about.html
+Harri.la About surprise-image easing patch v3
 
-Change scope: surprise image easing only.
-The surprise image now uses the exact Research figure preview opacity easing: opacity .24s ease, with no positional movement.
-No trigger, CV, CMS, navigation, greeting, layout, sizing, or other behavior was changed.
+Replace ONLY:
+  _layouts/about.html
+
+Scope:
+- Mini-CV and all About layout/content are unchanged.
+- Surprise image trigger/loading/positioning are unchanged.
+- Only the surprise image reveal animation changed.
+- Reveal uses a forced 240 ms ease opacity animation, matching the Research figure timing.

@@ -1487,14 +1487,30 @@ html.nav-state-syncing .nav-group *{
     cvSurprise.classList.add('revealing');
     cvSurprise.setAttribute('aria-hidden','false');
 
-    // First paint with the surprise image at opacity 0, then add .revealed
-    // on the next paint so the image uses the Research figure .24s ease crossfade.
-    requestAnimationFrame(() => {
+    // Use the exact Research figure timing on the image itself. Web Animations
+    // guarantees that the opacity-0 frame is actually painted before opacity 1,
+    // avoiding browsers collapsing both class changes into a single frame.
+    if(cvSurpriseImage && typeof cvSurpriseImage.animate === 'function'){
+      cvSurpriseImage.getAnimations().forEach((animation) => animation.cancel());
+      cvSurpriseImage.style.opacity = '0';
+      void cvSurpriseImage.offsetWidth;
+
+      const revealAnimation = cvSurpriseImage.animate(
+        [{opacity:0},{opacity:1}],
+        {duration:240,easing:'ease',fill:'forwards'}
+      );
+
+      revealAnimation.addEventListener('finish',() => {
+        cvSurprise.classList.add('revealed');
+        cvSurprise.classList.remove('revealing');
+        cvSurpriseImage.style.removeProperty('opacity');
+      },{once:true});
+    }else{
       requestAnimationFrame(() => {
         cvSurprise.classList.add('revealed');
         cvSurprise.classList.remove('revealing');
       });
-    });
+    }
     requestAnimationFrame(scheduleBioFit);
   }
 
