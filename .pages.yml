@@ -246,7 +246,7 @@ content:
       - name: link_url
         label: Image link (optional)
         type: string
-        description: Optional URL opened in a new tab when the figure image is clicked. Leave blank to keep the normal figure lightbox behavior.
+        description: Optional URL opened in a new tab when this figure image is clicked. Leave blank to keep the normal figure lightbox.
     - name: toc_columns
       label: Legacy Project Overview data
       type: object
@@ -328,7 +328,7 @@ content:
         - name: link_url
           label: Image link (optional)
           type: string
-          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal image/lightbox behavior.
+          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox behavior.
       - name: video
         label: Video
         fields:
@@ -428,7 +428,7 @@ content:
         - name: link_url
           label: Image link (optional)
           type: string
-          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal image/lightbox behavior.
+          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox behavior.
       - name: video
         label: Video
         fields:
@@ -528,7 +528,7 @@ content:
         - name: link_url
           label: Image link (optional)
           type: string
-          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal image/lightbox behavior.
+          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox behavior.
       - name: video
         label: Video
         fields:
@@ -593,7 +593,7 @@ content:
       - name: link_url
         label: Image link (optional)
         type: string
-        description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal Harrilanpuisto lightbox behavior.
+        description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal Harrilanpuisto lightbox.
       - name: desktop_columns
         label: Desktop width
         type: select
@@ -792,22 +792,22 @@ content:
       list: true
       description: The About greeting randomly uses these phrases.
     - name: greeting_interval_seconds
-      label: Seconds between automatic greetings
+      label: Seconds between greeting changes
       type: number
       default: 30
       required: true
-      description: Controls how many seconds pass before the About greeting automatically changes. Example: 30 means every 30 seconds.
+      description: Choose the delay between automatic greeting changes. Example: 30 means every 30 seconds.
     - name: morning_greeting_messages
       label: Morning-only greeting phrases
       type: string
       list: true
       description: These phrases are added to the About greeting rotation only from 12:00 AM (midnight) until 11:59 AM, using the visitor's local device time.
     - name: ascii_click_count
-      label: Clicks before fullscreen ASCII appears
+      label: Clicks before ASCII appears
       type: number
       default: 10
       required: true
-      description: Choose how many clicks/taps on the About greeting happen before the fullscreen ASCII face appears. Minimum effective value is 1.
+      description: Choose how many greeting clicks/taps are needed before the fullscreen ASCII face appears.
     - name: ascii_messages
       label: Fullscreen ASCII faces
       type: object
