@@ -649,6 +649,7 @@
 
   --harri-u-about-greeting:54px;
   --harri-u-about-bio:40px;
+  --harri-cv-research-fit:1;
   --harri-u-about-nav-top:148px;
   --harri-u-about-greeting-top:145px;
   --harri-u-about-greeting-height:275px;
@@ -986,11 +987,249 @@
     return Math.min(2, Math.min(w / BASE_W, h / BASE_H));
   }
 
+  function viewportFitKey(){
+    return [
+      "harri-cv-research-fit",
+      Math.round(window.innerWidth),
+      Math.round(window.innerHeight)
+    ].join(":");
+  }
+
+  function fallbackCvResearchFit(){
+    /*
+      About is the site landing page and measures the exact multiplier for
+      the current viewport. A direct deep-link to Research before About has
+      been measured keeps the established fit=1 hierarchy rather than
+      guessing from aspect ratio.
+    */
+    return 1;
+  }
+
+  function readStoredCvResearchFit(){
+    try{
+      const value = parseFloat(
+        sessionStorage.getItem(viewportFitKey()) || ""
+      );
+
+      if(Number.isFinite(value) && value >= 1){
+        return value;
+      }
+    }catch(e){}
+
+    return null;
+  }
+
+  const cvResearchFitKeys = [
+    "project-type",
+    "h1",
+    "chapter",
+    "body",
+    "toc",
+    "caption",
+    "space-12",
+    "space-14",
+    "space-18",
+    "space-24",
+    "space-26"
+  ];
+
+  function applyCvResearchFitVars(value){
+    const fit = Math.max(1, Number(value) || 1);
+    const root = document.documentElement;
+    const siteScale =
+      parseFloat(root.style.getPropertyValue("--harri-site-scale")) ||
+      desktopScale();
+
+    root.style.setProperty(
+      "--harri-cv-research-fit",
+      fit.toFixed(5)
+    );
+
+    cvResearchFitKeys.forEach((key)=>{
+      const value = base[key];
+      if(typeof value !== "number") return;
+
+      root.style.setProperty(
+        "--harri-fit-" + key,
+        (value * siteScale * fit).toFixed(4) + "px"
+      );
+    });
+
+    return fit;
+  }
+
+  function clearCvResearchFitVars(){
+    const root = document.documentElement;
+    root.style.removeProperty("--harri-cv-research-fit");
+
+    cvResearchFitKeys.forEach((key)=>{
+      root.style.removeProperty("--harri-fit-" + key);
+    });
+  }
+
+  function writeCvResearchFit(value){
+    const fit = applyCvResearchFitVars(value);
+
+    try{
+      sessionStorage.setItem(
+        viewportFitKey(),
+        fit.toFixed(5)
+      );
+    }catch(e){}
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "harri:cv-research-fit",
+        {detail:{fit}}
+      )
+    );
+
+    return fit;
+  }
+
+  function visibleCvSections(){
+    const cvColumn = document.querySelector(".cv-column");
+    if(!cvColumn) return [];
+
+    return Array.from(
+      cvColumn.querySelectorAll(".cv-section")
+    ).filter((section)=>{
+      return getComputedStyle(section).display !== "none";
+    });
+  }
+
+  function miniCvVisibleBottom(cvColumn, sections){
+    if(!cvColumn || !sections.length) return 0;
+
+    const columnRect = cvColumn.getBoundingClientRect();
+    const lastRect =
+      sections[sections.length - 1].getBoundingClientRect();
+
+    /*
+      Add scrollTop so this remains a content-space measurement even if the
+      visitor has already moved the CV before a resize event.
+    */
+    return (
+      lastRect.bottom -
+      columnRect.top +
+      cvColumn.scrollTop
+    );
+  }
+
+  function measureAboutCvResearchFit(){
+    if(
+      window.innerWidth <= 900 ||
+      !document.body ||
+      !document.body.classList.contains("page-about")
+    ){
+      return null;
+    }
+
+    const cvColumn = document.querySelector(".cv-column");
+    const sections = visibleCvSections();
+
+    if(!cvColumn || !sections.length) return null;
+
+    const originalScroll = cvColumn.scrollTop;
+
+    /*
+      Always start from the established responsive size. Only grow if the
+      final visible CV section leaves real unused height below it.
+    */
+    applyCvResearchFitVars(1);
+    void cvColumn.offsetHeight;
+
+    const target = cvColumn.clientHeight;
+    let naturalBottom = miniCvVisibleBottom(
+      cvColumn,
+      sections
+    );
+
+    if(naturalBottom >= target - 0.75){
+      cvColumn.scrollTop = originalScroll;
+      return writeCvResearchFit(1);
+    }
+
+    let low = 1;
+    let high = 1.08;
+
+    /*
+      Expand the search range until the CV reaches/passes the bottom.
+      4× is only a safety ceiling; normal responsive resolutions settle
+      well below it.
+    */
+    while(high < 4){
+      applyCvResearchFitVars(high);
+      void cvColumn.offsetHeight;
+
+      if(
+        miniCvVisibleBottom(cvColumn, sections) >=
+        target - 0.75
+      ){
+        break;
+      }
+
+      low = high;
+      high *= 1.12;
+    }
+
+    high = Math.min(high, 4);
+
+    for(let i=0;i<18;i+=1){
+      const mid = (low + high) / 2;
+
+      applyCvResearchFitVars(mid);
+      void cvColumn.offsetHeight;
+
+      if(
+        miniCvVisibleBottom(cvColumn, sections) >=
+        target - 0.75
+      ){
+        high = mid;
+      }else{
+        low = mid;
+      }
+    }
+
+    /*
+      Use the upper bound so the last entry reaches/slightly passes the
+      bottom rather than leaving a sub-pixel white line.
+    */
+    const fit = Math.min(
+      4,
+      Math.ceil(high * 1000) / 1000
+    );
+
+    cvColumn.scrollTop = originalScroll;
+    return writeCvResearchFit(fit);
+  }
+
+  let cvFitRaf = 0;
+
+  function scheduleCvResearchFit(){
+    cancelAnimationFrame(cvFitRaf);
+
+    cvFitRaf = requestAnimationFrame(()=>{
+      cvFitRaf = 0;
+
+      const measured = measureAboutCvResearchFit();
+      if(measured !== null) return;
+
+      const stored = readStoredCvResearchFit();
+      writeCvResearchFit(
+        stored === null
+          ? fallbackCvResearchFit()
+          : stored
+      );
+    });
+  }
+
   function apply(){
     raf = 0;
 
     if(window.innerWidth <= 900){
       document.documentElement.style.removeProperty("--harri-site-scale");
+      clearCvResearchFitVars();
       Object.keys(base).forEach((key)=>{
         document.documentElement.style.removeProperty("--harri-u-" + key);
       });
@@ -1012,6 +1251,8 @@
     window.dispatchEvent(
       new CustomEvent("harri:desktop-scale", {detail:{scale}})
     );
+
+    scheduleCvResearchFit();
   }
 
   function schedule(){
@@ -1027,6 +1268,28 @@
   if(window.visualViewport){
     window.visualViewport.addEventListener("resize",schedule,{passive:true});
   }
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      scheduleCvResearchFit,
+      {once:true}
+    );
+  }else{
+    scheduleCvResearchFit();
+  }
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready
+      .then(scheduleCvResearchFit)
+      .catch(scheduleCvResearchFit);
+  }
+
+  window.addEventListener(
+    "load",
+    scheduleCvResearchFit,
+    {once:true}
+  );
 })();
 </script>
 

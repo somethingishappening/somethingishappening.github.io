@@ -820,44 +820,38 @@ html.nav-state-syncing .nav-group *{
     margin-bottom:0 !important;
   }
 
-  /*
-    When the visible Mini-CV is shorter than its available column, JavaScript
-    distributes the unused height BETWEEN CV sections rather than leaving an
-    empty band below the last entry. Typography itself stays unchanged.
-  */
-  body.page-about .cv-section:not(:last-of-type){
-    margin-bottom:calc(
-      var(--harri-u-space-26,26px) +
-      var(--harri-cv-fill-gap,0px)
-    ) !important;
-  }
 }
 </style>
 
 
-<style id="harri-cv-research-body-source-v7-4">
+<style id="harri-cv-research-body-source-v7-5">
 /*
-  MINI-CV = RESEARCH BODY TYPOGRAPHY
-  ----------------------------------
-  There is no separate desktop CV type breakpoint anymore.
-  Both templates consume the same unified body-size and spacing variables.
+  MINI-CV = RESEARCH TYPOGRAPHY, WITH SHARED DESKTOP FIT SCALE
+  ------------------------------------------------------------
+  --harri-cv-research-fit starts at 1. When the visible Mini-CV would leave
+  unused space at the bottom of its desktop column, the shared responsive
+  controller increases this multiplier until the final visible CV entry
+  reaches/slightly passes the bottom.
+
+  The same multiplier is consumed by the Research template so the two keep
+  the same type relationship at every desktop resolution.
 */
 @media (min-width:901px){
   body.page-about .cv-section h2,
   body.page-about .cv-item,
   body.page-about .cv-item p{
-    font-size:var(--harri-u-body,18px) !important;
+    font-size:var(--harri-fit-body,var(--harri-u-body,18px)) !important;
     line-height:1.2 !important;
     letter-spacing:0 !important;
   }
 
   body.page-about .cv-section h2{
     font-weight:700 !important;
-    margin:0 0 var(--harri-u-space-12,12px) !important;
+    margin:0 0 var(--harri-fit-space-12,var(--harri-u-space-12,12px)) !important;
   }
 
   body.page-about .cv-item{
-    margin:0 0 var(--harri-u-space-14,14px) !important;
+    margin:0 0 var(--harri-fit-space-14,var(--harri-u-space-14,14px)) !important;
   }
 
   body.page-about .cv-item:last-child{
@@ -869,7 +863,7 @@ html.nav-state-syncing .nav-group *{
   }
 
   body.page-about .cv-section{
-    margin-bottom:var(--harri-u-space-26,26px) !important;
+    margin-bottom:var(--harri-fit-space-26,var(--harri-u-space-26,26px)) !important;
   }
 
   body.page-about .cv-section:last-of-type{

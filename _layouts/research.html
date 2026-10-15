@@ -2747,6 +2747,77 @@ min-width:0}
 }
 </style>
 
+
+<style id="harri-research-cv-shared-type-fit-v7-5">
+/*
+  RESEARCH TYPOGRAPHY FOLLOWS THE FITTED MINI-CV SCALE
+  ---------------------------------------------------
+  The shared responsive controller writes fitted pixel variables derived from
+  the Mini-CV. At fit=1 this is identical to the established Research
+  hierarchy. When About needs a larger CV, Research grows by exactly the same
+  multiplier while preserving the existing hierarchy.
+*/
+@media (min-width:901px){
+  body.page-research .project-title{
+    font-size:var(--harri-fit-project-type,var(--harri-u-project-type,27px)) !important;
+    margin-bottom:var(--harri-fit-space-24,var(--harri-u-space-24,24px)) !important;
+  }
+
+  body.page-research .paper h1{
+    font-size:var(--harri-fit-h1,var(--harri-u-h1,54px)) !important;
+    margin-bottom:var(--harri-fit-space-18,var(--harri-u-space-18,18px)) !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h1.chapter-heading{
+    font-size:var(--harri-fit-chapter,var(--harri-u-chapter,24px)) !important;
+    line-height:1.05 !important;
+    margin:
+      var(--harri-fit-space-26,var(--harri-u-space-26,26px))
+      0
+      var(--harri-fit-space-12,var(--harri-u-space-12,12px)) !important;
+  }
+
+  body.page-research .paper p,
+  body.page-research .research-abstract-copy,
+  body.page-research .research-copy ul,
+  body.page-research .research-copy ol,
+  body.page-research .research-copy ul > li,
+  body.page-research .research-copy ol > li,
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    font-size:var(--harri-fit-body,var(--harri-u-body,18px)) !important;
+  }
+
+  body.page-research .paper p,
+  body.page-research .research-copy ul > li,
+  body.page-research .research-copy ol > li{
+    margin-bottom:var(--harri-fit-space-14,var(--harri-u-space-14,14px)) !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    line-height:1.2 !important;
+    margin:
+      var(--harri-fit-space-26,var(--harri-u-space-26,26px))
+      0
+      var(--harri-fit-space-12,var(--harri-u-space-12,12px)) !important;
+  }
+
+  body.page-research .toc,
+  body.page-research .toc a{
+    font-size:var(--harri-fit-toc,var(--harri-u-toc,13px)) !important;
+  }
+
+  body.page-research .figure-caption{
+    font-size:var(--harri-fit-caption,var(--harri-u-caption,12px)) !important;
+  }
+}
+</style>
+
 </head>
 <body class="page-research">
 
