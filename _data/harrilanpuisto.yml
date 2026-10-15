@@ -2,14 +2,17 @@ enabled: true
 media:
   - type: image
     image: /assets/uploads/frostype.jpg
+    desktop_columns: two
     caption: Experimental typography that simulates frosted window panes. I
       developed this method and technique with Jennifer Sanderson in early 2022.
   - type: image
     image: /assets/uploads/frostypefiery.png
+    desktop_columns: two
     caption: Experimental typography that simulates frosted window panes. I
       developed this method and technique with Jennifer Sanderson in early 2022.
   - type: image
     image: /assets/uploads/yeast.png
+    desktop_columns: one
     caption: Living Arabic lettering of the word yeast, produced with wild yeast
       cultures in a Petri dish. Done as part of a class at Aalto University with
       Johanna Rotko and Laura Beloff in 2022.
