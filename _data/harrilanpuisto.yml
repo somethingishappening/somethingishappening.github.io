@@ -2,7 +2,7 @@ enabled: true
 media:
   - type: image
     image: /assets/uploads/frostype.jpg
-    desktop_columns: two
+    desktop_columns: one
     caption: Experimental typography that simulates frosted window panes. I
       developed this method and technique with Jennifer Sanderson in early 2022.
   - type: image
