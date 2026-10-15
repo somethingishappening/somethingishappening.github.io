@@ -218,12 +218,9 @@
     font-size:var(--harri-hi-body) !important;
   }
 
-  /* Work gallery items deliberately keep the baseline natural-aspect-ratio
-     sizing. Do not impose a viewport-height minimum here: doing so creates
-     large apparent gaps between differently proportioned project images. */
-  body.page-harrilanpuisto .media-item{
-    min-height:calc(100vh - clamp(58px,min(3.452381vw,6.444444vh),116px)) !important;
-  }
+  /* Work and Harrilanpuisto gallery items both keep their baseline
+     natural-aspect-ratio sizing. Do not impose viewport-height minimums:
+     they create large blank gaps between differently proportioned images. */
 
   /* Deliberately no Work .media-stack gap / media-item margin overrides.
      The Work template remains on its baseline 18px image spacing. */
@@ -437,11 +434,8 @@
   body.page-harrilanpuisto .project-description{
     max-width:min(32.226563vw,57.291667vh) !important;         /* 1320 */
   }
-  /* Same rule at 5K: Work items stay natural-height; only Harrilanpuisto
-     keeps its viewport-relative media-item minimum. */
-  body.page-harrilanpuisto .media-item{
-    min-height:calc(100vh - min(2.832031vw,5.034722vh)) !important;
-  }
+  /* Same rule at 5K: both Work and Harrilanpuisto media items stay
+     natural-height. */
 
   /* RESEARCH — same continuation; hanging line and CMS figure sizing untouched. */
   body.page-research .project-title{
@@ -855,6 +849,22 @@
     text-decoration:underline !important;
     text-decoration-thickness:1px !important;
     text-underline-offset:2px !important;
+  }
+}
+</style>
+
+
+<style id="harri-harrilanpuisto-natural-media-height-v6-15">
+/*
+  HARRILANPUISTO — NATURAL MEDIA HEIGHT
+  The gallery's own aspect-ratio logic determines each media item's height.
+  This preserves equal visible gutters and prevents large blank bands.
+*/
+@media (min-width:901px){
+  body.page-harrilanpuisto .harrilanpuisto-dump .media-item{
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
   }
 }
 </style>
