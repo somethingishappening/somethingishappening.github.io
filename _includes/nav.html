@@ -741,12 +741,11 @@
 })();
 </script>
 
-
 <style id="harri-navigation-hover-draw-animation">
 /*
-  Original project-name underline behavior:
-  left-origin draw-in, .16s ease, 1px line close to the baseline.
-  Section labels and footer items never get this hover underline.
+  Animated underline for PROJECT NAMES ONLY.
+  Category/section labels and footer items never receive a hover underline.
+  Motion matches Research (Fig. X): left-origin scaleX(0 -> 1), .16s ease.
 */
 .site-nav .project-links a,
 .site-nav .standalone-nav-link{
@@ -778,18 +777,19 @@
   transform:scaleX(1);
 }
 
+/* Never underline navigation SECTION labels or footer links. */
 .site-nav .group-head,
 .site-nav .group-head > span:first-child,
 .site-nav .left-footer a{
   text-decoration:none !important;
 }
-
 .site-nav .group-head > span:first-child::after,
 .site-nav .left-footer a::after{
   content:none !important;
   display:none !important;
 }
 
+/* Override older template-specific instant underlines on project names too. */
 .site-nav .project-links a:hover,
 .site-nav .project-links a:focus,
 .site-nav .standalone-nav-link:hover,
@@ -814,22 +814,19 @@
 (function(){
   "use strict";
 
-  function shouldSkip(link){
-    if(!link || link.closest(".site-nav")) return true;
+  function configure(link){
+    if(!link || link.closest(".site-nav")) return;
 
     const href = (link.getAttribute("href") || "").trim();
-    if(!href) return true;
-
-    return (
+    if(
+      !href ||
       href.startsWith("#") ||
       href.startsWith("mailto:") ||
       href.startsWith("tel:") ||
       href.startsWith("javascript:")
-    );
-  }
-
-  function configure(link){
-    if(shouldSkip(link)) return;
+    ){
+      return;
+    }
 
     link.setAttribute("target","_blank");
     link.setAttribute("rel","noopener noreferrer");
@@ -837,23 +834,18 @@
 
   function scan(root){
     if(!root) return;
-
     if(root.nodeType === 1 && root.matches && root.matches("a[href]")){
       configure(root);
     }
-
     if(root.querySelectorAll){
       root.querySelectorAll("a[href]").forEach(configure);
     }
   }
 
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded",()=>scan(document.body),{once:true});
-  }else{
+  function start(){
     scan(document.body);
-  }
 
-  if("MutationObserver" in window){
+    if(!("MutationObserver" in window)) return;
     const observer = new MutationObserver((mutations)=>{
       mutations.forEach((mutation)=>{
         mutation.addedNodes.forEach((node)=>{
@@ -861,18 +853,13 @@
         });
       });
     });
+    observer.observe(document.body,{childList:true,subtree:true});
+  }
 
-    const start = ()=>{
-      if(document.body){
-        observer.observe(document.body,{childList:true,subtree:true});
-      }
-    };
-
-    if(document.body){
-      start();
-    }else{
-      document.addEventListener("DOMContentLoaded",start,{once:true});
-    }
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded",start,{once:true});
+  }else{
+    start();
   }
 })();
 </script>

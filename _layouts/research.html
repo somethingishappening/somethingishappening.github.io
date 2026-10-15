@@ -4079,10 +4079,9 @@ min-width:0}
     document.body.classList.remove("lightbox-open");
   }
 
-  function openOptionalFigureLink(key){
+  function openFigureLinkIfPresent(key){
     const fig = figures[key];
     if(!fig || !fig.linkUrl) return false;
-
     window.open(fig.linkUrl, "_blank", "noopener,noreferrer");
     return true;
   }
@@ -4093,8 +4092,7 @@ min-width:0}
     desktopFigureBox.addEventListener("click", () => {
       const key = hoveredFigureKey || automaticFigureKey;
       if(!key) return;
-
-      if(openOptionalFigureLink(key)) return;
+      if(openFigureLinkIfPresent(key)) return;
       openFigureLightbox(key);
     });
   }
@@ -4108,8 +4106,7 @@ min-width:0}
     const img = box.querySelector("[data-mobile-image]");
     const key = img?.dataset.mobileImage;
     if(!key) return;
-
-    if(openOptionalFigureLink(key)) return;
+    if(openFigureLinkIfPresent(key)) return;
     openFigureLightbox(key);
   });
 

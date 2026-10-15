@@ -1574,13 +1574,6 @@ function buildMediaStack(){
     item.dataset.mediaIndex = index;
     item.dataset.desktopSpan = String(slide.desktopSpan || 1);
 
-    if(slide.type === "image" && slide.linkUrl){
-      item.dataset.imageLink = slide.linkUrl;
-      item.setAttribute("role","link");
-      item.setAttribute("tabindex","0");
-      item.setAttribute("aria-label", slide.alt || "Open linked image");
-    }
-
     const initialRatio = slide.type === "video" ? (16 / 9) : (4 / 5);
     item.dataset.mediaRatio = String(initialRatio);
     item.style.setProperty(
@@ -1733,20 +1726,6 @@ mediaStack.addEventListener("click", (event) => {
 
   activeMediaIndex = index;
   openLightbox(index);
-});
-
-mediaStack.addEventListener("keydown", (event) => {
-  if(event.key !== "Enter" && event.key !== " ") return;
-
-  const item = event.target.closest(".media-item[data-image-link]");
-  if(!item || !mediaStack.contains(item)) return;
-
-  const index = Number(item.dataset.mediaIndex);
-  const slide = mediaSlides[index];
-  if(!slide || !slide.linkUrl) return;
-
-  event.preventDefault();
-  window.open(slide.linkUrl, "_blank", "noopener,noreferrer");
 });
 
 const lightbox = document.querySelector(".lightbox");

@@ -1,4 +1,7 @@
-HARRI.LA — CMS/game/greetings/links/menu underline update
+HARRI.LA — corrected minimal feature patch (layout preserved)
+
+IMPORTANT
+This rebuild starts from the latest pre-regression files rather than older layouts.
 
 Replace:
   .pages.yml
@@ -8,40 +11,30 @@ Replace:
   _layouts/harrilanpuisto.html
   _includes/nav.html
 
-NEW ABOUT CMS CONTROLS
-  • Seconds between automatic greetings
-    - default: 30
-  • Clicks before fullscreen ASCII appears
-    - default: 10
+Preserved exact current layout lineages:
+  • About: Mini-CV Research-text / Abstract-alignment baseline
+  • Work: latest mobile smart-title / Geist-arrow version
+  • Research: v6.12.14 numbered-list rhythm version
+  • Harrilanpuisto: v7 three-column variable-span masonry
+  • Navigation underline: exact v6.12.4 project-only animated underline
+  • Artistic Work navigation toggle preserved
 
-LINK BEHAVIOR
-  • Content links added inside portfolio text open in a new tab.
-  • The website's own main navigation still stays in the same tab.
-  • mailto:, tel:, and # anchor links are not forced into a new tab.
+New controls:
+  • About -> Seconds between greeting changes
+  • About -> Clicks before ASCII appears
 
-OPTIONAL IMAGE LINKS
-  • Research figures: Image link (optional)
-  • Research Work-template gallery images: Image link (optional)
-  • Design Work gallery images: Image link (optional)
-  • Artistic Work gallery images: Image link (optional)
-  • Harrilanpuisto images: Image link (optional)
-  • About surprise images: Image link (optional)
+Links:
+  • Content links open in a new tab.
+  • Main site navigation remains in the same tab.
+  • Optional image links are available for:
+      Research figures
+      Research Work-template galleries
+      Design Work galleries
+      Artistic Work galleries
+      Harrilanpuisto images
+      About surprise images
+  • Blank image-link field keeps the existing lightbox behavior.
 
-  Leave Image link blank:
-    -> existing image/lightbox behavior remains unchanged.
-
-  Add a URL:
-    -> clicking that image opens the URL in a new tab.
-
-MAIN MENU UNDERLINE
-  • Restored the original project-name-only draw animation.
-  • scaleX(0 -> 1), left origin, .16s ease.
-  • 1px line close to the baseline.
-  • Section labels and footer links do not get the project-name underline.
-
-PRESERVED
-  • Harrilanpuisto 3-column variable-span masonry.
-  • Research mobile/desktop figure controls.
-  • Research numbered-list typography.
-  • Artistic Work visibility toggle.
-  • Existing navigation/mobile behavior.
+NO new CSS layout overrides were added.
+NO typography sizes, columns, spacing, grid widths, figure fitting,
+mobile geometry or navigation underline animation were redesigned.
