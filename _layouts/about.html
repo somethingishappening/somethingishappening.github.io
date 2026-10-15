@@ -1038,6 +1038,7 @@ html.nav-state-syncing .nav-group *{
   let desktopGameClickCount = 0;
   let desktopGreetingFullscreen = false;
   let desktopFullscreenTimeout = null;
+  let automaticGreetingTimeout = null;
 
   function baseGreetingSize(){
     return window.innerWidth <= 900 ? 70.875 : 54;
@@ -1126,7 +1127,9 @@ html.nav-state-syncing .nav-group *{
     greeting.style.left = '50%';
     greeting.style.top = '50%';
 
-    requestAnimationFrame(fitFullscreenGreetingToViewport);
+    // Fit while the greeting is still hidden by .changing so the visitor
+    // never sees a one-frame jump from the previous greeting size.
+    fitFullscreenGreetingToViewport();
   }
 
   function exitFullscreenGreeting(){
@@ -1166,6 +1169,27 @@ html.nav-state-syncing .nav-group *{
     }
   }
 
+  function clearAutomaticGreetingTimer(){
+    if(automaticGreetingTimeout){
+      clearTimeout(automaticGreetingTimeout);
+      automaticGreetingTimeout = null;
+    }
+  }
+
+  function scheduleAutomaticGreeting(){
+    clearAutomaticGreetingTimer();
+
+    automaticGreetingTimeout = setTimeout(() => {
+      automaticGreetingTimeout = null;
+
+      if(!desktopGreetingFullscreen){
+        changeGreeting(true,false);
+      }
+
+      scheduleAutomaticGreeting();
+    },greetingIntervalMs);
+  }
+
   function activateGreetingGame(){
     // While the giant state is visible, extra clicks do not interrupt its
     // fixed five-second duration.
@@ -1174,6 +1198,7 @@ html.nav-state-syncing .nav-group *{
     }
 
     desktopGameClickCount += 1;
+    clearAutomaticGreetingTimer();
 
     if(desktopGameClickCount >= asciiClickThreshold){
       showFullscreenGreeting();
@@ -1194,6 +1219,7 @@ html.nav-state-syncing .nav-group *{
           desktopGameClickCount = 0;
           lastGameSize = null;
           changeGreeting(false,true);
+          scheduleAutomaticGreeting();
         },180);
       },5000);
 
@@ -1201,6 +1227,7 @@ html.nav-state-syncing .nav-group *{
     }
 
     changeGreeting(true,true);
+    scheduleAutomaticGreeting();
   }
 
   function changeGreeting(animate=true,gameMove=false){
@@ -1237,7 +1264,7 @@ html.nav-state-syncing .nav-group *{
   changeGreeting(false);
 
   // Secret game: normal activations randomize phrase, position and size.
-  // Activation #10 shows the next fullscreen ASCII face for five seconds.
+  // The CMS-selected activation count shows the next fullscreen ASCII face for five seconds.
   greeting.addEventListener('click',activateGreetingGame);
   greeting.addEventListener('keydown',(event) => {
     if(event.key === 'Enter' || event.key === ' '){
@@ -1246,11 +1273,10 @@ html.nav-state-syncing .nav-group *{
     }
   });
 
-  // Automatic rotation pauses during the five-second fullscreen ASCII state.
-  setInterval(() => {
-    if(desktopGreetingFullscreen) return;
-    changeGreeting(true,false);
-  },greetingIntervalMs);
+  // Automatic rotation is a controlled one-shot timer. Manual game clicks
+  // and the ASCII state restart it, so an automatic change can never collide
+  // with the game animation.
+  scheduleAutomaticGreeting();
 
   window.addEventListener('resize',() => {
     if(desktopGreetingFullscreen){

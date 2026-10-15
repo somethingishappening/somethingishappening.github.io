@@ -1,16 +1,26 @@
-HARRI.LA — CMS-only About controls
+HARRI.LA — menu/footer consistency + About ASCII game fix
 
-Replace ONLY the root file:
-  .pages.yml
+Replace ONLY:
+  _includes/nav.html
+  _layouts/about.html
 
-Then reload Pages CMS.
+MENU / FOOTER
+  • One shared navigation typography source on every template.
+  • Desktop 901–1680:
+      section labels 17px / 18.7px
+      project names 17px / 18.7px
+      Harrilanpuisto 17px / 18.7px
+      footer 13px / 1.15
+  • Above 1680 the same menu/footer scale is applied to ALL templates.
+  • Mobile footer leading is identical across templates.
+  • Existing project-name underline animation is untouched.
+  • Existing menu accordion/open-close logic is untouched.
 
-Under About page you should see:
-  • Seconds between greeting changes
-  • Clicks before ASCII appears
+ABOUT GAME
+  • Fullscreen ASCII is fitted before it becomes visible, removing the size jump.
+  • Automatic greeting changes can no longer collide with manual game transitions.
+  • After the ASCII closes, a complete greeting interval starts fresh.
+  • CMS click-count and greeting-timing controls remain unchanged.
 
-This file also preserves the current CMS controls for:
-  • Artistic Work navigation visibility
-  • Harrilanpuisto 1/2/3-column desktop widths
-  • Research desktop/mobile figure controls
-  • Optional image links
+No .pages.yml changes.
+No Research/Work/Harrilanpuisto layout files changed.
