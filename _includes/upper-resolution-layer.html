@@ -869,3 +869,320 @@
 }
 </style>
 
+
+<style id="harri-about-resolution-coherence-v6-16">
+/*
+  ABOUT / MINI-CV — ONE COHERENT RESOLUTION SYSTEM
+  ------------------------------------------------
+  The previous layer mixed two scaling models:
+    • CV/type scaled from the 1680×900 reference and could cap at 2×.
+    • first/third column widths kept growing directly with vw.
+
+  That changed the CV text measure and proportions at 1920 / 4K / 5K, while
+  the lower-desktop layer also made the CV smaller than its established
+  17px/18px desktop sizes.
+
+  This lock restores the intended normal-desktop baseline, then scales the
+  entire About composition from one shared factor above 1680px.
+
+  Reference state:
+    1680 × 900
+    left       220px
+    right/CV   300px
+    gap         28px
+    page X pad  18px
+    page top    32px
+    page bottom 25px
+    CV body     18px
+    nav         17px / 18.7px
+*/
+
+/* ================================================================
+   NORMAL DESKTOP — keep the established desktop design unchanged.
+   ================================================================ */
+@media (min-width:901px) and (max-width:1680px){
+  body.page-about .about-layout{
+    --page-pad-x:18px !important;
+    --page-pad-top:32px !important;
+    --page-pad-bottom:25px !important;
+    --left-w:220px !important;
+    --right-w:300px !important;
+    --gap:28px !important;
+  }
+
+  body.page-about .brand{
+    font-size:27px !important;
+    line-height:1 !important;
+  }
+
+  body.page-about .left nav{
+    margin-top:148px !important;
+  }
+
+  body.page-about .greeting-zone{
+    top:145px !important;
+    height:275px !important;
+  }
+
+  body.page-about .about-greeting{
+    font-size:54px !important;
+  }
+
+  body.page-about .about-copy{
+    font-size:40px !important;
+    line-height:1.18 !important;
+  }
+
+  /* Shared desktop navigation stays at the established 17px size.
+     This prevents page-to-page point-size changes on ordinary laptops. */
+  body.page-about .group-head,
+  body.page-work .group-head,
+  body.page-research .group-head,
+  body.page-harrilanpuisto .group-head,
+  body.page-about .project-links a,
+  body.page-work .project-links a,
+  body.page-research .project-links a,
+  body.page-harrilanpuisto .project-links a,
+  body.page-about .standalone-nav-link,
+  body.page-work .standalone-nav-link,
+  body.page-research .standalone-nav-link,
+  body.page-harrilanpuisto .standalone-nav-link{
+    font-size:17px !important;
+    line-height:18.7px !important;
+  }
+
+  body.page-about .left-footer,
+  body.page-work .left-footer,
+  body.page-research .left-footer,
+  body.page-harrilanpuisto .left-footer{
+    font-size:13px !important;
+    line-height:1.15 !important;
+  }
+
+  body.page-about .group-toggle,
+  body.page-work .group-toggle,
+  body.page-research .group-toggle,
+  body.page-harrilanpuisto .group-toggle{
+    width:22px !important;
+    flex-basis:22px !important;
+    font-size:20px !important;
+    line-height:18.7px !important;
+  }
+
+  body.page-about .nav-group,
+  body.page-work .nav-group,
+  body.page-research .nav-group,
+  body.page-harrilanpuisto .nav-group,
+  body.page-about .nav-group:has(.group-head[aria-expanded="true"]),
+  body.page-work .nav-group:has(.group-head[aria-expanded="true"]),
+  body.page-research .nav-group:has(.group-head[aria-expanded="true"]),
+  body.page-harrilanpuisto .nav-group:has(.group-head[aria-expanded="true"]){
+    margin-bottom:5px !important;
+  }
+
+  body.page-about .project-links.open,
+  body.page-work .project-links.open,
+  body.page-research .project-links.open,
+  body.page-harrilanpuisto .project-links.open{
+    margin-top:8px !important;
+  }
+
+  body.page-about .project-links-inner,
+  body.page-work .project-links-inner,
+  body.page-research .project-links-inner,
+  body.page-harrilanpuisto .project-links-inner{
+    gap:3px !important;
+    padding-bottom:13px !important;
+  }
+
+  /* Mini-CV: final established typography. */
+  body.page-about .cv-column{
+    padding-top:0 !important;
+    padding-bottom:18px !important;
+  }
+
+  body.page-about .cv-section h2{
+    font-size:18px !important;
+    line-height:1.15 !important;
+    margin:0 0 12px !important;
+  }
+
+  body.page-about .cv-item{
+    font-size:18px !important;
+    line-height:1.2 !important;
+    margin-bottom:10px !important;
+  }
+
+  body.page-about .cv-section{
+    margin-bottom:26px !important;
+  }
+
+  body.page-about .cv-surprise{
+    margin-top:34px !important;
+  }
+}
+
+/* Narrow desktop: preserve the existing compact shell and 17px CV type. */
+@media (min-width:901px) and (max-width:1100px){
+  body.page-about .about-layout{
+    --right-w:270px !important;
+    --gap:22px !important;
+  }
+
+  body.page-about .about-greeting{
+    font-size:46px !important;
+  }
+
+  body.page-about .about-copy{
+    font-size:32px !important;
+  }
+
+  body.page-about .cv-section h2,
+  body.page-about .cv-item{
+    font-size:17px !important;
+  }
+}
+
+/* Research/CV baseline specifies 17px through the narrower-desktop range. */
+@media (min-width:1101px) and (max-width:1180px){
+  body.page-about .cv-section h2,
+  body.page-about .cv-item{
+    font-size:17px !important;
+  }
+}
+
+/* ================================================================
+   HIGH RESOLUTION — every About measurement follows ONE scale.
+   `--harri-about-unit` is the scaled equivalent of the baseline 18px
+   body size. Therefore the CV always keeps the same text measure.
+   ================================================================ */
+@media (min-width:1681px){
+  body.page-about{
+    --harri-about-unit:
+      clamp(18px,min(1.0714285714vw,2vh),36px);
+
+    --harri-about-left:calc(var(--harri-about-unit) * 12.2222222222);
+    --harri-about-right:calc(var(--harri-about-unit) * 16.6666666667);
+    --harri-about-gap:calc(var(--harri-about-unit) * 1.5555555556);
+    --harri-about-pad-x:var(--harri-about-unit);
+    --harri-about-pad-top:calc(var(--harri-about-unit) * 1.7777777778);
+    --harri-about-pad-bottom:calc(var(--harri-about-unit) * 1.3888888889);
+
+    --harri-about-brand:calc(var(--harri-about-unit) * 1.5);
+    --harri-about-nav:calc(var(--harri-about-unit) * .9444444444);
+    --harri-about-nav-line:calc(var(--harri-about-unit) * 1.0388888889);
+    --harri-about-footer:calc(var(--harri-about-unit) * .7222222222);
+
+    --harri-about-nav-top:calc(var(--harri-about-unit) * 8.2222222222);
+    --harri-about-greeting-top:calc(var(--harri-about-unit) * 8.0555555556);
+    --harri-about-greeting-height:calc(var(--harri-about-unit) * 15.2777777778);
+    --harri-about-greeting-type:calc(var(--harri-about-unit) * 3);
+    --harri-about-copy-type:calc(var(--harri-about-unit) * 2.2222222222);
+  }
+
+  body.page-about .about-layout{
+    --page-pad-x:var(--harri-about-pad-x) !important;
+    --page-pad-top:var(--harri-about-pad-top) !important;
+    --page-pad-bottom:var(--harri-about-pad-bottom) !important;
+    --left-w:var(--harri-about-left) !important;
+    --right-w:var(--harri-about-right) !important;
+    --gap:var(--harri-about-gap) !important;
+  }
+
+  body.page-about .brand{
+    font-size:var(--harri-about-brand) !important;
+    line-height:1 !important;
+  }
+
+  body.page-about .left nav{
+    margin-top:var(--harri-about-nav-top) !important;
+  }
+
+  body.page-about .greeting-zone{
+    top:var(--harri-about-greeting-top) !important;
+    height:var(--harri-about-greeting-height) !important;
+  }
+
+  body.page-about .about-greeting{
+    font-size:var(--harri-about-greeting-type) !important;
+  }
+
+  body.page-about .about-copy{
+    font-size:var(--harri-about-copy-type) !important;
+    line-height:1.18 !important;
+  }
+
+  body.page-about .group-head,
+  body.page-about .project-links a,
+  body.page-about .standalone-nav-link{
+    font-size:var(--harri-about-nav) !important;
+    line-height:var(--harri-about-nav-line) !important;
+  }
+
+  body.page-about .left-footer{
+    font-size:var(--harri-about-footer) !important;
+    line-height:1.15 !important;
+  }
+
+  body.page-about .group-toggle{
+    width:calc(var(--harri-about-unit) * 1.2222222222) !important;
+    flex-basis:calc(var(--harri-about-unit) * 1.2222222222) !important;
+    font-size:calc(var(--harri-about-unit) * 1.1111111111) !important;
+    line-height:var(--harri-about-nav-line) !important;
+  }
+
+  body.page-about .nav-group,
+  body.page-about .nav-group:has(.group-head[aria-expanded="true"]){
+    margin-bottom:calc(var(--harri-about-unit) * .2777777778) !important;
+  }
+
+  body.page-about .project-links.open{
+    margin-top:calc(var(--harri-about-unit) * .4444444444) !important;
+  }
+
+  body.page-about .project-links-inner{
+    gap:calc(var(--harri-about-unit) * .1666666667) !important;
+    padding-bottom:calc(var(--harri-about-unit) * .7222222222) !important;
+  }
+
+  /* CV width and CV text now scale from the SAME unit.
+     300 / 18 = 16.6667, so line wrapping remains stable at every resolution. */
+  body.page-about .cv-column{
+    padding-top:0 !important;
+    padding-bottom:var(--harri-about-unit) !important;
+  }
+
+  body.page-about .cv-section h2,
+  body.page-about .cv-item{
+    font-size:var(--harri-about-unit) !important;
+  }
+
+  body.page-about .cv-section h2{
+    line-height:1.15 !important;
+    margin:0 0 calc(var(--harri-about-unit) * .6666666667) !important;
+  }
+
+  body.page-about .cv-item{
+    line-height:1.2 !important;
+    margin-bottom:calc(var(--harri-about-unit) * .5555555556) !important;
+  }
+
+  body.page-about .cv-section{
+    margin-bottom:calc(var(--harri-about-unit) * 1.4444444444) !important;
+  }
+
+  body.page-about .cv-surprise{
+    margin-top:calc(var(--harri-about-unit) * 1.8888888889) !important;
+  }
+}
+
+/* Above the 4096×2304 checkpoint, continue the same coherent scale.
+   5120×2880 becomes exactly 1.25× the 4096 state instead of the old
+   ~3.05× horizontal-column growth. */
+@media (min-width:4097px) and (min-height:2305px){
+  body.page-about{
+    --harri-about-unit:min(.87890625vw,1.5625vh);
+  }
+}
+</style>
+

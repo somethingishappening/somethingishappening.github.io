@@ -1,41 +1,54 @@
-HARRI.LA — resolution restoration + Research Abstract opening stability
+HARRI.LA — About / Mini-CV resolution coherence v6.16
 
 Replace ONLY:
-  _includes/nav.html
-  _layouts/about.html
-  _layouts/research.html
-  _layouts/harrilanpuisto.html
+  _includes/upper-resolution-layer.html
 
-WHAT WAS WRONG
-1. About and Harrilanpuisto had lost:
-     {% include upper-resolution-layer.html %}
-   Work and Research still had it.
-   This made About/Harrilanpuisto behave differently across desktop resolutions.
+WHY
+The About Mini-CV was using different scaling systems for text and column
+width. This changed its line wrapping and proportions across resolutions,
+especially 1920, 3840, 4096 and 5120. The lower-desktop layer also shrank
+the CV below its established 17px/18px sizes.
 
-2. The previous menu-consistency patch forced navigation text to 17px from
-   901–1680px, overriding the established responsive scaling layer.
+NORMAL DESKTOP (901–1680)
+  • Restores the established About desktop shell rather than continuously
+    shrinking it.
+  • 901–1100 keeps the compact 270px right column / 22px gap.
+  • CV = 17px through 1180.
+  • CV = 18px from 1181–1680.
+  • Main-menu section names and project names = 17px / 18.7px.
+  • Footer = 13px / 1.15.
 
-3. Research's correct Abstract baseline adjustment happened after first paint,
-   so the intermediate position could briefly flash as a visible jump.
+HIGH RESOLUTION (>1680)
+  • About uses one shared scale factor for:
+      left column
+      CV/right column
+      gaps
+      page padding
+      greeting geometry
+      About copy
+      Mini-CV text and spacing
+      About navigation
+  • CV width and CV body size retain the exact same ratio at every resolution.
+  • Scaling caps coherently at 2× through 4096×2304.
+  • Above the 4096 checkpoint it continues proportionally:
+      5120×2880 = exactly 1.25× the 4096 state.
 
-FIXES
-• Restores upper-resolution-layer.html to About and Harrilanpuisto.
-• Removes the forced 17px desktop-menu lock.
-• Menu type once again follows the established shared resolution scale:
-    901–1680 scales toward the 1680 reference;
-    >1680 follows the existing upper-resolution continuation.
-• Work/Research/About/Harrilanpuisto therefore use the same scaling system.
-• Keeps the existing project-name underline animation.
-• Keeps the latest About ASCII timing/game fix.
-• Keeps content links / optional image-link behavior.
-• Research final Abstract alignment is unchanged.
-• The Research Abstract is hidden only during its tiny opening measurement
-  window, then revealed at its final aligned position, eliminating the jump.
+TARGETED RESOLUTIONS
+  1280×800
+  1280×832
+  1440×900
+  1512×982
+  1680×1050
+  1728×1117
+  1920×1200
+  3840×2160
+  4096×2304
+  5120×2880
 
-NOT CHANGED
-• .pages.yml
-• Research typography/hierarchy
-• Research figure fitting
-• Work layout
-• Harrilanpuisto 3-column masonry
-• mobile breakpoint (<=900px)
+UNCHANGED
+  • About content/game logic
+  • .pages.yml
+  • Work/Research/Harrilanpuisto layouts
+  • Research figure/Abstract behavior
+  • Harrilanpuisto masonry
+  • mobile <=900px
