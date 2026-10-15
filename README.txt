@@ -1,15 +1,13 @@
-Harri.la — v57-faithful surprise behavior
+Harri.la — surprise image responsive display fix
 
 Replace ONLY:
-  _layouts/about.html
+  _includes/upper-resolution-layer.html
 
-Built from:
-  harri-about-cv-stable-size-v3/_layouts/about.html
+Change made:
+- Removed only the desktop override that forced:
+    .cv-surprise:not(.revealed) { display:none !important; }
+    .cv-surprise.revealed      { display:block !important; }
 
-Changes are limited to the surprise image:
-- removed the later desktop display:none/display:block override that conflicts with v57
-- restored the exact v57 bottom-of-scroll class-toggle logic
-- restored the exact v57 desktop wheel behavior
-- changed only the surprise image loading attribute from lazy to eager so CMS images are already loaded like v57's embedded image
+Nothing else in the responsive scaling layer was changed.
 
-No CV typography, sizing, section spacing, navigation, biography, greeting, CMS schema, Research, Work, Artistic Work, or Harrilanpuisto code was changed.
+Keep your current _layouts/about.html unchanged.
