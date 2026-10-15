@@ -147,19 +147,21 @@ button{font:inherit;color:inherit}
   margin:34px 0 0;
   opacity:0;
   visibility:hidden;
-  transform:translateY(8px);
+  transform:none;
   transition:
-    opacity .12s ease-out,
-    transform .12s ease-out,
-    visibility 0s linear .12s;
+    opacity .45s cubic-bezier(.22,.61,.36,1),
+    visibility 0s linear .45s;
+}
+.cv-surprise.revealing{
+  opacity:0;
+  visibility:visible;
 }
 .cv-surprise.revealed{
   opacity:1;
   visibility:visible;
-  transform:translateY(0);
+  transform:none;
   transition:
-    opacity .12s ease-out,
-    transform .12s ease-out,
+    opacity .45s cubic-bezier(.22,.61,.36,1),
     visibility 0s;
 }
 .cv-surprise img{
@@ -820,10 +822,11 @@ html.nav-state-syncing .nav-group *{
     margin-bottom:0 !important;
   }
 
-  body.page-about .cv-surprise:not(.revealed){
+  body.page-about .cv-surprise:not(.revealed):not(.revealing){
     display:none !important;
   }
 
+  body.page-about .cv-surprise.revealing,
   body.page-about .cv-surprise.revealed{
     display:block !important;
   }
@@ -1488,9 +1491,18 @@ html.nav-state-syncing .nav-group *{
     if(!atEnd) return;
 
     cvSurpriseRevealed = true;
-    cvSurprise.classList.add('revealed');
+    cvSurprise.classList.add('revealing');
     cvSurprise.setAttribute('aria-hidden','false');
-    requestAnimationFrame(scheduleBioFit);
+
+    // Give the browser one painted frame at opacity:0 before easing to 1.
+    // This preserves display:none before reveal without sacrificing the fade.
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        cvSurprise.classList.add('revealed');
+        cvSurprise.classList.remove('revealing');
+        scheduleBioFit();
+      });
+    });
   }
 
   if(cvColumn){
@@ -1512,7 +1524,7 @@ html.nav-state-syncing .nav-group *{
     cvHasUserScrolled = false;
     cvSurpriseRevealed = false;
     if(cvSurprise){
-      cvSurprise.classList.remove('revealed');
+      cvSurprise.classList.remove('revealed','revealing');
       cvSurprise.setAttribute('aria-hidden','true');
     }
   });

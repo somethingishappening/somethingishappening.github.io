@@ -1,5 +1,8 @@
-Replace only _layouts/about.html.
+Harri.la — About surprise-image fade/ease patch
 
-Mini-CV sizing is no longer based on how many CMS titles/entries exist.
-The existing unified responsive resolution layer controls CV size.
-Adding more CV content only increases overflow/scroll; it never shrinks the CV typography or spacing.
+Replace only:
+  _layouts/about.html
+
+Change:
+- Surprise image now fades/eases in over 450ms when revealed.
+- Reveal trigger, Mini-CV sizing, navigation, CMS content, and all other About behavior are unchanged.
