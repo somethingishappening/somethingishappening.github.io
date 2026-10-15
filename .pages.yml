@@ -796,7 +796,7 @@ content:
       type: number
       default: 30
       required: true
-      description: Choose the delay between automatic greeting changes. Example: 30 means every 30 seconds.
+      description: "Choose the delay between automatic greeting changes. Example: 30 means every 30 seconds."
     - name: morning_greeting_messages
       label: Morning-only greeting phrases
       type: string
