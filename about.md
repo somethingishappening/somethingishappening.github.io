@@ -11,7 +11,7 @@ greeting_messages:
   - Ben salut!
   - Hi there!
   - مرحبا!
-greeting_interval_seconds: 3
+greeting_interval_seconds: 5
 morning_greeting_messages:
   - صباحو!
 ascii_click_count: 3
