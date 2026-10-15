@@ -829,32 +829,15 @@ html.nav-state-syncing .nav-group *{
   }
 
   /*
-    When the visible Mini-CV is shorter than the available height:
-      1. JavaScript widens the CV column and therefore squeezes the bio column.
-      2. Any remaining vertical underfill is distributed between CV sections.
-    Nothing is added underneath the final CV item.
+    When the visible Mini-CV is shorter than its available column, JavaScript
+    distributes the unused height BETWEEN CV sections rather than leaving an
+    empty band below the last entry. Typography itself stays unchanged.
   */
-  body.page-about .cv-column{
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:flex-start;
-  }
-
-  body.page-about .cv-column > .cv-section,
-  body.page-about .cv-column > .cv-surprise{
-    flex:0 0 auto;
-  }
-
-  body.page-about .cv-column.cv-spread-to-bottom{
-    justify-content:space-between !important;
-  }
-
-  body.page-about .cv-column.cv-spread-to-bottom > .cv-section{
-    margin-bottom:0 !important;
-  }
-
-  body.page-about .cv-column.cv-spread-to-bottom > .cv-section:last-of-type{
-    margin-bottom:0 !important;
+  body.page-about .cv-section:not(:last-of-type){
+    margin-bottom:calc(
+      var(--harri-u-space-26,26px) +
+      var(--harri-cv-fill-gap,0px)
+    ) !important;
   }
 }
 </style>
@@ -1389,7 +1372,6 @@ html.nav-state-syncing .nav-group *{
   };
 
   // Mini-CV surprise.
-  const aboutLayout = document.querySelector('.about-layout');
   const cvColumn = document.querySelector('.cv-column');
   const cvSurprise = document.getElementById('cvSurprise');
   const cvSurpriseImage = document.getElementById('cvSurpriseImage');
@@ -1538,125 +1520,60 @@ html.nav-state-syncing .nav-group *{
     });
   }
 
-  function naturalCvBottom(){
+  function balanceMiniCvHeight(){
+    if(!cvColumn || window.innerWidth <= 900){
+      document.documentElement.style.removeProperty('--harri-cv-fill-gap');
+      return 0;
+    }
+
+    // Always measure the natural CV first.
+    document.documentElement.style.setProperty('--harri-cv-fill-gap','0px');
+    void cvColumn.offsetHeight;
+
     const sections = visibleCvSections();
-    if(!sections.length || !cvColumn) return 0;
+    if(!sections.length) return 0;
 
     const columnRect = cvColumn.getBoundingClientRect();
     const lastRect = sections[sections.length - 1].getBoundingClientRect();
-    return lastRect.bottom - columnRect.top;
-  }
+    const naturalBottom = lastRect.bottom - columnRect.top;
+    const available = cvColumn.clientHeight;
+    const shortfall = Math.max(0, available - naturalBottom);
+    const gaps = Math.max(0, sections.length - 1);
 
-  function baseCvWidth(){
-    if(!aboutLayout) return 0;
-
-    const rootStyle = getComputedStyle(document.documentElement);
-    const unified = parseFloat(
-      rootStyle.getPropertyValue('--harri-u-about-right')
-    );
-
-    if(Number.isFinite(unified) && unified > 0){
-      return unified;
-    }
-
-    const layoutStyle = getComputedStyle(aboutLayout);
-    return parseFloat(layoutStyle.getPropertyValue('--right-w')) || 300;
-  }
-
-  function balanceMiniCvHeight(){
-    if(!cvColumn || !aboutLayout || !center || window.innerWidth <= 900){
-      if(aboutLayout){
-        aboutLayout.style.removeProperty('--right-w');
-      }
-      if(cvColumn){
-        cvColumn.classList.remove('cv-spread-to-bottom');
-      }
-      return {shortfallRatio:0,widthGrowthRatio:0};
+    if(shortfall <= 1 || gaps === 0){
+      return 0;
     }
 
     /*
-      Always start from the shared global layout. This makes the rebalance
-      conditional rather than cumulative across resize events.
+      Fill exactly through inter-section rhythm. This makes the final visible
+      CV entry land on the bottom line without fabricating padding below it.
     */
-    aboutLayout.style.removeProperty('--right-w');
-    cvColumn.classList.remove('cv-spread-to-bottom');
-    void aboutLayout.offsetWidth;
-
-    const available = Math.max(1, cvColumn.clientHeight);
-    const naturalBottomAtBase = naturalCvBottom();
-    const initialShortfall = Math.max(0, available - naturalBottomAtBase);
-    const shortfallRatio = initialShortfall / available;
-
-    if(initialShortfall <= 2){
-      return {shortfallRatio:0,widthGrowthRatio:0};
-    }
-
-    const baseWidth = Math.max(1, baseCvWidth());
-    const currentCenterWidth = center.clientWidth;
-
-    /*
-      More unused vertical space -> wider CV column.
-      Cap the change so the bio remains the dominant centre column.
-    */
-    const requestedGrowthRatio = Math.min(
-      0.42,
-      Math.max(0, shortfallRatio * 1.15)
+    const extraPerGap = shortfall / gaps;
+    document.documentElement.style.setProperty(
+      '--harri-cv-fill-gap',
+      extraPerGap.toFixed(3) + 'px'
     );
 
-    const widthByRatio = baseWidth * (1 + requestedGrowthRatio);
-    const widthByCenterSafety = baseWidth + currentCenterWidth * 0.20;
-    const targetWidth = Math.min(widthByRatio, widthByCenterSafety);
-
-    if(targetWidth > baseWidth + 0.5){
-      aboutLayout.style.setProperty(
-        '--right-w',
-        targetWidth.toFixed(3) + 'px',
-        'important'
-      );
-      void aboutLayout.offsetWidth;
-    }
-
-    /*
-      Widening changes the wrapping, so re-measure afterwards.
-      If there is still vertical underfill, spread the real CV sections across
-      the full column. There is still ZERO padding after the last section.
-    */
-    const remainingShortfall = Math.max(
-      0,
-      cvColumn.clientHeight - naturalCvBottom()
-    );
-
-    if(remainingShortfall > 2 && visibleCvSections().length > 1){
-      cvColumn.classList.add('cv-spread-to-bottom');
-    }
-
-    return {
-      shortfallRatio,
-      widthGrowthRatio:Math.max(0,(targetWidth - baseWidth) / baseWidth)
-    };
+    return shortfall / Math.max(1, available);
   }
 
   function fitAboutBiography(){
     if(!aboutCopy || !center || window.innerWidth <= 900){
       if(aboutCopy) aboutCopy.style.removeProperty('font-size');
+      document.documentElement.style.removeProperty('--harri-cv-fill-gap');
       return;
     }
 
     aboutCopy.style.removeProperty('font-size');
 
-    const cvBalance = balanceMiniCvHeight();
+    const cvShortfallRatio = balanceMiniCvHeight();
     const globalSize = parseFloat(getComputedStyle(aboutCopy).fontSize) || 40;
 
     /*
-      When the right column grows, the centre column is intentionally squeezed.
-      Reduce the large bio modestly as well so it keeps the reference-page
-      proportions while still obeying the hard midpoint limit.
+      If the CV needed vertical expansion, reduce the large bio slightly for
+      visual balance. This is deliberately modest: maximum 8%.
     */
-    const visualReduction = Math.min(
-      0.12,
-      (cvBalance.shortfallRatio * 0.22) +
-      (cvBalance.widthGrowthRatio * 0.18)
-    );
+    const visualReduction = Math.min(0.08, cvShortfallRatio * 0.32);
     const balancedBaseSize = globalSize * (1 - visualReduction);
     aboutCopy.style.setProperty(
       'font-size',
