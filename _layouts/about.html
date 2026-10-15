@@ -145,26 +145,17 @@ button{font:inherit;color:inherit}
 .cv-surprise{
   width:100%;
   margin:34px 0 0;
-  opacity:0;
-  visibility:hidden;
-  transform:none;
-  transition:
-    opacity .24s ease,
-    visibility 0s linear .24s;
-}
-.cv-surprise.revealed{
-  opacity:1;
-  visibility:visible;
-  transform:none;
-  transition:
-    opacity .24s ease,
-    visibility 0s;
 }
 .cv-surprise img{
   display:block;
   width:100%;
   height:auto;
   margin:0;
+  opacity:0;
+  transition:opacity .24s ease;
+}
+.cv-surprise.revealed img{
+  opacity:1;
 }
 
 
@@ -1496,8 +1487,8 @@ html.nav-state-syncing .nav-group *{
     cvSurprise.classList.add('revealing');
     cvSurprise.setAttribute('aria-hidden','false');
 
-    // First paint at the v57 hidden state (opacity 0, translateY(8px)), then
-    // apply .revealed so its existing .12s ease-out transition actually runs.
+    // First paint with the surprise image at opacity 0, then add .revealed
+    // on the next paint so the image uses the Research figure .24s ease crossfade.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         cvSurprise.classList.add('revealed');
