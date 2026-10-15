@@ -1,11 +1,20 @@
-HARRI.LA — Harrilanpuisto large-gap fix
+HARRI.LA — Harrilanpuisto 3-column variable-span masonry
 
-Replace only:
-  _includes/upper-resolution-layer.html
+Replace:
+  .pages.yml
+  _layouts/harrilanpuisto.html
 
-Fix:
-  • Removes viewport-height min-height overrides from Harrilanpuisto media items.
-  • Harrilanpuisto images return to their natural CMS/image aspect ratios.
-  • Existing 18px desktop horizontal and vertical gutters stay unchanged.
-  • 5K/high-resolution scaling remains unchanged.
-  • Work, Research, About, mobile, navigation and CMS behavior are untouched.
+Desktop (901px+):
+  • Gallery has 3 equal columns.
+  • Each image/video gets a CMS field: Desktop width.
+  • Choose 1 column, 2 columns, or 3 columns.
+  • Existing items with no setting default to 1 column.
+  • Horizontal and vertical visible gutter remains 18px.
+  • Masonry layout avoids large empty row gaps.
+  • Newest media remains first.
+
+Mobile:
+  • stays a single full-width stack.
+  • Desktop-width choices do not alter the phone layout.
+
+Lightbox and captions are unchanged.

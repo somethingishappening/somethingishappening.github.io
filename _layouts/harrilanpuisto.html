@@ -1401,10 +1401,68 @@ button{font:inherit;color:inherit}
   }
 }
 
+
+
+/* ============================================================
+   HARRILANPUISTO — THREE-COLUMN VARIABLE-SPAN MASONRY
+   ============================================================ */
+@media (min-width:901px){
+  .harrilanpuisto-dump{
+    --harrilanpuisto-gap:18px !important;
+  }
+
+  .harrilanpuisto-dump .media-stack{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    grid-auto-rows:1px !important;
+    grid-auto-flow:row !important;
+    column-gap:var(--harrilanpuisto-gap) !important;
+    row-gap:0 !important;
+    width:100% !important;
+    height:auto;
+    line-height:normal !important;
+    align-items:start !important;
+  }
+
+  .harrilanpuisto-dump .media-item{
+    display:block !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    align-self:start !important;
+    justify-self:stretch !important;
+    break-inside:auto !important;
+    page-break-inside:auto !important;
+  }
+}
+
+@media (max-width:900px){
+  .harrilanpuisto-dump .media-stack{
+    display:block !important;
+    width:100% !important;
+    height:auto !important;
+  }
+
+  .harrilanpuisto-dump .media-item{
+    display:block !important;
+    width:100% !important;
+    grid-column:auto !important;
+    grid-row:auto !important;
+    margin:0 0 15px 0 !important;
+  }
+
+  .harrilanpuisto-dump .media-item:last-child{
+    margin-bottom:0 !important;
+  }
+}
+
 </style>
   {% include browser-consistency.html %}
   {% include arabic-typography.html %}
-  {% include upper-resolution-layer.html %}
 </head>
 <body class="page-harrilanpuisto">
 {% assign harrilanpuisto_media_count = site.data.harrilanpuisto.media | size %}
@@ -1488,12 +1546,19 @@ function cmsAssetPath(path){
   return base + clean;
 }
 
+function harrilanDesktopSpan(value){
+  if(value === "three" || value === 3 || value === "3") return 3;
+  if(value === "two" || value === 2 || value === "2") return 2;
+  return 1;
+}
+
 const mediaSlides = [...(rawMedia || [])].reverse().map((slide, index) => ({
   type: slide.type || "image",
   src: cmsAssetPath(slide.type === "video" ? (slide.video || "") : (slide.image || "")),
   poster: cmsAssetPath(slide.poster || ""),
   alt: slide.alt || `Harrilanpuisto media ${index + 1}`,
-  caption: slide.caption || ""
+  caption: slide.caption || "",
+  desktopSpan: harrilanDesktopSpan(slide.desktop_columns)
 }));
 
 const mediaStack = document.getElementById("mediaStack");
@@ -1506,7 +1571,14 @@ function buildMediaStack(){
     const item = document.createElement("div");
     item.className = "media-item";
     item.dataset.mediaIndex = index;
-    item.style.setProperty("--media-ratio", slide.type === "video" ? "16 / 9" : "4 / 5");
+    item.dataset.desktopSpan = String(slide.desktopSpan || 1);
+
+    const initialRatio = slide.type === "video" ? (16 / 9) : (4 / 5);
+    item.dataset.mediaRatio = String(initialRatio);
+    item.style.setProperty(
+      "--media-ratio",
+      slide.type === "video" ? "16 / 9" : "4 / 5"
+    );
 
     const img = document.createElement("img");
     img.alt = slide.alt || "";
@@ -1522,7 +1594,13 @@ function buildMediaStack(){
       img.src = previewSrc;
       img.addEventListener("load", ()=>{
         if(img.naturalWidth && img.naturalHeight){
-          item.style.setProperty("--media-ratio", `${img.naturalWidth} / ${img.naturalHeight}`);
+          const ratio = img.naturalWidth / img.naturalHeight;
+          item.dataset.mediaRatio = String(ratio);
+          item.style.setProperty(
+            "--media-ratio",
+            `${img.naturalWidth} / ${img.naturalHeight}`
+          );
+          scheduleHarrilanMasonryLayout();
         }
       }, {once:true});
       img.style.display = "block";
@@ -1543,6 +1621,92 @@ function buildMediaStack(){
 
     mediaStack.appendChild(item);
   });
+}
+
+/* Harrilanpuisto desktop masonry.
+   Three columns; each item may span 1, 2, or 3 columns.
+   A 1px vertical grid lets differently proportioned images pack without
+   forcing shorter neighbours into the height of the tallest row. */
+let harrilanMasonryFrame = 0;
+
+function scheduleHarrilanMasonryLayout(){
+  cancelAnimationFrame(harrilanMasonryFrame);
+  harrilanMasonryFrame = requestAnimationFrame(layoutHarrilanMasonry);
+}
+
+function layoutHarrilanMasonry(){
+  if(!mediaStack) return;
+
+  const items = Array.from(mediaStack.querySelectorAll(".media-item"));
+
+  if(window.innerWidth <= 900){
+    mediaStack.style.removeProperty("height");
+    items.forEach(item=>{
+      item.style.removeProperty("grid-column");
+      item.style.removeProperty("grid-row");
+    });
+    return;
+  }
+
+  const gap = 18;
+  const width = mediaStack.clientWidth;
+  if(!width) return;
+
+  const columnWidth = (width - gap * 2) / 3;
+  const nextY = [0,0,0];
+  let maxBottom = 0;
+
+  items.forEach(item=>{
+    const span = Math.max(
+      1,
+      Math.min(3, parseInt(item.dataset.desktopSpan || "1", 10) || 1)
+    );
+
+    let bestStart = 0;
+    let bestTop = Infinity;
+
+    for(let start=0; start<=3-span; start++){
+      let top = 0;
+      for(let column=start; column<start+span; column++){
+        top = Math.max(top, nextY[column]);
+      }
+
+      if(top < bestTop){
+        bestTop = top;
+        bestStart = start;
+      }
+    }
+
+    const itemWidth = columnWidth * span + gap * (span - 1);
+    const ratio = Math.max(
+      0.05,
+      parseFloat(item.dataset.mediaRatio || "") ||
+      (item.classList.contains("has-video") ? 16/9 : 4/5)
+    );
+    const itemHeight = itemWidth / ratio;
+
+    item.style.gridColumn = `${bestStart + 1} / span ${span}`;
+    item.style.gridRow = `${Math.round(bestTop) + 1} / span ${Math.max(1, Math.ceil(itemHeight))}`;
+
+    const bottom = bestTop + itemHeight;
+    const next = bottom + gap;
+
+    for(let column=bestStart; column<bestStart+span; column++){
+      nextY[column] = next;
+    }
+
+    maxBottom = Math.max(maxBottom, bottom);
+  });
+
+  mediaStack.style.height = `${Math.ceil(maxBottom)}px`;
+}
+
+window.addEventListener("resize", scheduleHarrilanMasonryLayout);
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize", scheduleHarrilanMasonryLayout);
+}
+if(document.fonts && document.fonts.ready){
+  document.fonts.ready.then(scheduleHarrilanMasonryLayout);
 }
 
 mediaStack.addEventListener("click", (event) => {
@@ -1617,6 +1781,7 @@ function closeLightbox(){
 }
 
 buildMediaStack();
+scheduleHarrilanMasonryLayout();
 
 document.querySelector(".lightbox-close").addEventListener("click", closeLightbox);
 lightbox.addEventListener("click", e=>{if(e.target===lightbox)closeLightbox()});
