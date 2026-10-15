@@ -1,8 +1,9 @@
 ---
-title: "What do you feel "
-nav_order: 0
-project_type: Lettering
-title_line_1: "What do you feel "
+title: How does it feel
+nav_order: 5
+project_type: Lettering | Printmaking
+title_line_1: "How does that "
+title_line_2: make you feel
 description: |-
   Words written under their own influence.  
   These letterings were silkscreened.
