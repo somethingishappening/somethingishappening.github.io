@@ -1,21 +1,15 @@
-Harri.la About — exact v57 surprise-image behavior
+Harri.la — v57-faithful surprise behavior
 
 Replace ONLY:
   _layouts/about.html
 
-Source baseline:
+Built from:
   harri-about-cv-stable-size-v3/_layouts/about.html
 
-Only surprise-image behavior was changed:
-1. Removed the later desktop display:none/display:block override for .cv-surprise.
-2. Restored the exact v57 reveal calculation and class toggle.
-3. Restored the v57 desktop wheel behavior so the CV scroll event drives reveal.
+Changes are limited to the surprise image:
+- removed the later desktop display:none/display:block override that conflicts with v57
+- restored the exact v57 bottom-of-scroll class-toggle logic
+- restored the exact v57 desktop wheel behavior
+- changed only the surprise image loading attribute from lazy to eager so CMS images are already loaded like v57's embedded image
 
-Unchanged:
-- Mini-CV typography, size, spacing, content, and CMS structure
-- biography
-- greeting/game
-- navigation
-- random surprise-image selection
-- optional surprise-image link
-- all other layouts/includes
+No CV typography, sizing, section spacing, navigation, biography, greeting, CMS schema, Research, Work, Artistic Work, or Harrilanpuisto code was changed.

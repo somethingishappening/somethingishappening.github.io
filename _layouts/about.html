@@ -917,7 +917,7 @@ html.nav-state-syncing .nav-group *{
           id="cvSurpriseImage"
           src="{{ first_surprise.image | relative_url }}"
           alt="{{ first_surprise.alt | default: '' | escape }}"
-          loading="lazy"
+          loading="eager"
           decoding="async"
         />
         <div id="cvSurprisePool" hidden aria-hidden="true">
@@ -938,7 +938,7 @@ html.nav-state-syncing .nav-group *{
           id="cvSurpriseImage"
           src="{{ page.surprise_image | relative_url }}"
           alt="{{ page.surprise_alt | default: '' | escape }}"
-          loading="lazy"
+          loading="eager"
           decoding="async"
         />
       </figure>
@@ -1454,7 +1454,6 @@ html.nav-state-syncing .nav-group *{
     });
   }
 
-  // Mini-CV surprise: hidden until the user reaches the very end.
   function updateCvSurprise(){
     if(!cvColumn || !cvSurprise) return;
 
