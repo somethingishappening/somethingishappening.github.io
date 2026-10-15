@@ -741,54 +741,39 @@ html.nav-state-syncing .nav-group *{
 
 
 
-/* MINI-CV TYPOGRAPHY — match Research without changing CV alignment.
-   Titles use the Research H2 type treatment, but keep the CV's own zero
-   top margin so the first title remains aligned with the top of the column. */
+/* MINI-CV SECTION TITLES — same type size/leading as their entries.
+   Only weight distinguishes the title. Section spacing stays unchanged. */
 .cv-section h2{
-  font-size:18px !important;
-  line-height:1.15 !important;
-  font-weight:700 !important;
-  letter-spacing:0 !important;
-  margin:0 0 12px !important;
+  font-size:14px !important;
+  line-height:17.12px !important;
+  font-weight:750 !important;
+  letter-spacing:normal !important;
+  margin:0 0 10px !important;
 }
 
-/* Match Research running text exactly on wide desktop. */
-.cv-item{
-  font-size:18px !important;
-  line-height:1.2 !important;
-}
-
-/* Research drops both H2 and running text to 17px on narrower desktops. */
-@media (min-width:901px) and (max-width:1180px){
-  .cv-section h2{
-    font-size:17px !important;
-    line-height:1.15 !important;
-  }
-
-  .cv-item{
-    font-size:17px !important;
-    line-height:1.2 !important;
-  }
-}
-
-/* Match the Research mobile type sizes/leading while preserving CV spacing. */
 @media (max-width:900px){
   .cv-section h2{
-    font-size:17px !important;
-    line-height:1.16 !important;
-    margin:0 0 12px !important;
+    font-size:16px !important;
+    line-height:20.24px !important;
+    margin-bottom:12px !important;
   }
+}
 
-  .cv-item{
-    font-size:17px !important;
-    line-height:1.16 !important;
-  }
+
+
+#cvSurpriseLink{
+  display:block;
+  width:100%;
+  color:inherit;
+  text-decoration:none;
+}
+#cvSurpriseLink:not([href]){
+  cursor:default;
 }
 
 </style>
   {% include browser-consistency.html %}
   {% include arabic-typography.html %}
-  {% include upper-resolution-layer.html %}
 </head>
 <body class="page-about">
 <div class="about-layout">
@@ -815,6 +800,13 @@ html.nav-state-syncing .nav-group *{
     {% if page.surprise_images and page.surprise_images.size > 0 %}
       {% assign first_surprise = page.surprise_images | first %}
       <figure class="cv-surprise" id="cvSurprise" aria-hidden="true">
+        <a
+          id="cvSurpriseLink"
+          {% if first_surprise.link_url %}href="{{ first_surprise.link_url | escape }}"{% endif %}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="{{ first_surprise.alt | default: 'Open linked image' | escape }}"
+        >
         <img
           id="cvSurpriseImage"
           src="{{ first_surprise.image | relative_url }}"
@@ -822,12 +814,14 @@ html.nav-state-syncing .nav-group *{
           loading="lazy"
           decoding="async"
         />
+        </a>
         <div id="cvSurprisePool" hidden aria-hidden="true">
           {% for item in page.surprise_images %}
             {% if item.image %}
               <span
                 data-surprise-src="{{ item.image | relative_url }}"
                 data-surprise-alt="{{ item.alt | default: '' | escape }}"
+                data-surprise-link="{{ item.link_url | default: '' | escape }}"
               ></span>
             {% endif %}
           {% endfor %}
@@ -854,6 +848,28 @@ html.nav-state-syncing .nav-group *{
   const configuredMessages = {{ page.greeting_messages | jsonify }};
   const configuredMorningMessages = {{ page.morning_greeting_messages | jsonify }};
   const configuredAsciiMessages = {{ page.ascii_messages | jsonify }};
+  const configuredGreetingIntervalSeconds =
+    Number({{ page.greeting_interval_seconds | default: 30 | jsonify }});
+  const configuredAsciiClickCount =
+    Number({{ page.ascii_click_count | default: 10 | jsonify }});
+
+  const greetingIntervalMs =
+    Math.max(
+      1,
+      Number.isFinite(configuredGreetingIntervalSeconds)
+        ? configuredGreetingIntervalSeconds
+        : 30
+    ) * 1000;
+
+  const asciiClickThreshold =
+    Math.max(
+      1,
+      Math.round(
+        Number.isFinite(configuredAsciiClickCount)
+          ? configuredAsciiClickCount
+          : 10
+      )
+    );
 
   const regularMessages =
     Array.isArray(configuredMessages) && configuredMessages.length
@@ -975,16 +991,10 @@ html.nav-state-syncing .nav-group *{
     const centerRect = center.getBoundingClientRect();
     const copyRect = aboutCopy.getBoundingClientRect();
     const gapAboveCopy = 28;
-    const canvasScale = window.__harriCanvasScale || 1;
-    const safeBottom = Math.max(
-      0,
-      ((copyRect.top - centerRect.top) / canvasScale) - gapAboveCopy
-    );
+    const safeBottom = Math.max(0,copyRect.top - centerRect.top - gapAboveCopy);
 
     // Desktop playground starts at the same vertical level as Harri.la
-    // but remains entirely inside the center-column white space. When the
-    // proportional desktop canvas is active, DOM rects are visual/zoomed
-    // pixels while the zone height is a source-canvas measurement.
+    // but remains entirely inside the center-column white space.
     zone.style.top = '0px';
     zone.style.height = Math.round(safeBottom) + 'px';
   }
@@ -1165,7 +1175,7 @@ html.nav-state-syncing .nav-group *{
 
     desktopGameClickCount += 1;
 
-    if(desktopGameClickCount === 10){
+    if(desktopGameClickCount >= asciiClickThreshold){
       showFullscreenGreeting();
 
       if(desktopFullscreenTimeout){
@@ -1227,7 +1237,7 @@ html.nav-state-syncing .nav-group *{
   changeGreeting(false);
 
   // Secret game: normal activations randomize phrase, position and size.
-  // Activation #10 shows the next fullscreen ASCII face for five seconds.
+  // The CMS-controlled activation count shows the next fullscreen ASCII face for five seconds.
   greeting.addEventListener('click',activateGreetingGame);
   greeting.addEventListener('keydown',(event) => {
     if(event.key === 'Enter' || event.key === ' '){
@@ -1240,7 +1250,7 @@ html.nav-state-syncing .nav-group *{
   setInterval(() => {
     if(desktopGreetingFullscreen) return;
     changeGreeting(true,false);
-  },30000);
+  },greetingIntervalMs);
 
   window.addEventListener('resize',() => {
     if(desktopGreetingFullscreen){
@@ -1284,11 +1294,13 @@ html.nav-state-syncing .nav-group *{
   const cvColumn = document.querySelector('.cv-column');
   const cvSurprise = document.getElementById('cvSurprise');
   const cvSurpriseImage = document.getElementById('cvSurpriseImage');
+  const cvSurpriseLink = document.getElementById('cvSurpriseLink');
   const cvSurpriseChoices = cvSurprise
     ? Array.from(cvSurprise.querySelectorAll('[data-surprise-src]'))
         .map((node) => ({
           src: node.getAttribute('data-surprise-src') || '',
-          alt: node.getAttribute('data-surprise-alt') || ''
+          alt: node.getAttribute('data-surprise-alt') || '',
+          link: node.getAttribute('data-surprise-link') || ''
         }))
         .filter((item) => item.src)
     : [];
@@ -1303,33 +1315,36 @@ html.nav-state-syncing .nav-group *{
 
     cvSurpriseImage.src = choice.src;
     cvSurpriseImage.alt = choice.alt;
+
+    if(cvSurpriseLink){
+      if(choice.link){
+        cvSurpriseLink.href = choice.link;
+        cvSurpriseLink.setAttribute("aria-label", choice.alt || "Open linked image");
+      }else{
+        cvSurpriseLink.removeAttribute("href");
+        cvSurpriseLink.removeAttribute("aria-label");
+      }
+    }
   }
 
   chooseSurpriseImage();
-
-  // The surprise must never appear merely because the CV happens to fit
-  // inside a tall viewport. It becomes eligible only after the visitor has
-  // actually scrolled the CV/page away from its initial position.
-  let cvHasUserScrolled = false;
 
   function updateCvSurprise(){
     if(!cvColumn || !cvSurprise) return;
 
     let atEnd = false;
 
-    if(cvHasUserScrolled){
-      if(window.innerWidth > 900){
-        atEnd =
-          cvColumn.scrollTop + cvColumn.clientHeight >=
-          cvColumn.scrollHeight - 3;
-      }else{
-        const rect = cvSurprise.getBoundingClientRect();
-        const pageBottom =
-          window.scrollY + window.innerHeight >=
-          document.documentElement.scrollHeight - 3;
+    if(window.innerWidth > 900){
+      atEnd =
+        cvColumn.scrollTop + cvColumn.clientHeight >=
+        cvColumn.scrollHeight - 3;
+    }else{
+      const rect = cvSurprise.getBoundingClientRect();
+      const pageBottom =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 3;
 
-        atEnd = pageBottom && rect.top < window.innerHeight;
-      }
+      atEnd = pageBottom && rect.top < window.innerHeight;
     }
 
     cvSurprise.classList.toggle('revealed',atEnd);
@@ -1337,27 +1352,10 @@ html.nav-state-syncing .nav-group *{
   }
 
   if(cvColumn){
-    cvColumn.addEventListener('scroll',function(){
-      if(window.innerWidth > 900 && cvColumn.scrollTop > 1){
-        cvHasUserScrolled = true;
-      }
-      updateCvSurprise();
-    },{passive:true});
+    cvColumn.addEventListener('scroll',updateCvSurprise,{passive:true});
   }
-  window.addEventListener('scroll',function(){
-    if(window.innerWidth <= 900 && window.scrollY > 1){
-      cvHasUserScrolled = true;
-    }
-    updateCvSurprise();
-  },{passive:true});
+  window.addEventListener('scroll',updateCvSurprise,{passive:true});
   window.addEventListener('resize',updateCvSurprise);
-  window.addEventListener('pageshow',function(){
-    cvHasUserScrolled = false;
-    if(cvSurprise){
-      cvSurprise.classList.remove('revealed');
-      cvSurprise.setAttribute('aria-hidden','true');
-    }
-  });
   requestAnimationFrame(updateCvSurprise);
 
   // Desktop About: wheel/trackpad scrolling anywhere controls Mini-CV.

@@ -740,3 +740,140 @@
   }, {passive:true});
 })();
 </script>
+
+
+<style id="harri-navigation-hover-draw-animation">
+/*
+  Original project-name underline behavior:
+  left-origin draw-in, .16s ease, 1px line close to the baseline.
+  Section labels and footer items never get this hover underline.
+*/
+.site-nav .project-links a,
+.site-nav .standalone-nav-link{
+  position:relative !important;
+  text-decoration:none !important;
+  width:max-content;
+  max-width:100%;
+}
+
+.site-nav .project-links a::after,
+.site-nav .standalone-nav-link::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:.10em;
+  height:1px;
+  background:currentColor;
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .16s ease;
+  pointer-events:none;
+}
+
+.site-nav .project-links a:hover::after,
+.site-nav .project-links a:focus-visible::after,
+.site-nav .standalone-nav-link:hover::after,
+.site-nav .standalone-nav-link:focus-visible::after{
+  transform:scaleX(1);
+}
+
+.site-nav .group-head,
+.site-nav .group-head > span:first-child,
+.site-nav .left-footer a{
+  text-decoration:none !important;
+}
+
+.site-nav .group-head > span:first-child::after,
+.site-nav .left-footer a::after{
+  content:none !important;
+  display:none !important;
+}
+
+.site-nav .project-links a:hover,
+.site-nav .project-links a:focus,
+.site-nav .standalone-nav-link:hover,
+.site-nav .standalone-nav-link:focus,
+.site-nav .group-head:hover,
+.site-nav .group-head:focus,
+.site-nav .left-footer a:hover,
+.site-nav .left-footer a:focus{
+  text-decoration:none !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .site-nav .project-links a::after,
+  .site-nav .standalone-nav-link::after{
+    transition:none;
+  }
+}
+</style>
+
+
+<script id="harri-content-links-new-tab">
+(function(){
+  "use strict";
+
+  function shouldSkip(link){
+    if(!link || link.closest(".site-nav")) return true;
+
+    const href = (link.getAttribute("href") || "").trim();
+    if(!href) return true;
+
+    return (
+      href.startsWith("#") ||
+      href.startsWith("mailto:") ||
+      href.startsWith("tel:") ||
+      href.startsWith("javascript:")
+    );
+  }
+
+  function configure(link){
+    if(shouldSkip(link)) return;
+
+    link.setAttribute("target","_blank");
+    link.setAttribute("rel","noopener noreferrer");
+  }
+
+  function scan(root){
+    if(!root) return;
+
+    if(root.nodeType === 1 && root.matches && root.matches("a[href]")){
+      configure(root);
+    }
+
+    if(root.querySelectorAll){
+      root.querySelectorAll("a[href]").forEach(configure);
+    }
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded",()=>scan(document.body),{once:true});
+  }else{
+    scan(document.body);
+  }
+
+  if("MutationObserver" in window){
+    const observer = new MutationObserver((mutations)=>{
+      mutations.forEach((mutation)=>{
+        mutation.addedNodes.forEach((node)=>{
+          if(node.nodeType === 1) scan(node);
+        });
+      });
+    });
+
+    const start = ()=>{
+      if(document.body){
+        observer.observe(document.body,{childList:true,subtree:true});
+      }
+    };
+
+    if(document.body){
+      start();
+    }else{
+      document.addEventListener("DOMContentLoaded",start,{once:true});
+    }
+  }
+})();
+</script>
+

@@ -3079,6 +3079,7 @@ min-width:0}
       mobileSrc: explicitMobileSrc || desktopSrc,
       alt: fig.alt || `Figure ${number}`,
       caption: fig.caption || "",
+      linkUrl: typeof fig.link_url === "string" ? fig.link_url.trim() : "",
       displaySize,
       widthPercent: figureDisplayWidths[displaySize],
       displayAlignment,
@@ -4078,12 +4079,23 @@ min-width:0}
     document.body.classList.remove("lightbox-open");
   }
 
+  function openOptionalFigureLink(key){
+    const fig = figures[key];
+    if(!fig || !fig.linkUrl) return false;
+
+    window.open(fig.linkUrl, "_blank", "noopener,noreferrer");
+    return true;
+  }
+
   // Desktop preview figure.
   const desktopFigureBox = document.getElementById("figureBox");
   if(desktopFigureBox){
     desktopFigureBox.addEventListener("click", () => {
       const key = hoveredFigureKey || automaticFigureKey;
-      if(key) openFigureLightbox(key);
+      if(!key) return;
+
+      if(openOptionalFigureLink(key)) return;
+      openFigureLightbox(key);
     });
   }
 
@@ -4095,7 +4107,10 @@ min-width:0}
 
     const img = box.querySelector("[data-mobile-image]");
     const key = img?.dataset.mobileImage;
-    if(key) openFigureLightbox(key);
+    if(!key) return;
+
+    if(openOptionalFigureLink(key)) return;
+    openFigureLightbox(key);
   });
 
   if(lightboxClose){
