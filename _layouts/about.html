@@ -820,28 +820,6 @@ html.nav-state-syncing .nav-group *{
     margin-bottom:0 !important;
   }
 
-  body.page-about .cv-surprise:not(.revealed):not(.revealing){
-    display:none !important;
-  }
-
-  body.page-about .cv-surprise.revealing,
-  body.page-about .cv-surprise.revealed{
-    display:block !important;
-  }
-
-  body.page-about .cv-surprise.revealing{
-    opacity:0 !important;
-    visibility:visible !important;
-    transform:none !important;
-  }
-
-  body.page-about .cv-surprise.revealed{
-    opacity:1 !important;
-    visibility:visible !important;
-    transform:none !important;
-    transition:opacity .55s cubic-bezier(.22,1,.36,1) !important;
-  }
-
   /*
     When the visible Mini-CV is shorter than its available column, JavaScript
     distributes the unused height BETWEEN CV sections rather than leaving an
@@ -1476,15 +1454,10 @@ html.nav-state-syncing .nav-group *{
     });
   }
 
-  // The surprise must never reserve invisible space below the Mini-CV.
-  // It is display:none until the visitor genuinely reaches the end, then it
-  // stays revealed for the rest of that page visit.
-  let cvHasUserScrolled = false;
-  let cvSurpriseRevealed = false;
-
+  // Mini-CV surprise: match the approved v57 behavior exactly.
+  // It remains invisible until the visitor reaches the very end, then eases in.
   function updateCvSurprise(){
-    if(!cvColumn || !cvSurprise || cvSurpriseRevealed) return;
-    if(!cvHasUserScrolled) return;
+    if(!cvColumn || !cvSurprise) return;
 
     let atEnd = false;
 
@@ -1493,48 +1466,29 @@ html.nav-state-syncing .nav-group *{
         cvColumn.scrollTop + cvColumn.clientHeight >=
         cvColumn.scrollHeight - 3;
     }else{
+      const rect = cvSurprise.getBoundingClientRect();
       const pageBottom =
         window.scrollY + window.innerHeight >=
         document.documentElement.scrollHeight - 3;
-      atEnd = pageBottom;
+
+      atEnd = pageBottom && rect.top < window.innerHeight;
     }
 
-    if(!atEnd) return;
-
-    cvSurpriseRevealed = true;
-    cvSurprise.classList.add('revealing');
-    cvSurprise.setAttribute('aria-hidden','false');
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        cvSurprise.classList.add('revealed');
-        cvSurprise.classList.remove('revealing');
-      });
-    });
-    requestAnimationFrame(scheduleBioFit);
+    cvSurprise.classList.toggle('revealed', atEnd);
+    cvSurprise.setAttribute('aria-hidden', String(!atEnd));
   }
 
   if(cvColumn){
-    cvColumn.addEventListener('scroll',function(){
-      if(window.innerWidth > 900 && cvColumn.scrollTop > 1){
-        cvHasUserScrolled = true;
-      }
-      updateCvSurprise();
-    },{passive:true});
+    cvColumn.addEventListener('scroll', updateCvSurprise, {passive:true});
   }
-  window.addEventListener('scroll',function(){
-    if(window.innerWidth <= 900 && window.scrollY > 1){
-      cvHasUserScrolled = true;
-    }
-    updateCvSurprise();
-  },{passive:true});
-  window.addEventListener('resize',updateCvSurprise);
+  window.addEventListener('scroll', updateCvSurprise, {passive:true});
+  window.addEventListener('resize', updateCvSurprise);
   window.addEventListener('pageshow',function(){
-    cvHasUserScrolled = false;
-    cvSurpriseRevealed = false;
     if(cvSurprise){
-      cvSurprise.classList.remove('revealed','revealing');
+      cvSurprise.classList.remove('revealed');
       cvSurprise.setAttribute('aria-hidden','true');
     }
+    requestAnimationFrame(updateCvSurprise);
   });
   requestAnimationFrame(updateCvSurprise);
 
