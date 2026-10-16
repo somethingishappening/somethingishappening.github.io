@@ -86,4 +86,6 @@ surprise_images:
   - image: /assets/uploads/20220227171121.png
     link_url: https://www.aziza-lo.com
   - image: /assets/uploads/img20261015235008496.jpg
+  - image: /assets/uploads/20260421134845.jpg
+  - image: /assets/uploads/img20261016014933190.jpg
 ---
