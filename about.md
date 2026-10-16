@@ -3,7 +3,7 @@ layout: about
 title: About
 permalink: /about/
 about_nav_open_research: true
-about_nav_open_design: false
+about_nav_open_design: true
 about_nav_open_artistic: false
 greeting_messages:
   - No terve!
