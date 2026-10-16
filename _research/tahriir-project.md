@@ -691,7 +691,7 @@ figures:
   - number: 1
     image: /assets/uploads/fig-1mobile-2.jpg
     mobile_image: /assets/uploads/fig-1mobile-1.jpg
-    display_size: full
+    display_size: large
     mobile_display_size: full
     display_alignment: left
     mobile_display_alignment: inherit
