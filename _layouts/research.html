@@ -2836,19 +2836,31 @@ min-width:0}
 </style>
 
 
-<style id="harri-research-toc-slightly-wider-v1">
-/* Research desktop/laptop/TV only: slightly widen the two-column article navigation. */
+<style id="harri-research-toc-content-width-v2">
+/*
+  RESEARCH ARTICLE NAV — CONTENT-DRIVEN DESKTOP WIDTH
+  ---------------------------------------------------
+  The previous patch was still capped by a percentage of the right rail, so
+  it could remain too narrow at resolutions such as 1728×1117.
+
+  On laptop/desktop/TV, each of the two navigation columns now takes the
+  natural width required by its labels. This prevents labels such as
+  “Short vowels/marks” from wrapping merely because the viewport changed.
+  Position, type size, leading, arrow behaviour and vertical scrolling remain
+  unchanged. Mobile is intentionally untouched.
+*/
 @media (min-width:901px){
   body.page-research .toc{
-    width:min(
-      clamp(340px, min(20.238095vw, 37.777778vh), 680px),
-      52%
-    ) !important;
-    min-width:clamp(
-      305px,
-      min(18.154762vw, 33.888889vh),
-      610px
-    ) !important;
+    width:max-content !important;
+    min-width:0 !important;
+    max-width:none !important;
+    grid-template-columns:max-content max-content !important;
+  }
+
+  body.page-research .toc a,
+  body.page-research .toc .toc-title,
+  body.page-research .toc .toc-group-title{
+    white-space:nowrap !important;
   }
 }
 </style>
@@ -4621,18 +4633,29 @@ min-width:0}
 
   function applyCaptionSharedScale(){
     /*
-      All desktop/laptop/TV captions share one unified text-box measure at
-      each viewport size. The box keeps its own 190px reference width and
-      scales only with the common desktop caption typography scale.
+      DESKTOP CAPTION BOX — TRUE SHARED FIGURE-RAIL SCALE
+      ---------------------------------------------------
+      The caption keeps its own 190px reference box. It is NOT calculated
+      from the current image width, CMS figure size, or a figure:caption ratio.
 
-      It is deliberately NOT multiplied by an individual figure's CMS size
-      or fitted width, so every Research caption has the same boundaries.
-      Mobile caption behavior is untouched.
+      Instead, the caption box receives the same horizontal scale as the
+      Research figure rail itself. This keeps one consistent caption boundary
+      at each laptop/desktop/TV resolution while allowing the whole figure area
+      and caption box to grow/shrink together from the 1680px reference.
+
+      Reference Research figure-rail width at 1680px:
+        available = 1680 - 2*18 padding - 2*28 gaps - 220 left rail
+        right rail = available * 660 / (745 + 660)
+      Mobile is intentionally untouched.
     */
-    const captionFontSize =
-      parseFloat(getComputedStyle(caption).fontSize) || BASE_CAPTION_FONT_SIZE;
-    const typographyScale = captionFontSize / BASE_CAPTION_FONT_SIZE;
-    const captionWidth = BASE_CAPTION_WIDTH * typographyScale;
+    const BASE_STAGE_WIDTH =
+      (1680 - (18 * 2) - (28 * 2) - 220) * 660 / (745 + 660);
+
+    const currentStageWidth = stage.clientWidth;
+    if(currentStageWidth <= 0) return;
+
+    const sharedRailScale = Math.max(0.01, currentStageWidth / BASE_STAGE_WIDTH);
+    const captionWidth = BASE_CAPTION_WIDTH * sharedRailScale;
 
     stage.style.setProperty(
       "--research-caption-fit-width",
