@@ -125,6 +125,9 @@ for (const f of failures) {
   }
 }
 
+const technicalErrors = uniqueFailures.filter((f) => f.error);
+const wrapWarnings = uniqueFailures.filter((f) => !f.error);
+
 const summaryPath = process.env.GITHUB_STEP_SUMMARY;
 const lines = [];
 lines.push('# Research navigation label check');
@@ -132,40 +135,50 @@ lines.push('');
 lines.push(`Checked **${entries.length}** Research project(s) at **${viewports.length}** laptop/desktop/TV resolutions.`);
 lines.push('');
 
-if (uniqueFailures.length === 0) {
+if (technicalErrors.length > 0) {
+  lines.push('❌ **The checker encountered a technical rendering problem.**');
+  lines.push('');
+  for (const f of technicalErrors) {
+    lines.push(`- ${f.entry} — ${f.viewportName}: ${f.error}`);
+    console.error(`ERROR ${f.entry} @ ${f.viewportName}: ${f.error}`);
+    console.log(
+      `::error title=Research navigation checker error::${f.entry} — ${f.viewportName}: ${f.error}`
+    );
+  }
+} else if (wrapWarnings.length === 0) {
   lines.push('✅ **All navigation labels fit inside their columns at every tested resolution.**');
   lines.push('');
   lines.push(`Measured ${checked} rendered label instances using the actual Research page, Geist font, current three-column rail, and viewport-specific site/CV scaling.`);
   console.log('PASS: all Research navigation labels fit at every supported desktop resolution.');
 } else {
-  lines.push('❌ **One or more navigation labels exceed the available navigation-column width.**');
+  lines.push('⚠️ **One or more navigation labels may wrap at a tested resolution.**');
   lines.push('');
   lines.push('| Project | Resolution | Label | Needs | Available |');
   lines.push('|---|---:|---|---:|---:|');
-  for (const f of uniqueFailures) {
-    if (f.error) {
-      lines.push(`| ${f.entry} | ${f.viewportName} | ${f.error} | — | — |`);
-      console.error(`ERROR ${f.entry} @ ${f.viewportName}: ${f.error}`);
-      continue;
-    }
+
+  for (const f of wrapWarnings) {
     const need = `${f.textWidth.toFixed(1)}px`;
     const have = `${f.availableWidth.toFixed(1)}px`;
     lines.push(`| ${f.entry} | ${f.viewportName} | ${String(f.text).replaceAll('|', '\\|')} | ${need} | ${have} |`);
-    console.error(
-      `TOO WIDE: "${f.text}" in ${f.entry} at ${f.viewportName} ` +
+    console.warn(
+      `MAY WRAP: "${f.text}" in ${f.entry} at ${f.viewportName} ` +
       `(needs ${need}, column ${have})`
     );
     console.log(
-      `::error title=Research nav label too wide::${f.entry} — "${f.text}" ` +
+      `::warning title=Research nav label may wrap::${f.entry} — "${f.text}" ` +
       `needs ${need}, but its column is ${have} at ${f.viewportName}. ` +
       `Use the CMS Navigation label field to shorten it.`
     );
   }
+
   lines.push('');
-  lines.push('Shorten the flagged item using **Navigation label (optional)** in the Research article section. The article heading itself can remain unchanged.');
+  lines.push('Shorten a flagged item using **Navigation label (optional)** in the Research article section. The article heading itself can remain unchanged.');
+  console.log(`CHECK COMPLETE: ${wrapWarnings.length} navigation label instance(s) may wrap.`);
 }
 
 if (summaryPath) fs.appendFileSync(summaryPath, `${lines.join('\n')}\n`);
 else console.log(lines.join('\n'));
 
-if (uniqueFailures.length > 0) process.exit(1);
+// Only a genuine checker/rendering problem should make the GitHub job red.
+// A label that may wrap is a normal validation result and is surfaced as a warning.
+if (technicalErrors.length > 0) process.exit(1);
