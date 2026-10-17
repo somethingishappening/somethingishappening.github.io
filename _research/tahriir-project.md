@@ -819,7 +819,7 @@ figures:
     mobile_display_size: inherit
     display_alignment: left
     mobile_display_alignment: inherit
-    alt: >-
+    caption: >-
       Phrase taken from The Sultan Baybars’ Qur’an. The circular diacritics are
       colored differently from their base characters (gold leaf).
 
