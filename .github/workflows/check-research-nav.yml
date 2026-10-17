@@ -14,6 +14,7 @@ on:
       - '_includes/upper-resolution-layer.html'
       - '.pages.yml'
       - 'scripts/check_research_nav.mjs'
+      - '.github/workflows/check-research-nav.yml'
 
 permissions:
   contents: read
@@ -21,10 +22,10 @@ permissions:
 jobs:
   check-navigation-labels:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - name: Check out current site
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Resolve Pages CMS Research entry
         id: entry
@@ -33,21 +34,26 @@ jobs:
           PAGES_CMS_PAYLOAD: ${{ inputs.payload }}
         run: |
           node <<'NODE'
+          const fs = require('fs');
           const payloadText = process.env.PAGES_CMS_PAYLOAD || '';
           let entryPath = '';
-          if (payloadText) {
-            const payload = JSON.parse(payloadText);
-            entryPath = payload?.context?.path || '';
+          if (payloadText.trim()) {
+            try {
+              const payload = JSON.parse(payloadText);
+              entryPath = payload?.context?.path || payload?.entry?.path || payload?.path || '';
+            } catch (error) {
+              console.log('::warning title=Pages CMS payload could not be parsed::The checker will test all Research projects instead. ' + String(error.message || error));
+            }
           }
-          require('fs').appendFileSync(process.env.GITHUB_OUTPUT, `path=${entryPath}\n`);
-          console.log(entryPath ? `Checking CMS entry: ${entryPath}` : 'No entry payload: checking all Research projects.');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `path=${String(entryPath).replace(/\r?\n/g, '')}\n`);
+          console.log(entryPath ? `Checking CMS entry: ${entryPath}` : 'No usable entry payload: checking all Research projects.');
           NODE
 
-      - name: Build the current Jekyll site
-        shell: bash
-        run: |
-          gem install jekyll --no-document
-          jekyll build --destination _site
+      - name: Build site with the GitHub Pages Jekyll environment
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
 
       - name: Install browser checker
         shell: bash
@@ -59,13 +65,16 @@ jobs:
         shell: bash
         run: |
           python3 -m http.server 4173 --directory _site > /tmp/harri-nav-check-server.log 2>&1 &
-          for i in {1..30}; do
+          echo $! > /tmp/harri-nav-check-server.pid
+          for i in {1..40}; do
             if curl -fsS http://127.0.0.1:4173/about/ >/dev/null; then
+              echo "Local Jekyll site is ready."
               exit 0
             fi
             sleep 1
           done
-          cat /tmp/harri-nav-check-server.log
+          echo "Local site did not become ready."
+          cat /tmp/harri-nav-check-server.log || true
           exit 1
 
       - name: Check rendered Research navigation labels
