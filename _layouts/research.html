@@ -2835,6 +2835,24 @@ min-width:0}
 }
 </style>
 
+
+<style id="harri-research-toc-slightly-wider-v1">
+/* Research desktop/laptop/TV only: slightly widen the two-column article navigation. */
+@media (min-width:901px){
+  body.page-research .toc{
+    width:min(
+      clamp(340px, min(20.238095vw, 37.777778vh), 680px),
+      52%
+    ) !important;
+    min-width:clamp(
+      305px,
+      min(18.154762vw, 33.888889vh),
+      610px
+    ) !important;
+  }
+}
+</style>
+
 </head>
 <body class="page-research">
 
