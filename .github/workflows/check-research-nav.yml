@@ -1,0 +1,75 @@
+name: Check Research navigation labels
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS action payload
+        required: false
+        type: string
+  push:
+    paths:
+      - '_research/**'
+      - '_layouts/research.html'
+      - '_includes/upper-resolution-layer.html'
+      - '.pages.yml'
+      - 'scripts/check_research_nav.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  check-navigation-labels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out current site
+        uses: actions/checkout@v4
+
+      - name: Resolve Pages CMS Research entry
+        id: entry
+        shell: bash
+        env:
+          PAGES_CMS_PAYLOAD: ${{ inputs.payload }}
+        run: |
+          node <<'NODE'
+          const payloadText = process.env.PAGES_CMS_PAYLOAD || '';
+          let entryPath = '';
+          if (payloadText) {
+            const payload = JSON.parse(payloadText);
+            entryPath = payload?.context?.path || '';
+          }
+          require('fs').appendFileSync(process.env.GITHUB_OUTPUT, `path=${entryPath}\n`);
+          console.log(entryPath ? `Checking CMS entry: ${entryPath}` : 'No entry payload: checking all Research projects.');
+          NODE
+
+      - name: Build the current Jekyll site
+        shell: bash
+        run: |
+          gem install jekyll --no-document
+          jekyll build --destination _site
+
+      - name: Install browser checker
+        shell: bash
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Start local site
+        shell: bash
+        run: |
+          python3 -m http.server 4173 --directory _site > /tmp/harri-nav-check-server.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/about/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/harri-nav-check-server.log
+          exit 1
+
+      - name: Check rendered Research navigation labels
+        env:
+          BASE_URL: http://127.0.0.1:4173
+          ENTRY_PATH: ${{ steps.entry.outputs.path }}
+        run: node scripts/check_research_nav.mjs
