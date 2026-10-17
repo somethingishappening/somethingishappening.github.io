@@ -2603,8 +2603,7 @@ min-width:0}
    and the same desktop hanging line. Lightbox size is unchanged. */
 @media (min-width:901px){
   .figure-stage .figure-caption{
-    width:var(--research-caption-fit-width, 190px) !important;
-    max-width:var(--research-caption-fit-width, 190px) !important;
+    max-width:var(--research-figure-fit-width, 190px) !important;
   }
 }
 
@@ -2644,20 +2643,6 @@ min-width:0}
 
 </style>
   {% include upper-resolution-layer.html %}
-
-<style id="research-large-screen-ordered-list-width-fix-v1">
-/*
-  LARGE DESKTOP ORDERED LIST WIDTH
-  Ordered lists use the same Research copy wrapper as the surrounding prose.
-  The wrapper itself remains the established 96.5% paper-column measure, so
-  list lines end at the same right-hand text limit and never extend beyond it.
-*/
-@media (min-width:1681px){
-  body.page-research .research-copy ol{
-    max-width:100% !important;
-  }
-}
-</style>
 
 <style id="research-list-body-lock-v7-1">
 /*
@@ -2829,6 +2814,31 @@ min-width:0}
 
   body.page-research .figure-caption{
     font-size:var(--harri-fit-caption,var(--harri-u-caption,12px)) !important;
+  }
+}
+</style>
+
+<style id="research-large-desktop-only-list-caption-fix-v2">
+/*
+  LARGE DESKTOP ONLY (>1680px)
+  ----------------------------
+  1) Ordered lists use the same final reading width as the surrounding
+     Research copy; they never extend beyond the text column.
+  2) Figure-caption measure scales in the original 190:700 proportion with
+     the ACTUAL fitted figure width. It remains narrower than the figure.
+
+  <=1680px desktop and ALL mobile caption/list behavior are untouched.
+*/
+@media (min-width:1681px){
+  body.page-research .research-copy > ol,
+  body.page-research .research-copy ol{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  body.page-research .figure-stage .figure-caption{
+    width:calc(var(--research-figure-fit-width, 700px) * 0.2714285714) !important;
+    max-width:calc(var(--research-figure-fit-width, 700px) * 0.2714285714) !important;
   }
 }
 </style>
@@ -4553,27 +4563,8 @@ min-width:0}
   const bottomPageMargin = 26;
   const MAX_PASSES = 4;
 
-  const BASE_FIGURE_WIDTH = 700;
-  const BASE_CAPTION_WIDTH = 190;
-  const CAPTION_TO_FIGURE_RATIO = BASE_CAPTION_WIDTH / BASE_FIGURE_WIDTH;
-
-  function applyDesktopFitWidth(width){
-    const safeWidth = Math.max(1, Math.floor(width));
-    const captionWidth = Math.max(1, safeWidth * CAPTION_TO_FIGURE_RATIO);
-
-    stage.style.setProperty(
-      "--research-figure-fit-width",
-      safeWidth + "px"
-    );
-    stage.style.setProperty(
-      "--research-caption-fit-width",
-      captionWidth.toFixed(3) + "px"
-    );
-  }
-
   function clearDesktopFit(){
     stage.style.removeProperty("--research-figure-fit-width");
-    stage.style.removeProperty("--research-caption-fit-width");
   }
 
   function requestedWidth(){
@@ -4615,7 +4606,10 @@ min-width:0}
     const naturalRatio = img.naturalWidth / img.naturalHeight;
     let fittedWidth = requestedFigureWidth;
 
-    applyDesktopFitWidth(fittedWidth);
+    stage.style.setProperty(
+      "--research-figure-fit-width",
+      Math.max(1, Math.floor(fittedWidth)) + "px"
+    );
 
     for(let pass = 0; pass < MAX_PASSES; pass++){
       const captionStyles = getComputedStyle(caption);
@@ -4640,10 +4634,16 @@ min-width:0}
       }
 
       fittedWidth = nextWidth;
-      applyDesktopFitWidth(fittedWidth);
+      stage.style.setProperty(
+        "--research-figure-fit-width",
+        fittedWidth + "px"
+      );
     }
 
-    applyDesktopFitWidth(fittedWidth);
+    stage.style.setProperty(
+      "--research-figure-fit-width",
+      Math.max(1, Math.floor(fittedWidth)) + "px"
+    );
   }
 
   window.fitDesktopResearchFigureNow = fitDesktopResearchFigure;
