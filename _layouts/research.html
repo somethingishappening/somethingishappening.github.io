@@ -3554,16 +3554,21 @@ min-width:0}
   const paperScroller = document.querySelector(".paper");
 
   /*
-    Desktop Research: wheel / trackpad scrolling works from anywhere on
-    the page, not only while the pointer is over the article column.
-    Mobile keeps its native page scrolling. Lightbox and browser zoom
-    gestures are deliberately left untouched.
+    Desktop Research: keep the article's original native wheel / trackpad
+    scrolling whenever the pointer is already over the article. When the
+    pointer is over the left navigation or right figure area, forward the
+    same gesture to the article instead. Mobile, lightbox and browser zoom
+    gestures keep their existing behavior.
   */
   function routeResearchWheelToPaper(event){
     if(window.innerWidth <= 900 || !paperScroller) return;
     if(document.body.classList.contains("lightbox-open")) return;
     if(event.ctrlKey || event.metaKey) return;
     if(event.deltaY === 0 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+
+    /* Inside the article: do nothing. The browser preserves its native
+       trackpad momentum, acceleration and wheel feel exactly as before. */
+    if(event.target instanceof Node && paperScroller.contains(event.target)) return;
 
     let deltaY = event.deltaY;
     if(event.deltaMode === 1){
