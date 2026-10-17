@@ -3578,7 +3578,15 @@ min-width:0}
     }
 
     event.preventDefault();
+
+    /* Match native wheel speed outside the text column. The paper uses
+       scroll-behavior:smooth for navigation jumps, which can otherwise make
+       manually forwarded wheel input feel slower than native scrolling.
+       Disable it only for this single wheel step, then restore it. */
+    const previousInlineScrollBehavior = paperScroller.style.scrollBehavior;
+    paperScroller.style.scrollBehavior = "auto";
     paperScroller.scrollTop += deltaY;
+    paperScroller.style.scrollBehavior = previousInlineScrollBehavior;
   }
 
   document.addEventListener("wheel", routeResearchWheelToPaper, {passive:false});
