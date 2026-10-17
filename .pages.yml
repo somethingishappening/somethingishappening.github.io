@@ -42,15 +42,18 @@ content:
       label: Project name
       type: string
       required: true
-      description: The default project name. It is used when an optional Main menu name or Mobile Research navigation name is left blank.
+      description: The default project name. It is used when an optional Main menu name or Mobile Research navigation name
+        is left blank.
     - name: menu_title
       label: Main menu name (optional)
       type: string
-      description: Optional shorter or different name shown only in the main website navigation. Leave blank to use Project name.
+      description: Optional shorter or different name shown only in the main website navigation. Leave blank to use Project
+        name.
     - name: mobile_research_title
       label: Mobile Research navigation name (optional)
       type: string
-      description: Optional custom name shown only in the mobile Research project navigation bar. Leave blank to use the Navigation title above.
+      description: Optional custom name shown only in the mobile Research project navigation bar. Leave blank to use the Navigation
+        title above.
     - name: nav_order
       label: Navigation order
       type: number
@@ -66,19 +69,23 @@ content:
           label: Research template
         - name: work
           label: Work template
-      description: Choose Research template for the long article + Project Overview + figures layout, or Work template for the short description + image/video gallery layout. The project still stays under Design Research in the navigation.
+      description: Choose Research template for the long article + Project Overview + figures layout, or Work template for
+        the short description + image/video gallery layout. The project still stays under Design Research in the navigation.
     - name: research_type
       label: Research project type / descriptor
       type: string
-      description: "Small text shown above the large Research project title, like the project type in the Work template. Examples: Typographic Research, Visual Research, Publication, Research Project."
+      description: 'Small text shown above the large Research project title, like the project type in the Work template. Examples:
+        Typographic Research, Visual Research, Publication, Research Project.'
     - name: headline_line_1
       label: Displayed project title — line 1
       type: string
-      description: First line of the large title inside the Research article. It is independent from the Navigation title above.
+      description: First line of the large title inside the Research article. It is independent from the Navigation title
+        above.
     - name: headline_line_2
       label: Displayed project title — line 2
       type: string
-      description: Optional second line of the large title inside the Research article. It is independent from the Navigation title above.
+      description: Optional second line of the large title inside the Research article. It is independent from the Navigation
+        title above.
     - name: abstract
       label: Abstract / project summary
       type: rich-text
@@ -86,7 +93,8 @@ content:
         format: markdown
         switcher: false
         media: false
-      description: This is the text shown in the first Research screen. On desktop its final line aligns with the footer email baseline. It is automatically linked as “Abstract” in the Research navigation.
+      description: This is the text shown in the first Research screen. On desktop its final line aligns with the footer email
+        baseline. It is automatically linked as “Abstract” in the Research navigation.
     - name: sections
       label: Research article
       type: object
@@ -95,12 +103,16 @@ content:
         collapsible:
           collapsed: true
           summary: '{heading}'
-      description: Add the article sections that come after the Abstract. Each section can also be placed directly into the two-column Project Overview navigation; no manual Section IDs or separate navigation structure are needed.
+      description: Add the article sections that come after the Abstract. Each section can also be placed directly into the
+        two-column Project Overview navigation; no manual Section IDs or separate navigation structure are needed.
       fields:
       - name: heading
         label: Section title
         type: string
-        description: The heading shown in the article. For the opening section, you can leave this blank if the large Article title above should act as the heading.
+        description: The heading shown in the article. For the opening section, you can leave this blank if the large Article
+          title above should act as the heading. If this section is shown in the Research navigation and the heading is long,
+          use Navigation label below for a shorter menu label. Use “Check navigation labels” in the Research entry header
+          to test the real menu at all supported laptop/desktop/TV resolutions.
       - name: heading_level
         label: Heading level
         type: select
@@ -113,7 +125,8 @@ content:
             label: Header 2 — body-size bold
           - name: h3
             label: Header 3 — body-size regular, underlined
-        description: Header 1 is the chapter-title level. Header 2 is body-size bold. Header 3 is body-size regular and underlined, matching the article hierarchy.
+        description: Header 1 is the chapter-title level. Header 2 is body-size bold. Header 3 is body-size regular and underlined,
+          matching the article hierarchy.
       - name: body
         label: Section text
         type: rich-text
@@ -121,7 +134,9 @@ content:
           format: markdown
           switcher: false
           media: false
-        description: Write normally. Header 1 is the chapter-title level. Header 2 is body-size bold. Header 3 is body-size regular and underlined. To cite an image, simply type (Fig. 1), (Fig. 2), etc. The website detects these references automatically.
+        description: Write normally. Header 1 is the chapter-title level. Header 2 is body-size bold. Header 3 is body-size
+          regular and underlined. To cite an image, simply type (Fig. 1), (Fig. 2), etc. The website detects these references
+          automatically.
       - name: nav_column
         label: Show in navigation
         type: select
@@ -134,7 +149,8 @@ content:
             label: Left column
           - name: right
             label: Right column
-        description: The navigation style comes automatically from the Heading level. For Header 3, choose Right column if you want it shown in the right-side navigation, or Do not show if you want it hidden.
+        description: The navigation style comes automatically from the Heading level. For Header 3, choose Right column if
+          you want it shown in the right-side navigation, or Do not show if you want it hidden.
       - name: navigation
         label: Legacy navigation placement
         type: string
@@ -143,7 +159,9 @@ content:
       - name: nav_label
         label: Navigation label (optional)
         type: string
-        description: Leave blank to use the Section title. Fill this only if you want a shorter/different label in the Project Overview.
+        description: 'Leave blank to use the Section title. Fill this only if you want a shorter/different label in the Project
+          Overview. After editing, use “Check navigation labels” in the Research entry header: it renders the actual Geist
+          navigation and flags any label that exceeds its column at a supported laptop/desktop/TV resolution.'
       - name: id
         label: Legacy Section ID
         type: string
@@ -155,13 +173,15 @@ content:
       list:
         collapsible:
           collapsed: true
-          summary: 'Fig. {number}'
-      description: Add the image that corresponds to each (Fig. X) written in your article. Figure references in the text are detected automatically.
+          summary: Fig. {number}
+      description: Add the image that corresponds to each (Fig. X) written in your article. Figure references in the text
+        are detected automatically.
       fields:
       - name: number
         label: Figure number
         type: number
-        description: 'Enter the number used in your text. Example: enter 3 for (Fig. 3). Older figures without a number continue to use their list order.'
+        description: 'Enter the number used in your text. Example: enter 3 for (Fig. 3). Older figures without a number continue
+          to use their list order.'
       - name: image
         label: Desktop / default image
         type: image
@@ -190,7 +210,8 @@ content:
             label: 50%
           - name: small
             label: 33%
-        description: Controls how wide this figure appears on desktop/laptop. Existing figures without a setting remain full width.
+        description: Controls how wide this figure appears on desktop/laptop. Existing figures without a setting remain full
+          width.
       - name: mobile_display_size
         label: Mobile display size
         type: select
@@ -207,7 +228,8 @@ content:
             label: 50%
           - name: small
             label: 33%
-        description: Controls this figure's allocated width on phones. Same as desktop inherits Desktop display size. The caption keeps this allocated width even if the mobile image itself is narrower.
+        description: Controls this figure's allocated width on phones. Same as desktop inherits Desktop display size. The
+          caption keeps this allocated width even if the mobile image itself is narrower.
       - name: display_alignment
         label: Desktop justification
         type: select
@@ -220,7 +242,8 @@ content:
             label: Center
           - name: right
             label: Right
-        description: Controls where the desktop/laptop figure sits inside its designated figure area. Existing figures remain left aligned unless you choose another alignment.
+        description: Controls where the desktop/laptop figure sits inside its designated figure area. Existing figures remain
+          left aligned unless you choose another alignment.
       - name: mobile_display_alignment
         label: Mobile justification
         type: select
@@ -246,7 +269,8 @@ content:
       - name: link_url
         label: Image link (optional)
         type: string
-        description: Optional URL opened in a new tab when this figure image is clicked. Leave blank to keep the normal figure lightbox.
+        description: Optional URL opened in a new tab when this figure image is clicked. Leave blank to keep the normal figure
+          lightbox.
     - name: toc_columns
       label: Legacy Project Overview data
       type: object
@@ -328,7 +352,8 @@ content:
         - name: link_url
           label: Image link (optional)
           type: string
-          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox behavior.
+          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox
+            behavior.
       - name: video
         label: Video
         fields:
@@ -356,6 +381,13 @@ content:
         - name: alt
           label: Accessibility label
           type: text
+    actions:
+    - name: check-research-nav-labels
+      label: Check navigation labels
+      workflow: check-research-nav.yml
+      ref: current
+      scope: entry
+      confirm: false
 - name: design_group
   label: Design Work
   type: group
@@ -381,7 +413,8 @@ content:
     - name: menu_title
       label: Main menu name (optional)
       type: string
-      description: Optional shorter or different name shown only in the main website navigation. Leave blank to use Project name.
+      description: Optional shorter or different name shown only in the main website navigation. Leave blank to use Project
+        name.
     - name: nav_order
       label: Navigation order
       type: number
@@ -428,7 +461,8 @@ content:
         - name: link_url
           label: Image link (optional)
           type: string
-          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox behavior.
+          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox
+            behavior.
       - name: video
         label: Video
         fields:
@@ -481,7 +515,8 @@ content:
     - name: menu_title
       label: Main menu name (optional)
       type: string
-      description: Optional shorter or different name shown only in the main website navigation. Leave blank to use Project name.
+      description: Optional shorter or different name shown only in the main website navigation. Leave blank to use Project
+        name.
     - name: nav_order
       label: Navigation order
       type: number
@@ -528,7 +563,8 @@ content:
         - name: link_url
           label: Image link (optional)
           type: string
-          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox behavior.
+          description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal lightbox
+            behavior.
       - name: video
         label: Video
         fields:
@@ -566,7 +602,8 @@ content:
     label: Show in website
     type: boolean
     default: false
-    description: Harrilanpuisto appears in the main navigation only when this is ON and at least one image or video has been added.
+    description: Harrilanpuisto appears in the main navigation only when this is ON and at least one image or video has been
+      added.
   - name: media
     label: Images and videos
     type: block
@@ -575,7 +612,8 @@ content:
         collapsed: true
         summary: '{type} {index}'
     blockKey: type
-    description: Add new media at the end of this list. The public Harrilanpuisto page automatically displays the newest item first.
+    description: Add new media at the end of this list. The public Harrilanpuisto page automatically displays the newest item
+      first.
     blocks:
     - name: image
       label: Image
@@ -593,7 +631,8 @@ content:
       - name: link_url
         label: Image link (optional)
         type: string
-        description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal Harrilanpuisto lightbox.
+        description: Optional URL opened in a new tab when this image is clicked. Leave blank to keep the normal Harrilanpuisto
+          lightbox.
       - name: desktop_columns
         label: Desktop width
         type: select
@@ -606,7 +645,8 @@ content:
             label: 2 columns
           - name: three
             label: 3 columns
-        description: Choose whether this image uses 1, 2, or all 3 Harrilanpuisto columns on desktop. Mobile remains full width.
+        description: Choose whether this image uses 1, 2, or all 3 Harrilanpuisto columns on desktop. Mobile remains full
+          width.
       - name: caption
         label: Lightbox caption
         type: text
@@ -649,7 +689,8 @@ content:
             label: 2 columns
           - name: three
             label: 3 columns
-        description: Choose whether this video uses 1, 2, or all 3 Harrilanpuisto columns on desktop. Mobile remains full width.
+        description: Choose whether this video uses 1, 2, or all 3 Harrilanpuisto columns on desktop. Mobile remains full
+          width.
       - name: caption
         label: Lightbox caption
         type: text
@@ -744,7 +785,8 @@ content:
       label: Show Artistic Work in navigation
       type: boolean
       default: true
-      description: Turn this off to hide the entire Artistic Work section from the website navigation on desktop and mobile. The Artistic Work projects are not deleted and can be shown again later.
+      description: Turn this off to hide the entire Artistic Work section from the website navigation on desktop and mobile.
+        The Artistic Work projects are not deleted and can be shown again later.
     - name: harrilanpuisto_label
       label: Harrilanpuisto section name
       type: string
@@ -796,12 +838,13 @@ content:
       type: number
       default: 30
       required: true
-      description: "Choose the delay between automatic greeting changes. Example: 30 means every 30 seconds."
+      description: 'Choose the delay between automatic greeting changes. Example: 30 means every 30 seconds.'
     - name: morning_greeting_messages
       label: Morning-only greeting phrases
       type: string
       list: true
-      description: These phrases are added to the About greeting rotation only from 12:00 AM (midnight) until 11:59 AM, using the visitor's local device time.
+      description: These phrases are added to the About greeting rotation only from 12:00 AM (midnight) until 11:59 AM, using
+        the visitor's local device time.
     - name: ascii_click_count
       label: Clicks before ASCII appears
       type: number
@@ -816,7 +859,8 @@ content:
         collapsible:
           collapsed: true
           summary: '{text}'
-      description: Add, remove, reorder, or recolor the ASCII faces used by the fullscreen easter egg. The click threshold is controlled by the setting above. Their display order is randomized automatically.
+      description: Add, remove, reorder, or recolor the ASCII faces used by the fullscreen easter egg. The click threshold
+        is controlled by the setting above. Their display order is randomized automatically.
       fields:
       - name: text
         label: ASCII
@@ -836,7 +880,8 @@ content:
       label: Biography
       type: text
       required: true
-      description: Edit the About biography here. Text wraps automatically to the column width. Press Enter only when you intentionally want a hard line break.
+      description: Edit the About biography here. Text wraps automatically to the column width. Press Enter only when you
+        intentionally want a hard line break.
     - name: mini_cv_sections
       label: Mini-CV sections
       type: object
@@ -874,7 +919,8 @@ content:
         collapsible:
           collapsed: true
           summary: '{alt}'
-      description: Images revealed at the bottom of the Mini-CV. If there is one image, it always appears. If there are two or more, one is chosen randomly each time the page loads.
+      description: Images revealed at the bottom of the Mini-CV. If there is one image, it always appears. If there are two
+        or more, one is chosen randomly each time the page loads.
       fields:
       - name: image
         label: Image
