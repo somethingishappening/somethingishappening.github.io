@@ -1515,7 +1515,7 @@ min-width:0}
   .figure-stage .figure-box img,
   .figure-stage .figure-caption{
     opacity:1;
-    transition:opacity .24s ease;
+    transition:opacity .12s ease;
   }
 
   .figure-stage.figure-changing .figure-box img,
@@ -3531,7 +3531,7 @@ min-width:0}
       };
 
       if(hasPreviousFigure){
-        window.setTimeout(swap, 150);
+        window.setTimeout(swap, 75);
       }else{
         stage.classList.add("figure-changing");
         swap();
@@ -4562,22 +4562,20 @@ min-width:0}
     stage.style.removeProperty("--research-caption-fit-width");
   }
 
-  function applyCaptionSharedScale(figureWidth, fullFigureWidth){
+  function applyCaptionSharedScale(){
     /*
-      Caption and figure share one scale multiplier.
-      The caption width is NOT calculated from a figure:caption ratio.
-      Its own 190px reference box scales with:
-        1) the current desktop caption typography scale, and
-        2) the exact same figure-size multiplier used by the displayed figure.
-    */
-    if(fullFigureWidth <= 0) return;
+      All desktop/laptop/TV captions share one unified text-box measure at
+      each viewport size. The box keeps its own 190px reference width and
+      scales only with the common desktop caption typography scale.
 
+      It is deliberately NOT multiplied by an individual figure's CMS size
+      or fitted width, so every Research caption has the same boundaries.
+      Mobile caption behavior is untouched.
+    */
     const captionFontSize =
       parseFloat(getComputedStyle(caption).fontSize) || BASE_CAPTION_FONT_SIZE;
     const typographyScale = captionFontSize / BASE_CAPTION_FONT_SIZE;
-    const sharedFigureScale = Math.max(0.01, figureWidth / fullFigureWidth);
-    const captionWidth =
-      BASE_CAPTION_WIDTH * typographyScale * sharedFigureScale;
+    const captionWidth = BASE_CAPTION_WIDTH * typographyScale;
 
     stage.style.setProperty(
       "--research-caption-fit-width",
