@@ -2818,27 +2818,13 @@ min-width:0}
 }
 </style>
 
-<style id="research-large-desktop-only-list-caption-fix-v2">
-/*
-  LARGE DESKTOP ONLY (>1680px)
-  ----------------------------
-  1) Ordered lists use the same final reading width as the surrounding
-     Research copy; they never extend beyond the text column.
-  2) Figure-caption measure scales in the original 190:700 proportion with
-     the ACTUAL fitted figure width. It remains narrower than the figure.
-
-  <=1680px desktop and ALL mobile caption/list behavior are untouched.
-*/
+<style id="research-large-desktop-list-fix-v3">
+/* LARGE DESKTOP ONLY (>1680px): ordered lists stay inside the Research copy width. */
 @media (min-width:1681px){
   body.page-research .research-copy > ol,
   body.page-research .research-copy ol{
     width:100% !important;
     max-width:100% !important;
-  }
-
-  body.page-research .figure-stage .figure-caption{
-    width:calc(var(--research-figure-fit-width, 700px) * 0.2714285714) !important;
-    max-width:calc(var(--research-figure-fit-width, 700px) * 0.2714285714) !important;
   }
 }
 </style>
