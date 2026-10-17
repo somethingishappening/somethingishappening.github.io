@@ -2836,25 +2836,42 @@ min-width:0}
 </style>
 
 
-<style id="harri-research-toc-content-width-v2">
+<style id="harri-research-three-equal-right-columns-v3">
 /*
-  RESEARCH ARTICLE NAV — CONTENT-DRIVEN DESKTOP WIDTH
-  ---------------------------------------------------
-  The previous patch was still capped by a percentage of the right rail, so
-  it could remain too narrow at resolutions such as 1728×1117.
+  RESEARCH RIGHT RAIL — ONE SHARED THREE-COLUMN GRID
+  --------------------------------------------------
+  Laptop / desktop / TV only.
 
-  On laptop/desktop/TV, each of the two navigation columns now takes the
-  natural width required by its labels. This prevents labels such as
-  “Short vowels/marks” from wrapping merely because the viewport changed.
-  Position, type size, leading, arrow behaviour and vertical scrolling remain
-  unchanged. Mobile is intentionally untouched.
+  The entire Research right rail is divided into three EQUAL columns with
+  the SAME gutter between each pair:
+
+      column 1 = figure caption
+      column 2 = Research nav column 1
+      column 3 = Research nav column 2
+
+  This removes the intrinsic max-content sizing that shifted the nav. The nav
+  now occupies the fixed second + third grid columns, while the caption uses
+  exactly the same column width as either nav column. Long nav labels keep the
+  no-wrap fix. Mobile is intentionally untouched.
 */
 @media (min-width:901px){
+  body.page-research .right{
+    --research-right-grid-gap:var(--harri-u-gap,28px);
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    column-gap:var(--research-right-grid-gap) !important;
+    row-gap:26px !important;
+  }
+
   body.page-research .toc{
-    width:max-content !important;
+    grid-column:2 / 4 !important;
+    grid-row:1 !important;
+    width:100% !important;
     min-width:0 !important;
     max-width:none !important;
-    grid-template-columns:max-content max-content !important;
+    justify-self:stretch !important;
+    margin-right:0 !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    column-gap:var(--research-right-grid-gap) !important;
   }
 
   body.page-research .toc a,
@@ -4623,8 +4640,6 @@ min-width:0}
   let resizeRaf = 0;
   const bottomPageMargin = 26;
   const MAX_PASSES = 4;
-  const BASE_CAPTION_WIDTH = 190;
-  const BASE_CAPTION_FONT_SIZE = 12;
 
   function clearDesktopFit(){
     stage.style.removeProperty("--research-figure-fit-width");
@@ -4633,33 +4648,27 @@ min-width:0}
 
   function applyCaptionSharedScale(){
     /*
-      DESKTOP CAPTION BOX — TRUE SHARED FIGURE-RAIL SCALE
-      ---------------------------------------------------
-      The caption keeps its own 190px reference box. It is NOT calculated
-      from the current image width, CMS figure size, or a figure:caption ratio.
-
-      Instead, the caption box receives the same horizontal scale as the
-      Research figure rail itself. This keeps one consistent caption boundary
-      at each laptop/desktop/TV resolution while allowing the whole figure area
-      and caption box to grow/shrink together from the 1680px reference.
-
-      Reference Research figure-rail width at 1680px:
-        available = 1680 - 2*18 padding - 2*28 gaps - 220 left rail
-        right rail = available * 660 / (745 + 660)
+      DESKTOP CAPTION BOX — COLUMN 1 OF THE SHARED RIGHT-RAIL GRID
+      ------------------------------------------------------------
+      The caption width is not derived from the figure image and is not a
+      figure:caption ratio. It is exactly one of the three equal columns used
+      by the Research right rail. Nav columns 1 and 2 use the other two equal
+      columns. All three therefore share the same width and gutter system.
       Mobile is intentionally untouched.
     */
-    const BASE_STAGE_WIDTH =
-      (1680 - (18 * 2) - (28 * 2) - 220) * 660 / (745 + 660);
+    const rightRail = stage.closest(".right");
+    if(!rightRail) return;
 
-    const currentStageWidth = stage.clientWidth;
-    if(currentStageWidth <= 0) return;
+    const railWidth = rightRail.clientWidth;
+    if(railWidth <= 0) return;
 
-    const sharedRailScale = Math.max(0.01, currentStageWidth / BASE_STAGE_WIDTH);
-    const captionWidth = BASE_CAPTION_WIDTH * sharedRailScale;
+    const rightStyles = getComputedStyle(rightRail);
+    const gridGap = parseFloat(rightStyles.columnGap) || 0;
+    const sharedColumnWidth = Math.max(1, (railWidth - (gridGap * 2)) / 3);
 
     stage.style.setProperty(
       "--research-caption-fit-width",
-      Math.max(1, captionWidth).toFixed(3) + "px"
+      sharedColumnWidth.toFixed(3) + "px"
     );
   }
 
