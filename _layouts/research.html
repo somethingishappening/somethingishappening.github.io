@@ -2818,6 +2818,34 @@ min-width:0}
 }
 </style>
 
+<style id="research-large-screen-list-caption-width-fix-v1">
+/*
+  LARGE DESKTOP RESEARCH ONLY
+  ---------------------------
+  Fix two width regressions without changing typography or layout:
+
+  1. Ordered lists follow the same reading width as the surrounding Research
+     copy above the 1680px reference, instead of staying capped at 700px.
+  2. Desktop figure captions follow the final fitted image width, instead of
+     remaining at the old fixed 190px measure.
+
+  Everything at <=1680px and all mobile behavior remain untouched.
+*/
+@media (min-width:1681px){
+  body.page-research .research-copy ol,
+  body.page-research .paper ol,
+  body.page-research .article-body ol,
+  body.page-research .research-article ol{
+    max-width:100% !important;
+  }
+
+  body.page-research .figure-stage .figure-caption{
+    width:var(--research-figure-fit-width,190px) !important;
+    max-width:var(--research-figure-fit-width,190px) !important;
+  }
+}
+</style>
+
 </head>
 <body class="page-research">
 
