@@ -2603,7 +2603,13 @@ min-width:0}
    and the same desktop hanging line. Lightbox size is unchanged. */
 @media (min-width:901px){
   .figure-stage .figure-caption{
-    max-width:var(--research-figure-fit-width, 190px) !important;
+    /*
+      Desktop caption box keeps its own working reference measure and receives
+      the SAME scale multiplier as the figure. It is not derived from a
+      figure-to-caption width ratio. Mobile caption rules remain untouched.
+    */
+    width:var(--research-caption-fit-width, 190px) !important;
+    max-width:var(--research-caption-fit-width, 190px) !important;
   }
 }
 
@@ -4548,9 +4554,35 @@ min-width:0}
   let resizeRaf = 0;
   const bottomPageMargin = 26;
   const MAX_PASSES = 4;
+  const BASE_CAPTION_WIDTH = 190;
+  const BASE_CAPTION_FONT_SIZE = 12;
 
   function clearDesktopFit(){
     stage.style.removeProperty("--research-figure-fit-width");
+    stage.style.removeProperty("--research-caption-fit-width");
+  }
+
+  function applyCaptionSharedScale(figureWidth, fullFigureWidth){
+    /*
+      Caption and figure share one scale multiplier.
+      The caption width is NOT calculated from a figure:caption ratio.
+      Its own 190px reference box scales with:
+        1) the current desktop caption typography scale, and
+        2) the exact same figure-size multiplier used by the displayed figure.
+    */
+    if(fullFigureWidth <= 0) return;
+
+    const captionFontSize =
+      parseFloat(getComputedStyle(caption).fontSize) || BASE_CAPTION_FONT_SIZE;
+    const typographyScale = captionFontSize / BASE_CAPTION_FONT_SIZE;
+    const sharedFigureScale = Math.max(0.01, figureWidth / fullFigureWidth);
+    const captionWidth =
+      BASE_CAPTION_WIDTH * typographyScale * sharedFigureScale;
+
+    stage.style.setProperty(
+      "--research-caption-fit-width",
+      Math.max(1, captionWidth).toFixed(3) + "px"
+    );
   }
 
   function requestedWidth(){
@@ -4596,6 +4628,7 @@ min-width:0}
       "--research-figure-fit-width",
       Math.max(1, Math.floor(fittedWidth)) + "px"
     );
+    applyCaptionSharedScale(fittedWidth, stage.clientWidth);
 
     for(let pass = 0; pass < MAX_PASSES; pass++){
       const captionStyles = getComputedStyle(caption);
@@ -4624,12 +4657,14 @@ min-width:0}
         "--research-figure-fit-width",
         fittedWidth + "px"
       );
+      applyCaptionSharedScale(fittedWidth, stage.clientWidth);
     }
 
     stage.style.setProperty(
       "--research-figure-fit-width",
       Math.max(1, Math.floor(fittedWidth)) + "px"
     );
+    applyCaptionSharedScale(fittedWidth, stage.clientWidth);
   }
 
   window.fitDesktopResearchFigureNow = fitDesktopResearchFigure;
