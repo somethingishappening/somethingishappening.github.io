@@ -1007,4 +1007,33 @@
   }
 }
 </style>
+<style id="harri-menu-underline-reference-box-v3">
+/*
+  Make every main-menu underline use the same text-box geometry as the
+  Design category underline. This changes only the underline reference box;
+  spacing, font sizing, weights and accordion behavior are untouched.
+*/
+.site-nav .group-head > .nav-underline-label,
+.site-nav .project-links a > .nav-underline-label,
+.site-nav .standalone-nav-link > .nav-underline-label{
+  display:inline-block !important;
+  position:relative !important;
+  line-height:inherit !important;
+  vertical-align:baseline !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+}
+
+/* One shared underline geometry for category labels, project names and
+   inactive Harrilanpuisto. */
+.site-nav .group-head[aria-expanded="false"] > .nav-underline-label::after,
+.site-nav .project-links a > .nav-underline-label::after,
+.site-nav .standalone-nav-link:not(.active) > .nav-underline-label::after{
+  left:0 !important;
+  right:0 !important;
+  bottom:.10em !important;
+  height:1px !important;
+}
+</style>
 
