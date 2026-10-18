@@ -895,3 +895,49 @@
   font-weight:700 !important;
 }
 </style>
+
+<style id="harri-category-collapsed-underline-v1">
+/*
+  Main navigation category underline behavior only.
+  - Collapsed category labels may draw the existing hover underline.
+  - Open/bold category labels never underline.
+  - Active/bold Harrilanpuisto never underlines.
+*/
+.site-nav .group-head > span:first-child{
+  position:relative !important;
+  width:max-content;
+  max-width:100%;
+}
+
+.site-nav .group-head[aria-expanded="false"] > span:first-child::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:.10em;
+  height:1px;
+  background:currentColor;
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .16s ease;
+  pointer-events:none;
+}
+
+.site-nav .group-head[aria-expanded="false"]:hover > span:first-child::after,
+.site-nav .group-head[aria-expanded="false"]:focus-visible > span:first-child::after{
+  transform:scaleX(1);
+}
+
+.site-nav .group-head[aria-expanded="true"] > span:first-child::after,
+.site-nav .standalone-nav-link.active::after{
+  content:none !important;
+  display:none !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .site-nav .group-head[aria-expanded="false"] > span:first-child::after{
+    transition:none;
+  }
+}
+</style>
