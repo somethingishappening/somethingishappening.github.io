@@ -1427,48 +1427,16 @@ button{font:inherit;color:inherit}
   {% include arabic-typography.html %}
   {% include upper-resolution-layer.html %}
 
-<style id="harri-work-fixed-desktop-scroll-v1">
-/*
-  DESKTOP WORK — fixed application-style viewport, matching Research.
-  The page shell itself does not scroll; only the project media column does.
-  Mobile remains on its existing document-scroll design.
-*/
+<style id="harri-work-desktop-internal-scroll-no-shift-v2">
 @media (min-width:901px){
-  html,
-  body{
-    height:100% !important;
-    overflow:hidden !important;
+  html.harri-work-scroll-lock,
+  html.harri-work-scroll-lock body.page-work{overflow:hidden !important;}
+  html.harri-work-scroll-lock body.page-work .media-column{
+    max-height:calc(100dvh - var(--harri-u-pad-top,32px) - var(--harri-u-pad-bottom,26px)) !important;
+    overflow-y:auto !important; overflow-x:hidden !important;
+    overscroll-behavior:contain; scrollbar-width:none;
   }
-
-  .layout{
-    height:100vh !important;
-    min-height:0 !important;
-    grid-template-rows:minmax(0,1fr) !important;
-    overflow:hidden !important;
-  }
-
-  .left,
-  .project-info{
-    position:relative !important;
-    top:auto !important;
-    height:100% !important;
-    min-height:0 !important;
-  }
-
-  .media-column{
-    position:relative !important;
-    height:100% !important;
-    min-height:0 !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-    overscroll-behavior:contain;
-    scrollbar-width:none;
-  }
-
-  .media-column::-webkit-scrollbar{
-    width:0;
-    height:0;
-  }
+  html.harri-work-scroll-lock body.page-work .media-column::-webkit-scrollbar{width:0;height:0;}
 }
 </style>
 
@@ -2062,35 +2030,58 @@ lightbox.addEventListener("touchend", e=>{
   {% include desktop-top-baseline-alignment.html reference=".brand" target=".project-type" %}
 {% endif %}
 
-<script id="harri-work-desktop-wheel-routing-v1">
+<script id="harri-work-desktop-wheel-routing-no-shift-v2">
 (() => {
-  const mediaScroller = document.querySelector('.media-column');
-  if(!mediaScroller) return;
+  const root=document.documentElement;
+  const scroller=document.querySelector(".media-column");
+  const lockClass="harri-work-scroll-lock";
+  if(!scroller) return;
 
-  function routeWorkWheel(event){
-    if(window.innerWidth <= 900) return;
-    if(document.querySelector('.lightbox.open')) return;
-    if(event.ctrlKey || event.metaKey) return;
-    if(event.deltaY === 0 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
-
-    /* Keep native scrolling over the gallery itself. */
-    if(event.target instanceof Node && mediaScroller.contains(event.target)) return;
-
-    /* The left menu keeps its own existing internal scrolling. */
-    if(event.target instanceof Element && event.target.closest('.left nav')) return;
-
-    let deltaY = event.deltaY;
-    if(event.deltaMode === 1){
-      deltaY *= 16;
-    }else if(event.deltaMode === 2){
-      deltaY *= mediaScroller.clientHeight;
-    }
-
-    event.preventDefault();
-    mediaScroller.scrollTop += deltaY;
+  function documentActuallyOverflows(){
+    return Math.max(root.scrollHeight, document.body ? document.body.scrollHeight : 0) > window.innerHeight + 1;
   }
 
-  document.addEventListener('wheel', routeWorkWheel, {passive:false});
+  function syncDesktopScrollMode(){
+    root.classList.remove(lockClass);
+    root.style.scrollbarGutter="";
+    if(window.innerWidth <= 900) return;
+    if(documentActuallyOverflows()) root.style.scrollbarGutter="stable";
+    const oldPageY=window.scrollY || 0;
+    root.classList.add(lockClass);
+    if(oldPageY){
+      window.scrollTo(0,0);
+      scroller.scrollTop=Math.min(scroller.scrollTop + oldPageY, Math.max(0, scroller.scrollHeight - scroller.clientHeight));
+    }
+  }
+
+  function normalizedWheelDelta(event){
+    let deltaY=event.deltaY;
+    if(event.deltaMode===1) deltaY*=16;
+    else if(event.deltaMode===2) deltaY*=scroller.clientHeight;
+    return deltaY;
+  }
+
+  function routeWheel(event){
+    if(window.innerWidth <= 900) return;
+    if(document.querySelector(".lightbox.open")) return;
+    if(event.ctrlKey || event.metaKey) return;
+    if(event.deltaY===0 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+    if(event.target instanceof Node && scroller.contains(event.target)) return;
+    if(event.target instanceof Element && event.target.closest(".left nav")) return;
+    event.preventDefault();
+    const previousInlineScrollBehavior=scroller.style.scrollBehavior;
+    scroller.style.scrollBehavior="auto";
+    scroller.scrollTop += normalizedWheelDelta(event);
+    scroller.style.scrollBehavior=previousInlineScrollBehavior;
+  }
+
+  syncDesktopScrollMode();
+  let resizeFrame=0;
+  window.addEventListener("resize", () => {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame=requestAnimationFrame(syncDesktopScrollMode);
+  });
+  document.addEventListener("wheel", routeWheel, {passive:false});
 })();
 </script>
 
