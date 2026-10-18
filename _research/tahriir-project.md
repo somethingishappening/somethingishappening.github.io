@@ -689,7 +689,7 @@ sections:
     nav_column: none
 figures:
   - number: 1
-    image: /assets/uploads/fig-1mobile-2.jpg
+    image: /assets/uploads/fig-1mobile-3.jpg
     mobile_image: /assets/uploads/fig-1mobile-1.jpg
     display_size: large
     mobile_display_size: full
