@@ -2030,27 +2030,28 @@ lightbox.addEventListener("touchend", e=>{
   {% include desktop-top-baseline-alignment.html reference=".brand" target=".project-type" %}
 {% endif %}
 
-<script id="harri-work-desktop-wheel-routing-no-shift-v2">
+<script id="harri-work-desktop-wheel-routing-single-path-v3">
 (() => {
   const root=document.documentElement;
   const scroller=document.querySelector(".media-column");
   const lockClass="harri-work-scroll-lock";
   if(!scroller) return;
 
-  function documentActuallyOverflows(){
-    return Math.max(root.scrollHeight, document.body ? document.body.scrollHeight : 0) > window.innerHeight + 1;
-  }
-
   function syncDesktopScrollMode(){
-    root.classList.remove(lockClass);
-    root.style.scrollbarGutter="";
-    if(window.innerWidth <= 900) return;
-    if(documentActuallyOverflows()) root.style.scrollbarGutter="stable";
+    if(window.innerWidth <= 900){
+      root.classList.remove(lockClass);
+      return;
+    }
+
     const oldPageY=window.scrollY || 0;
     root.classList.add(lockClass);
+
     if(oldPageY){
       window.scrollTo(0,0);
-      scroller.scrollTop=Math.min(scroller.scrollTop + oldPageY, Math.max(0, scroller.scrollHeight - scroller.clientHeight));
+      scroller.scrollTop=Math.min(
+        scroller.scrollTop + oldPageY,
+        Math.max(0, scroller.scrollHeight - scroller.clientHeight)
+      );
     }
   }
 
@@ -2066,21 +2067,25 @@ lightbox.addEventListener("touchend", e=>{
     if(document.querySelector(".lightbox.open")) return;
     if(event.ctrlKey || event.metaKey) return;
     if(event.deltaY===0 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
-    if(event.target instanceof Node && scroller.contains(event.target)) return;
-    if(event.target instanceof Element && event.target.closest(".left nav")) return;
+
+    /*
+      One desktop scroll path everywhere: every vertical wheel/trackpad event
+      drives the media column with the same 1:1 normalized delta, regardless
+      of where the cursor is. Momentum remains the browser/trackpad's own
+      sequence of wheel events; no extra easing or multiplier is added.
+    */
     event.preventDefault();
-    const previousInlineScrollBehavior=scroller.style.scrollBehavior;
-    scroller.style.scrollBehavior="auto";
     scroller.scrollTop += normalizedWheelDelta(event);
-    scroller.style.scrollBehavior=previousInlineScrollBehavior;
   }
 
   syncDesktopScrollMode();
+
   let resizeFrame=0;
   window.addEventListener("resize", () => {
     cancelAnimationFrame(resizeFrame);
     resizeFrame=requestAnimationFrame(syncDesktopScrollMode);
   });
+
   document.addEventListener("wheel", routeWheel, {passive:false});
 })();
 </script>
