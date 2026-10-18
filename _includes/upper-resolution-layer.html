@@ -1026,12 +1026,149 @@
 
   function fallbackCvResearchFit(){
     /*
-      About is the site landing page and measures the exact multiplier for
-      the current viewport. A direct deep-link to Research before About has
-      been measured keeps the established fit=1 hierarchy rather than
-      guessing from aspect ratio.
+      Keep the established 1× fallback while a direct Research entry obtains
+      the exact About Mini-CV fit for this viewport. The site's responsive
+      scale itself is never changed by this fallback.
     */
     return 1;
+  }
+
+  function isResearchPage(){
+    return !!(
+      document.body &&
+      document.body.classList.contains("page-research")
+    );
+  }
+
+  let researchFitProbe = null;
+  let researchFitProbeKey = "";
+  let researchFitProbeToken = 0;
+
+  function removeResearchFitProbe(){
+    if(researchFitProbe){
+      researchFitProbe.remove();
+      researchFitProbe = null;
+    }
+    researchFitProbeKey = "";
+  }
+
+  function requestExactResearchFitFromAbout(){
+    if(
+      window.innerWidth <= 900 ||
+      !document.body ||
+      !isResearchPage() ||
+      readStoredCvResearchFit() !== null
+    ){
+      return;
+    }
+
+    const key = viewportFitKey();
+
+    if(
+      researchFitProbe &&
+      researchFitProbeKey === key
+    ){
+      return;
+    }
+
+    removeResearchFitProbe();
+
+    const token = ++researchFitProbeToken;
+    const frame = document.createElement("iframe");
+
+    researchFitProbe = frame;
+    researchFitProbeKey = key;
+
+    frame.setAttribute("aria-hidden", "true");
+    frame.setAttribute("tabindex", "-1");
+    frame.setAttribute("title", "");
+    frame.style.cssText = [
+      "position:fixed",
+      "left:-200vw",
+      "top:0",
+      "width:100vw",
+      "height:100vh",
+      "border:0",
+      "margin:0",
+      "padding:0",
+      "opacity:0",
+      "visibility:hidden",
+      "pointer-events:none",
+      "z-index:-1"
+    ].join(";");
+
+    frame.addEventListener("load", async ()=>{
+      try{
+        const childWindow = frame.contentWindow;
+        const childDocument = frame.contentDocument;
+
+        if(!childWindow || !childDocument) return;
+
+        if(childDocument.fonts && childDocument.fonts.ready){
+          try{
+            await childDocument.fonts.ready;
+          }catch(e){}
+        }
+
+        /*
+          About schedules its exact Mini-CV measurement on animation frames
+          and again after fonts/load. Give those existing callbacks time to
+          settle, then read the value they already computed.
+        */
+        await new Promise((resolve)=>{
+          childWindow.requestAnimationFrame(()=>{
+            childWindow.requestAnimationFrame(resolve);
+          });
+        });
+
+        await new Promise((resolve)=>setTimeout(resolve, 40));
+
+        if(
+          token !== researchFitProbeToken ||
+          viewportFitKey() !== key
+        ){
+          return;
+        }
+
+        let fit = null;
+
+        try{
+          const stored = parseFloat(
+            childWindow.sessionStorage.getItem(key) || ""
+          );
+
+          if(Number.isFinite(stored) && stored >= 1){
+            fit = stored;
+          }
+        }catch(e){}
+
+        if(fit === null){
+          const cssFit = parseFloat(
+            childDocument.documentElement.style.getPropertyValue(
+              "--harri-cv-research-fit"
+            ) || ""
+          );
+
+          if(Number.isFinite(cssFit) && cssFit >= 1){
+            fit = cssFit;
+          }
+        }
+
+        if(fit !== null){
+          writeCvResearchFit(fit);
+        }
+      }catch(e){
+        /* Same-origin About should be readable; keep the existing 1× fallback
+           if a browser/privacy setting prevents the probe. */
+      }finally{
+        if(token === researchFitProbeToken){
+          removeResearchFitProbe();
+        }
+      }
+    }, {once:true});
+
+    frame.src = "/about/?harri-fit-probe=1";
+    document.body.appendChild(frame);
   }
 
   function readStoredCvResearchFit(){
@@ -1245,11 +1382,23 @@
       if(measured !== null) return;
 
       const stored = readStoredCvResearchFit();
+
       writeCvResearchFit(
         stored === null
           ? fallbackCvResearchFit()
           : stored
       );
+
+      /*
+        A direct Research deep-link has no About-derived fit yet. Measure the
+        real About Mini-CV off-screen at this exact viewport and reuse its
+        result. This changes only the shared fit handoff; desktopScale(), base
+        values, breakpoints and every existing About measurement rule remain
+        untouched.
+      */
+      if(stored === null){
+        requestExactResearchFitFromAbout();
+      }
     });
   }
 
@@ -1285,6 +1434,14 @@
   }
 
   function schedule(){
+    if(
+      researchFitProbe &&
+      researchFitProbeKey !== viewportFitKey()
+    ){
+      researchFitProbeToken += 1;
+      removeResearchFitProbe();
+    }
+
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(apply);
   }
