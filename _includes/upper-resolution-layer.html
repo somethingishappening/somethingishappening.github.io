@@ -938,6 +938,37 @@
 }
 </style>
 
+<style id="harri-research-direct-fit-first-paint-v1">
+/*
+  Direct desktop Research entry only:
+  keep Research invisible until the exact About/CV fit for this viewport has
+  been applied. This does not alter any scale, breakpoint, size or layout rule.
+*/
+html.harri-research-fit-pending body.page-research{
+  visibility:hidden !important;
+}
+</style>
+
+<script id="harri-research-direct-fit-first-paint-preflight-v1">
+(() => {
+  if(window.innerWidth <= 900) return;
+  if(!/^\/research\//.test(window.location.pathname)) return;
+
+  const key = [
+    "harri-cv-research-fit",
+    Math.round(window.innerWidth),
+    Math.round(window.innerHeight)
+  ].join(":");
+
+  try{
+    const stored = parseFloat(sessionStorage.getItem(key) || "");
+    if(Number.isFinite(stored) && stored >= 1) return;
+  }catch(e){}
+
+  document.documentElement.classList.add("harri-research-fit-pending");
+})();
+</script>
+
 <script id="harri-unified-desktop-scale-script-v7">
 (function(){
   "use strict";
@@ -1037,6 +1068,13 @@
     return !!(
       document.body &&
       document.body.classList.contains("page-research")
+    );
+  }
+
+
+  function revealResearchAfterExactFit(){
+    document.documentElement.classList.remove(
+      "harri-research-fit-pending"
     );
   }
 
@@ -1156,16 +1194,37 @@
 
         if(fit !== null){
           writeCvResearchFit(fit);
+          revealResearchAfterExactFit();
         }
       }catch(e){
         /* Same-origin About should be readable; keep the existing 1× fallback
            if a browser/privacy setting prevents the probe. */
+        revealResearchAfterExactFit();
       }finally{
         if(token === researchFitProbeToken){
           removeResearchFitProbe();
         }
       }
     }, {once:true});
+
+    frame.addEventListener("error", ()=>{
+      if(token !== researchFitProbeToken) return;
+      revealResearchAfterExactFit();
+      removeResearchFitProbe();
+    }, {once:true});
+
+    /* Fail-safe only: never leave Research hidden if the probe is blocked. */
+    window.setTimeout(()=>{
+      if(
+        token === researchFitProbeToken &&
+        document.documentElement.classList.contains(
+          "harri-research-fit-pending"
+        )
+      ){
+        revealResearchAfterExactFit();
+        removeResearchFitProbe();
+      }
+    }, 1500);
 
     frame.src = "/about/?harri-fit-probe=1";
     document.body.appendChild(frame);
@@ -1389,6 +1448,10 @@
           : stored
       );
 
+      if(stored !== null){
+        revealResearchAfterExactFit();
+      }
+
       /*
         A direct Research deep-link has no About-derived fit yet. Measure the
         real About Mini-CV off-screen at this exact viewport and reuse its
@@ -1406,6 +1469,7 @@
     raf = 0;
 
     if(window.innerWidth <= 900){
+      revealResearchAfterExactFit();
       document.documentElement.style.removeProperty("--harri-site-scale");
       clearCvResearchFitVars();
       Object.keys(base).forEach((key)=>{
