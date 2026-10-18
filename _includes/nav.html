@@ -59,13 +59,13 @@
             data-desktop-open="{% if research_desktop_open %}true{% else %}false{% endif %}"
             type="button"
             aria-expanded="{% if research_desktop_open %}true{% else %}false{% endif %}">
-            <span>{{ site.data.site.design_research_label | default: "Design Research" }}</span>
+            <span class="nav-underline-label">{{ site.data.site.design_research_label | default: "Design Research" }}</span>
             <span class="group-toggle">{% if research_desktop_open %}−{% else %}+{% endif %}</span>
           </button>
           <div class="project-links{% unless research_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in research_projects %}
-                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.menu_title | default: project.title }}</a>
+                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}"><span class="nav-underline-label">{{ project.menu_title | default: project.title }}</span></a>
               {% endfor %}
             </div>
           </div>
@@ -80,13 +80,13 @@
             data-desktop-open="{% if design_desktop_open %}true{% else %}false{% endif %}"
             type="button"
             aria-expanded="{% if design_desktop_open %}true{% else %}false{% endif %}">
-            <span>{{ site.data.site.design_work_label | default: "Design Work" }}</span>
+            <span class="nav-underline-label">{{ site.data.site.design_work_label | default: "Design Work" }}</span>
             <span class="group-toggle">{% if design_desktop_open %}−{% else %}+{% endif %}</span>
           </button>
           <div class="project-links{% unless design_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in design_projects %}
-                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.menu_title | default: project.title }}</a>
+                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}"><span class="nav-underline-label">{{ project.menu_title | default: project.title }}</span></a>
               {% endfor %}
             </div>
           </div>
@@ -106,13 +106,13 @@
             data-desktop-open="{% if artistic_desktop_open %}true{% else %}false{% endif %}"
             type="button"
             aria-expanded="{% if artistic_desktop_open %}true{% else %}false{% endif %}">
-            <span>{{ site.data.site.artistic_work_label | default: "Artistic Work" }}</span>
+            <span class="nav-underline-label">{{ site.data.site.artistic_work_label | default: "Artistic Work" }}</span>
             <span class="group-toggle">{% if artistic_desktop_open %}−{% else %}+{% endif %}</span>
           </button>
           <div class="project-links{% unless artistic_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in artistic_projects %}
-                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}">{{ project.menu_title | default: project.title }}</a>
+                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}"><span class="nav-underline-label">{{ project.menu_title | default: project.title }}</span></a>
               {% endfor %}
             </div>
           </div>
@@ -121,7 +121,7 @@
 
         {% assign harrilanpuisto_image_count = site.data.harrilanpuisto.media | size %}
         {% if site.data.harrilanpuisto.enabled and harrilanpuisto_image_count > 0 %}
-          <a class="standalone-nav-link{% if page.layout == 'harrilanpuisto' %} active{% endif %}" href="{{ '/harrilanpuisto/' | relative_url }}">{{ site.data.site.harrilanpuisto_label | default: "Harrilanpuisto" }}</a>
+          <a class="standalone-nav-link{% if page.layout == 'harrilanpuisto' %} active{% endif %}" href="{{ '/harrilanpuisto/' | relative_url }}"><span class="nav-underline-label">{{ site.data.site.harrilanpuisto_label | default: "Harrilanpuisto" }}</span></a>
         {% endif %}
       </nav>
 
@@ -941,3 +941,70 @@
   }
 }
 </style>
+
+<style id="harri-unified-menu-underline-style-v2">
+/*
+  Use the preferred category-label underline geometry throughout the main menu.
+  Every underline is anchored to the same inline text span, so baseline/offset
+  match visually instead of merely sharing the same numeric bottom value.
+
+  Behavior stays the same:
+  - collapsed category: underline on hover/focus
+  - open/bold category: no underline
+  - project link: underline on hover/focus
+  - inactive Harrilanpuisto: underline on hover/focus
+  - active/bold Harrilanpuisto: no underline
+*/
+.site-nav .nav-underline-label{
+  position:relative !important;
+  text-decoration:none !important;
+}
+
+/* Disable the older anchor-box pseudo underlines so there is only one system. */
+.site-nav .project-links a::after,
+.site-nav .standalone-nav-link::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* Shared visual underline: exactly the preferred category underline. */
+.site-nav .project-links a > .nav-underline-label::after,
+.site-nav .standalone-nav-link:not(.active) > .nav-underline-label::after,
+.site-nav .group-head[aria-expanded="false"] > .nav-underline-label::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:.10em;
+  height:1px;
+  background:currentColor;
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .16s ease;
+  pointer-events:none;
+}
+
+.site-nav .project-links a:hover > .nav-underline-label::after,
+.site-nav .project-links a:focus-visible > .nav-underline-label::after,
+.site-nav .standalone-nav-link:not(.active):hover > .nav-underline-label::after,
+.site-nav .standalone-nav-link:not(.active):focus-visible > .nav-underline-label::after,
+.site-nav .group-head[aria-expanded="false"]:hover > .nav-underline-label::after,
+.site-nav .group-head[aria-expanded="false"]:focus-visible > .nav-underline-label::after{
+  transform:scaleX(1);
+}
+
+/* Bold/open states stay underline-free. */
+.site-nav .group-head[aria-expanded="true"] > .nav-underline-label::after,
+.site-nav .standalone-nav-link.active > .nav-underline-label::after{
+  content:none !important;
+  display:none !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .site-nav .nav-underline-label::after{
+    transition:none !important;
+  }
+}
+</style>
+
