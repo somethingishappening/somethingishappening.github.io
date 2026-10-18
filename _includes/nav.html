@@ -864,4 +864,34 @@
 })();
 </script>
 
+<style id="harri-harrilanpuisto-nav-spacing-active-v1">
+/*
+  Harrilanpuisto navigation normalization only.
+  - Its gap from the preceding main category uses the exact same category gap.
+  - Its active state is bold on every breakpoint.
+  No other navigation spacing or typography is changed.
+*/
+@media (min-width:901px){
+  .site-nav nav > .nav-group:has(+ .standalone-nav-link){
+    margin-bottom:0 !important;
+  }
 
+  .site-nav nav > .standalone-nav-link{
+    margin-top:var(--harri-u-space-5,5px) !important;
+  }
+}
+
+@media (max-width:900px){
+  .site-nav nav > .nav-group:has(+ .standalone-nav-link){
+    margin-bottom:0 !important;
+  }
+
+  .site-nav nav > .standalone-nav-link{
+    margin-top:4px !important;
+  }
+}
+
+.site-nav .standalone-nav-link.active{
+  font-weight:700 !important;
+}
+</style>
