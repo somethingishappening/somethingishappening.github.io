@@ -740,75 +740,76 @@
   }, {passive:true});
 })();
 </script>
-
-<style id="harri-navigation-hover-draw-animation">
+<style id="harri-menu-underline-state-stable-v4">
 /*
-  Animated underline for PROJECT NAMES ONLY.
-  Category/section labels and footer items never receive a hover underline.
-  Motion matches Research (Fig. X): left-origin scaleX(0 -> 1), .16s ease.
+  ONE underline system for the main navigation.
+  The underline is positioned from a 1em text box rather than from the
+  accordion/link line box, so opening/closing a category cannot change its offset.
 */
-.site-nav .project-links a,
-.site-nav .standalone-nav-link{
+.site-nav .nav-underline-label{
+  display:inline-block !important;
   position:relative !important;
+  line-height:1em !important;
+  vertical-align:baseline !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
   text-decoration:none !important;
-  width:max-content;
-  max-width:100%;
+}
+
+.site-nav .project-links a,
+.site-nav .standalone-nav-link,
+.site-nav .group-head,
+.site-nav .left-footer a{
+  text-decoration:none !important;
 }
 
 .site-nav .project-links a::after,
-.site-nav .standalone-nav-link::after{
-  content:"";
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:.10em;
-  height:1px;
-  background:currentColor;
+.site-nav .standalone-nav-link::after,
+.site-nav .group-head::after,
+.site-nav .left-footer a::after{
+  content:none !important;
+  display:none !important;
+}
+
+.site-nav .project-links a > .nav-underline-label::after,
+.site-nav .standalone-nav-link:not(.active) > .nav-underline-label::after,
+.site-nav .group-head[aria-expanded="false"] > .nav-underline-label::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  height:1px !important;
+  background:currentColor !important;
   transform:scaleX(0);
   transform-origin:left;
   transition:transform .16s ease;
   pointer-events:none;
 }
 
-.site-nav .project-links a:hover::after,
-.site-nav .project-links a:focus-visible::after,
-.site-nav .standalone-nav-link:hover::after,
-.site-nav .standalone-nav-link:focus-visible::after{
+.site-nav .project-links a:hover > .nav-underline-label::after,
+.site-nav .project-links a:focus-visible > .nav-underline-label::after,
+.site-nav .standalone-nav-link:not(.active):hover > .nav-underline-label::after,
+.site-nav .standalone-nav-link:not(.active):focus-visible > .nav-underline-label::after,
+.site-nav .group-head[aria-expanded="false"]:hover > .nav-underline-label::after,
+.site-nav .group-head[aria-expanded="false"]:focus-visible > .nav-underline-label::after{
   transform:scaleX(1);
 }
 
-/* Never underline navigation SECTION labels or footer links. */
-.site-nav .group-head,
-.site-nav .group-head > span:first-child,
-.site-nav .left-footer a{
-  text-decoration:none !important;
-}
-.site-nav .group-head > span:first-child::after,
-.site-nav .left-footer a::after{
+.site-nav .group-head[aria-expanded="true"] > .nav-underline-label::after,
+.site-nav .standalone-nav-link.active > .nav-underline-label::after{
   content:none !important;
   display:none !important;
 }
 
-/* Override older template-specific instant underlines on project names too. */
-.site-nav .project-links a:hover,
-.site-nav .project-links a:focus,
-.site-nav .standalone-nav-link:hover,
-.site-nav .standalone-nav-link:focus,
-.site-nav .group-head:hover,
-.site-nav .group-head:focus,
-.site-nav .left-footer a:hover,
-.site-nav .left-footer a:focus{
-  text-decoration:none !important;
-}
-
 @media (prefers-reduced-motion:reduce){
-  .site-nav .project-links a::after,
-  .site-nav .standalone-nav-link::after{
-    transition:none;
+  .site-nav .nav-underline-label::after{
+    transition:none !important;
   }
 }
 </style>
-
 
 <script id="harri-content-links-new-tab">
 (function(){
@@ -895,145 +896,3 @@
   font-weight:700 !important;
 }
 </style>
-
-<style id="harri-category-collapsed-underline-v1">
-/*
-  Main navigation category underline behavior only.
-  - Collapsed category labels may draw the existing hover underline.
-  - Open/bold category labels never underline.
-  - Active/bold Harrilanpuisto never underlines.
-*/
-.site-nav .group-head > span:first-child{
-  position:relative !important;
-  width:max-content;
-  max-width:100%;
-}
-
-.site-nav .group-head[aria-expanded="false"] > span:first-child::after{
-  content:"" !important;
-  display:block !important;
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:.10em;
-  height:1px;
-  background:currentColor;
-  transform:scaleX(0);
-  transform-origin:left;
-  transition:transform .16s ease;
-  pointer-events:none;
-}
-
-.site-nav .group-head[aria-expanded="false"]:hover > span:first-child::after,
-.site-nav .group-head[aria-expanded="false"]:focus-visible > span:first-child::after{
-  transform:scaleX(1);
-}
-
-.site-nav .group-head[aria-expanded="true"] > span:first-child::after,
-.site-nav .standalone-nav-link.active::after{
-  content:none !important;
-  display:none !important;
-}
-
-@media (prefers-reduced-motion:reduce){
-  .site-nav .group-head[aria-expanded="false"] > span:first-child::after{
-    transition:none;
-  }
-}
-</style>
-
-<style id="harri-unified-menu-underline-style-v2">
-/*
-  Use the preferred category-label underline geometry throughout the main menu.
-  Every underline is anchored to the same inline text span, so baseline/offset
-  match visually instead of merely sharing the same numeric bottom value.
-
-  Behavior stays the same:
-  - collapsed category: underline on hover/focus
-  - open/bold category: no underline
-  - project link: underline on hover/focus
-  - inactive Harrilanpuisto: underline on hover/focus
-  - active/bold Harrilanpuisto: no underline
-*/
-.site-nav .nav-underline-label{
-  position:relative !important;
-  text-decoration:none !important;
-}
-
-/* Disable the older anchor-box pseudo underlines so there is only one system. */
-.site-nav .project-links a::after,
-.site-nav .standalone-nav-link::after{
-  content:none !important;
-  display:none !important;
-}
-
-/* Shared visual underline: exactly the preferred category underline. */
-.site-nav .project-links a > .nav-underline-label::after,
-.site-nav .standalone-nav-link:not(.active) > .nav-underline-label::after,
-.site-nav .group-head[aria-expanded="false"] > .nav-underline-label::after{
-  content:"" !important;
-  display:block !important;
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:.10em;
-  height:1px;
-  background:currentColor;
-  transform:scaleX(0);
-  transform-origin:left;
-  transition:transform .16s ease;
-  pointer-events:none;
-}
-
-.site-nav .project-links a:hover > .nav-underline-label::after,
-.site-nav .project-links a:focus-visible > .nav-underline-label::after,
-.site-nav .standalone-nav-link:not(.active):hover > .nav-underline-label::after,
-.site-nav .standalone-nav-link:not(.active):focus-visible > .nav-underline-label::after,
-.site-nav .group-head[aria-expanded="false"]:hover > .nav-underline-label::after,
-.site-nav .group-head[aria-expanded="false"]:focus-visible > .nav-underline-label::after{
-  transform:scaleX(1);
-}
-
-/* Bold/open states stay underline-free. */
-.site-nav .group-head[aria-expanded="true"] > .nav-underline-label::after,
-.site-nav .standalone-nav-link.active > .nav-underline-label::after{
-  content:none !important;
-  display:none !important;
-}
-
-@media (prefers-reduced-motion:reduce){
-  .site-nav .nav-underline-label::after{
-    transition:none !important;
-  }
-}
-</style>
-<style id="harri-menu-underline-reference-box-v3">
-/*
-  Make every main-menu underline use the same text-box geometry as the
-  Design category underline. This changes only the underline reference box;
-  spacing, font sizing, weights and accordion behavior are untouched.
-*/
-.site-nav .group-head > .nav-underline-label,
-.site-nav .project-links a > .nav-underline-label,
-.site-nav .standalone-nav-link > .nav-underline-label{
-  display:inline-block !important;
-  position:relative !important;
-  line-height:inherit !important;
-  vertical-align:baseline !important;
-  margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
-}
-
-/* One shared underline geometry for category labels, project names and
-   inactive Harrilanpuisto. */
-.site-nav .group-head[aria-expanded="false"] > .nav-underline-label::after,
-.site-nav .project-links a > .nav-underline-label::after,
-.site-nav .standalone-nav-link:not(.active) > .nav-underline-label::after{
-  left:0 !important;
-  right:0 !important;
-  bottom:.10em !important;
-  height:1px !important;
-}
-</style>
-
