@@ -18,11 +18,13 @@ gallery:
   - type: image
     image: /assets/uploads/bdw18-poster-180527page1-1.jpg
   - type: image
-    image: /assets/uploads/1.jpg
+    image: /assets/uploads/bq5a91122-protected-intensity-default-v2.jpg
+  - type: image
+    image: /assets/uploads/1-protected-intensity-default-v2.jpg
     alt: Project image 1
   - type: image
-    image: /assets/uploads/2.jpg
+    image: /assets/uploads/2-protected-intensity-default-v2.jpg
     alt: dad
   - type: image
-    image: /assets/uploads/3.jpg
+    image: /assets/uploads/3-protected-intensity-default-v2.jpg
 ---
