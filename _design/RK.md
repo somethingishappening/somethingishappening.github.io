@@ -10,7 +10,7 @@ description: A logo and syndicate stamp created for Architect Rawad El Khoueiry
   drastic contrast creates a strong visual impact.
 gallery:
   - type: image
-    image: /assets/uploads/rawadlogo1.jpg
+    image: /assets/uploads/rawadlogo1-protected-intensity-default-v2.jpg
   - type: image
     image: /assets/uploads/q5a06852bw-protected-intensity-default-v2.jpg
 ---
