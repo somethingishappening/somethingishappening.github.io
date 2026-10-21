@@ -1579,6 +1579,57 @@ button{font:inherit;color:inherit}
   }
 }
 </style>
+
+
+<style id="harri-work-final-static-research-grid-v1">
+/*
+  WORK DESKTOP — FINAL STATIC RESEARCH-GRID PARITY
+  ------------------------------------------------
+  Work uses the same real middle/right grid tracks as Research instead of
+  splitting the combined content area 50/50. The project title/description
+  remain fixed in the middle track; only the media track may scroll.
+  Above 1680px, the description follows Research's proportional 96.5% copy
+  measure rather than the older scaled 700px cap.
+*/
+@media (min-width:901px){
+  body.page-work .project-info{
+    grid-column:2 !important;
+    grid-row:1 !important;
+    width:auto !important;
+    max-width:none !important;
+    min-width:0 !important;
+    margin-left:0 !important;
+    padding-right:var(--harri-u-space-14,14px) !important;
+    overflow:hidden !important;
+    overscroll-behavior:none !important;
+  }
+
+  body.page-work .media-column{
+    grid-column:3 !important;
+    grid-row:1 !important;
+    width:auto !important;
+    min-width:0 !important;
+    margin-left:0 !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    overscroll-behavior:contain !important;
+  }
+
+  body.page-work .project-description{
+    overflow:hidden !important;
+    overscroll-behavior:none !important;
+    scrollbar-width:none !important;
+  }
+}
+
+@media (min-width:1681px){
+  body.page-work .project-description{
+    width:96.5% !important;
+    max-width:96.5% !important;
+  }
+}
+</style>
+
 </head>
 <body class="page-work">
 <div class="layout">
@@ -2060,7 +2111,7 @@ lightbox.addEventListener("touchend", e=>{
 
 {% endif %}
 
-<script id="harri-work-desktop-wheel-routing-single-path-v3">
+<script id="harri-work-desktop-wheel-routing-single-path-v4">
 (() => {
   const root=document.documentElement;
   const scroller=document.querySelector(".media-column");
@@ -2073,37 +2124,25 @@ lightbox.addEventListener("touchend", e=>{
       return;
     }
 
-    const oldPageY=window.scrollY || 0;
     root.classList.add(lockClass);
-
-    if(oldPageY){
+    if(window.scrollY || document.documentElement.scrollTop || document.body.scrollTop){
       window.scrollTo(0,0);
-      scroller.scrollTop=Math.min(
-        scroller.scrollTop + oldPageY,
-        Math.max(0, scroller.scrollHeight - scroller.clientHeight)
-      );
+      document.documentElement.scrollTop=0;
+      document.body.scrollTop=0;
     }
   }
 
-  function normalizedWheelDelta(event){
-    let deltaY=event.deltaY;
-    if(event.deltaMode===1) deltaY*=16;
-    else if(event.deltaMode===2) deltaY*=scroller.clientHeight;
-    return deltaY;
-  }
-
-  function routeWheel(event){
+  function blockNonMediaWheel(event){
     if(window.innerWidth <= 900) return;
     if(document.querySelector(".lightbox.open")) return;
     if(event.ctrlKey || event.metaKey) return;
-    if(event.deltaY===0 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+    if(event.target.closest(".media-column")) return;
 
-    const delta = normalizedWheelDelta(event);
-
-    /* Work text is intentionally static on desktop, matching the Research
-       first-screen text geometry. All desktop wheel motion routes to media. */
-    event.preventDefault();
-    scroller.scrollTop += delta;
+    /* Desktop Work text is completely static. Only direct interaction over
+       the media column is allowed to scroll. */
+    if(event.deltaY !== 0 && Math.abs(event.deltaY) >= Math.abs(event.deltaX)){
+      event.preventDefault();
+    }
   }
 
   syncDesktopScrollMode();
@@ -2114,7 +2153,7 @@ lightbox.addEventListener("touchend", e=>{
     resizeFrame=requestAnimationFrame(syncDesktopScrollMode);
   });
 
-  document.addEventListener("wheel", routeWheel, {passive:false});
+  document.addEventListener("wheel", blockNonMediaWheel, {passive:false});
 })();
 </script>
 
