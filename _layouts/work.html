@@ -1381,16 +1381,22 @@ button{font:inherit;color:inherit}
 
 
 
-/* DESKTOP BOTTOM ALIGNMENT — tight visual baseline.
-   Keep the Research-template 14px paragraph spacing, but cancel only the
-   final trailing paragraph space at the container edge. */
+/* DESKTOP BOTTOM ALIGNMENT — mirror Research flow-safe behavior.
+   Keep normal paragraph spacing throughout the description, but remove only
+   the final trailing gap. The tiny residual footer-baseline correction is
+   applied to the last text block in normal flow by the script below. */
 @media (min-width:901px){
   .left-footer{
     padding-bottom:0 !important;
   }
 
   .project-description{
-    margin-bottom:-14px !important;
+    margin-bottom:0 !important;
+    transform:none !important;
+  }
+
+  .project-description > :last-child{
+    margin-bottom:0 !important;
   }
 }
 
@@ -1471,28 +1477,108 @@ button{font:inherit;color:inherit}
 }
 </style>
 
-<style id="harri-work-text-overflow-consistency-v1">
+
+
+
+<style id="harri-work-desktop-media-only-scroll-v1">
 /*
-  WORK TEXT SAFETY
-  Keep the established top/bottom geometry. If a project's title + description
-  is taller than the available desktop column, make that same column internally
-  scrollable instead of clipping the description. Short projects remain visually
-  unchanged and continue to baseline-align to the footer.
+  WORK DESKTOP: ONLY MEDIA SCROLLS
+  -------------------------------
+  Lock the document and the text column in normal layout flow. The media rail
+  is the only desktop scroll container. This is CSS-enforced so the Work text
+  cannot move because of wheel/trackpad, keyboard page scrolling, restoration,
+  or a delayed JavaScript class. Mobile remains unchanged.
 */
 @media (min-width:901px){
+  html,
+  body.page-work{
+    height:100dvh !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  body.page-work .layout{
+    height:100dvh !important;
+    min-height:0 !important;
+    grid-template-rows:minmax(0,1fr) !important;
+    overflow:hidden !important;
+  }
+
   body.page-work .project-info{
+    position:relative !important;
+    top:auto !important;
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  body.page-work .media-column{
+    height:100% !important;
+    min-height:0 !important;
+    max-height:none !important;
     overflow-y:auto !important;
     overflow-x:hidden !important;
-    overscroll-behavior:contain;
-    scrollbar-width:none;
+    overscroll-behavior:contain !important;
+    scrollbar-width:none !important;
   }
-  body.page-work .project-info::-webkit-scrollbar{
-    width:0;
-    height:0;
+
+  body.page-work .media-column::-webkit-scrollbar{
+    width:0 !important;
+    height:0 !important;
   }
 }
 </style>
 
+<style id="harri-work-research-text-parity-v1">
+/*
+  WORK TEXT = RESEARCH TEXT
+  -------------------------
+  Desktop Work title/copy use the same typography, copy measure and paragraph
+  rhythm as the Research title/Abstract. Nothing in this block moves at runtime.
+  The Work text column remains sticky/static while only media scrolls.
+*/
+@media (min-width:901px){
+  body.page-work .project-info{
+    overflow:visible !important;
+  }
+
+  body.page-work .project-type{
+    transform:none !important;
+  }
+
+  body.page-work .project-info h1{
+    font-size:var(--harri-fit-h1,var(--harri-u-h1,54px)) !important;
+    line-height:.95 !important;
+    letter-spacing:-.035em !important;
+    width:auto !important;
+    max-width:var(--harri-u-research-title-max,680px) !important;
+    margin:0 0 var(--harri-u-space-18,18px) !important;
+  }
+
+  body.page-work .project-description{
+    margin-top:auto !important;
+    margin-bottom:0 !important;
+    transform:none !important;
+    width:100% !important;
+    max-width:var(--harri-u-copy-max,700px) !important;
+    font-size:var(--harri-fit-body,var(--harri-u-body,18px)) !important;
+    line-height:1.2 !important;
+    overflow:visible !important;
+    overscroll-behavior:auto !important;
+    scrollbar-width:auto !important;
+  }
+
+  body.page-work .project-description p{
+    margin:0 0 var(--harri-u-space-14,14px) !important;
+    font-size:inherit !important;
+    line-height:inherit !important;
+  }
+
+  body.page-work .project-description > :last-child{
+    margin-bottom:0 !important;
+  }
+}
+</style>
 </head>
 <body class="page-work">
 <div class="layout">
@@ -1971,10 +2057,7 @@ lightbox.addEventListener("touchend", e=>{
 </script>
 
 {% if page.collection == "design" or page.collection == "artistic" %}
-  {% include desktop-baseline-alignment.html target=".project-description" %}
-{% endif %}
-{% if page.collection == "design" or page.collection == "artistic" %}
-  {% include desktop-top-baseline-alignment.html reference=".brand" target=".project-type" %}
+
 {% endif %}
 
 <script id="harri-work-desktop-wheel-routing-single-path-v3">
@@ -2016,28 +2099,9 @@ lightbox.addEventListener("touchend", e=>{
     if(event.deltaY===0 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
     const delta = normalizedWheelDelta(event);
-    const info = document.querySelector(".project-info");
-    const overInfo = info && event.target instanceof Node && info.contains(event.target);
 
-    /*
-      Preserve the established single-path media scrolling everywhere unless
-      the Work text column actually overflows. In that one case, scrolling over
-      the text reveals the full description instead of leaving it clipped. Once
-      the text reaches its edge, the same wheel motion continues through media.
-    */
-    if(overInfo && info.scrollHeight > info.clientHeight + 1){
-      const maxInfo = Math.max(0, info.scrollHeight - info.clientHeight);
-      const canMoveInfo =
-        (delta < 0 && info.scrollTop > 0) ||
-        (delta > 0 && info.scrollTop < maxInfo - 0.5);
-
-      if(canMoveInfo){
-        event.preventDefault();
-        info.scrollTop += delta;
-        return;
-      }
-    }
-
+    /* Work text is intentionally static on desktop, matching the Research
+       first-screen text geometry. All desktop wheel motion routes to media. */
     event.preventDefault();
     scroller.scrollTop += delta;
   }
