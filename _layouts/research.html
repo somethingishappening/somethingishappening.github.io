@@ -3444,14 +3444,30 @@ min-width:0}
         mobileAlignment === "right" ? "0" : "auto"
       );
 
-      inline.innerHTML = `
-        <div class="figure-box">
-          <img data-mobile-image="${key}" alt="${fig.alt || ""}">
-        </div>
-        <figcaption>
-          <strong>Fig. ${number}</strong><span class="caption-separator">, </span>${fig.caption || ""}
-        </figcaption>
-      `;
+      const mobileFigureBox = document.createElement("div");
+      mobileFigureBox.className = "figure-box";
+
+      const mobileImage = document.createElement("img");
+      mobileImage.dataset.mobileImage = key;
+      mobileImage.alt = fig.alt || "";
+      mobileFigureBox.appendChild(mobileImage);
+
+      const mobileCaption = document.createElement("figcaption");
+
+      const mobileFigureLabel = document.createElement("strong");
+      mobileFigureLabel.textContent = `Fig. ${number}`;
+
+      const mobileCaptionSeparator = document.createElement("span");
+      mobileCaptionSeparator.className = "caption-separator";
+      mobileCaptionSeparator.textContent = ", ";
+
+      mobileCaption.append(
+        mobileFigureLabel,
+        mobileCaptionSeparator,
+        document.createTextNode(fig.caption || "")
+      );
+
+      inline.append(mobileFigureBox, mobileCaption);
       insertionPoint.insertAdjacentElement("afterend", inline);
       insertionPoint = inline;
     });
