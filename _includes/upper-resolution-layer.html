@@ -1561,13 +1561,23 @@ html.harri-research-fit-pending body.page-research{
   geometry, menus, or mobile behavior.
 */
 @media (min-width:901px){
+  /* Work and Harrilanpuisto use sticky rails, so their sticky inset mirrors
+     the layout padding. */
   body.page-work .left,
-  body.page-research .left,
   body.page-harrilanpuisto .left{
     top:var(--harri-u-pad-top,32px) !important;
     height:calc(
       100vh - var(--harri-u-pad-top,32px) - var(--harri-u-pad-bottom,26px)
     ) !important;
+  }
+
+  /* Research is deliberately a relative rail inside a viewport-height grid.
+     Its layout padding already supplies the same top/bottom shell. Adding the
+     sticky inset here a second time pushed the entire Research menu downward. */
+  body.page-research .left,
+  body.page-research .right{
+    top:auto !important;
+    height:100% !important;
   }
 }
 </style>
