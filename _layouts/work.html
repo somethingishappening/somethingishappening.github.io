@@ -1471,6 +1471,28 @@ button{font:inherit;color:inherit}
 }
 </style>
 
+<style id="harri-work-text-overflow-consistency-v1">
+/*
+  WORK TEXT SAFETY
+  Keep the established top/bottom geometry. If a project's title + description
+  is taller than the available desktop column, make that same column internally
+  scrollable instead of clipping the description. Short projects remain visually
+  unchanged and continue to baseline-align to the footer.
+*/
+@media (min-width:901px){
+  body.page-work .project-info{
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    overscroll-behavior:contain;
+    scrollbar-width:none;
+  }
+  body.page-work .project-info::-webkit-scrollbar{
+    width:0;
+    height:0;
+  }
+}
+</style>
+
 </head>
 <body class="page-work">
 <div class="layout">
@@ -1935,122 +1957,16 @@ lightbox.addEventListener("touchend", e=>{
 }
 </style>
 
-<script id="mobile-smart-project-title-fit">
+<script id="mobile-project-title-consistent-size">
+/*
+  Keep every Work project title at the same mobile type size. Long CMS title
+  lines wrap naturally instead of shrinking an individual project's title.
+*/
 (function(){
-  const MOBILE_MAX = 900;
-  const MAX_OVERFLOW_GLYPHS = 3;
-  const MIN_SCALE = 0.90;
   const title = document.querySelector('.project-info h1');
   if(!title) return;
-
-  const lines = Array.from(title.children).filter(function(el){
-    return el.classList && el.classList.contains('title-line');
-  });
-  if(!lines.length) return;
-
-  let resizeRaf = 0;
-
-  function reset(){
-    title.classList.remove('mobile-title-keep-cms-lines');
-    title.style.removeProperty('font-size');
-  }
-
-  function naturalWidth(line, computedTitle){
-    const probe = document.createElement('span');
-    probe.textContent = line.textContent || '';
-    probe.setAttribute('aria-hidden','true');
-    probe.style.cssText = [
-      'position:fixed',
-      'left:-100000px',
-      'top:0',
-      'visibility:hidden',
-      'pointer-events:none',
-      'display:inline-block',
-      'width:max-content',
-      'max-width:none',
-      'white-space:nowrap',
-      'padding:0',
-      'margin:0',
-      'border:0',
-      'font-family:' + computedTitle.fontFamily,
-      'font-size:' + computedTitle.fontSize,
-      'font-weight:' + computedTitle.fontWeight,
-      'font-style:' + computedTitle.fontStyle,
-      'font-stretch:' + computedTitle.fontStretch,
-      'letter-spacing:' + computedTitle.letterSpacing,
-      'text-transform:' + computedTitle.textTransform
-    ].join(';');
-    document.body.appendChild(probe);
-    const width = probe.getBoundingClientRect().width;
-    probe.remove();
-    return width;
-  }
-
-  function availableWidth(){
-    const rect = title.getBoundingClientRect();
-    const parent = title.parentElement ? title.parentElement.getBoundingClientRect() : rect;
-    const viewportRight = document.documentElement.clientWidth;
-    const rightEdge = Math.min(parent.right, viewportRight);
-    return Math.max(0, rightEdge - rect.left);
-  }
-
-  function fitNow(){
-    reset();
-    if(window.innerWidth > MOBILE_MAX) return;
-
-    const available = availableWidth();
-    if(available <= 1) return;
-
-    const computed = getComputedStyle(title);
-    const baseSize = parseFloat(computed.fontSize);
-    if(!baseSize) return;
-
-    let requiredScale = 1;
-    let slightOnly = true;
-    let hasOverflow = false;
-
-    lines.forEach(function(line){
-      const natural = naturalWidth(line, computed);
-      if(natural <= available + 0.5) return;
-
-      hasOverflow = true;
-      const text = (line.textContent || '').trim();
-      const glyphCount = Math.max(1, Array.from(text.replace(/\s+/g, '')).length);
-      const averageGlyph = natural / glyphCount;
-      const overflowGlyphs = (natural - available) / Math.max(averageGlyph, 1);
-      const scale = available / natural;
-      requiredScale = Math.min(requiredScale, scale);
-
-      if(overflowGlyphs > MAX_OVERFLOW_GLYPHS || scale < MIN_SCALE){
-        slightOnly = false;
-      }
-    });
-
-    if(hasOverflow && slightOnly){
-      const scale = Math.max(MIN_SCALE, Math.min(1, requiredScale * 0.992));
-      title.style.setProperty('font-size', (baseSize * scale).toFixed(2) + 'px', 'important');
-      title.classList.add('mobile-title-keep-cms-lines');
-    }
-    /* Larger overflow deliberately remains at the normal mobile size and wraps. */
-  }
-
-  function fit(){
-    cancelAnimationFrame(resizeRaf);
-    resizeRaf = requestAnimationFrame(function(){
-      requestAnimationFrame(fitNow);
-    });
-  }
-
-  window.addEventListener('resize', fit, {passive:true});
-  window.addEventListener('orientationchange', fit, {passive:true});
-  window.addEventListener('load', fit, {once:true});
-
-
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(fit).catch(fit);
-  }else{
-    fit();
-  }
+  title.classList.remove('mobile-title-keep-cms-lines');
+  title.style.removeProperty('font-size');
 })();
 </script>
 
@@ -2099,14 +2015,31 @@ lightbox.addEventListener("touchend", e=>{
     if(event.ctrlKey || event.metaKey) return;
     if(event.deltaY===0 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
+    const delta = normalizedWheelDelta(event);
+    const info = document.querySelector(".project-info");
+    const overInfo = info && event.target instanceof Node && info.contains(event.target);
+
     /*
-      One desktop scroll path everywhere: every vertical wheel/trackpad event
-      drives the media column with the same 1:1 normalized delta, regardless
-      of where the cursor is. Momentum remains the browser/trackpad's own
-      sequence of wheel events; no extra easing or multiplier is added.
+      Preserve the established single-path media scrolling everywhere unless
+      the Work text column actually overflows. In that one case, scrolling over
+      the text reveals the full description instead of leaving it clipped. Once
+      the text reaches its edge, the same wheel motion continues through media.
     */
+    if(overInfo && info.scrollHeight > info.clientHeight + 1){
+      const maxInfo = Math.max(0, info.scrollHeight - info.clientHeight);
+      const canMoveInfo =
+        (delta < 0 && info.scrollTop > 0) ||
+        (delta > 0 && info.scrollTop < maxInfo - 0.5);
+
+      if(canMoveInfo){
+        event.preventDefault();
+        info.scrollTop += delta;
+        return;
+      }
+    }
+
     event.preventDefault();
-    scroller.scrollTop += normalizedWheelDelta(event);
+    scroller.scrollTop += delta;
   }
 
   syncDesktopScrollMode();
