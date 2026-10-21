@@ -1,7 +1,7 @@
-brand: Harrila
+brand: Harri.la
 footer_slot_1_visible: true
 footer_slot_1_text: Instagram
-footer_slot_1_link_type: external
+footer_slot_1_link_type: none
 footer_slot_2_visible: true
 footer_slot_2_text: maraheb@harri.la
 footer_slot_2_link_type: email
