@@ -1,6 +1,6 @@
 ---
 title: MalignBenign
-nav_order: 3
+nav_order: 4
 project_type: Album Cover Art
 title_line_1: MalignBenign
 description: >-
