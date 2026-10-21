@@ -1,7 +1,7 @@
 ---
 title: Beirut Design Week 2018
 menu_title: Beirut Design Week
-nav_order: 2
+nav_order: 3
 project_type: Visual Communication
 title_line_1: Beirut Design Week 2018
 description: >-
