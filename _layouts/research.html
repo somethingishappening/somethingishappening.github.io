@@ -2905,6 +2905,15 @@ min-width:0}
 }
 
 @media (min-width:1681px){
+  /* Reassert the proportional Research measure after the unified scale layer.
+     That later layer specifically re-caps .research-abstract-copy, which can
+     otherwise make the Abstract narrower than every following section. */
+  body.page-research .research-copy,
+  body.page-research .research-abstract-copy{
+    width:96.5% !important;
+    max-width:96.5% !important;
+  }
+
   body.page-research .research-copy > p,
   body.page-research .research-copy > ul,
   body.page-research .research-copy > ol,

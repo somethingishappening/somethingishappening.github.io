@@ -1427,18 +1427,44 @@ button{font:inherit;color:inherit}
   {% include arabic-typography.html %}
   {% include upper-resolution-layer.html %}
 
-<style id="harri-work-column-consistency-v8">
+<style id="harri-work-column-consistency-v9">
 /*
-  LARGE-DESKTOP WORK / DESIGN COPY
+  LARGE-DESKTOP WORK / DESIGN COPY + INNER GUTTER
+  ------------------------------------------------
   The unified scale layer must not re-cap the project description after the
   Work layout has assigned its text column. Let the description fill that
   column at >1680px, as the earlier desktop-balance rule intended.
-  Mobile and the established <=1680 desktop range remain untouched.
+
+  The original text/media split used an 18px gutter (9px on each side of the
+  50% split). At high resolutions the rest of the desktop canvas scales but
+  that fixed gutter did not, making text look progressively closer to images.
+  Scale only this internal gutter with the same viewport logic as the existing
+  desktop system. <=1680px and mobile remain exactly unchanged.
 */
 @media (min-width:1681px){
+  body.page-work{
+    --harri-work-inner-half-gutter:min(.535714vw, 1vh, 18px);
+  }
+
+  body.page-work .project-info{
+    width:calc(50% - var(--harri-work-inner-half-gutter)) !important;
+  }
+
+  body.page-work .media-column{
+    margin-left:calc(50% + var(--harri-work-inner-half-gutter)) !important;
+  }
+
   body.page-work .project-description{
     width:100% !important;
     max-width:100% !important;
+  }
+}
+
+/* Preserve the existing 4096 -> 5120 continuation instead of stopping the
+   internal gutter at the 2x 4K checkpoint. */
+@media (min-width:4097px) and (min-height:2305px){
+  body.page-work{
+    --harri-work-inner-half-gutter:min(.439453125vw, .78125vh);
   }
 }
 </style>
