@@ -1427,23 +1427,20 @@ button{font:inherit;color:inherit}
   {% include arabic-typography.html %}
   {% include upper-resolution-layer.html %}
 
-<style id="harri-work-column-consistency-v9">
+<style id="harri-work-column-consistency-v10">
 /*
-  LARGE-DESKTOP WORK / DESIGN COPY + INNER GUTTER
-  ------------------------------------------------
-  The unified scale layer must not re-cap the project description after the
-  Work layout has assigned its text column. Let the description fill that
-  column at >1680px, as the earlier desktop-balance rule intended.
-
-  The original text/media split used an 18px gutter (9px on each side of the
-  50% split). At high resolutions the rest of the desktop canvas scales but
-  that fixed gutter did not, making text look progressively closer to images.
-  Scale only this internal gutter with the same viewport logic as the existing
-  desktop system. <=1680px and mobile remain exactly unchanged.
+  WORK / DESIGN TEXT-TO-MEDIA BUFFER
+  ----------------------------------
+  Keep a real gutter between the text half and media half at every desktop
+  resolution. The full internal gutter is exactly the same responsive size as
+  the site's standard column gutter: 28px at the 1680×900 reference, shrinking
+  or growing with the existing unified desktop scale. Only this internal
+  boundary changes; mobile, typography, media sizing/alignment and the outer
+  page grid remain untouched.
 */
-@media (min-width:1681px){
+@media (min-width:901px){
   body.page-work{
-    --harri-work-inner-half-gutter:min(.535714vw, 1vh, 18px);
+    --harri-work-inner-half-gutter:var(--harri-u-space-14,14px);
   }
 
   body.page-work .project-info{
@@ -1457,14 +1454,6 @@ button{font:inherit;color:inherit}
   body.page-work .project-description{
     width:100% !important;
     max-width:100% !important;
-  }
-}
-
-/* Preserve the existing 4096 -> 5120 continuation instead of stopping the
-   internal gutter at the 2x 4K checkpoint. */
-@media (min-width:4097px) and (min-height:2305px){
-  body.page-work{
-    --harri-work-inner-half-gutter:min(.439453125vw, .78125vh);
   }
 }
 </style>
