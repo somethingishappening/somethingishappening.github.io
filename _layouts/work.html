@@ -1427,6 +1427,22 @@ button{font:inherit;color:inherit}
   {% include arabic-typography.html %}
   {% include upper-resolution-layer.html %}
 
+<style id="harri-work-column-consistency-v8">
+/*
+  LARGE-DESKTOP WORK / DESIGN COPY
+  The unified scale layer must not re-cap the project description after the
+  Work layout has assigned its text column. Let the description fill that
+  column at >1680px, as the earlier desktop-balance rule intended.
+  Mobile and the established <=1680 desktop range remain untouched.
+*/
+@media (min-width:1681px){
+  body.page-work .project-description{
+    width:100% !important;
+    max-width:100% !important;
+  }
+}
+</style>
+
 <style id="harri-work-desktop-internal-scroll-no-shift-v2">
 @media (min-width:901px){
   html.harri-work-scroll-lock,
