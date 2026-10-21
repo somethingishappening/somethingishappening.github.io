@@ -1543,3 +1543,31 @@ html.harri-research-fit-pending body.page-research{
 })();
 </script>
 
+
+<style id="harri-shared-left-rail-shell-lock-v1">
+/*
+  SHARED DESKTOP LEFT-RAIL SHELL LOCK
+  -----------------------------------
+  Harri.la, the main navigation and the footer must occupy the same outer
+  desktop frame on Work, Research and Harrilanpuisto at every desktop scale.
+
+  Work/Harrilanpuisto already resolve to these values. Research historically
+  kept an older 28px / 56px sticky inset-height pair, which could move its
+  left rail relative to the shared 32px-top / 26px-bottom shell, especially
+  after scrolling or at scaled desktop sizes.
+
+  This rule changes only the sticky rail inset/height. It does not alter grid
+  tracks, horizontal page margins, typography, content widths, media, figure
+  geometry, menus, or mobile behavior.
+*/
+@media (min-width:901px){
+  body.page-work .left,
+  body.page-research .left,
+  body.page-harrilanpuisto .left{
+    top:var(--harri-u-pad-top,32px) !important;
+    height:calc(
+      100vh - var(--harri-u-pad-top,32px) - var(--harri-u-pad-bottom,26px)
+    ) !important;
+  }
+}
+</style>
