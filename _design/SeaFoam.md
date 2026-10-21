@@ -1,6 +1,6 @@
 ---
 title: SeaFoam
-nav_order: 4
+nav_order: 6
 project_type: Experimental Lettering
 title_line_1: Consciousness
 title_line_2: is SeaFoam
