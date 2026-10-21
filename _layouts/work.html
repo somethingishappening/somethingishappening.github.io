@@ -1427,39 +1427,28 @@ button{font:inherit;color:inherit}
   {% include arabic-typography.html %}
   {% include upper-resolution-layer.html %}
 
-<style id="harri-work-column-consistency-v11">
+<style id="harri-work-column-consistency-v10">
 /*
-  WORK / DESIGN GRID + TEXT-TO-MEDIA BUFFER
-  -----------------------------------------
-  Use the same real desktop grid tracks as the rest of the site instead of
-  splitting the combined content area 50/50. This keeps the Work text start,
-  media start and outer margins on the shared responsive grid at every desktop
-  resolution.
-
-  The requested extra breathing room remains inside the text column only, so
-  it cannot move the media column or change the outer page margins. Mobile and
-  all global scale/type/image rules remain untouched.
+  WORK / DESIGN TEXT-TO-MEDIA BUFFER
+  ----------------------------------
+  Keep a real gutter between the text half and media half at every desktop
+  resolution. The full internal gutter is exactly the same responsive size as
+  the site's standard column gutter: 28px at the 1680×900 reference, shrinking
+  or growing with the existing unified desktop scale. Only this internal
+  boundary changes; mobile, typography, media sizing/alignment and the outer
+  page grid remain untouched.
 */
 @media (min-width:901px){
   body.page-work{
-    --harri-work-text-media-buffer:var(--harri-u-space-14,14px);
+    --harri-work-inner-half-gutter:var(--harri-u-space-14,14px);
   }
 
   body.page-work .project-info{
-    grid-column:2 !important;
-    grid-row:1 !important;
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-    padding-right:var(--harri-work-text-media-buffer) !important;
+    width:calc(50% - var(--harri-work-inner-half-gutter)) !important;
   }
 
   body.page-work .media-column{
-    grid-column:3 !important;
-    grid-row:1 !important;
-    width:100% !important;
-    margin-left:0 !important;
-    min-width:0 !important;
+    margin-left:calc(50% + var(--harri-work-inner-half-gutter)) !important;
   }
 
   body.page-work .project-description{
