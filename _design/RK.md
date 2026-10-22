@@ -1,7 +1,7 @@
 ---
 title: RK Logo and Stamp
 menu_title: RK Logo/Stamp
-nav_order: 5
+nav_order: 6
 project_type: Branding and Identity
 title_line_1: RK Logo and Stamp
 description: A logo and syndicate stamp created for Architect Rawad El Khoueiry
