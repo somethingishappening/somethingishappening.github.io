@@ -1,6 +1,6 @@
 ---
 title: Bassil Development
-nav_order: 6
+nav_order: 7
 project_type: Branding and Identity
 title_line_1: Bassil Development
 description: A visual identity created for an architectural and contracting
