@@ -41,7 +41,7 @@ gallery:
   - type: image
     image: /assets/uploads/coolerplanet-4.jpg
   - type: image
-    image: /assets/uploads/coolerplanet-5.jpg
+    image: /assets/uploads/coolerplanet-6093.jpg
   - type: image
-    image: /assets/uploads/coolerplanet-6.jpg
+    image: /assets/uploads/designsforacoolerplanetopeningsphotokallekataila-6029original.jpg
 ---
