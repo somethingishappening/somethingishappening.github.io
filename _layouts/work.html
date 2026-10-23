@@ -1897,10 +1897,22 @@ html.work-theme-dark.work-lightbox-white .lightbox{
       window.addEventListener("harri:work-theme-transition-start", showTypography, {once:true});
       return;
     }
-    const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-    fonts.catch(()=>{}).finally(function(){
-      window.__harriWorkTypographyReady = true;
-      window.__harriWorkTryEntryReveal();
+
+    /* Coordinate the first figure with the Work type without blocking the
+       image on the browser's entire font queue. Wait only briefly for Geist
+       (the font used by Work text), then release on a painted frame. */
+    let fontGate = Promise.resolve();
+    if(document.fonts && typeof document.fonts.load === "function"){
+      const geist = document.fonts.load('16px "Geist"').catch(()=>{});
+      const timeout = new Promise(resolve=>window.setTimeout(resolve, 320));
+      fontGate = Promise.race([geist, timeout]);
+    }
+
+    fontGate.finally(function(){
+      requestAnimationFrame(function(){
+        window.__harriWorkTypographyReady = true;
+        window.__harriWorkTryEntryReveal();
+      });
     });
   }
 
