@@ -2,6 +2,50 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script id="harri-light-page-theme-handoff">
+(function(){
+  const root = document.documentElement;
+  try{
+    const previousTheme = sessionStorage.getItem("harri-work-theme");
+    const previousPath = sessionStorage.getItem("harri-work-theme-path");
+    let referrerPath = "";
+    if(document.referrer){
+      const referrer = new URL(document.referrer);
+      if(referrer.origin === window.location.origin){
+        referrerPath = referrer.pathname;
+      }
+    }
+    if(previousTheme === "dark" && previousPath && previousPath === referrerPath){
+      root.setAttribute("data-harri-theme-from", "dark");
+    }
+    sessionStorage.setItem("harri-work-theme", "light");
+    sessionStorage.setItem("harri-work-theme-path", window.location.pathname);
+  }catch(e){}
+})();
+</script>
+<style id="harri-light-page-theme-transition">
+  :root{--harri-cross-template-ease:800ms cubic-bezier(.4,0,.2,1);}
+
+  /* Use the same Work black/white color interpolation on About. */
+  @property --bg{syntax:"<color>";inherits:true;initial-value:#fff;}
+  @property --text{syntax:"<color>";inherits:true;initial-value:#0b0b0b;}
+  @property --line{syntax:"<color>";inherits:true;initial-value:#111;}
+
+  html[data-harri-theme-from="dark"]{
+    --bg:#000;
+    --text:#fff;
+    --line:#fff;
+  }
+  html{
+    transition:
+      --bg var(--harri-cross-template-ease),
+      --text var(--harri-cross-template-ease),
+      --line var(--harri-cross-template-ease),
+      background-color var(--harri-cross-template-ease),
+      color var(--harri-cross-template-ease);
+  }
+  @media (prefers-reduced-motion:reduce){html{transition:none !important;}}
+</style>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ page.title | default: "About" }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +61,7 @@
   --right-w:300px;
   --gap:28px;
   --text:#0b0b0b;
+  --line:#111;
   --bg:#fff;
 }
 *{box-sizing:border-box}
@@ -182,7 +227,7 @@ button{font:inherit;color:inherit}
 @media (max-width:900px){
   html,body{overflow:auto;height:auto;min-height:100%}
   .about-layout{display:block;height:auto;min-height:100vh;padding:14px 16px 28px;overflow:visible}
-  .left{height:auto;overflow:visible;position:sticky;top:0;z-index:30;background:#FFFFFF;padding:4px 0 0}
+  .left{height:auto;overflow:visible;position:sticky;top:0;z-index:30;background:var(--bg);padding:4px 0 0}
   .brand{font-size:21px;line-height:34px;min-height:34px}
   .mobile-menu-button{display:grid;place-items:center;position:absolute;right:0;top:4px;width:34px;height:34px;border:0;padding:0;background:transparent;cursor:pointer;font-size:28px;line-height:1;z-index:40}
 
@@ -228,7 +273,7 @@ button{font:inherit;color:inherit}
     max-height:900px;
     margin-top:7px;
     padding:10px 0;
-    border-top-color:#111;
+    border-top-color:var(--line);
     border-bottom-color:transparent;
     opacity:1;
     transform:translateY(0);
@@ -245,7 +290,7 @@ button{font:inherit;color:inherit}
     max-height:140px;
     margin-top:18px;
     padding-bottom:11px;
-    border-bottom-color:#111;
+    border-bottom-color:var(--line);
     opacity:1;
     transform:translateY(0);
     pointer-events:auto;
@@ -288,7 +333,7 @@ button{font:inherit;color:inherit}
     line-height:1.16;
     text-align:left;
   }
-  .cv-column{height:auto;overflow:visible;padding:24px 0 30px;border-top:1px solid #111}
+  .cv-column{height:auto;overflow:visible;padding:24px 0 30px;border-top:1px solid var(--line)}
   .cv-title{font-size:26px}
   .cv-item{
     font-size:16px;
@@ -610,7 +655,7 @@ html.nav-state-syncing .nav-group *{
     overflow:hidden !important;
     margin-top:0 !important;
     padding:10px 0 !important;
-    border-top:1px solid #111 !important;
+    border-top:1px solid var(--line) !important;
     border-bottom:1px solid transparent !important;
     opacity:0;
     visibility:hidden;
@@ -629,7 +674,7 @@ html.nav-state-syncing .nav-group *{
     overflow:hidden !important;
     margin-top:0 !important;
     padding:0 0 11px !important;
-    border-bottom:1px solid #111 !important;
+    border-bottom:1px solid var(--line) !important;
     opacity:0;
     visibility:hidden;
     pointer-events:none;
@@ -880,6 +925,36 @@ html.nav-state-syncing .nav-group *{
   }
 }
 </style>
+
+
+<script id="harri-light-page-theme-transition-release">
+(function(){
+  const root = document.documentElement;
+  function releaseTheme(){
+    if(!root.hasAttribute("data-harri-theme-from")) return;
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        root.removeAttribute("data-harri-theme-from");
+      });
+    });
+  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", releaseTheme, {once:true});
+  else releaseTheme();
+
+  window.addEventListener("pageshow", function(event){
+    if(!event.persisted) return;
+    try{
+      const previousTheme = sessionStorage.getItem("harri-work-theme");
+      if(previousTheme === "dark"){
+        root.setAttribute("data-harri-theme-from", "dark");
+        sessionStorage.setItem("harri-work-theme", "light");
+        sessionStorage.setItem("harri-work-theme-path", window.location.pathname);
+        releaseTheme();
+      }
+    }catch(e){}
+  });
+})();
+</script>
 
 </head>
 <body class="page-about">
