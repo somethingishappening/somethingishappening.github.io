@@ -1,6 +1,7 @@
 ---
 title: How does it feel
 nav_order: 9
+work_invert: true
 project_type: Lettering | Printmaking
 title_line_1: "How does that "
 title_line_2: make you feel
