@@ -874,10 +874,16 @@
     return promise;
   }
 
+  function isHarrilanpuistoLink(link){
+    const href = link ? (link.getAttribute("href") || "") : "";
+    return /\/harrilanpuisto\/?(?:[?#].*)?$/.test(href);
+  }
+
   function warmLink(link, all){
     const assets = assetsFor(link);
     const count = all ? assets.length : Math.min(1, assets.length);
-    for(let i=0; i<count; i++) warm(assets[i], all && i < 2 ? "high" : "low");
+    const highCount = isHarrilanpuistoLink(link) ? 6 : 2;
+    for(let i=0; i<count; i++) warm(assets[i], all && i < highCount ? "high" : "low");
   }
 
   function linkFromEvent(event){
@@ -894,7 +900,10 @@
 
   function warmFirstOfEveryProject(){
     document.querySelectorAll(".site-nav a[data-harri-gallery]").forEach(function(link){
-      warmLink(link, false);
+      /* Harrilanpuisto has only a tiny gallery, so warm all of it during idle
+         time. Other project galleries keep the existing first-preview-only
+         idle policy and are fully warmed on hover/focus/touch. */
+      warmLink(link, isHarrilanpuistoLink(link));
     });
   }
 
