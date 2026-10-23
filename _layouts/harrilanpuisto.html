@@ -49,6 +49,17 @@
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ site.data.site.harrilanpuisto_label | default: "Harrilanpuisto" }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
+  {% assign harrilanpuisto_preload_media = site.data.harrilanpuisto.media | reverse %}
+  {% for preload_slide in harrilanpuisto_preload_media limit:6 %}
+    {% if preload_slide.type == "video" %}
+      {% assign preload_src = preload_slide.poster %}
+    {% else %}
+      {% assign preload_src = preload_slide.image %}
+    {% endif %}
+    {% if preload_src and preload_src != "" %}
+      <link rel="preload" as="image" href="{{ preload_src | relative_url }}" fetchpriority="high">
+    {% endif %}
+  {% endfor %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
@@ -295,6 +306,17 @@ button{font:inherit;color:inherit}
 .media-item.media-loading::before,
 .media-item.media-loading::after{
   display:none;
+}
+
+/* Loading state: reserve the exact media geometry without painting any frame.
+   A frame/X is allowed only for a genuine load failure, never while fetching. */
+.media-item.media-loading{
+  border:0 !important;
+  background:transparent !important;
+}
+.media-item.media-error{
+  border:1.5px solid var(--line) !important;
+  background:var(--bg) !important;
 }
 
 .media-item img{
@@ -1731,22 +1753,26 @@ function buildMediaStack(){
       slide.type === "video" ? "16 / 9" : "4 / 5"
     );
 
-    const img = document.createElement("img");
-    img.alt = slide.alt || "";
-    img.decoding = "async";
-    img.loading = index === 0 ? "eager" : "lazy";
-    if("fetchPriority" in img){
-      img.fetchPriority = index === 0 ? "high" : "low";
-    }
-
     const previewSrc = slide.type === "video" ? slide.poster : slide.src;
 
     if(previewSrc){
+      /* Keep the real <img> completely off-DOM until it has loaded and decoded.
+         This removes the browser/CSS timing window that could briefly expose an
+         empty framed box before the image became ready. */
       item.classList.add("media-loading");
-      let revealed = false;
-      const revealCompleteImage = ()=>{
-        if(revealed) return;
-        revealed = true;
+      const img = new Image();
+      img.alt = slide.alt || "";
+      img.decoding = "async";
+      img.loading = index < 6 ? "eager" : "lazy";
+      if("fetchPriority" in img){
+        img.fetchPriority = index < 6 ? "high" : "auto";
+      }
+
+      let committed = false;
+      const commitReadyImage = ()=>{
+        if(committed) return;
+        committed = true;
+
         if(img.naturalWidth && img.naturalHeight){
           const ratio = img.naturalWidth / img.naturalHeight;
           item.dataset.mediaRatio = String(ratio);
@@ -1754,29 +1780,41 @@ function buildMediaStack(){
             "--media-ratio",
             `${img.naturalWidth} / ${img.naturalHeight}`
           );
-          scheduleHarrilanMasonryLayout();
         }
-        const reveal = ()=>{
+
+        img.style.display = "block";
+        item.appendChild(img);
+        item.classList.remove("media-loading", "media-error");
+        item.classList.add("has-image");
+        scheduleHarrilanMasonryLayout();
+
+        if(window.matchMedia("(max-width: 900px)").matches){
           img.classList.add("media-ready");
-          item.classList.remove("media-loading");
-          item.classList.add("has-image");
-        };
-        if(img.decode){
-          img.decode().catch(()=>{}).finally(reveal);
         }else{
-          reveal();
+          requestAnimationFrame(()=>{
+            requestAnimationFrame(()=>img.classList.add("media-ready"));
+          });
         }
       };
-      img.addEventListener("load", revealCompleteImage, {once:true});
+
+      const finishLoad = ()=>{
+        if(img.decode){
+          img.decode().then(commitReadyImage).catch(commitReadyImage);
+        }else{
+          commitReadyImage();
+        }
+      };
+
+      img.addEventListener("load", finishLoad, {once:true});
       img.addEventListener("error", ()=>{
         item.classList.remove("media-loading");
+        item.classList.add("media-error");
       }, {once:true});
       img.src = previewSrc;
-      img.style.display = "block";
-      if(img.complete && img.naturalWidth) revealCompleteImage();
+      if(img.complete && img.naturalWidth) finishLoad();
+    }else{
+      item.classList.add("media-error");
     }
-
-    item.appendChild(img);
 
     if(slide.type === "video"){
       item.classList.add("has-video");
