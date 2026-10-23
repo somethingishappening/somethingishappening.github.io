@@ -114,6 +114,24 @@
     html.research-typography-pending .research-copy{
       opacity:0;
     }
+    /* Mobile: Research typography is immediate — no reveal fade. */
+    @media (max-width:900px){
+      .project-title,
+      .research-abstract-panel > h1,
+      .paper > section > h1,
+      .paper > section > h2,
+      .paper > section > h3,
+      .research-copy,
+      html.research-typography-pending .project-title,
+      html.research-typography-pending .research-abstract-panel > h1,
+      html.research-typography-pending .paper > section > h1,
+      html.research-typography-pending .paper > section > h2,
+      html.research-typography-pending .paper > section > h3,
+      html.research-typography-pending .research-copy{
+        opacity:1 !important;
+        transition:none !important;
+      }
+    }
     @media (prefers-reduced-motion:reduce){
       .project-title,
       .research-abstract-panel > h1,

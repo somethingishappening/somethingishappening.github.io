@@ -928,6 +928,13 @@ button{font:inherit;color:inherit}
   opacity:1;
 }
 
+/* Mobile: decoded Harrilanpuisto images appear immediately; no fade. */
+@media (max-width:900px){
+  .harrilanpuisto-dump .media-item img{
+    transition:none !important;
+  }
+}
+
 .media-placeholder-label{
   position:absolute;
   left:10px;

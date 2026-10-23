@@ -267,6 +267,15 @@ html.work-theme-transition-active .project-info{
   transition-timing-function:cubic-bezier(.4,0,.2,1);
 }
 
+/* Mobile: typography is immediate — no opacity reveal or theme-linked fade. */
+@media (max-width:900px){
+  .project-info,
+  html.work-typography-pending .project-info{
+    opacity:1 !important;
+    transition:none !important;
+  }
+}
+
 .project-info{
   position:sticky;
   top:32px;
@@ -379,6 +388,16 @@ html.work-theme-transition-active .project-info{
    black/white transition window as the page theme. */
 html.work-theme-transition-active .media-stack .media-item img{
   transition:opacity var(--work-theme-ease);
+}
+
+
+/* Mobile: decoded project images appear immediately; keep the loading/decoding
+   safeguard, but remove the opacity animation. */
+@media (max-width:900px){
+  .media-stack .media-item img,
+  html.work-theme-transition-active .media-stack .media-item img{
+    transition:none !important;
+  }
 }
 
 /* FULLSCREEN MEDIA */
