@@ -1704,6 +1704,35 @@ const mediaPreviewPreloaders = new Map();
 function mediaPreviewSrc(slide){
   return slide ? (slide.type === "video" ? slide.poster : slide.src) : "";
 }
+
+/* INITIAL REVEAL: the first six real previews fetch/decode in parallel, but
+   are presented as one visual batch so they never pop in one-by-one. */
+const initialRevealIndices = new Set(
+  mediaSlides
+    .map((slide, index) => mediaPreviewSrc(slide) ? index : null)
+    .filter(index => index !== null)
+    .slice(0, 6)
+);
+let initialRevealSettled = 0;
+let initialRevealFlushed = false;
+const initialRevealers = [];
+function settleInitialReveal(revealer){
+  if(initialRevealFlushed){
+    revealer();
+    return;
+  }
+  initialRevealers.push(revealer);
+  initialRevealSettled += 1;
+  if(initialRevealSettled < initialRevealIndices.size) return;
+  initialRevealFlushed = true;
+  const revealAll = ()=>initialRevealers.splice(0).forEach(fn=>fn());
+  if(window.matchMedia("(max-width: 900px)").matches){
+    revealAll();
+  }else{
+    requestAnimationFrame(()=>requestAnimationFrame(revealAll));
+  }
+}
+
 function warmMediaPreview(index){
   if(index < 0 || index >= mediaSlides.length || mediaPreviewPreloaders.has(index)) return;
   const src = mediaPreviewSrc(mediaSlides[index]);
@@ -1782,17 +1811,27 @@ function buildMediaStack(){
           );
         }
 
+        /* Insert only after decode, but keep the item in its invisible loading
+           state until the reveal group is ready. This lets masonry settle first
+           without showing individual images one-by-one. */
         img.style.display = "block";
         item.appendChild(img);
-        item.classList.remove("media-loading", "media-error");
-        item.classList.add("has-image");
         scheduleHarrilanMasonryLayout();
 
-        if(window.matchMedia("(max-width: 900px)").matches){
+        const revealReadyImage = ()=>{
+          item.classList.remove("media-loading", "media-error");
+          item.classList.add("has-image");
+          scheduleHarrilanMasonryLayout();
           img.classList.add("media-ready");
+        };
+
+        if(initialRevealIndices.has(index)){
+          settleInitialReveal(revealReadyImage);
+        }else if(window.matchMedia("(max-width: 900px)").matches){
+          revealReadyImage();
         }else{
           requestAnimationFrame(()=>{
-            requestAnimationFrame(()=>img.classList.add("media-ready"));
+            requestAnimationFrame(revealReadyImage);
           });
         }
       };
@@ -1807,8 +1846,15 @@ function buildMediaStack(){
 
       img.addEventListener("load", finishLoad, {once:true});
       img.addEventListener("error", ()=>{
-        item.classList.remove("media-loading");
-        item.classList.add("media-error");
+        const revealError = ()=>{
+          item.classList.remove("media-loading");
+          item.classList.add("media-error");
+        };
+        if(initialRevealIndices.has(index)){
+          settleInitialReveal(revealError);
+        }else{
+          revealError();
+        }
       }, {once:true});
       img.src = previewSrc;
       if(img.complete && img.naturalWidth) finishLoad();
