@@ -2,6 +2,9 @@
 <html lang="en" class="work-theme-{% if page.work_invert %}dark{% else %}light{% endif %}{% if page.work_invert and page.work_lightbox_background == 'white' %} work-lightbox-white{% elsif page.work_invert %} work-lightbox-black{% endif %}" data-work-theme="{% if page.work_invert %}dark{% else %}light{% endif %}">
 <head>
   <meta charset="UTF-8" />
+  <script id="harri-work-typography-init">
+  document.documentElement.classList.add("work-typography-pending");
+  </script>
   <script id="harri-work-theme-handoff">
   (function(){
     const root = document.documentElement;
@@ -251,6 +254,19 @@ button{font:inherit;color:inherit}
 }
 
 /* CENTER PROJECT INFORMATION */
+/* TYPOGRAPHY REVEAL — opacity only; no geometry, spacing or positioning changes. */
+.project-info{
+  opacity:1;
+  transition:opacity .35s ease;
+}
+html.work-typography-pending .project-info{
+  opacity:0;
+}
+html.work-theme-transition-active .project-info{
+  transition-duration:800ms;
+  transition-timing-function:cubic-bezier(.4,0,.2,1);
+}
+
 .project-info{
   position:sticky;
   top:32px;
@@ -1756,6 +1772,7 @@ html.work-theme-dark.work-lightbox-white .lightbox{
 
 @media (prefers-reduced-motion:reduce){
   html{transition:none !important;}
+  .project-info{transition:none !important;}
 }
 </style>
 
@@ -1819,6 +1836,41 @@ html.work-theme-dark.work-lightbox-white .lightbox{
   });
 })();
 </script>
+
+<script id="harri-work-typography-release">
+(function(){
+  const root = document.documentElement;
+  let released = false;
+
+  function showTypography(){
+    if(released) return;
+    released = true;
+    requestAnimationFrame(function(){
+      root.classList.remove("work-typography-pending");
+    });
+  }
+
+  function release(){
+    if(root.dataset.workThemeFrom){
+      window.addEventListener("harri:work-theme-transition-start", showTypography, {once:true});
+      return;
+    }
+    const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+    fonts.catch(()=>{}).finally(function(){
+      requestAnimationFrame(function(){ requestAnimationFrame(showTypography); });
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", release, {once:true});
+  }else{
+    release();
+  }
+
+  window.setTimeout(showTypography, 1600);
+})();
+</script>
+
 
 </head>
 <body class="page-work">

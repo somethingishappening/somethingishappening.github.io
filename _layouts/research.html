@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <script id="harri-research-typography-init">
+  document.documentElement.classList.add("research-typography-pending");
+  </script>
   <script id="harri-light-page-theme-handoff">
   (function(){
     const root = document.documentElement;
@@ -89,6 +92,36 @@
       html.research-initializing .research-intro-screen{
         visibility:hidden !important;
         pointer-events:none !important;
+      }
+    }
+
+    /* TYPOGRAPHY REVEAL — opacity only. This does not change widths, heights,
+       flow, alignment, scrolling or figure geometry. */
+    .project-title,
+    .research-abstract-panel > h1,
+    .paper > section > h1,
+    .paper > section > h2,
+    .paper > section > h3,
+    .research-copy{
+      opacity:1;
+      transition:opacity .35s ease;
+    }
+    html.research-typography-pending .project-title,
+    html.research-typography-pending .research-abstract-panel > h1,
+    html.research-typography-pending .paper > section > h1,
+    html.research-typography-pending .paper > section > h2,
+    html.research-typography-pending .paper > section > h3,
+    html.research-typography-pending .research-copy{
+      opacity:0;
+    }
+    @media (prefers-reduced-motion:reduce){
+      .project-title,
+      .research-abstract-panel > h1,
+      .paper > section > h1,
+      .paper > section > h2,
+      .paper > section > h3,
+      .research-copy{
+        transition:none !important;
       }
     }
 
@@ -3005,6 +3038,51 @@ min-width:0}
   });
 })();
 </script>
+
+<script id="harri-research-typography-release">
+(function(){
+  const root = document.documentElement;
+  let released = false;
+
+  function showTypography(){
+    if(released) return;
+    released = true;
+    requestAnimationFrame(function(){
+      root.classList.remove("research-typography-pending");
+    });
+  }
+
+  function waitForResearchReady(){
+    if(!root.classList.contains("research-initializing")){
+      showTypography();
+      return;
+    }
+    const observer = new MutationObserver(function(){
+      if(!root.classList.contains("research-initializing")){
+        observer.disconnect();
+        showTypography();
+      }
+    });
+    observer.observe(root, {attributes:true, attributeFilter:["class"]});
+  }
+
+  function release(){
+    const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+    fonts.catch(()=>{}).finally(function(){
+      requestAnimationFrame(waitForResearchReady);
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", release, {once:true});
+  }else{
+    release();
+  }
+
+  window.setTimeout(showTypography, 1800);
+})();
+</script>
+
 
 </head>
 <body class="page-research">

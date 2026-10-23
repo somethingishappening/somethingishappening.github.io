@@ -915,12 +915,17 @@ button{font:inherit;color:inherit}
   object-position:center center !important;
 }
 
-/* PERFORMANCE: never paint a partially downloaded/decoded gallery image. */
+/* PERFORMANCE: never paint a partially downloaded/decoded gallery image.
+   Once decoding is complete, reveal it with the same soft opacity-only fade
+   used by Work. Geometry never changes during the fade. */
 .harrilanpuisto-dump .media-item img{
   visibility:hidden;
+  opacity:0;
+  transition:opacity .35s ease;
 }
 .harrilanpuisto-dump .media-item img.media-ready{
   visibility:visible;
+  opacity:1;
 }
 
 .media-placeholder-label{
