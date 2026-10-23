@@ -1864,10 +1864,33 @@ html.work-theme-dark.work-lightbox-white .lightbox{
   function showTypography(){
     if(released) return;
     released = true;
-    requestAnimationFrame(function(){
-      root.classList.remove("work-typography-pending");
-    });
+    root.classList.remove("work-typography-pending");
   }
+
+  /* DESKTOP ENTRY SYNC: on a normal Work-page entry, typography and the first
+     visible project figure wait for one another, then reveal on the same frame.
+     Geometry is untouched; this coordinates opacity only. */
+  window.__harriWorkTypographyReady = false;
+  window.__harriWorkFirstMediaDecoded = false;
+  window.__harriWorkFirstMediaShow = null;
+  window.__harriWorkTryEntryReveal = function(){
+    if(window.innerWidth <= 900){
+      showTypography();
+      if(typeof window.__harriWorkFirstMediaShow === "function")
+        window.__harriWorkFirstMediaShow();
+      return;
+    }
+    /* Cross-theme entries already synchronize type + image to the theme event. */
+    if(root.dataset.workThemeFrom) return;
+    if(!window.__harriWorkTypographyReady || !window.__harriWorkFirstMediaDecoded) return;
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        showTypography();
+        if(typeof window.__harriWorkFirstMediaShow === "function")
+          window.__harriWorkFirstMediaShow();
+      });
+    });
+  };
 
   function release(){
     if(root.dataset.workThemeFrom){
@@ -1876,17 +1899,23 @@ html.work-theme-dark.work-lightbox-white .lightbox{
     }
     const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
     fonts.catch(()=>{}).finally(function(){
-      requestAnimationFrame(function(){ requestAnimationFrame(showTypography); });
+      window.__harriWorkTypographyReady = true;
+      window.__harriWorkTryEntryReveal();
     });
   }
 
-  if(document.readyState === "loading"){
+  if(document.readyState === "loading")
     document.addEventListener("DOMContentLoaded", release, {once:true});
-  }else{
-    release();
-  }
+  else release();
 
-  window.setTimeout(showTypography, 1600);
+  /* Safety only: broken/unusually slow media must not leave type invisible forever. */
+  window.setTimeout(function(){
+    if(!released){
+      window.__harriWorkTypographyReady = true;
+      window.__harriWorkFirstMediaDecoded = true;
+      window.__harriWorkTryEntryReveal();
+    }
+  }, 5000);
 })();
 </script>
 
@@ -2039,6 +2068,13 @@ function buildMediaStack(){
               window.__harriWorkFirstMediaReady = true;
               document.dispatchEvent(new CustomEvent("harri:work-first-media-ready"));
             }
+          }else if(index === 0 && window.innerWidth > 900 && !document.documentElement.dataset.workThemeFrom){
+            /* Normal desktop entry: hold the first visible figure until typography
+               is also ready, then let both opacity fades start on one frame. */
+            window.__harriWorkFirstMediaDecoded = true;
+            window.__harriWorkFirstMediaShow = show;
+            if(typeof window.__harriWorkTryEntryReveal === "function")
+              window.__harriWorkTryEntryReveal();
           }else{
             show();
           }
@@ -2052,9 +2088,17 @@ function buildMediaStack(){
       img.addEventListener("load", revealCompleteImage, {once:true});
       img.addEventListener("error", ()=>{
         item.classList.remove("media-loading");
-        if(index === 0 && document.documentElement.dataset.workThemeSyncMedia === "1"){
-          window.__harriWorkFirstMediaReady = true;
-          document.dispatchEvent(new CustomEvent("harri:work-first-media-ready"));
+        if(index === 0){
+          if(document.documentElement.dataset.workThemeSyncMedia === "1"){
+            window.__harriWorkFirstMediaReady = true;
+            document.dispatchEvent(new CustomEvent("harri:work-first-media-ready"));
+          }else if(window.innerWidth > 900 && !document.documentElement.dataset.workThemeFrom){
+            /* A failed first asset still releases the synchronized typography reveal. */
+            window.__harriWorkFirstMediaDecoded = true;
+            window.__harriWorkFirstMediaShow = null;
+            if(typeof window.__harriWorkTryEntryReveal === "function")
+              window.__harriWorkTryEntryReveal();
+          }
         }
       }, {once:true});
       img.src = previewSrc;
