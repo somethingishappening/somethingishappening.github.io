@@ -1,7 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="work-theme-{% if page.work_invert %}dark{% else %}light{% endif %}" data-work-theme="{% if page.work_invert %}dark{% else %}light{% endif %}">
 <head>
   <meta charset="UTF-8" />
+  <script id="harri-work-theme-handoff">
+  (function(){
+    const root = document.documentElement;
+    const target = root.dataset.workTheme || "light";
+    try{
+      const previousTheme = sessionStorage.getItem("harri-work-theme");
+      const previousPath = sessionStorage.getItem("harri-work-theme-path");
+      let referrerPath = "";
+      if(document.referrer){
+        const referrer = new URL(document.referrer);
+        if(referrer.origin === window.location.origin){
+          referrerPath = referrer.pathname;
+        }
+      }
+      if(previousTheme && previousTheme !== target && previousPath && previousPath === referrerPath){
+        root.dataset.workThemeFrom = previousTheme;
+      }
+      sessionStorage.setItem("harri-work-theme", target);
+      sessionStorage.setItem("harri-work-theme-path", window.location.pathname);
+    }catch(e){}
+  })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ page.title }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,6 +40,38 @@
   --text:#0b0b0b;
   --line:#111;
   --bg:#fff;
+  --work-theme-ease:520ms cubic-bezier(.22,.61,.36,1);
+}
+
+/* Optional per-project Work inversion. Existing projects stay light unless the
+   CMS toggle is enabled. Registered color variables let every surface using
+   the shared theme values ease together instead of flashing between pages. */
+@property --bg{syntax:"<color>";inherits:true;initial-value:#fff;}
+@property --text{syntax:"<color>";inherits:true;initial-value:#0b0b0b;}
+@property --line{syntax:"<color>";inherits:true;initial-value:#111;}
+
+html.work-theme-dark{
+  --bg:#000;
+  --text:#fff;
+  --line:#fff;
+}
+html.work-theme-light[data-work-theme-from="dark"]{
+  --bg:#000;
+  --text:#fff;
+  --line:#fff;
+}
+html.work-theme-dark[data-work-theme-from="light"]{
+  --bg:#fff;
+  --text:#0b0b0b;
+  --line:#111;
+}
+html{
+  transition:
+    --bg var(--work-theme-ease),
+    --text var(--work-theme-ease),
+    --line var(--work-theme-ease),
+    background-color var(--work-theme-ease),
+    color var(--work-theme-ease);
 }
 
 *{box-sizing:border-box}
@@ -225,7 +279,7 @@ button{font:inherit;color:inherit}
   min-height:calc(100vh - 58px);
   border:1.5px solid var(--line);
   overflow:hidden;
-  background:#FFFFFF;
+  background:var(--bg);
   cursor:zoom-in;
 }
 
@@ -583,8 +637,8 @@ button{font:inherit;color:inherit}
   .left.menu-open .main-menu-panel-inner{
     padding-top:10px !important;
     padding-bottom:11px !important;
-    border-top-color:#111 !important;
-    border-bottom-color:#111 !important;
+    border-top-color:var(--line) !important;
+    border-bottom-color:var(--line) !important;
   }
 
   .left nav{
@@ -1629,6 +1683,50 @@ button{font:inherit;color:inherit}
   }
 }
 </style>
+
+<style id="work-inverted-theme-finishing-rules">
+/* Only inverted Work projects receive these overrides. They do not alter the
+   light theme or any layout measurement. */
+html.work-theme-dark .left nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.42);}
+html.work-theme-dark .left nav{scrollbar-color:rgba(255,255,255,.42) transparent;}
+html.work-theme-dark .lightbox{background:rgba(0,0,0,.97);}
+
+@media (prefers-reduced-motion:reduce){
+  html{transition:none !important;}
+}
+</style>
+
+<script id="harri-work-theme-transition-release">
+(function(){
+  const root = document.documentElement;
+  if(!root.dataset.workThemeFrom) return;
+  function releaseTheme(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        root.removeAttribute("data-work-theme-from");
+      });
+    });
+  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", releaseTheme, {once:true});
+  else releaseTheme();
+
+  /* Back/forward cache restores do not rerun the head script. Recreate the
+     same cross-project easing when returning directly from another Work theme. */
+  window.addEventListener("pageshow", function(event){
+    if(!event.persisted) return;
+    try{
+      const target = root.dataset.workTheme || "light";
+      const previousTheme = sessionStorage.getItem("harri-work-theme");
+      if(previousTheme && previousTheme !== target){
+        root.dataset.workThemeFrom = previousTheme;
+        sessionStorage.setItem("harri-work-theme", target);
+        sessionStorage.setItem("harri-work-theme-path", window.location.pathname);
+        releaseTheme();
+      }
+    }catch(e){}
+  });
+})();
+</script>
 
 </head>
 <body class="page-work">
