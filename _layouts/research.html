@@ -3900,6 +3900,47 @@ min-width:0}
   let desktopArrowTarget = null;
   let mobileArrowTarget = null;
 
+  /*
+    Do not reveal the EPS navigation arrow until both the actual webfont and
+    the exact Research/CV fit for the current viewport have settled.
+    This prevents the visible fallback-size -> final-size jump on first paint
+    and while changing between desktop resolutions.
+  */
+  let arrowFontsReady = !(document.fonts && document.fonts.ready);
+  let arrowFitReady = window.innerWidth <= 900;
+  let arrowGeometryReady = false;
+  let arrowPendingExactRelease = document.documentElement.classList.contains(
+    "harri-research-fit-pending"
+  );
+
+  function hideNavigationArrows(){
+    [desktopTocArrow, mobileTocArrow].forEach((arrow) => {
+      if(!arrow) return;
+      arrow.removeAttribute("data-arrow-ready");
+    });
+  }
+
+  function refreshArrowReadiness(){
+    const canReveal = arrowFontsReady && (window.innerWidth <= 900 || arrowFitReady);
+
+    if(!canReveal){
+      arrowGeometryReady = false;
+      hideNavigationArrows();
+      return;
+    }
+
+    arrowGeometryReady = true;
+    desktopArrowTarget = null;
+    mobileArrowTarget = null;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        updateTextNavigation();
+        positionNavigationArrows();
+      });
+    });
+  }
+
   function currentSectionId(){
     if(!sections.length) return "";
 
@@ -4004,7 +4045,12 @@ min-width:0}
       */
       arrow.style.transition = "none";
       arrow.style.transform = value;
-      arrow.dataset.arrowReady = "true";
+
+      if(arrowGeometryReady){
+        arrow.dataset.arrowReady = "true";
+      }else{
+        arrow.removeAttribute("data-arrow-ready");
+      }
 
       requestAnimationFrame(() => {
         arrow.style.removeProperty("transition");
@@ -4239,13 +4285,86 @@ min-width:0}
   window.addEventListener("harri:desktop-scale", () => {
     desktopArrowTarget = null;
     mobileArrowTarget = null;
-    requestAnimationFrame(() => {
-      updateTextNavigation();
-      positionNavigationArrows();
-    });
+
+    if(window.innerWidth > 900){
+      arrowFitReady = false;
+      arrowGeometryReady = false;
+      hideNavigationArrows();
+    }else{
+      arrowFitReady = true;
+    }
+
+    refreshArrowReadiness();
   });
 
+  window.addEventListener("harri:cv-research-fit", (event) => {
+    if(window.innerWidth <= 900){
+      arrowFitReady = true;
+      refreshArrowReadiness();
+      return;
+    }
+
+    /*
+      The shared scale layer labels its temporary Research fallback fit as
+      exact:false. Keep the arrow hidden through that pass. Only the stored or
+      About-measured exact fit may make it visible.
+    */
+    const isExact = !event.detail || event.detail.exact !== false;
+    arrowFitReady = isExact;
+    if(isExact) arrowPendingExactRelease = false;
+
+    if(!isExact){
+      arrowGeometryReady = false;
+      hideNavigationArrows();
+    }
+
+    refreshArrowReadiness();
+  });
+
+  /*
+    Fail-safe only: if the hidden About probe is blocked, the shared scale
+    layer releases Research with its safe fallback after 1.5 s. In that rare
+    case, reveal the arrow only when that pending state is actually removed.
+    Ignore unrelated html class changes such as research-initializing.
+  */
+  const researchFitClassObserver = new MutationObserver(() => {
+    if(
+      arrowPendingExactRelease &&
+      window.innerWidth > 900 &&
+      !document.documentElement.classList.contains("harri-research-fit-pending")
+    ){
+      arrowPendingExactRelease = false;
+      arrowFitReady = true;
+      refreshArrowReadiness();
+    }
+  });
+  researchFitClassObserver.observe(document.documentElement, {
+    attributes:true,
+    attributeFilter:["class"]
+  });
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(() => {
+      arrowFontsReady = true;
+      refreshArrowReadiness();
+    }).catch(() => {
+      arrowFontsReady = true;
+      refreshArrowReadiness();
+    });
+  }else{
+    arrowFontsReady = true;
+  }
+
   window.addEventListener("resize", () => {
+    if(window.innerWidth > 900){
+      arrowFitReady = false;
+      arrowGeometryReady = false;
+      hideNavigationArrows();
+    }else{
+      arrowFitReady = true;
+      refreshArrowReadiness();
+    }
+
     updateTextNavigation();
     if(
       window.innerWidth <= 900 &&
@@ -4264,6 +4383,7 @@ min-width:0}
 
   updateTextNavigation();
   requestAnimationFrame(positionNavigationArrows);
+  refreshArrowReadiness();
 
   // ------------------------------------------------------------
   // 5) MOBILE PROJECT TEXT NAVIGATION

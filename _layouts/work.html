@@ -26,6 +26,28 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ page.title }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
+
+  {%- comment -%}
+  WORK MEDIA PRELOAD
+  ------------------
+  Start every project preview image (and every video poster) from the document
+  head, before the Work gallery is constructed. This changes only request
+  timing: dimensions, order, quality, scrolling and rendering remain unchanged.
+  {%- endcomment -%}
+  {% if page.gallery %}
+    {% for slide in page.gallery %}
+      {% assign work_preload_src = slide.image %}
+      {% if slide.type == "video" %}{% assign work_preload_src = slide.poster %}{% endif %}
+      {% if work_preload_src and work_preload_src != "" %}
+        {% if work_preload_src contains "://" or work_preload_src contains "data:" %}
+          <link rel="preload" as="image" href="{{ work_preload_src | escape }}">
+        {% else %}
+          <link rel="preload" as="image" href="{{ work_preload_src | relative_url }}">
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
@@ -1839,44 +1861,8 @@ const mediaSlides = (rawGallery || []).map((slide, index) => ({
 const mediaStack = document.getElementById("mediaStack");
 let activeMediaIndex = 0;
 
-/* PERFORMANCE ONLY: keep a small look-ahead window warm while preserving
-   normal lazy loading for media farther down the project. */
-const mediaPreviewPreloaders = new Map();
-function mediaPreviewSrc(slide){
-  return slide ? (slide.type === "video" ? slide.poster : slide.src) : "";
-}
-function warmMediaPreview(index){
-  if(index < 0 || index >= mediaSlides.length || mediaPreviewPreloaders.has(index)) return;
-  const src = mediaPreviewSrc(mediaSlides[index]);
-  if(!src) return;
-  const preloader = new Image();
-  preloader.decoding = "async";
-  preloader.src = src;
-  mediaPreviewPreloaders.set(index, preloader);
-}
-function warmMediaWindow(index, ahead = 3){
-  for(let offset = 0; offset <= ahead; offset++) warmMediaPreview(index + offset);
-}
-
-function installMediaLookahead(){
-  warmMediaWindow(0, 3);
-  if(!("IntersectionObserver" in window)) return;
-
-  const scroller = document.querySelector(".media-column");
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if(!entry.isIntersecting) return;
-      const index = Number(entry.target.dataset.mediaIndex);
-      if(!Number.isNaN(index)) warmMediaWindow(index, 3);
-    });
-  }, {
-    root: scroller || null,
-    rootMargin: "150% 0px 150% 0px",
-    threshold: 0
-  });
-
-  mediaStack.querySelectorAll(".media-item").forEach(item => observer.observe(item));
-}
+/* PERFORMANCE ONLY: project preview assets are preloaded from <head> so
+   they begin fetching before this gallery is constructed. */
 
 function buildMediaStack(){
   mediaStack.innerHTML = "";
@@ -1892,9 +1878,9 @@ function buildMediaStack(){
     const img = document.createElement("img");
     img.alt = slide.alt || "";
     img.decoding = "async";
-    img.loading = index === 0 ? "eager" : "lazy";
+    img.loading = "eager";
     if("fetchPriority" in img){
-      img.fetchPriority = index === 0 ? "high" : "low";
+      img.fetchPriority = index < 2 ? "high" : "auto";
     }
 
     const previewSrc = slide.type === "video" ? slide.poster : slide.src;
@@ -1996,7 +1982,6 @@ function closeLightbox(){
 }
 
 buildMediaStack();
-installMediaLookahead();
 
 document.querySelector(".lightbox-close").addEventListener("click",closeLightbox);
 lightbox.addEventListener("click",e=>{if(e.target===lightbox)closeLightbox()});
