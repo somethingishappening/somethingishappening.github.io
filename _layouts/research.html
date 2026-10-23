@@ -2,6 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <script id="harri-light-page-theme-handoff">
+  (function(){
+    const root = document.documentElement;
+    try{
+      const previousTheme = sessionStorage.getItem("harri-work-theme");
+      const previousPath = sessionStorage.getItem("harri-work-theme-path");
+      let referrerPath = "";
+      if(document.referrer){
+        const referrer = new URL(document.referrer);
+        if(referrer.origin === window.location.origin){
+          referrerPath = referrer.pathname;
+        }
+      }
+      if(previousTheme === "dark" && previousPath && previousPath === referrerPath){
+        root.setAttribute("data-harri-theme-from", "dark");
+      }
+      sessionStorage.setItem("harri-work-theme", "light");
+      sessionStorage.setItem("harri-work-theme-path", window.location.pathname);
+    }catch(e){}
+  })();
+  </script>
+  <style id="harri-light-page-theme-transition">
+    :root{--harri-cross-template-ease:800ms cubic-bezier(.4,0,.2,1);}
+
+    /* Match Work's black/white handoff exactly: animate the shared color
+       variables rather than fading the whole destination page in. */
+    @property --bg{syntax:"<color>";inherits:true;initial-value:#fff;}
+    @property --text{syntax:"<color>";inherits:true;initial-value:#0b0b0b;}
+    @property --line{syntax:"<color>";inherits:true;initial-value:#111;}
+
+    html[data-harri-theme-from="dark"]{
+      --bg:#000;
+      --text:#fff;
+      --line:#fff;
+    }
+    html{
+      transition:
+        --bg var(--harri-cross-template-ease),
+        --text var(--harri-cross-template-ease),
+        --line var(--harri-cross-template-ease),
+        background-color var(--harri-cross-template-ease),
+        color var(--harri-cross-template-ease);
+    }
+    @media (prefers-reduced-motion:reduce){html{transition:none !important;}}
+  </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ page.title }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
   <script>
@@ -2931,6 +2976,35 @@ min-width:0}
   }
 }
 </style>
+
+<script id="harri-light-page-theme-transition-release">
+(function(){
+  const root = document.documentElement;
+  function releaseTheme(){
+    if(!root.hasAttribute("data-harri-theme-from")) return;
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        root.removeAttribute("data-harri-theme-from");
+      });
+    });
+  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", releaseTheme, {once:true});
+  else releaseTheme();
+
+  window.addEventListener("pageshow", function(event){
+    if(!event.persisted) return;
+    try{
+      const previousTheme = sessionStorage.getItem("harri-work-theme");
+      if(previousTheme === "dark"){
+        root.setAttribute("data-harri-theme-from", "dark");
+        sessionStorage.setItem("harri-work-theme", "light");
+        sessionStorage.setItem("harri-work-theme-path", window.location.pathname);
+        releaseTheme();
+      }
+    }catch(e){}
+  });
+})();
+</script>
 
 </head>
 <body class="page-research">
