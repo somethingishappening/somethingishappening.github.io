@@ -339,12 +339,16 @@ button{font:inherit;color:inherit}
   z-index:1;
 }
 
-/* PERFORMANCE: never paint a partially downloaded/decoded project image. */
+/* PERFORMANCE: never paint a partially downloaded/decoded project image.
+   Once decoding is complete, reveal the image with a soft opacity fade only. */
 .media-stack .media-item img{
   visibility:hidden;
+  opacity:0;
+  transition:opacity .35s ease;
 }
 .media-stack .media-item img.media-ready{
   visibility:visible;
+  opacity:1;
 }
 
 /* FULLSCREEN MEDIA */
