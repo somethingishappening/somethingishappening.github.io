@@ -328,6 +328,12 @@ button{font:inherit;color:inherit}
   display:none;
 }
 
+/* Keep the reserved Work media area visually clean while the real image is
+   loading/decoding. The normal frame returns only when loading has finished. */
+.media-item.media-loading{
+  border-color:transparent;
+}
+
 .media-item img{
   cursor:zoom-in;
   position:absolute;
