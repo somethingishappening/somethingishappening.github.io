@@ -2,6 +2,7 @@
 title: Overwhelmed
 nav_order: 4
 work_invert: true
+work_lightbox_background: white
 project_type: Experimental Letter Art
 title_line_1: Overwhelmed
 description: >-
