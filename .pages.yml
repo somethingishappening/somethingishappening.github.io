@@ -311,6 +311,17 @@ content:
       type: boolean
       default: false
       description: Used only with the Work template. Turn this on to invert this project to white text on a black background. Switching directly between light and inverted Work projects eases between the two themes.
+    - name: work_lightbox_background
+      label: Work template — figure lightbox background
+      type: select
+      default: black
+      options:
+        values:
+        - name: black
+          label: Black
+        - name: white
+          label: White
+      description: Used only when the Work template is inverted. Choose whether clicked figures open on a black or white fullscreen lightbox.
     - name: project_type
       label: Work template — project description / type
       type: string
@@ -429,6 +440,17 @@ content:
       type: boolean
       default: false
       description: Turn this on for this project to invert the Work template to white text on a black background. Switching directly between light and inverted Work projects eases between the two themes.
+    - name: work_lightbox_background
+      label: Figure lightbox background
+      type: select
+      default: black
+      options:
+        values:
+        - name: black
+          label: Black
+        - name: white
+          label: White
+      description: When Black background / white text is enabled, choose whether clicked figures open on a black or white fullscreen lightbox.
     - name: project_type
       label: Project description / type
       type: string
@@ -536,6 +558,17 @@ content:
       type: boolean
       default: false
       description: Turn this on for this project to invert the Work template to white text on a black background. Switching directly between light and inverted Work projects eases between the two themes.
+    - name: work_lightbox_background
+      label: Figure lightbox background
+      type: select
+      default: black
+      options:
+        values:
+        - name: black
+          label: Black
+        - name: white
+          label: White
+      description: When Black background / white text is enabled, choose whether clicked figures open on a black or white fullscreen lightbox.
     - name: project_type
       label: Project description / type
       type: string
