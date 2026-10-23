@@ -1,0 +1,1584 @@
+<style id="harri-upper-resolution-layer-v5">
+/*
+  HARRI.LA — UPPER-RESOLUTION LAYER v6.4 (Research column proportion + baseline recovery)
+  ------------------------------------
+  This file is deliberately additive. The existing site remains the source of
+  truth through 1680px wide and on every mobile/tablet breakpoint.
+
+  Reference desktop: 1680 × 900 CSS px.
+
+  Above 1680px:
+  - horizontal grid measurements follow viewport width, so the existing
+    desktop column proportions do not collapse on ultrawide / 4K canvases;
+  - vertical spacing and typography grow from the smaller of width-growth and
+    height-growth, so ultrawide screens do not become vertically oversized;
+  - type/vertical growth is bounded at 2× for extreme future viewports.
+
+  Explicitly untouched:
+  - all <= 1680px behaviour, including 1680 × 1050;
+  - all <= 900px mobile behaviour;
+  - Work media/gallery 18px spacing;
+  - Research 43.5vh hanging line;
+  - Research figure width/fit variables and CMS figure controls;
+  - Research scrolling/navigation logic;
+  - About/Work/Research/Harrilanpuisto content and CMS data.
+*/
+
+@media (min-width:1681px){
+  :root{
+    /*
+      HORIZONTAL SHELL
+      These values are the original 1680px desktop measurements expressed as
+      vw. Therefore 220 / centre / 300 on About, and the 745:660 Work/Research
+      tracks, retain the same horizontal composition as the viewport widens.
+    */
+    --harri-hi-left:13.0952380952vw;      /* 220 / 1680 */
+    --harri-hi-gap:1.6666666667vw;        /* 28 / 1680 */
+    --harri-hi-pad-x:1.0714285714vw;      /* 18 / 1680 */
+    --harri-hi-about-right:17.8571428571vw;/* 300 / 1680 */
+
+    /*
+      VERTICAL + TYPE SCALE
+      Each preferred value is tied to both the 1680px reference width and the
+      900px reference height. min() chooses the limiting dimension. The 2× cap
+      prevents runaway enlargement beyond the requested high-resolution range.
+    */
+    --harri-hi-pad-top-32:clamp(32px,min(1.904762vw,3.555556vh),64px);
+    --harri-hi-pad-bottom-26:clamp(26px,min(1.547619vw,2.888889vh),52px);
+
+    --harri-hi-brand:clamp(27px,min(1.607143vw,3vh),54px);
+    --harri-hi-welcome-height:clamp(148px,min(8.809524vw,16.444444vh),296px);
+    --harri-hi-welcome-type:clamp(28px,min(1.666667vw,3.111111vh),56px);
+    /* The final shared desktop navigation deliberately uses one type size
+       for category labels, project links and Harrilanpuisto: 17px / 18.7px. */
+    --harri-hi-nav-type:clamp(17px,min(1.011905vw,1.888889vh),34px);
+    --harri-hi-nav-line:clamp(18.7px,min(1.113095vw,2.077778vh),37.4px);
+    --harri-hi-link-type:var(--harri-hi-nav-type);
+    --harri-hi-link-line:var(--harri-hi-nav-line);
+    --harri-hi-footer-type:clamp(13px,min(0.77381vw,1.444444vh),26px);
+
+    --harri-hi-project-type:clamp(27px,min(1.607143vw,3vh),54px);
+    --harri-hi-h1:clamp(54px,min(3.214286vw,6vh),108px);
+    --harri-hi-body:clamp(18px,min(1.071429vw,2vh),36px);
+    --harri-hi-toc:clamp(13px,min(0.77381vw,1.444444vh),26px);
+  }
+
+  /* =========================================================
+     SHARED DESKTOP NAVIGATION
+     ========================================================= */
+  body.page-about .brand,
+  body.page-work .brand,
+  body.page-research .brand,
+  body.page-harrilanpuisto .brand{
+    font-size:var(--harri-hi-brand) !important;
+  }
+
+  body.page-work .welcome-zone,
+  body.page-research .welcome-zone,
+  body.page-harrilanpuisto .welcome-zone{
+    flex-basis:var(--harri-hi-welcome-height) !important;
+    height:var(--harri-hi-welcome-height) !important;
+    min-height:var(--harri-hi-welcome-height) !important;
+  }
+
+  body.page-work .welcome,
+  body.page-research .welcome,
+  body.page-harrilanpuisto .welcome{
+    font-size:var(--harri-hi-welcome-type) !important;
+  }
+
+  body.page-about .group-head,
+  body.page-work .group-head,
+  body.page-research .group-head,
+  body.page-harrilanpuisto .group-head,
+  body.page-about .standalone-nav-link,
+  body.page-work .standalone-nav-link,
+  body.page-research .standalone-nav-link,
+  body.page-harrilanpuisto .standalone-nav-link{
+    font-size:var(--harri-hi-nav-type) !important;
+    line-height:var(--harri-hi-nav-line) !important;
+  }
+
+  body.page-about .project-links a,
+  body.page-work .project-links a,
+  body.page-research .project-links a,
+  body.page-harrilanpuisto .project-links a{
+    font-size:var(--harri-hi-nav-type) !important;
+    line-height:var(--harri-hi-nav-line) !important;
+  }
+
+  body.page-about .harrilanpuisto-link{
+    font-size:var(--harri-hi-nav-type) !important;
+    line-height:var(--harri-hi-nav-line) !important;
+  }
+
+  body.page-about .left-footer,
+  body.page-work .left-footer,
+  body.page-research .left-footer,
+  body.page-harrilanpuisto .left-footer{
+    font-size:var(--harri-hi-footer-type) !important;
+  }
+
+  /* =========================================================
+     ABOUT
+     Keep the original 220 / flexible / 300 relationship relative
+     to viewport width rather than letting only the middle track grow.
+     ========================================================= */
+  body.page-about .about-layout{
+    --page-pad-x:var(--harri-hi-pad-x) !important;
+    --page-pad-top:var(--harri-hi-pad-top-32) !important;
+    --page-pad-bottom:clamp(25px,min(1.488095vw,2.777778vh),50px) !important;
+    --left-w:var(--harri-hi-left) !important;
+    --right-w:var(--harri-hi-about-right) !important;
+    --gap:var(--harri-hi-gap) !important;
+  }
+
+  body.page-about .left nav{
+    margin-top:clamp(148px,min(8.809524vw,16.444444vh),296px) !important;
+  }
+
+  body.page-about .greeting-zone{
+    top:clamp(145px,min(8.630952vw,16.111111vh),290px) !important;
+    height:clamp(275px,min(16.369048vw,30.555556vh),550px) !important;
+  }
+
+  body.page-about .about-greeting{
+    font-size:var(--harri-hi-h1) !important;
+  }
+
+  body.page-about .about-copy{
+    font-size:clamp(40px,min(2.380952vw,4.444444vh),80px) !important;
+  }
+
+  /* Preserve the established Mini-CV top alignment. */
+  body.page-about .cv-column{
+    padding-top:0 !important;
+  }
+
+  /* In the chosen baseline CV H2 and running text are both 18px desktop. */
+  body.page-about .cv-section h2,
+  body.page-about .cv-item{
+    font-size:var(--harri-hi-body) !important;
+  }
+
+  body.page-about .cv-section h2{
+    margin-top:0 !important;
+    margin-bottom:clamp(12px,min(0.714286vw,1.333333vh),24px) !important;
+  }
+
+  body.page-about .cv-section{
+    margin-bottom:clamp(26px,min(1.547619vw,2.888889vh),52px) !important;
+  }
+
+  body.page-about .cv-item{
+    margin-bottom:clamp(10px,min(0.595238vw,1.111111vh),20px) !important;
+  }
+
+  /* =========================================================
+     WORK + ARTISTIC + HARRILANPUISTO
+     Horizontal shell scales with viewport width. Centre/right keep
+     the existing 745:660 relationship. Media-stack spacing is not touched.
+     ========================================================= */
+  body.page-work .layout,
+  body.page-harrilanpuisto .layout{
+    grid-template-columns:
+      var(--harri-hi-left)
+      minmax(0,745fr)
+      minmax(0,660fr) !important;
+    gap:var(--harri-hi-gap) !important;
+    padding:
+      var(--harri-hi-pad-top-32)
+      var(--harri-hi-pad-x)
+      var(--harri-hi-pad-bottom-26) !important;
+  }
+
+  body.page-work .left,
+  body.page-harrilanpuisto .left,
+  body.page-work .project-info,
+  body.page-harrilanpuisto .project-info{
+    top:var(--harri-hi-pad-top-32) !important;
+    height:calc(100vh - clamp(58px,min(3.452381vw,6.444444vh),116px)) !important;
+  }
+
+  body.page-work .project-type,
+  body.page-harrilanpuisto .project-type{
+    font-size:var(--harri-hi-project-type) !important;
+    margin-bottom:clamp(24px,min(1.428571vw,2.666667vh),48px) !important;
+  }
+
+  body.page-work .project-info h1,
+  body.page-harrilanpuisto .project-info h1{
+    font-size:var(--harri-hi-h1) !important;
+    max-width:clamp(610px,min(36.309524vw,67.777778vh),1220px) !important;
+  }
+
+  body.page-work .project-description,
+  body.page-harrilanpuisto .project-description{
+    max-width:clamp(660px,min(39.285714vw,73.333333vh),1320px) !important;
+    font-size:var(--harri-hi-body) !important;
+  }
+
+  /* Work and Harrilanpuisto gallery items both keep their baseline
+     natural-aspect-ratio sizing. Do not impose viewport-height minimums:
+     they create large blank gaps between differently proportioned images. */
+
+  /* Deliberately no Work .media-stack gap / media-item margin overrides.
+     The Work template remains on its baseline 18px image spacing. */
+
+  /* =========================================================
+     RESEARCH
+     Keep the existing 745:660 grid and exact 43.5vh hanging line.
+     IMPORTANT: no figure-stage width/max-width/caption-width override here;
+     the baseline fit script and CMS --research-figure-fit-width stay in charge.
+     ========================================================= */
+  body.page-research .layout{
+    grid-template-columns:
+      var(--harri-hi-left)
+      minmax(0,745fr)
+      minmax(0,660fr) !important;
+    gap:var(--harri-hi-gap) !important;
+    padding:
+      var(--harri-hi-pad-top-32)
+      var(--harri-hi-pad-x)
+      var(--harri-hi-pad-bottom-26) !important;
+  }
+
+  body.page-research .project-title{
+    font-size:var(--harri-hi-project-type) !important;
+    margin-bottom:clamp(24px,min(1.428571vw,2.666667vh),48px) !important;
+  }
+
+  body.page-research .paper h1{
+    font-size:var(--harri-hi-h1) !important;
+    max-width:clamp(680px,min(40.47619vw,75.555556vh),1360px) !important;
+    margin-bottom:clamp(18px,min(1.071429vw,2vh),36px) !important;
+  }
+
+  body.page-research .paper h1.chapter-heading{
+    margin-top:clamp(42px,min(2.5vw,4.666667vh),84px) !important;
+  }
+
+  /*
+    The actual Research section H2/H3 in the chosen baseline is 18px, not the
+    older generic 24px .paper h2 rule. Scale that established style only.
+  */
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    font-size:var(--harri-hi-body) !important;
+  }
+
+  body.page-research .paper p,
+  body.page-research .research-copy ul > li{
+    font-size:var(--harri-hi-body) !important;
+    line-height:1.2 !important;
+    max-width:clamp(700px,min(41.666667vw,77.777778vh),1400px) !important;
+  }
+
+  /* The Abstract wrapper used to remain capped at the baseline 700px even
+     while its type and paragraphs scaled up. That made the text block become
+     progressively taller on large/high-resolution screens and caused the
+     first-screen bottom alignment to switch unpredictably. Scale the wrapper
+     and list measure with the exact same ratio as the running text. */
+  body.page-research .research-abstract-copy,
+  body.page-research .research-copy ul{
+    max-width:clamp(700px,min(41.666667vw,77.777778vh),1400px) !important;
+  }
+
+  body.page-research .toc{
+    width:min(clamp(320px,min(19.047619vw,35.555556vh),640px),48%) !important;
+    min-width:clamp(290px,min(17.261905vw,32.222222vh),580px) !important;
+    gap:clamp(34px,min(2.02381vw,3.777778vh),68px) !important;
+    font-size:var(--harri-hi-toc) !important;
+  }
+
+  /*
+    Intentionally no .figure-stage positional/size rule here.
+    `top:43.5vh`, the restored left/right figure rail, the CMS widthPercent,
+    and --research-figure-fit-width all remain exactly baseline-controlled.
+  */
+}
+</style>
+
+
+<style id="harri-upper-resolution-layer-v6-5k-continuation">
+/*
+  HARRI.LA — 5K CONTINUATION FROM THE WORKING 4K STATE
+  -----------------------------------------------------
+  4096×2304 is treated as the trusted large-screen state.
+  Above that size, the vertical/type system continues from its 2× 4K cap
+  at exactly the same rate as the viewport grows. Therefore 5120×2880 is
+  a clean 1.25× continuation of 4096×2304 rather than jumping from 2× to
+  ~3.05×.
+
+  Horizontal tracks already scale continuously with vw in the main layer.
+  This tier only continues the capped type/vertical rhythm and the small
+  shared navigation measurements that otherwise remained frozen.
+
+  Nothing at 4096×2304 or below is changed.
+*/
+@media (min-width:4097px) and (min-height:2305px){
+  :root{
+    /* 4K capped values, continued proportionally above 4096×2304. */
+    --harri-hi-pad-top-32:min(1.5625vw,2.777778vh);             /* 64 @ 4096 */
+    --harri-hi-pad-bottom-26:min(1.269531vw,2.256944vh);        /* 52 */
+
+    --harri-hi-brand:min(1.318359vw,2.34375vh);                 /* 54 */
+    --harri-hi-welcome-height:min(7.226563vw,12.847222vh);      /* 296 */
+    --harri-hi-welcome-type:min(1.367188vw,2.430556vh);         /* 56 */
+    --harri-hi-nav-type:min(.830078vw,1.475694vh);              /* 34 */
+    --harri-hi-nav-line:min(.913086vw,1.623264vh);              /* 37.4 */
+    --harri-hi-link-type:var(--harri-hi-nav-type);
+    --harri-hi-link-line:var(--harri-hi-nav-line);
+    --harri-hi-footer-type:min(.634766vw,1.128472vh);           /* 26 */
+
+    --harri-hi-project-type:min(1.318359vw,2.34375vh);          /* 54 */
+    --harri-hi-h1:min(2.636719vw,4.6875vh);                    /* 108 */
+    --harri-hi-body:min(.878906vw,1.5625vh);                   /* 36 */
+    --harri-hi-toc:min(.634766vw,1.128472vh);                  /* 26 */
+  }
+
+  /* Shared navigation micro-rhythm: 5120 becomes exactly 1.25× the
+     measurements seen at the working 4096 state. */
+  body.page-about .nav-group,
+  body.page-work .nav-group,
+  body.page-research .nav-group,
+  body.page-harrilanpuisto .nav-group{
+    margin-bottom:min(.152588vw,.271267vh) !important;         /* 5 @ 4096 */
+  }
+
+  body.page-work .nav-group:has(.group-head[aria-expanded="true"]),
+  body.page-research .nav-group:has(.group-head[aria-expanded="true"]),
+  body.page-harrilanpuisto .nav-group:has(.group-head[aria-expanded="true"]){
+    margin-bottom:min(.549316vw,.976563vh) !important;         /* 18 */
+  }
+
+  body.page-about .group-head,
+  body.page-work .group-head,
+  body.page-research .group-head,
+  body.page-harrilanpuisto .group-head{
+    gap:min(.366211vw,.651042vh) !important;                   /* 12 */
+  }
+
+  body.page-about .group-toggle,
+  body.page-work .group-toggle,
+  body.page-research .group-toggle,
+  body.page-harrilanpuisto .group-toggle{
+    width:min(.671387vw,1.193576vh) !important;                /* 22 */
+    flex-basis:min(.671387vw,1.193576vh) !important;
+    font-size:min(.610352vw,1.085069vh) !important;            /* 20 */
+  }
+
+  body.page-about .project-links.open,
+  body.page-work .project-links.open,
+  body.page-research .project-links.open,
+  body.page-harrilanpuisto .project-links.open{
+    margin-top:min(.213623vw,.379774vh) !important;            /* 7 */
+  }
+
+  body.page-about .project-links-inner,
+  body.page-work .project-links-inner,
+  body.page-research .project-links-inner,
+  body.page-harrilanpuisto .project-links-inner{
+    gap:min(.091553vw,.16276vh) !important;                    /* 3 */
+    padding-bottom:min(.396729vw,.705295vh) !important;        /* 13 */
+  }
+
+  /* ABOUT — continue the exact 4K state rather than uncapping to 3.05×. */
+  body.page-about .about-layout{
+    --page-pad-bottom:min(1.220703vw,2.170139vh) !important;    /* 50 @ 4096 */
+  }
+  body.page-about .left nav{
+    margin-top:min(7.226563vw,12.847222vh) !important;         /* 296 */
+  }
+  body.page-about .greeting-zone{
+    top:min(7.080078vw,12.586806vh) !important;                /* 290 */
+    height:min(13.427734vw,23.871528vh) !important;            /* 550 */
+  }
+  body.page-about .about-copy{
+    font-size:min(1.953125vw,3.472222vh) !important;           /* 80 */
+  }
+  body.page-about .cv-column{
+    padding-bottom:min(.549316vw,.976563vh) !important;        /* 18 */
+  }
+  body.page-about .cv-section h2{
+    margin-bottom:min(.585938vw,1.041667vh) !important;        /* 24 */
+  }
+  body.page-about .cv-section{
+    margin-bottom:min(1.269531vw,2.256944vh) !important;       /* 52 */
+  }
+  body.page-about .cv-item{
+    margin-bottom:min(.488281vw,.868056vh) !important;         /* 20 */
+  }
+  body.page-about .cv-surprise{
+    margin-top:min(.830078vw,1.475694vh) !important;           /* 34 */
+  }
+
+  /* WORK + HARRILANPUISTO — continue the working 4K vertical/type rhythm. */
+  body.page-work .left,
+  body.page-harrilanpuisto .left,
+  body.page-work .project-info,
+  body.page-harrilanpuisto .project-info{
+    height:calc(100vh - min(2.832031vw,5.034722vh)) !important; /* 116 */
+  }
+  body.page-work .project-type,
+  body.page-harrilanpuisto .project-type{
+    margin-bottom:min(1.171875vw,2.083333vh) !important;       /* 48 */
+  }
+  body.page-work .project-info h1,
+  body.page-harrilanpuisto .project-info h1{
+    max-width:min(29.785156vw,52.951389vh) !important;         /* 1220 */
+  }
+  body.page-work .project-description,
+  body.page-harrilanpuisto .project-description{
+    max-width:min(32.226563vw,57.291667vh) !important;         /* 1320 */
+  }
+  /* Same rule at 5K: both Work and Harrilanpuisto media items stay
+     natural-height. */
+
+  /* RESEARCH — same continuation; hanging line and CMS figure sizing untouched. */
+  body.page-research .project-title{
+    margin-bottom:min(1.171875vw,2.083333vh) !important;       /* 48 */
+  }
+  body.page-research .paper h1{
+    max-width:min(33.203125vw,59.027778vh) !important;         /* 1360 */
+    margin-bottom:min(.878906vw,1.5625vh) !important;          /* 36 */
+  }
+  body.page-research .paper h1.chapter-heading{
+    margin-top:min(2.050781vw,3.645833vh) !important;          /* 84 */
+  }
+  body.page-research .paper p,
+  body.page-research .research-copy ul > li{
+    max-width:min(34.179688vw,60.763889vh) !important;         /* 1400 */
+  }
+  body.page-research .research-abstract-copy,
+  body.page-research .research-copy ul{
+    max-width:min(34.179688vw,60.763889vh) !important;         /* same proportional measure */
+  }
+  body.page-research .toc{
+    width:min(min(15.625vw,27.777778vh),48%) !important;       /* 640 */
+    min-width:min(14.160156vw,25.173611vh) !important;         /* 580 */
+    gap:min(1.660156vw,2.951389vh) !important;                 /* 68 */
+  }
+
+  /* Intentionally no Research .figure-stage rule: 43.5vh and CMS fit remain baseline-owned. */
+}
+</style>
+
+<style id="harri-desktop-balance-v6-2-work-only">
+/*
+  RESTORED DESKTOP BEHAVIOUR
+  --------------------------
+  The previously accepted upper-resolution system deliberately leaves
+  ALL desktop behaviour through 1680px to the original page layouts.
+
+  The old v6.2 901–1680 scaling block has been removed completely.
+  This means 1280 / 1440 / 1512 / 1680 return to their original layout,
+  typography, CV widths, menu sizes and vertical rhythm.
+
+  Keep only the independent >1680 Work copy-width correction.
+*/
+@media (min-width:1681px){
+  body.page-work .project-description{
+    width:100% !important;
+    max-width:100% !important;
+  }
+}
+</style>
+
+<style id="harri-research-column-proportion-v6-4">
+/*
+  RESEARCH TEXT COLUMN — preserve the original column relationship
+  ---------------------------------------------------------------
+  At the 1680px reference, the 700px Research measure occupies about 96.5%
+  of the middle paper column. The previous high-resolution rules preserved a
+  constant em measure instead, which made the text progressively too narrow
+  relative to the actual middle column on ultrawide / 4K / 5K screens.
+
+  Keep the entire Research copy wrapper at the original 96.5% paper-column
+  proportion. Child paragraphs/lists then use the wrapper's full width.
+  This reduces the accidental extra wrapping that made the Abstract too tall
+  and lets the existing exact footer-baseline script align its last line again.
+
+  <=1680px and mobile are intentionally untouched.
+*/
+@media (min-width:1681px){
+  body.page-research .research-copy{
+    width:96.5% !important;
+    max-width:96.5% !important;
+  }
+
+  body.page-research .research-copy > p,
+  body.page-research .research-copy > ul,
+  body.page-research .research-copy ul,
+  body.page-research .research-copy ul > li{
+    max-width:100% !important;
+  }
+}
+</style>
+
+
+<style id="harri-research-lower-desktop-type-v6-5">
+/*
+  RESEARCH LOWER-DESKTOP TYPE CONTINUITY
+  --------------------------------------
+  The v6.2 desktop-balance layer intentionally scales desktop typography from
+  the 1680px reference, but --harri-lo-body had a 13px floor. That floor makes
+  the Research running text stop shrinking below ~1213px and therefore look
+  relatively oversized at 1024px. Research H2/H3 are body-sized by design, so
+  they follow the same continuous scale here. Mobile (<=900px) is untouched.
+*/
+@media (min-width:901px) and (max-width:1680px){
+  body.page-research .paper p,
+  body.page-research .research-copy ul > li,
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    font-size:1.0714285714vw !important; /* 18px at the 1680px reference */
+  }
+
+  body.page-research .paper p,
+  body.page-research .research-copy ul > li{
+    line-height:1.2 !important;
+  }
+}
+</style>
+
+
+<style id="harri-research-desktop-hierarchy-lock-v6-14">
+/*
+  RESEARCH DESKTOP TYPOGRAPHIC HIERARCHY LOCK
+  -------------------------------------------
+  Keep the hierarchy identical at every desktop resolution:
+
+  running text = reference size
+  H2           = same size, bold
+  H3           = same size, regular + underline
+
+  The previous fixed 26px / 12px heading margins became proportionally
+  smaller as the high-resolution layer enlarged the type. Express those
+  distances in em so the visual hierarchy stays identical while scaling.
+
+  Baseline reference:
+    26 / 18 = 1.444444em top
+    12 / 18 = 0.666667em bottom
+
+  Mobile remains untouched.
+*/
+@media (min-width:901px){
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    margin-top:1.444444em !important;
+    margin-bottom:.666667em !important;
+    letter-spacing:0 !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2{
+    font-weight:700 !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    font-weight:400 !important;
+    text-decoration:underline !important;
+    text-decoration-thickness:1px !important;
+    text-underline-offset:2px !important;
+  }
+}
+</style>
+
+
+<style id="harri-harrilanpuisto-natural-media-height-v6-15">
+/*
+  HARRILANPUISTO — NATURAL MEDIA HEIGHT
+  The gallery's own aspect-ratio logic determines each media item's height.
+  This preserves equal visible gutters and prevents large blank bands.
+*/
+@media (min-width:901px){
+  body.page-harrilanpuisto .harrilanpuisto-dump .media-item{
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+  }
+}
+</style>
+
+
+<style id="harri-unified-desktop-scale-v7">
+/*
+  HARRI.LA — UNIFIED DESKTOP SCALE v7
+  -----------------------------------
+  One reference composition: 1680 × 900.
+
+  All desktop typography and the main structural shell use the SAME scale.
+  This prevents About, Work, Research and Harrilanpuisto from drifting apart
+  at 1280 / 1366 / 1440 / 1512 / 1680 / 1728 / 1920 / 4K / 5K.
+
+  4096 × 2304 remains the established 2× checkpoint.
+  5120 × 2880 continues from it at 2.5× rather than jumping to ~3.05×.
+*/
+:root{
+  --harri-u-pad-x:18px;
+  --harri-u-pad-top:32px;
+  --harri-u-pad-bottom:26px;
+  --harri-u-about-pad-bottom:25px;
+  --harri-u-left:220px;
+  --harri-u-about-right:300px;
+  --harri-u-gap:28px;
+
+  --harri-u-brand:27px;
+  --harri-u-welcome-height:148px;
+  --harri-u-welcome-type:28px;
+  --harri-u-nav:17px;
+  --harri-u-nav-line:18.7px;
+  --harri-u-toggle:20px;
+  --harri-u-toggle-width:22px;
+  --harri-u-footer:13px;
+
+  --harri-u-project-type:27px;
+  --harri-u-h1:54px;
+  --harri-u-chapter:24px;
+  --harri-u-body:18px;
+  --harri-u-toc:13px;
+  --harri-u-caption:12px;
+
+  --harri-u-about-greeting:54px;
+  --harri-u-about-bio:40px;
+  --harri-cv-research-fit:1;
+  --harri-u-about-nav-top:148px;
+  --harri-u-about-greeting-top:145px;
+  --harri-u-about-greeting-height:275px;
+
+  --harri-u-space-3:3px;
+  --harri-u-space-5:5px;
+  --harri-u-space-8:8px;
+  --harri-u-space-10:10px;
+  --harri-u-space-12:12px;
+  --harri-u-space-13:13px;
+  --harri-u-space-14:14px;
+  --harri-u-space-18:18px;
+  --harri-u-space-24:24px;
+  --harri-u-space-26:26px;
+  --harri-u-space-34:34px;
+
+  --harri-u-work-title-max:610px;
+  --harri-u-research-title-max:680px;
+  --harri-u-copy-max:700px;
+  --harri-u-work-copy-max:660px;
+}
+
+/* DESKTOP ONLY. Mobile keeps the existing dedicated mobile design. */
+@media (min-width:901px){
+
+  /* ---------- shared page shell ---------- */
+  body.page-about .about-layout{
+    --page-pad-x:var(--harri-u-pad-x) !important;
+    --page-pad-top:var(--harri-u-pad-top) !important;
+    --page-pad-bottom:var(--harri-u-about-pad-bottom) !important;
+    --left-w:var(--harri-u-left) !important;
+    --right-w:var(--harri-u-about-right) !important;
+    --gap:var(--harri-u-gap) !important;
+  }
+
+  body.page-work .layout,
+  body.page-research .layout,
+  body.page-harrilanpuisto .layout{
+    grid-template-columns:
+      var(--harri-u-left)
+      minmax(0,745fr)
+      minmax(0,660fr) !important;
+    gap:var(--harri-u-gap) !important;
+    padding:
+      var(--harri-u-pad-top)
+      var(--harri-u-pad-x)
+      var(--harri-u-pad-bottom) !important;
+  }
+
+  /* ---------- shared navigation ---------- */
+  body.page-about .brand,
+  body.page-work .brand,
+  body.page-research .brand,
+  body.page-harrilanpuisto .brand{
+    font-size:var(--harri-u-brand) !important;
+  }
+
+  body.page-work .welcome-zone,
+  body.page-research .welcome-zone,
+  body.page-harrilanpuisto .welcome-zone{
+    flex-basis:var(--harri-u-welcome-height) !important;
+    height:var(--harri-u-welcome-height) !important;
+    min-height:var(--harri-u-welcome-height) !important;
+  }
+
+  body.page-work .welcome,
+  body.page-research .welcome,
+  body.page-harrilanpuisto .welcome{
+    font-size:var(--harri-u-welcome-type) !important;
+  }
+
+  body.page-about .group-head,
+  body.page-work .group-head,
+  body.page-research .group-head,
+  body.page-harrilanpuisto .group-head,
+  body.page-about .project-links a,
+  body.page-work .project-links a,
+  body.page-research .project-links a,
+  body.page-harrilanpuisto .project-links a,
+  body.page-about .harrilanpuisto-link,
+  body.page-about .standalone-nav-link,
+  body.page-work .standalone-nav-link,
+  body.page-research .standalone-nav-link,
+  body.page-harrilanpuisto .standalone-nav-link{
+    font-size:var(--harri-u-nav) !important;
+    line-height:var(--harri-u-nav-line) !important;
+  }
+
+  body.page-about .group-toggle,
+  body.page-work .group-toggle,
+  body.page-research .group-toggle,
+  body.page-harrilanpuisto .group-toggle{
+    width:var(--harri-u-toggle-width) !important;
+    flex-basis:var(--harri-u-toggle-width) !important;
+    font-size:var(--harri-u-toggle) !important;
+    line-height:var(--harri-u-nav-line) !important;
+  }
+
+  body.page-about .left-footer,
+  body.page-work .left-footer,
+  body.page-research .left-footer,
+  body.page-harrilanpuisto .left-footer{
+    font-size:var(--harri-u-footer) !important;
+    line-height:1.15 !important;
+  }
+
+  body.page-about .nav-group,
+  body.page-work .nav-group,
+  body.page-research .nav-group,
+  body.page-harrilanpuisto .nav-group{
+    margin-bottom:var(--harri-u-space-5) !important;
+  }
+
+  body.page-about .project-links.open,
+  body.page-work .project-links:not(.collapsed),
+  body.page-research .project-links:not(.collapsed),
+  body.page-harrilanpuisto .project-links:not(.collapsed){
+    margin-top:var(--harri-u-space-8) !important;
+  }
+
+  body.page-about .project-links-inner,
+  body.page-work .project-links-inner,
+  body.page-research .project-links-inner,
+  body.page-harrilanpuisto .project-links-inner{
+    gap:var(--harri-u-space-3) !important;
+    padding-bottom:var(--harri-u-space-13) !important;
+  }
+
+  /* ---------- About ---------- */
+  body.page-about .left nav{
+    margin-top:var(--harri-u-about-nav-top) !important;
+  }
+
+  body.page-about .greeting-zone{
+    top:var(--harri-u-about-greeting-top) !important;
+    height:var(--harri-u-about-greeting-height) !important;
+  }
+
+  body.page-about .about-greeting{
+    font-size:var(--harri-u-about-greeting) !important;
+  }
+
+  body.page-about .about-copy{
+    font-size:var(--harri-u-about-bio) !important;
+    line-height:1.18 !important;
+  }
+
+  body.page-about .cv-column{
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+  }
+
+  body.page-about .cv-section h2,
+  body.page-about .cv-item{
+    font-size:var(--harri-u-body) !important;
+  }
+
+  body.page-about .cv-section h2{
+    line-height:1.15 !important;
+    margin:0 0 var(--harri-u-space-12) !important;
+  }
+
+  body.page-about .cv-item{
+    line-height:1.2 !important;
+    margin-bottom:var(--harri-u-space-10) !important;
+  }
+
+  body.page-about .cv-section{
+    margin-bottom:var(--harri-u-space-26) !important;
+  }
+
+  body.page-about .cv-section:last-of-type{
+    margin-bottom:0 !important;
+  }
+
+  body.page-about .cv-surprise{
+    margin-top:var(--harri-u-space-34) !important;
+  }
+
+  /* ---------- Work + Harrilanpuisto ---------- */
+  /*
+    Work typography follows the Research hierarchy at every desktop
+    resolution, including the fitted Mini-CV/Research multiplier.
+    Work layout/media geometry remains independent and unchanged.
+  */
+  body.page-work .project-type{
+    font-size:var(--harri-fit-project-type,var(--harri-u-project-type)) !important;
+    line-height:1 !important;
+    margin-bottom:var(--harri-u-space-24) !important;
+  }
+
+  body.page-work .project-info h1{
+    font-size:var(--harri-fit-h1,var(--harri-u-h1)) !important;
+    line-height:.95 !important;
+    max-width:var(--harri-u-work-title-max) !important;
+  }
+
+  body.page-work .project-description{
+    font-size:var(--harri-fit-body,var(--harri-u-body)) !important;
+    line-height:1.2 !important;
+    max-width:var(--harri-u-work-copy-max) !important;
+  }
+
+  body.page-work .project-description p,
+  body.page-work .project-description li,
+  body.page-work .project-description h2,
+  body.page-work .project-description h3{
+    font-size:inherit !important;
+    line-height:inherit !important;
+  }
+
+  /* Harrilanpuisto stays exactly on its existing typography rules. */
+  body.page-harrilanpuisto .project-type{
+    font-size:var(--harri-u-project-type) !important;
+    margin-bottom:var(--harri-u-space-24) !important;
+  }
+
+  body.page-harrilanpuisto .project-info h1{
+    font-size:var(--harri-u-h1) !important;
+    max-width:var(--harri-u-work-title-max) !important;
+  }
+
+  body.page-harrilanpuisto .project-description{
+    font-size:var(--harri-u-body) !important;
+    max-width:var(--harri-u-work-copy-max) !important;
+  }
+
+  /* ---------- Research ---------- */
+  body.page-research .project-title{
+    font-size:var(--harri-u-project-type) !important;
+    margin-bottom:var(--harri-u-space-24) !important;
+  }
+
+  body.page-research .paper h1{
+    font-size:var(--harri-u-h1) !important;
+    max-width:var(--harri-u-research-title-max) !important;
+    margin-bottom:var(--harri-u-space-18) !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h1.chapter-heading{
+    font-size:var(--harri-u-chapter) !important;
+    line-height:1.05 !important;
+    margin:
+      var(--harri-u-space-26)
+      0
+      var(--harri-u-space-12) !important;
+    max-width:var(--harri-u-copy-max) !important;
+  }
+
+  body.page-research .paper p,
+  body.page-research .research-abstract-copy,
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3,
+  body.page-research .paper ul,
+  body.page-research .paper ol{
+    font-size:var(--harri-u-body) !important;
+  }
+
+  body.page-research .paper p,
+  body.page-research .research-abstract-copy{
+    line-height:1.2 !important;
+    max-width:var(--harri-u-copy-max) !important;
+  }
+
+  body.page-research .paper section:not(#abstract) > h2,
+  body.page-research .paper .research-copy h2,
+  body.page-research .paper section:not(#abstract) > h3,
+  body.page-research .paper .research-copy h3{
+    line-height:1.2 !important;
+    margin:
+      var(--harri-u-space-26)
+      0
+      var(--harri-u-space-12) !important;
+  }
+
+  body.page-research .toc,
+  body.page-research .toc a{
+    font-size:var(--harri-u-toc) !important;
+  }
+
+  body.page-research .figure-caption{
+    font-size:var(--harri-u-caption) !important;
+  }
+}
+</style>
+
+<style id="harri-research-direct-fit-first-paint-v1">
+/*
+  Direct desktop Research entry only:
+  keep Research invisible until the exact About/CV fit for this viewport has
+  been applied. This does not alter any scale, breakpoint, size or layout rule.
+*/
+html.harri-research-fit-pending body.page-research{
+  visibility:hidden !important;
+}
+</style>
+
+<script id="harri-research-direct-fit-first-paint-preflight-v1">
+(() => {
+  if(window.innerWidth <= 900) return;
+  if(!/^\/research\//.test(window.location.pathname)) return;
+
+  const key = [
+    "harri-cv-research-fit",
+    Math.round(window.innerWidth),
+    Math.round(window.innerHeight)
+  ].join(":");
+
+  try{
+    const stored = parseFloat(sessionStorage.getItem(key) || "");
+    if(Number.isFinite(stored) && stored >= 1) return;
+  }catch(e){}
+
+  document.documentElement.classList.add("harri-research-fit-pending");
+})();
+</script>
+
+<script id="harri-unified-desktop-scale-script-v7">
+(function(){
+  "use strict";
+
+  const BASE_W = 1680;
+  const BASE_H = 900;
+  const FOUR_K_W = 4096;
+  const FOUR_K_H = 2304;
+
+  const base = {
+    "pad-x":18,
+    "pad-top":32,
+    "pad-bottom":26,
+    "about-pad-bottom":25,
+    "left":220,
+    "about-right":300,
+    "gap":28,
+
+    "brand":27,
+    "welcome-height":148,
+    "welcome-type":28,
+    "nav":17,
+    "nav-line":18.7,
+    "toggle":20,
+    "toggle-width":22,
+    "footer":13,
+
+    "project-type":27,
+    "h1":54,
+    "chapter":24,
+    "body":18,
+    "toc":13,
+    "caption":12,
+
+    "about-greeting":54,
+    "about-bio":40,
+    "about-nav-top":148,
+    "about-greeting-top":145,
+    "about-greeting-height":275,
+
+    "space-3":3,
+    "space-5":5,
+    "space-8":8,
+    "space-10":10,
+    "space-12":12,
+    "space-13":13,
+    "space-14":14,
+    "space-18":18,
+    "space-24":24,
+    "space-26":26,
+    "space-34":34,
+
+    "work-title-max":610,
+    "research-title-max":680,
+    "copy-max":700,
+    "work-copy-max":660
+  };
+
+  let raf = 0;
+
+  function desktopScale(){
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    if(w <= 900) return 1;
+
+    /*
+      The reference shrinks uniformly below 1680×900.
+      Growth is capped at the established 2× 4K checkpoint.
+      Beyond the checkpoint the old 4096 -> 5120 continuation is preserved.
+    */
+    if(w > FOUR_K_W && h > FOUR_K_H){
+      return 2 * Math.min(w / FOUR_K_W, h / FOUR_K_H);
+    }
+
+    return Math.min(2, Math.min(w / BASE_W, h / BASE_H));
+  }
+
+  function viewportFitKey(){
+    return [
+      "harri-cv-research-fit",
+      Math.round(window.innerWidth),
+      Math.round(window.innerHeight)
+    ].join(":");
+  }
+
+  function fallbackCvResearchFit(){
+    /*
+      Keep the established 1× fallback while a direct Research entry obtains
+      the exact About Mini-CV fit for this viewport. The site's responsive
+      scale itself is never changed by this fallback.
+    */
+    return 1;
+  }
+
+  function isResearchPage(){
+    return !!(
+      document.body &&
+      document.body.classList.contains("page-research")
+    );
+  }
+
+
+  function revealResearchAfterExactFit(){
+    document.documentElement.classList.remove(
+      "harri-research-fit-pending"
+    );
+  }
+
+  let researchFitProbe = null;
+  let researchFitProbeKey = "";
+  let researchFitProbeToken = 0;
+
+  function removeResearchFitProbe(){
+    if(researchFitProbe){
+      researchFitProbe.remove();
+      researchFitProbe = null;
+    }
+    researchFitProbeKey = "";
+  }
+
+  function requestExactResearchFitFromAbout(){
+    if(
+      window.innerWidth <= 900 ||
+      !document.body ||
+      !isResearchPage() ||
+      readStoredCvResearchFit() !== null
+    ){
+      return;
+    }
+
+    const key = viewportFitKey();
+
+    if(
+      researchFitProbe &&
+      researchFitProbeKey === key
+    ){
+      return;
+    }
+
+    removeResearchFitProbe();
+
+    const token = ++researchFitProbeToken;
+    const frame = document.createElement("iframe");
+
+    researchFitProbe = frame;
+    researchFitProbeKey = key;
+
+    frame.setAttribute("aria-hidden", "true");
+    frame.setAttribute("tabindex", "-1");
+    frame.setAttribute("title", "");
+    frame.style.cssText = [
+      "position:fixed",
+      "left:-200vw",
+      "top:0",
+      "width:100vw",
+      "height:100vh",
+      "border:0",
+      "margin:0",
+      "padding:0",
+      "opacity:0",
+      "visibility:hidden",
+      "pointer-events:none",
+      "z-index:-1"
+    ].join(";");
+
+    frame.addEventListener("load", async ()=>{
+      try{
+        const childWindow = frame.contentWindow;
+        const childDocument = frame.contentDocument;
+
+        if(!childWindow || !childDocument) return;
+
+        if(childDocument.fonts && childDocument.fonts.ready){
+          try{
+            await childDocument.fonts.ready;
+          }catch(e){}
+        }
+
+        /*
+          About schedules its exact Mini-CV measurement on animation frames
+          and again after fonts/load. Give those existing callbacks time to
+          settle, then read the value they already computed.
+        */
+        await new Promise((resolve)=>{
+          childWindow.requestAnimationFrame(()=>{
+            childWindow.requestAnimationFrame(resolve);
+          });
+        });
+
+        await new Promise((resolve)=>setTimeout(resolve, 40));
+
+        if(
+          token !== researchFitProbeToken ||
+          viewportFitKey() !== key
+        ){
+          return;
+        }
+
+        let fit = null;
+
+        try{
+          const stored = parseFloat(
+            childWindow.sessionStorage.getItem(key) || ""
+          );
+
+          if(Number.isFinite(stored) && stored >= 1){
+            fit = stored;
+          }
+        }catch(e){}
+
+        if(fit === null){
+          const cssFit = parseFloat(
+            childDocument.documentElement.style.getPropertyValue(
+              "--harri-cv-research-fit"
+            ) || ""
+          );
+
+          if(Number.isFinite(cssFit) && cssFit >= 1){
+            fit = cssFit;
+          }
+        }
+
+        if(fit !== null){
+          writeCvResearchFit(fit);
+          revealResearchAfterExactFit();
+        }
+      }catch(e){
+        /* Same-origin About should be readable; keep the existing 1× fallback
+           if a browser/privacy setting prevents the probe. */
+        revealResearchAfterExactFit();
+      }finally{
+        if(token === researchFitProbeToken){
+          removeResearchFitProbe();
+        }
+      }
+    }, {once:true});
+
+    frame.addEventListener("error", ()=>{
+      if(token !== researchFitProbeToken) return;
+      revealResearchAfterExactFit();
+      removeResearchFitProbe();
+    }, {once:true});
+
+    /* Fail-safe only: never leave Research hidden if the probe is blocked. */
+    window.setTimeout(()=>{
+      if(
+        token === researchFitProbeToken &&
+        document.documentElement.classList.contains(
+          "harri-research-fit-pending"
+        )
+      ){
+        revealResearchAfterExactFit();
+        removeResearchFitProbe();
+      }
+    }, 1500);
+
+    frame.src = "/about/?harri-fit-probe=1";
+    document.body.appendChild(frame);
+  }
+
+  function readStoredCvResearchFit(){
+    try{
+      const value = parseFloat(
+        sessionStorage.getItem(viewportFitKey()) || ""
+      );
+
+      if(Number.isFinite(value) && value >= 1){
+        return value;
+      }
+    }catch(e){}
+
+    return null;
+  }
+
+  const cvResearchFitKeys = [
+    "project-type",
+    "h1",
+    "chapter",
+    "body",
+    "toc",
+    "caption",
+    "space-12",
+    "space-14",
+    "space-18",
+    "space-24",
+    "space-26"
+  ];
+
+  function applyCvResearchFitVars(value){
+    const fit = Math.max(1, Number(value) || 1);
+    const root = document.documentElement;
+    const siteScale =
+      parseFloat(root.style.getPropertyValue("--harri-site-scale")) ||
+      desktopScale();
+
+    root.style.setProperty(
+      "--harri-cv-research-fit",
+      fit.toFixed(5)
+    );
+
+    cvResearchFitKeys.forEach((key)=>{
+      const value = base[key];
+      if(typeof value !== "number") return;
+
+      root.style.setProperty(
+        "--harri-fit-" + key,
+        (value * siteScale * fit).toFixed(4) + "px"
+      );
+    });
+
+    return fit;
+  }
+
+  function clearCvResearchFitVars(){
+    const root = document.documentElement;
+    root.style.removeProperty("--harri-cv-research-fit");
+
+    cvResearchFitKeys.forEach((key)=>{
+      root.style.removeProperty("--harri-fit-" + key);
+    });
+  }
+
+  function writeCvResearchFit(value, isExact = true){
+    const fit = applyCvResearchFitVars(value);
+
+    try{
+      sessionStorage.setItem(
+        viewportFitKey(),
+        fit.toFixed(5)
+      );
+    }catch(e){}
+
+    window.dispatchEvent(
+      new CustomEvent(
+        "harri:cv-research-fit",
+        {detail:{fit, exact:isExact}}
+      )
+    );
+
+    return fit;
+  }
+
+  function visibleCvSections(){
+    const cvColumn = document.querySelector(".cv-column");
+    if(!cvColumn) return [];
+
+    return Array.from(
+      cvColumn.querySelectorAll(".cv-section")
+    ).filter((section)=>{
+      return getComputedStyle(section).display !== "none";
+    });
+  }
+
+  function miniCvVisibleBottom(cvColumn, sections){
+    if(!cvColumn || !sections.length) return 0;
+
+    const columnRect = cvColumn.getBoundingClientRect();
+    const lastRect =
+      sections[sections.length - 1].getBoundingClientRect();
+
+    /*
+      Add scrollTop so this remains a content-space measurement even if the
+      visitor has already moved the CV before a resize event.
+    */
+    return (
+      lastRect.bottom -
+      columnRect.top +
+      cvColumn.scrollTop
+    );
+  }
+
+  function measureAboutCvResearchFit(){
+    if(
+      window.innerWidth <= 900 ||
+      !document.body ||
+      !document.body.classList.contains("page-about")
+    ){
+      return null;
+    }
+
+    const cvColumn = document.querySelector(".cv-column");
+    const sections = visibleCvSections();
+
+    if(!cvColumn || !sections.length) return null;
+
+    const originalScroll = cvColumn.scrollTop;
+
+    /*
+      Always start from the established responsive size. Only grow if the
+      final visible CV section leaves real unused height below it.
+    */
+    applyCvResearchFitVars(1);
+    void cvColumn.offsetHeight;
+
+    const target = cvColumn.clientHeight;
+    let naturalBottom = miniCvVisibleBottom(
+      cvColumn,
+      sections
+    );
+
+    if(naturalBottom >= target - 0.75){
+      cvColumn.scrollTop = originalScroll;
+      return writeCvResearchFit(1);
+    }
+
+    let low = 1;
+    let high = 1.08;
+
+    /*
+      Expand the search range until the CV reaches/passes the bottom.
+      4× is only a safety ceiling; normal responsive resolutions settle
+      well below it.
+    */
+    while(high < 4){
+      applyCvResearchFitVars(high);
+      void cvColumn.offsetHeight;
+
+      if(
+        miniCvVisibleBottom(cvColumn, sections) >=
+        target - 0.75
+      ){
+        break;
+      }
+
+      low = high;
+      high *= 1.12;
+    }
+
+    high = Math.min(high, 4);
+
+    for(let i=0;i<18;i+=1){
+      const mid = (low + high) / 2;
+
+      applyCvResearchFitVars(mid);
+      void cvColumn.offsetHeight;
+
+      if(
+        miniCvVisibleBottom(cvColumn, sections) >=
+        target - 0.75
+      ){
+        high = mid;
+      }else{
+        low = mid;
+      }
+    }
+
+    /*
+      Use the upper bound so the last entry reaches/slightly passes the
+      bottom rather than leaving a sub-pixel white line.
+    */
+    const fit = Math.min(
+      4,
+      Math.ceil(high * 1000) / 1000
+    );
+
+    cvColumn.scrollTop = originalScroll;
+    return writeCvResearchFit(fit);
+  }
+
+  let cvFitRaf = 0;
+
+  function scheduleCvResearchFit(){
+    cancelAnimationFrame(cvFitRaf);
+
+    cvFitRaf = requestAnimationFrame(()=>{
+      cvFitRaf = 0;
+
+      const measured = measureAboutCvResearchFit();
+      if(measured !== null) return;
+
+      const stored = readStoredCvResearchFit();
+
+      writeCvResearchFit(
+        stored === null
+          ? fallbackCvResearchFit()
+          : stored,
+        stored !== null
+      );
+
+      if(stored !== null){
+        revealResearchAfterExactFit();
+      }
+
+      /*
+        A direct Research deep-link has no About-derived fit yet. Measure the
+        real About Mini-CV off-screen at this exact viewport and reuse its
+        result. This changes only the shared fit handoff; desktopScale(), base
+        values, breakpoints and every existing About measurement rule remain
+        untouched.
+      */
+      if(stored === null){
+        requestExactResearchFitFromAbout();
+      }
+    });
+  }
+
+  function apply(){
+    raf = 0;
+
+    if(window.innerWidth <= 900){
+      revealResearchAfterExactFit();
+      document.documentElement.style.removeProperty("--harri-site-scale");
+      clearCvResearchFitVars();
+      Object.keys(base).forEach((key)=>{
+        document.documentElement.style.removeProperty("--harri-u-" + key);
+      });
+      return;
+    }
+
+    const scale = desktopScale();
+    const root = document.documentElement;
+
+    root.style.setProperty("--harri-site-scale", String(scale));
+
+    Object.entries(base).forEach(([key,value])=>{
+      root.style.setProperty(
+        "--harri-u-" + key,
+        (value * scale).toFixed(4) + "px"
+      );
+    });
+
+    window.dispatchEvent(
+      new CustomEvent("harri:desktop-scale", {detail:{scale}})
+    );
+
+    scheduleCvResearchFit();
+  }
+
+  function schedule(){
+    if(
+      researchFitProbe &&
+      researchFitProbeKey !== viewportFitKey()
+    ){
+      researchFitProbeToken += 1;
+      removeResearchFitProbe();
+    }
+
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(apply);
+  }
+
+  apply();
+
+  window.addEventListener("resize",schedule,{passive:true});
+  window.addEventListener("orientationchange",schedule,{passive:true});
+
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize",schedule,{passive:true});
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      scheduleCvResearchFit,
+      {once:true}
+    );
+  }else{
+    scheduleCvResearchFit();
+  }
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready
+      .then(scheduleCvResearchFit)
+      .catch(scheduleCvResearchFit);
+  }
+
+  window.addEventListener(
+    "load",
+    scheduleCvResearchFit,
+    {once:true}
+  );
+})();
+</script>
+
+
+<style id="harri-shared-left-rail-shell-lock-v1">
+/*
+  SHARED DESKTOP LEFT-RAIL SHELL LOCK
+  -----------------------------------
+  Harri.la, the main navigation and the footer must occupy the same outer
+  desktop frame on Work, Research and Harrilanpuisto at every desktop scale.
+
+  Work/Harrilanpuisto already resolve to these values. Research historically
+  kept an older 28px / 56px sticky inset-height pair, which could move its
+  left rail relative to the shared 32px-top / 26px-bottom shell, especially
+  after scrolling or at scaled desktop sizes.
+
+  This rule changes only the sticky rail inset/height. It does not alter grid
+  tracks, horizontal page margins, typography, content widths, media, figure
+  geometry, menus, or mobile behavior.
+*/
+@media (min-width:901px){
+  /* Work and Harrilanpuisto use sticky rails, so their sticky inset mirrors
+     the layout padding. */
+  body.page-work .left,
+  body.page-harrilanpuisto .left{
+    top:var(--harri-u-pad-top,32px) !important;
+    height:calc(
+      100vh - var(--harri-u-pad-top,32px) - var(--harri-u-pad-bottom,26px)
+    ) !important;
+  }
+
+  /* Research is deliberately a relative rail inside a viewport-height grid.
+     Its layout padding already supplies the same top/bottom shell. Adding the
+     sticky inset here a second time pushed the entire Research menu downward. */
+  body.page-research .left,
+  body.page-research .right{
+    top:auto !important;
+    height:100% !important;
+  }
+}
+</style>
