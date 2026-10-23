@@ -291,7 +291,9 @@ button{font:inherit;color:inherit}
 .media-item::after{transform:rotate(-55deg)}
 
 .media-item.has-image::before,
-.media-item.has-image::after{
+.media-item.has-image::after,
+.media-item.media-loading::before,
+.media-item.media-loading::after{
   display:none;
 }
 
@@ -1728,6 +1730,7 @@ function buildMediaStack(){
     const previewSrc = slide.type === "video" ? slide.poster : slide.src;
 
     if(previewSrc){
+      item.classList.add("media-loading");
       let revealed = false;
       const revealCompleteImage = ()=>{
         if(revealed) return;
@@ -1743,6 +1746,7 @@ function buildMediaStack(){
         }
         const reveal = ()=>{
           img.classList.add("media-ready");
+          item.classList.remove("media-loading");
           item.classList.add("has-image");
         };
         if(img.decode){
@@ -1752,6 +1756,9 @@ function buildMediaStack(){
         }
       };
       img.addEventListener("load", revealCompleteImage, {once:true});
+      img.addEventListener("error", ()=>{
+        item.classList.remove("media-loading");
+      }, {once:true});
       img.src = previewSrc;
       img.style.display = "block";
       if(img.complete && img.naturalWidth) revealCompleteImage();
