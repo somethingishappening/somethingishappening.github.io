@@ -65,7 +65,7 @@
           <div class="project-links{% unless research_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in research_projects %}
-                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}"><span class="nav-underline-label">{{ project.menu_title | default: project.title }}</span></a>
+                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}"{% if project.gallery %} data-harri-gallery='{{ project.gallery | jsonify | escape }}'{% endif %}><span class="nav-underline-label">{{ project.menu_title | default: project.title }}</span></a>
               {% endfor %}
             </div>
           </div>
@@ -86,7 +86,7 @@
           <div class="project-links{% unless design_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in design_projects %}
-                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}"><span class="nav-underline-label">{{ project.menu_title | default: project.title }}</span></a>
+                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}"{% if project.gallery %} data-harri-gallery='{{ project.gallery | jsonify | escape }}'{% endif %}><span class="nav-underline-label">{{ project.menu_title | default: project.title }}</span></a>
               {% endfor %}
             </div>
           </div>
@@ -112,7 +112,7 @@
           <div class="project-links{% unless artistic_desktop_open %} collapsed{% endunless %}">
             <div class="project-links-inner">
               {% for project in artistic_projects %}
-                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}"><span class="nav-underline-label">{{ project.menu_title | default: project.title }}</span></a>
+                <a{% if page.url == project.url %} class="active"{% endif %} href="{{ project.url | relative_url }}"{% if project.gallery %} data-harri-gallery='{{ project.gallery | jsonify | escape }}'{% endif %}><span class="nav-underline-label">{{ project.menu_title | default: project.title }}</span></a>
               {% endfor %}
             </div>
           </div>
@@ -121,7 +121,7 @@
 
         {% assign harrilanpuisto_image_count = site.data.harrilanpuisto.media | size %}
         {% if site.data.harrilanpuisto.enabled and harrilanpuisto_image_count > 0 %}
-          <a class="standalone-nav-link{% if page.layout == 'harrilanpuisto' %} active{% endif %}" href="{{ '/harrilanpuisto/' | relative_url }}"><span class="nav-underline-label">{{ site.data.site.harrilanpuisto_label | default: "Harrilanpuisto" }}</span></a>
+          <a class="standalone-nav-link{% if page.layout == 'harrilanpuisto' %} active{% endif %}" href="{{ '/harrilanpuisto/' | relative_url }}" data-harri-gallery='{{ site.data.harrilanpuisto.media | jsonify | escape }}'><span class="nav-underline-label">{{ site.data.site.harrilanpuisto_label | default: "Harrilanpuisto" }}</span></a>
         {% endif %}
       </nav>
 
@@ -810,6 +810,101 @@
   }
 }
 </style>
+
+
+<script id="harri-gallery-prewarm-before-navigation">
+(function(){
+  "use strict";
+
+  /*
+    PERFORMANCE ONLY. Begin fetching project media from the current page,
+    before navigation. This does not alter navigation timing or layout.
+  */
+  const warmed = new Map();
+
+  function assetUrl(path){
+    if(typeof path !== "string" || !path.trim()) return "";
+    try{ return new URL(path.trim(), document.baseURI).href; }catch(_){ return ""; }
+  }
+
+  function assetsFor(link){
+    if(!link || !link.dataset.harriGallery) return [];
+    let gallery;
+    try{ gallery = JSON.parse(link.dataset.harriGallery); }catch(_){ return []; }
+    if(!Array.isArray(gallery)) return [];
+
+    const seen = new Set();
+    return gallery.map(function(slide){
+      if(!slide || typeof slide !== "object") return "";
+      const raw = slide.type === "video" ? slide.poster : slide.image;
+      return assetUrl(raw);
+    }).filter(function(src){
+      if(!src || seen.has(src)) return false;
+      seen.add(src);
+      return true;
+    });
+  }
+
+  function warm(src, priority){
+    if(!src) return Promise.resolve();
+    if(warmed.has(src)) return warmed.get(src).promise;
+
+    const img = new Image();
+    img.decoding = "async";
+    if("fetchPriority" in img) img.fetchPriority = priority || "auto";
+
+    const promise = new Promise(function(resolve){
+      let settled = false;
+      function finish(){
+        if(settled) return;
+        settled = true;
+        if(img.decode){
+          img.decode().catch(function(){}).finally(resolve);
+        }else{
+          resolve();
+        }
+      }
+      img.addEventListener("load", finish, {once:true});
+      img.addEventListener("error", resolve, {once:true});
+      img.src = src;
+      if(img.complete && img.naturalWidth) finish();
+    });
+
+    warmed.set(src, {img:img, promise:promise});
+    return promise;
+  }
+
+  function warmLink(link, all){
+    const assets = assetsFor(link);
+    const count = all ? assets.length : Math.min(1, assets.length);
+    for(let i=0; i<count; i++) warm(assets[i], all && i < 2 ? "high" : "low");
+  }
+
+  function linkFromEvent(event){
+    const target = event.target && event.target.closest ? event.target.closest(".site-nav a[data-harri-gallery]") : null;
+    return target;
+  }
+
+  ["pointerover","focusin","touchstart","pointerdown"].forEach(function(type){
+    document.addEventListener(type, function(event){
+      const link = linkFromEvent(event);
+      if(link) warmLink(link, true);
+    }, {passive:true});
+  });
+
+  function warmFirstOfEveryProject(){
+    document.querySelectorAll(".site-nav a[data-harri-gallery]").forEach(function(link){
+      warmLink(link, false);
+    });
+  }
+
+  if("requestIdleCallback" in window){
+    requestIdleCallback(warmFirstOfEveryProject, {timeout:1200});
+  }else{
+    setTimeout(warmFirstOfEveryProject, 250);
+  }
+})();
+</script>
 
 <script id="harri-content-links-new-tab">
 (function(){
