@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="work-theme-{% if page.work_invert %}dark{% else %}light{% endif %}" data-work-theme="{% if page.work_invert %}dark{% else %}light{% endif %}">
+<html lang="en" class="work-theme-{% if page.work_invert %}dark{% else %}light{% endif %}{% if page.work_invert and page.work_lightbox_background == 'white' %} work-lightbox-white{% elsif page.work_invert %} work-lightbox-black{% endif %}" data-work-theme="{% if page.work_invert %}dark{% else %}light{% endif %}">
 <head>
   <meta charset="UTF-8" />
   <script id="harri-work-theme-handoff">
@@ -323,7 +323,11 @@ button{font:inherit;color:inherit}
   display:grid;
   place-items:center;
   padding:24px;
-  background:rgba(255,255,255,.97);
+  --work-lightbox-bg:rgba(255,255,255,.97);
+  --work-lightbox-fg:#0b0b0b;
+  --work-lightbox-line:#111;
+  background:var(--work-lightbox-bg);
+  color:var(--work-lightbox-fg);
   opacity:0;
   visibility:hidden;
   pointer-events:none;
@@ -356,7 +360,7 @@ button{font:inherit;color:inherit}
 .lightbox-placeholder{
   width:min(88vw,1200px);
   height:min(82vh,850px);
-  border:1.5px solid var(--line);
+  border:1.5px solid var(--work-lightbox-line);
   position:relative;
   overflow:hidden;
 }
@@ -368,7 +372,7 @@ button{font:inherit;color:inherit}
   top:50%;
   width:150%;
   height:1px;
-  background:var(--line);
+  background:var(--work-lightbox-line);
 }
 .lightbox-placeholder::before{transform:rotate(38deg)}
 .lightbox-placeholder::after{transform:rotate(-38deg)}
@@ -1689,7 +1693,16 @@ button{font:inherit;color:inherit}
    light theme or any layout measurement. */
 html.work-theme-dark .left nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.42);}
 html.work-theme-dark .left nav{scrollbar-color:rgba(255,255,255,.42) transparent;}
-html.work-theme-dark .lightbox{background:rgba(0,0,0,.97);}
+html.work-theme-dark .lightbox{
+  --work-lightbox-bg:rgba(0,0,0,.97);
+  --work-lightbox-fg:#fff;
+  --work-lightbox-line:#fff;
+}
+html.work-theme-dark.work-lightbox-white .lightbox{
+  --work-lightbox-bg:rgba(255,255,255,.97);
+  --work-lightbox-fg:#0b0b0b;
+  --work-lightbox-line:#111;
+}
 
 @media (prefers-reduced-motion:reduce){
   html{transition:none !important;}
