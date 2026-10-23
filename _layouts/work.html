@@ -337,6 +337,14 @@ button{font:inherit;color:inherit}
   z-index:1;
 }
 
+/* PERFORMANCE: never paint a partially downloaded/decoded project image. */
+.media-stack .media-item img{
+  visibility:hidden;
+}
+.media-stack .media-item img.media-ready{
+  visibility:visible;
+}
+
 /* FULLSCREEN MEDIA */
 .lightbox{
   position:fixed;
@@ -1886,14 +1894,27 @@ function buildMediaStack(){
     const previewSrc = slide.type === "video" ? slide.poster : slide.src;
 
     if(previewSrc){
-      img.src = previewSrc;
-      img.addEventListener("load", ()=>{
+      let revealed = false;
+      const revealCompleteImage = ()=>{
+        if(revealed) return;
+        revealed = true;
         if(img.naturalWidth && img.naturalHeight){
           item.style.setProperty("--media-ratio", `${img.naturalWidth} / ${img.naturalHeight}`);
         }
-      }, {once:true});
+        const reveal = ()=>{
+          img.classList.add("media-ready");
+          item.classList.add("has-image");
+        };
+        if(img.decode){
+          img.decode().catch(()=>{}).finally(reveal);
+        }else{
+          reveal();
+        }
+      };
+      img.addEventListener("load", revealCompleteImage, {once:true});
+      img.src = previewSrc;
       img.style.display = "block";
-      item.classList.add("has-image");
+      if(img.complete && img.naturalWidth) revealCompleteImage();
     }
 
     item.appendChild(img);
