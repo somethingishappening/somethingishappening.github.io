@@ -306,6 +306,11 @@ content:
           - name: section_id
             label: Section ID
             type: string
+    - name: work_invert
+      label: Work template — black background / white text
+      type: boolean
+      default: false
+      description: Used only with the Work template. Turn this on to invert this project to white text on a black background. Switching directly between light and inverted Work projects eases between the two themes.
     - name: project_type
       label: Work template — project description / type
       type: string
@@ -419,6 +424,11 @@ content:
       label: Navigation order
       type: number
       required: true
+    - name: work_invert
+      label: Black background / white text
+      type: boolean
+      default: false
+      description: Turn this on for this project to invert the Work template to white text on a black background. Switching directly between light and inverted Work projects eases between the two themes.
     - name: project_type
       label: Project description / type
       type: string
@@ -521,6 +531,11 @@ content:
       label: Navigation order
       type: number
       required: true
+    - name: work_invert
+      label: Black background / white text
+      type: boolean
+      default: false
+      description: Turn this on for this project to invert the Work template to white text on a black background. Switching directly between light and inverted Work projects eases between the two themes.
     - name: project_type
       label: Project description / type
       type: string
