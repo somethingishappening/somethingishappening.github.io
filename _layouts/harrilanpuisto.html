@@ -1654,6 +1654,45 @@ const mediaSlides = [...(rawMedia || [])].reverse().map((slide, index) => ({
 const mediaStack = document.getElementById("mediaStack");
 let activeMediaIndex = 0;
 
+/* PERFORMANCE ONLY: warm a few upcoming previews while leaving distant
+   archive images lazy, so fast scrolling does not outrun image loading. */
+const mediaPreviewPreloaders = new Map();
+function mediaPreviewSrc(slide){
+  return slide ? (slide.type === "video" ? slide.poster : slide.src) : "";
+}
+function warmMediaPreview(index){
+  if(index < 0 || index >= mediaSlides.length || mediaPreviewPreloaders.has(index)) return;
+  const src = mediaPreviewSrc(mediaSlides[index]);
+  if(!src) return;
+  const preloader = new Image();
+  preloader.decoding = "async";
+  preloader.src = src;
+  mediaPreviewPreloaders.set(index, preloader);
+}
+function warmMediaWindow(index, ahead = 3){
+  for(let offset = 0; offset <= ahead; offset++) warmMediaPreview(index + offset);
+}
+
+function installMediaLookahead(){
+  warmMediaWindow(0, 3);
+  if(!("IntersectionObserver" in window)) return;
+
+  const scroller = document.querySelector(".harrilanpuisto-dump");
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if(!entry.isIntersecting) return;
+      const index = Number(entry.target.dataset.mediaIndex);
+      if(!Number.isNaN(index)) warmMediaWindow(index, 3);
+    });
+  }, {
+    root: scroller || null,
+    rootMargin: "150% 0px 150% 0px",
+    threshold: 0
+  });
+
+  mediaStack.querySelectorAll(".media-item").forEach(item => observer.observe(item));
+}
+
 function buildMediaStack(){
   mediaStack.innerHTML = "";
 
@@ -1878,6 +1917,7 @@ function closeLightbox(){
 }
 
 buildMediaStack();
+installMediaLookahead();
 scheduleHarrilanMasonryLayout();
 
 document.querySelector(".lightbox-close").addEventListener("click", closeLightbox);
