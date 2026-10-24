@@ -19,7 +19,7 @@ morning_greeting_messages:
   - Huamenta!
 ascii_click_count: 5
 ascii_messages:
-  - text: (╯°□°）╯︵ ┻━┻
+  - text: (╯°□°)╯︵ ┻━┻
     color: "#FF0000"
   - text: (；一_一)
     color: "#FF0000"
@@ -32,6 +32,12 @@ ascii_messages:
   - text: (-_-)
     color: "#FF0000"
   - text: (-(-_-(-_(-_(-_-)_-)-_-)_-)_-)-)
+    color: "#FF0000"
+  - text: →_←
+    color: "#FF0000"
+  - text: ( •̀ - •́ )
+    color: "#FF0000"
+  - text: (￣^￣)
     color: "#FF0000"
 bio: I’m Harri. I am a designer and experimental letter artist currently
   residing in Finland. I have a diverse background across multiple design
