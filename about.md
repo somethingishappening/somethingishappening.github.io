@@ -31,6 +31,8 @@ ascii_messages:
     color: "#FF0000"
   - text: (-_-)
     color: "#FF0000"
+  - text: (-(-_-(-_(-_(-_-)_-)-_-)_-)_-)-)
+    color: "#FF0000"
 bio: I’m Harri. I am a designer and experimental letter artist currently
   residing in Finland. I have a diverse background across multiple design
   disciplines, primarily graphic and typographic design research. I value
