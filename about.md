@@ -43,7 +43,7 @@ bio: I’m Harri, a designer and experimental letter artist currently residing i
   Finland. I have a diverse background across multiple design disciplines, with
   a primary focus on graphic and typographic design research. I value
   experimental, slow design and focus on the process, research, and learning
-  curve that comes with it. I am currently pursuing my doctoral studies at Aalto
+  curve that come with it. I am currently pursuing my doctoral studies at Aalto
   University.
 mini_cv_sections:
   - title: Education
