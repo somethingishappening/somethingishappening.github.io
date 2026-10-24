@@ -2,7 +2,7 @@
 title: MetaWhat
 nav_order: 1
 work_invert: false
-work_lightbox_background: black
+work_lightbox_background: white
 project_type: Typedesign
 title_line_1: MetaWhat
 description: >-
