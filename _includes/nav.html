@@ -847,7 +847,15 @@
 
   function warm(src, priority){
     if(!src) return Promise.resolve();
-    if(warmed.has(src)) return warmed.get(src).promise;
+    if(warmed.has(src)){
+      const existing = warmed.get(src);
+      /* If user intent becomes clear after an idle low-priority warm started,
+         promote that same in-flight image instead of leaving it low priority. */
+      if(priority === "high" && existing && existing.img && "fetchPriority" in existing.img){
+        existing.img.fetchPriority = "high";
+      }
+      return existing.promise;
+    }
 
     const img = new Image();
     img.decoding = "async";
@@ -879,11 +887,21 @@
     return /\/harrilanpuisto\/?(?:[?#].*)?$/.test(href);
   }
 
-  function warmLink(link, all){
+  function warmLink(link, all, firstHigh){
     const assets = assetsFor(link);
     const count = all ? assets.length : Math.min(1, assets.length);
     const highCount = isHarrilanpuistoLink(link) ? 6 : 2;
-    for(let i=0; i<count; i++) warm(assets[i], all && i < highCount ? "high" : "low");
+    for(let i=0; i<count; i++){
+      const priority = (all && i < highCount) || (firstHigh && i === 0) ? "high" : "low";
+      warm(assets[i], priority);
+    }
+  }
+
+  function warmFirstsInGroup(group){
+    if(!group || !group.querySelectorAll) return;
+    group.querySelectorAll('a[data-harri-gallery]').forEach(function(link){
+      if(!isHarrilanpuistoLink(link)) warmLink(link, false, true);
+    });
   }
 
   function linkFromEvent(event){
@@ -894,16 +912,33 @@
   ["pointerover","focusin","touchstart","pointerdown"].forEach(function(type){
     document.addEventListener(type, function(event){
       const link = linkFromEvent(event);
-      if(link) warmLink(link, true);
+      if(link) warmLink(link, true, true);
+
+      /* Warming starts one interaction earlier for Work: when a project group
+         is opened/approached, fetch each project's first preview at high
+         priority. This gives the first visible image a head start before the
+         user chooses a project, without changing navigation or layout. */
+      const head = event.target && event.target.closest ? event.target.closest('.site-nav .group-head') : null;
+      if(head){
+        const group = head.closest('.nav-group');
+        warmFirstsInGroup(group);
+      }
     }, {passive:true});
+  });
+
+  /* Any Work group that is already open when the navigation is rendered gets
+     the same first-image head start immediately. */
+  document.querySelectorAll('.site-nav .nav-group').forEach(function(group){
+    const links = group.querySelector('.project-links:not(.collapsed)');
+    if(links) warmFirstsInGroup(group);
   });
 
   function warmFirstOfEveryProject(){
     document.querySelectorAll(".site-nav a[data-harri-gallery]").forEach(function(link){
-      /* Harrilanpuisto has only a tiny gallery, so warm all of it during idle
-         time. Other project galleries keep the existing first-preview-only
-         idle policy and are fully warmed on hover/focus/touch. */
-      warmLink(link, isHarrilanpuistoLink(link));
+      /* Harrilanpuisto keeps its dedicated first-six policy. Other projects
+         retain a low-impact idle fallback for the first preview; open/hovered
+         Work groups are already warmed at high priority above. */
+      warmLink(link, isHarrilanpuistoLink(link), false);
     });
   }
 
