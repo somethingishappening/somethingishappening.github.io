@@ -1,6 +1,8 @@
 ---
 title: MetaWhat
 nav_order: 1
+work_invert: false
+work_lightbox_background: black
 project_type: Typedesign
 title_line_1: MetaWhat
 description: >-
@@ -16,7 +18,7 @@ description: >-
   NYC](https://www.oneclub.org/awards/tdcawards/-award/53821/metawhata/).
 gallery:
   - type: image
-    image: /assets/uploads/metawhatmain-2.gif
+    image: /assets/uploads/metawhatmain-1.gif
   - type: image
     image: /assets/uploads/metawhat1.jpg
   - type: image
