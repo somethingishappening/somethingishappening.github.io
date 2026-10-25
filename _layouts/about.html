@@ -48,12 +48,37 @@
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ page.title | default: "About" }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
-  {% assign harri_favicon = site.data.site.favicon %}
-  {% if harri_favicon %}
+  {% assign harri_favicon_light = site.data.site.favicon %}
+  {% assign harri_favicon_dark = site.data.site.favicon_dark %}
+  {% if harri_favicon_light or harri_favicon_dark %}
   {% assign harri_favicon_version = site.time | date: "%s" %}
-  <link rel="icon" href="{{ harri_favicon | relative_url }}?v={{ harri_favicon_version }}">
-  <link rel="shortcut icon" href="{{ harri_favicon | relative_url }}?v={{ harri_favicon_version }}">
-  <link rel="apple-touch-icon" href="{{ harri_favicon | relative_url }}?v={{ harri_favicon_version }}">
+  {% if harri_favicon_light %}
+  <link id="harri-favicon" rel="icon" href="{{ harri_favicon_light | relative_url }}?v={{ harri_favicon_version }}">
+  <link id="harri-shortcut-icon" rel="shortcut icon" href="{{ harri_favicon_light | relative_url }}?v={{ harri_favicon_version }}">
+  <link rel="apple-touch-icon" href="{{ harri_favicon_light | relative_url }}?v={{ harri_favicon_version }}">
+  {% else %}
+  <link id="harri-favicon" rel="icon" href="{{ harri_favicon_dark | relative_url }}?v={{ harri_favicon_version }}">
+  <link id="harri-shortcut-icon" rel="shortcut icon" href="{{ harri_favicon_dark | relative_url }}?v={{ harri_favicon_version }}">
+  <link rel="apple-touch-icon" href="{{ harri_favicon_dark | relative_url }}?v={{ harri_favicon_version }}">
+  {% endif %}
+  <script>
+    (function(){
+      var icon = document.getElementById('harri-favicon');
+      var shortcut = document.getElementById('harri-shortcut-icon');
+      if (!icon || !window.matchMedia) return;
+      var lightHref = {% if harri_favicon_light %}"{{ harri_favicon_light | relative_url }}?v={{ harri_favicon_version }}"{% else %}null{% endif %};
+      var darkHref = {% if harri_favicon_dark %}"{{ harri_favicon_dark | relative_url }}?v={{ harri_favicon_version }}"{% else %}null{% endif %};
+      var scheme = window.matchMedia('(prefers-color-scheme: dark)');
+      function applyFavicon(){
+        var nextHref = (scheme.matches && darkHref) ? darkHref : (lightHref || darkHref);
+        icon.href = nextHref;
+        if (shortcut) shortcut.href = nextHref;
+      }
+      applyFavicon();
+      if (scheme.addEventListener) scheme.addEventListener('change', applyFavicon);
+      else if (scheme.addListener) scheme.addListener(applyFavicon);
+    })();
+  </script>
   {% endif %}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
