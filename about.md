@@ -96,4 +96,5 @@ surprise_images:
   - image: /assets/uploads/img20261015235008496.jpg
   - image: /assets/uploads/20260421134845.jpg
   - image: /assets/uploads/img20261016014933190.jpg
+  - image: /assets/uploads/202610170134261.jpg
 ---
