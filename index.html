@@ -6,6 +6,12 @@
   <meta charset="utf-8">
   <meta http-equiv="refresh" content="0; url={{ '/about/' | relative_url }}">
   <title>{{ site.data.site.brand | default: "Harri.la" }}</title>
+  {% assign harri_favicon = site.data.site.favicon %}
+  {% if harri_favicon %}
+  <link rel="icon" href="{{ harri_favicon | relative_url }}">
+  <link rel="shortcut icon" href="{{ harri_favicon | relative_url }}">
+  {% endif %}
+
 </head>
 <body>
   <p><a href="{{ '/about/' | relative_url }}">About</a></p>
