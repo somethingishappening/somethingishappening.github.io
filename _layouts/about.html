@@ -48,6 +48,12 @@
 </style>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ page.title | default: "About" }} — {{ site.data.site.brand | default: "Harri.la" }}</title>
+  {% assign harri_favicon = site.data.site.favicon %}
+  {% if harri_favicon %}
+  <link rel="icon" href="{{ harri_favicon | relative_url }}">
+  <link rel="shortcut icon" href="{{ harri_favicon | relative_url }}">
+  {% endif %}
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
