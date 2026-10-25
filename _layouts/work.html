@@ -35,8 +35,10 @@
 
   {% assign harri_favicon = site.data.site.favicon %}
   {% if harri_favicon %}
-  <link rel="icon" href="{{ harri_favicon | relative_url }}">
-  <link rel="shortcut icon" href="{{ harri_favicon | relative_url }}">
+  {% assign harri_favicon_version = site.time | date: "%s" %}
+  <link rel="icon" href="{{ harri_favicon | relative_url }}?v={{ harri_favicon_version }}">
+  <link rel="shortcut icon" href="{{ harri_favicon | relative_url }}?v={{ harri_favicon_version }}">
+  <link rel="apple-touch-icon" href="{{ harri_favicon | relative_url }}?v={{ harri_favicon_version }}">
   {% endif %}
 
   {%- comment -%}
