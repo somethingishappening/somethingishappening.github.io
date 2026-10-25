@@ -758,6 +758,13 @@ content:
       type: string
       required: true
       description: Controls the Harri.la name shown at the top-left of every page. It is also used in browser/page titles.
+    - name: favicon
+      label: Website tab icon / favicon
+      type: image
+      options:
+        media: images
+        rename: safe
+      description: Optional icon shown in browser tabs and bookmarks across the whole website. A square PNG is recommended. Leave blank to use the browser default.
     - name: footer_slot_1_visible
       label: Show footer item 1
       type: boolean
