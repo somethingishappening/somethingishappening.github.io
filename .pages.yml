@@ -759,12 +759,19 @@ content:
       required: true
       description: Controls the Harri.la name shown at the top-left of every page. It is also used in browser/page titles.
     - name: favicon
-      label: Website tab icon / favicon
+      label: Light / regular display favicon
       type: image
       options:
         media: images
         rename: safe
-      description: Optional icon shown in browser tabs and bookmarks across the whole website. A square PNG is recommended. Leave blank to use the browser default.
+      description: Icon used for browser tabs and bookmarks in light/regular display mode. Your existing favicon stays here. A square PNG is recommended.
+    - name: favicon_dark
+      label: Dark display favicon
+      type: image
+      options:
+        media: images
+        rename: safe
+      description: Optional alternate browser-tab icon for dark display mode. If left blank, the light/regular favicon is used in both modes. A square PNG is recommended.
     - name: footer_slot_1_visible
       label: Show footer item 1
       type: boolean
