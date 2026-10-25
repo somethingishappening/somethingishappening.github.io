@@ -1,5 +1,6 @@
 brand: Harrila
-favicon: /assets/uploads/favicon-02.png
+favicon: /assets/uploads/favicon-reg.png
+favicon_dark: /assets/uploads/favicon-dark-1.png
 footer_slot_1_visible: true
 footer_slot_1_text: Instagram
 footer_slot_1_link_type: none
