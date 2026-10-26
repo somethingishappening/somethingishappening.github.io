@@ -889,10 +889,10 @@
 
   function warmLink(link, all, firstHigh){
     const assets = assetsFor(link);
-    const count = all ? assets.length : Math.min(1, assets.length);
-    const highCount = isHarrilanpuistoLink(link) ? 6 : 2;
+    const initialHighCount = isHarrilanpuistoLink(link) ? 6 : 3;
+    const count = all ? assets.length : Math.min(initialHighCount, assets.length);
     for(let i=0; i<count; i++){
-      const priority = (all && i < highCount) || (firstHigh && i === 0) ? "high" : "low";
+      const priority = i < initialHighCount ? "high" : "low";
       warm(assets[i], priority);
     }
   }
@@ -912,7 +912,10 @@
   ["pointerover","focusin","touchstart","pointerdown"].forEach(function(type){
     document.addEventListener(type, function(event){
       const link = linkFromEvent(event);
-      if(link) warmLink(link, true, true);
+      /* Before a Work project opens, protect bandwidth for the media that can
+         actually be visible on entry: warm only its first three previews.
+         Harrilanpuisto keeps its first-six policy through warmLink(). */
+      if(link) warmLink(link, false, true);
 
       /* Warming starts one interaction earlier for Work: when a project group
          is opened/approached, fetch each project's first preview at high
@@ -935,10 +938,10 @@
 
   function warmFirstOfEveryProject(){
     document.querySelectorAll(".site-nav a[data-harri-gallery]").forEach(function(link){
-      /* Harrilanpuisto keeps its dedicated first-six policy. Other projects
-         retain a low-impact idle fallback for the first preview; open/hovered
-         Work groups are already warmed at high priority above. */
-      warmLink(link, isHarrilanpuistoLink(link), false);
+      /* Keep the first visible media group ready before navigation. Work warms
+         its first three previews at high priority; Harrilanpuisto keeps its
+         dedicated first-six policy. */
+      warmLink(link, isHarrilanpuistoLink(link), true);
     });
   }
 
