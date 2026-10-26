@@ -817,10 +817,24 @@
   "use strict";
 
   /*
-    PERFORMANCE ONLY. Begin fetching project media from the current page,
-    before navigation. This does not alter navigation timing or layout.
+    PERFORMANCE ONLY. Warm gallery media before navigation without allowing
+    every Work project to compete at high priority at the same instant.
+
+    Work policy:
+    - background queue is round-robin: image 1 of every project, then image 2,
+      then image 3;
+    - only a small number of high-priority requests run concurrently;
+    - explicit user intent (hover/focus/touch/pointerdown) immediately promotes
+      that project's first three images.
+
+    Harrilanpuisto keeps its independent first-six warm-up policy.
   */
   const warmed = new Map();
+  const queued = new Set();
+  const workQueue = [];
+  const WORK_INITIAL_COUNT = 3;
+  const WORK_BACKGROUND_CONCURRENCY = 4;
+  let activeWorkBackground = 0;
 
   function assetUrl(path){
     if(typeof path !== "string" || !path.trim()) return "";
@@ -849,8 +863,6 @@
     if(!src) return Promise.resolve();
     if(warmed.has(src)){
       const existing = warmed.get(src);
-      /* If user intent becomes clear after an idle low-priority warm started,
-         promote that same in-flight image instead of leaving it low priority. */
       if(priority === "high" && existing && existing.img && "fetchPriority" in existing.img){
         existing.img.fetchPriority = "high";
       }
@@ -887,68 +899,87 @@
     return /\/harrilanpuisto\/?(?:[?#].*)?$/.test(href);
   }
 
-  function warmLink(link, all, firstHigh){
-    const assets = assetsFor(link);
-    const initialHighCount = isHarrilanpuistoLink(link) ? 6 : 3;
-    const count = all ? assets.length : Math.min(initialHighCount, assets.length);
-    for(let i=0; i<count; i++){
-      const priority = i < initialHighCount ? "high" : "low";
-      warm(assets[i], priority);
-    }
-  }
-
-  function warmFirstsInGroup(group){
-    if(!group || !group.querySelectorAll) return;
-    group.querySelectorAll('a[data-harri-gallery]').forEach(function(link){
-      if(!isHarrilanpuistoLink(link)) warmLink(link, false, true);
+  function warmTargetWork(link){
+    assetsFor(link).slice(0, WORK_INITIAL_COUNT).forEach(function(src){
+      warm(src, "high");
     });
   }
 
+  function warmHarrilanpuisto(link){
+    assetsFor(link).slice(0, 6).forEach(function(src){
+      warm(src, "high");
+    });
+  }
+
+  function enqueueWorkSrc(src){
+    if(!src || warmed.has(src) || queued.has(src)) return;
+    queued.add(src);
+    workQueue.push(src);
+  }
+
+  function pumpWorkQueue(){
+    while(activeWorkBackground < WORK_BACKGROUND_CONCURRENCY && workQueue.length){
+      const src = workQueue.shift();
+      queued.delete(src);
+      if(warmed.has(src)) continue;
+      activeWorkBackground += 1;
+      /* Requests in the controlled queue can safely be high priority because
+         only a few are active at once. */
+      warm(src, "high").finally(function(){
+        activeWorkBackground -= 1;
+        pumpWorkQueue();
+      });
+    }
+  }
+
+  function buildFairWorkQueue(){
+    const links = Array.from(document.querySelectorAll(".site-nav a[data-harri-gallery]"))
+      .filter(function(link){ return !isHarrilanpuistoLink(link); });
+
+    const galleries = links.map(function(link){ return assetsFor(link); });
+
+    /* Round-robin by visible depth: every project's first image gets a head
+       start before any project's second, then every second before any third. */
+    for(let depth=0; depth<WORK_INITIAL_COUNT; depth++){
+      galleries.forEach(function(assets){
+        if(assets[depth]) enqueueWorkSrc(assets[depth]);
+      });
+    }
+    pumpWorkQueue();
+  }
+
   function linkFromEvent(event){
-    const target = event.target && event.target.closest ? event.target.closest(".site-nav a[data-harri-gallery]") : null;
-    return target;
+    return event.target && event.target.closest
+      ? event.target.closest(".site-nav a[data-harri-gallery]")
+      : null;
   }
 
   ["pointerover","focusin","touchstart","pointerdown"].forEach(function(type){
     document.addEventListener(type, function(event){
       const link = linkFromEvent(event);
-      /* Before a Work project opens, protect bandwidth for the media that can
-         actually be visible on entry: warm only its first three previews.
-         Harrilanpuisto keeps its first-six policy through warmLink(). */
-      if(link) warmLink(link, false, true);
-
-      /* Warming starts one interaction earlier for Work: when a project group
-         is opened/approached, fetch each project's first preview at high
-         priority. This gives the first visible image a head start before the
-         user chooses a project, without changing navigation or layout. */
-      const head = event.target && event.target.closest ? event.target.closest('.site-nav .group-head') : null;
-      if(head){
-        const group = head.closest('.nav-group');
-        warmFirstsInGroup(group);
-      }
+      if(!link) return;
+      if(isHarrilanpuistoLink(link)) warmHarrilanpuisto(link);
+      else warmTargetWork(link);
     }, {passive:true});
   });
 
-  /* Any Work group that is already open when the navigation is rendered gets
-     the same first-image head start immediately. */
-  document.querySelectorAll('.site-nav .nav-group').forEach(function(group){
-    const links = group.querySelector('.project-links:not(.collapsed)');
-    if(links) warmFirstsInGroup(group);
-  });
+  function startBackgroundWarm(){
+    buildFairWorkQueue();
 
-  function warmFirstOfEveryProject(){
+    /* Harrilanpuisto is small and keeps its separate first-six policy. */
     document.querySelectorAll(".site-nav a[data-harri-gallery]").forEach(function(link){
-      /* Keep the first visible media group ready before navigation. Work warms
-         its first three previews at high priority; Harrilanpuisto keeps its
-         dedicated first-six policy. */
-      warmLink(link, isHarrilanpuistoLink(link), true);
+      if(isHarrilanpuistoLink(link)) warmHarrilanpuisto(link);
     });
   }
 
-  if("requestIdleCallback" in window){
-    requestIdleCallback(warmFirstOfEveryProject, {timeout:1200});
+  /* Start early enough to help the first click, but yield one turn so current
+     page parsing/rendering is not blocked. */
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", function(){
+      setTimeout(startBackgroundWarm, 0);
+    }, {once:true});
   }else{
-    setTimeout(warmFirstOfEveryProject, 250);
+    setTimeout(startBackgroundWarm, 0);
   }
 })();
 </script>
