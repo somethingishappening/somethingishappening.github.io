@@ -69,19 +69,19 @@
   {%- comment -%}
   WORK MEDIA PRELOAD
   ------------------
-  Start every project preview image (and every video poster) from the document
-  head, before the Work gallery is constructed. This changes only request
-  timing: dimensions, order, quality, scrolling and rendering remain unchanged.
+  Give the first three project previews the strongest possible head start.
+  Later gallery media is intentionally not preloaded here so it cannot compete
+  with the images that may be visible immediately on page entry.
   {%- endcomment -%}
   {% if page.gallery %}
-    {% for slide in page.gallery %}
+    {% for slide in page.gallery limit:3 %}
       {% assign work_preload_src = slide.image %}
       {% if slide.type == "video" %}{% assign work_preload_src = slide.poster %}{% endif %}
       {% if work_preload_src and work_preload_src != "" %}
         {% if work_preload_src contains "://" or work_preload_src contains "data:" %}
-          <link rel="preload" as="image" href="{{ work_preload_src | escape }}"{% if forloop.index0 < 2 %} fetchpriority="high"{% endif %}>
+          <link rel="preload" as="image" href="{{ work_preload_src | escape }}" fetchpriority="high">
         {% else %}
-          <link rel="preload" as="image" href="{{ work_preload_src | relative_url }}"{% if forloop.index0 < 2 %} fetchpriority="high"{% endif %}>
+          <link rel="preload" as="image" href="{{ work_preload_src | relative_url }}" fetchpriority="high">
         {% endif %}
       {% endif %}
     {% endfor %}
@@ -2080,9 +2080,9 @@ function buildMediaStack(){
     const img = document.createElement("img");
     img.alt = slide.alt || "";
     img.decoding = "async";
-    img.loading = "eager";
+    img.loading = index < 3 ? "eager" : "lazy";
     if("fetchPriority" in img){
-      img.fetchPriority = index < 2 ? "high" : "auto";
+      img.fetchPriority = index < 3 ? "high" : "auto";
     }
 
     const previewSrc = slide.type === "video" ? slide.poster : slide.src;
