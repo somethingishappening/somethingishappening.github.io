@@ -1,6 +1,8 @@
 ---
 title: MalignBenign
 nav_order: 5
+work_invert: false
+work_lightbox_background: black
 project_type: Album Cover Art
 title_line_1: MalignBenign
 description: >-
@@ -16,7 +18,7 @@ description: >-
   Domain)
 gallery:
   - type: image
-    image: /assets/uploads/malignbenignalbumartmain.jpg
+    image: /assets/uploads/malignbenignalbumart-protected-intensity-default-v2.jpg
   - type: image
     image: /assets/uploads/malignbenigncell-1.jpg
   - type: image
