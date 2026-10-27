@@ -46,4 +46,6 @@ gallery:
     image: /assets/uploads/lack-of-sun-protected-intensity-default-v2.jpg
   - type: image
     image: /assets/uploads/cannotbreathe-protected-intensity-default-v2.jpg
+  - type: image
+    image: /assets/uploads/p.gif
 ---
