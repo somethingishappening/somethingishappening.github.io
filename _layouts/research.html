@@ -658,36 +658,19 @@ min-width:0}
         overflow-x:hidden;
         scroll-behavior:smooth;
         overscroll-behavior:contain;
+        /* Keep the article scrollbar hidden permanently. Previously it
+           changed from zero-width to visible on hover, which narrowed the
+           reading column and caused lines to re-wrap as the cursor entered.
+           Scrolling itself remains fully available via wheel/trackpad. */
         scrollbar-width:none;
-        scrollbar-gutter:stable;
         padding-right:4px;
       }
 
-      .paper:hover{
-        scrollbar-width:thin;
-      }
-
-      /* Safari / Chrome */
+      /* Safari / Chrome: preserve the exact same text measure at rest and
+         on hover by never introducing scrollbar width into the article. */
       .paper::-webkit-scrollbar{
         width:0;
         height:0;
-      }
-
-      .paper:hover::-webkit-scrollbar{
-        width:8px;
-      }
-
-      .paper::-webkit-scrollbar-track{
-        background:transparent;
-      }
-
-      .paper::-webkit-scrollbar-thumb{
-        background:rgba(0,0,0,.35);
-        border-radius:8px;
-      }
-
-      .paper::-webkit-scrollbar-thumb:hover{
-        background:rgba(0,0,0,.55);
       }
 
       .anchor-target{
