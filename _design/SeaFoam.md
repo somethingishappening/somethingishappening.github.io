@@ -1,6 +1,8 @@
 ---
 title: SeaFoam
 nav_order: 8
+work_invert: false
+work_lightbox_background: black
 project_type: Experimental Lettering
 title_line_1: Consciousness
 title_line_2: is SeaFoam
@@ -22,6 +24,8 @@ description: >-
   to capture the spirit of the sea and reinforce the idea of constant change,
   even in a finished product.
 gallery:
+  - type: image
+    image: /assets/uploads/seafoammain.gif
   - type: image
     image: /assets/uploads/seafoam1-protected-intensity-default-v2.jpg
   - type: image
