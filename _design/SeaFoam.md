@@ -25,11 +25,11 @@ description: >-
   even in a finished product.
 gallery:
   - type: image
-    image: /assets/uploads/seafoammain.gif
-  - type: image
     image: /assets/uploads/seafoam1-protected-intensity-default-v2.jpg
   - type: image
     image: /assets/uploads/seafoam2-protected-intensity-default-v2.jpg
   - type: image
     image: /assets/uploads/seafoam3-protected-intensity-default-v2-1.jpg
+  - type: image
+    image: /assets/uploads/seafoammain.gif
 ---
