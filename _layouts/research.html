@@ -137,7 +137,7 @@
     .paper > section > h3,
     .research-copy{
       opacity:1;
-      transition:opacity .35s ease;
+      transition:none;
     }
     html.research-typography-pending .project-title,
     html.research-typography-pending .research-abstract-panel > h1,
@@ -3081,9 +3081,7 @@ min-width:0}
   function showTypography(){
     if(released) return;
     released = true;
-    requestAnimationFrame(function(){
-      root.classList.remove("research-typography-pending");
-    });
+    root.classList.remove("research-typography-pending");
   }
 
   function waitForResearchReady(){
