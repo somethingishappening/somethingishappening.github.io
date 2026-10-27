@@ -687,6 +687,85 @@ sections:
       designers and type users can manipulate them in ways that do not translate
       to dots.
     nav_column: none
+  - heading: References
+    heading_level: h1
+    nav_column: right
+  - heading: In-text References
+    heading_level: h2
+    body: >-
+      Abbott, N. (1939b). The rise of the North Arabic script and its kur’ānic
+      development: With a full Descripton of the kur’ān MSS. in the Oriental
+      Institute. University of Chicago Press.
+
+
+      Al-Ḥusayny, A. Ḥusayn ‘Abd A. (2003). al-Takwyn al-Fanny Lil-khaṭ Al’araby
+      Wifq Usus al-Taṣmym. Dar Sader, Beirut.
+
+
+      al-Kurdy, M. Ṭāhir ‘Abd al-Qadir. (1939). Tārykh al-Khaṭ al-’Araby wa
+      Ādābihi. Maktabat al-Hilāl.
+
+
+      al-Qalqashandy, A. al-‘Abbās A. (1914). Subḥi al-A’shá al-Juz’ al-Thālith.
+      Dar al-Kutub al-Khadyawiyah.
+
+
+      Déroche, F. (2006). Appendix: diacritical marks and orthoepic signs. In M.
+      I. Waley (Ed.), D. Dusinberre & D. Radzinowicz (Trans.), Islamic
+      codicology an introduction to the study of manuscripts in Arabic script
+      (pp. 219–224). essay, Al-Furqān Islamic Heritage Foundation.
+
+
+      Gacek, A. (2009). Arabic manuscripts: A Vademecum for readers. Brill.
+
+
+      Ja’far, Ṭāhir. (1987). Al-Murshid Fy Ta’lym Khaṭ al-Naskh. Dār Badr
+      Lil-Ṭibā’ah wa al-Nnashr wa al-Ttawri’, Riyāḍ, and Mu’assasat ‘Uluwm
+      al-Qur’ān, Bayruwt.
+
+
+      Massoudy, H. (2010). Calligraphie Arabe Vivante. Flammarion.
+
+
+      Milo, T. (2002). Arabic script and typography: A brief historical
+      overview. In J. D. Berry (Ed.), Language Culture Type: International Type
+      Design in the Age of Unicode (pp. 112–127). essay, Graphis Inc.
+
+
+      Nemeth, T. (2017). Arabic type-making in the machine age: The influence of
+      technology on the form of Arabic type, 1908-1993. Brill.
+
+
+      Nemeth, T., Conidi, E., Izadpanah, B., & Yazıcıgil, O. (2023). Arabic
+      typography: History and Practice (T. Nemeth, Ed.). Niggli.
+    nav_column: right
+  - heading: Figures and images
+    heading_level: h2
+    body: |-
+      Aḥmad, D. (1750). *[Ḥadīth]* [Manuscript]. McGill Library. [https://archive.org/details/McGillLibrary-rbsc_isl_arabic-calligraphy_084-19515/page/n1/mode/2up](https://archive.org/details/McGillLibrary-rbsc_isl_arabic-calligraphy_084-19515/page/n1/mode/2up)
+
+      al-Ḥāfiẓ, U. (1670). *[Ḥadīth]* [Manuscript]. McGill University Library. [https://archive.org/details/McGillLibrary-rbsc_isl_arabic-calligraphy_074-19500](https://archive.org/details/McGillLibrary-rbsc_isl_arabic-calligraphy_074-19500)
+
+      al-Ḥillī, I. al-Muṭahhar. (1625). *Qawā’id al-aḥkām fī ma’rifat al-ḥalāl wa-al-ḥarām*[Manuscript]. McGill Library. [https://archive.org/details/McGillLibrary-rbsc_islam-ms-isl-0007-18527/page/n7/mode/2up](https://archive.org/details/McGillLibrary-rbsc_islam-ms-isl-0007-18527/page/n7/mode/2up)
+
+      George, A. (2017). *Midad: The public and intimate lives of Arabic calligraphy*. Dar El-Nimer for Arts and Culture.
+
+      ibn al-Wahid, M. (1306). *Sultan Baybars’ Qur’an* [Manuscript]. [https://archive.org/details/mushaf_baibars/Baibars%20al-Jashankir%20Mushaf%201of7/page/n17/mode/2up](https://archive.org/details/mushaf_baibars/Baibars%20al-Jashankir%20Mushaf%201of7/page/n17/mode/2up)
+
+      Massoudy, H. (2010). *Calligraphie arabe vivante*. Flammarion.
+
+      Muḥammad, H. (1986). *Qawā’id al-Khaṭ al-’Araby*. ’Alam al-Kutub.
+
+      Munis zādah, M. (1286). *[Ḥadīth]* [Manuscript]. McGill Library. [https://archive.org/details/McGillLibrary-rbsc_isl_arabic-calligraphy_064-19490](https://archive.org/details/McGillLibrary-rbsc_isl_arabic-calligraphy_064-19490)
+
+      *Qurʼan* [Manuscript]. (n.d.). Library of Congress. [https://www.loc.gov/item/2021667226](https://www.loc.gov/item/2021667226)
+
+      *Section of a Qur’an* [Manuscript leaf]. (n.d.). The Metropolitan Museum of Art. [https://www.metmuseum.org/art/collection/search/447781](https://www.metmuseum.org/art/collection/search/447781)
+
+      Unknown. (2008). *Folio from a Koran (8th–9th century)*. Wikipedia. [https://en.wikipedia.org/wiki/File:Folio_from_a_Koran_(8th-9th_century).jpg](https://en.wikipedia.org/wiki/File:Folio_from_a_Koran_(8th-9th_century).jpg)
+
+      Zuhdī, I. (1205). *[Ḥadīth]* [Manuscript]. McGill Library. [https://archive.org/details/McGillLibrary-rbsc_isl_arabic-calligraphy_050-19474/mode/2up](https://archive.org/details/McGillLibrary-rbsc_isl_arabic-calligraphy_050-19474/mode/2up)
+    nav_column: right
 figures:
   - number: 1
     image: /assets/uploads/fig-1mobile-3.jpg
@@ -733,7 +812,8 @@ figures:
       Qur’anic manuscript leaf; the text is fully dotted with golden-outlined
       circles.
 
-      Retrieved from The Metropolitan Museum of Art collection (unavailable).
+      Retrieved from The Metropolitan Museum of Art collection (Section of a
+      Qur’an, n.d.).
   - number: 5
     image: /assets/uploads/fig-5.gif
     display_size: full
@@ -961,7 +1041,7 @@ figures:
       Arabic Manuscript leaf executed in the Eastern Kufi script, adorned with
       circular diacritics with gold leaf.
 
-      Retrieved from the Library of Congress (Qurʼan not identified).
+      Retrieved from the Library of Congress (Qurʼan, n.d.).
   - number: 25
     image: /assets/uploads/fig-25.jpg
     display_size: full
@@ -1081,4 +1161,6 @@ toc_columns:
             section_id: reading-residue
           - label: Open Endings
             section_id: open-endings
+work_invert: false
+work_lightbox_background: black
 ---
