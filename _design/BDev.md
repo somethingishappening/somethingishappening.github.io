@@ -1,6 +1,8 @@
 ---
 title: Bassil Development
 nav_order: 7
+work_invert: false
+work_lightbox_background: black
 project_type: Branding and Identity
 title_line_1: Bassil Development
 description: A visual identity created for an architectural and contracting
@@ -10,13 +12,13 @@ description: A visual identity created for an architectural and contracting
   company's flexibility in designing homes depending on the clients' needs.
 gallery:
   - type: image
+    image: /assets/uploads/bd.gif
+  - type: image
+    image: /assets/uploads/q5a06631-protected-intensity-default-v2.jpg
+  - type: image
     image: /assets/uploads/q5a06041-protected-intensity-default-v2.jpg
   - type: image
     image: /assets/uploads/q5a0658-protected-intensity-default-v2.jpg
   - type: image
-    image: /assets/uploads/q5a06631-protected-intensity-default-v2.jpg
-  - type: image
     image: /assets/uploads/q5a0576-protected-intensity-default-v2.jpg
-  - type: image
-    image: /assets/uploads/q5a0576-protected-intensity-default-v2-1.jpg
 ---
