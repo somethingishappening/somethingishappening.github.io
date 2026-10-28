@@ -16,7 +16,7 @@ description: >-
   This project passed the 2016 ISTD Student Assessment with Merit.
 gallery:
   - type: image
-    image: /assets/uploads/deliver.gif
+    image: /assets/uploads/deliverfromevilmain2.gif
   - type: image
     image: /assets/uploads/q5a0810.jpg
   - type: image
