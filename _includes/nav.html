@@ -817,24 +817,20 @@
   "use strict";
 
   /*
-    PERFORMANCE ONLY. Warm gallery media before navigation without allowing
-    every Work project to compete at high priority at the same instant.
+    PERFORMANCE ONLY. Warm the first three media assets of every Work project
+    as soon as the shared navigation has been parsed on any page of the site.
 
     Work policy:
-    - background queue is round-robin: image 1 of every project, then image 2,
-      then image 3;
-    - only a small number of high-priority requests run concurrently;
-    - explicit user intent (hover/focus/touch/pointerdown) immediately promotes
-      that project's first three images.
+    - Design Work + Artistic Work only;
+    - images 1, 2 and 3 of every project begin immediately;
+    - all three receive high fetch priority and an image preload hint;
+    - explicit user intent keeps promoting the same first three assets.
 
     Harrilanpuisto keeps its independent first-six warm-up policy.
   */
   const warmed = new Map();
-  const queued = new Set();
-  const workQueue = [];
+  const preloadHints = new Map();
   const WORK_INITIAL_COUNT = 3;
-  const WORK_BACKGROUND_CONCURRENCY = 4;
-  let activeWorkBackground = 0;
 
   function assetUrl(path){
     if(typeof path !== "string" || !path.trim()) return "";
@@ -859,8 +855,23 @@
     });
   }
 
+  function ensurePreloadHint(src){
+    if(!src || !document.head || preloadHints.has(src)) return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = src;
+    link.setAttribute("fetchpriority", "high");
+    if("fetchPriority" in link) link.fetchPriority = "high";
+    link.dataset.harriWorkPreload = "1";
+    preloadHints.set(src, link);
+    document.head.appendChild(link);
+  }
+
   function warm(src, priority){
     if(!src) return Promise.resolve();
+    if(priority === "high") ensurePreloadHint(src);
+
     if(warmed.has(src)){
       const existing = warmed.get(src);
       if(priority === "high" && existing && existing.img && "fetchPriority" in existing.img){
@@ -899,7 +910,15 @@
     return /\/harrilanpuisto\/?(?:[?#].*)?$/.test(href);
   }
 
-  function warmTargetWork(link){
+  function isWorkLink(link){
+    if(!link || isHarrilanpuistoLink(link)) return false;
+    const group = link.closest ? link.closest(".nav-group") : null;
+    const head = group ? group.querySelector(".group-head[data-nav-key]") : null;
+    const key = head ? head.getAttribute("data-nav-key") : "";
+    return key === "design" || key === "artistic";
+  }
+
+  function warmFirstThree(link){
     assetsFor(link).slice(0, WORK_INITIAL_COUNT).forEach(function(src){
       warm(src, "high");
     });
@@ -911,41 +930,10 @@
     });
   }
 
-  function enqueueWorkSrc(src){
-    if(!src || warmed.has(src) || queued.has(src)) return;
-    queued.add(src);
-    workQueue.push(src);
-  }
-
-  function pumpWorkQueue(){
-    while(activeWorkBackground < WORK_BACKGROUND_CONCURRENCY && workQueue.length){
-      const src = workQueue.shift();
-      queued.delete(src);
-      if(warmed.has(src)) continue;
-      activeWorkBackground += 1;
-      /* Requests in the controlled queue can safely be high priority because
-         only a few are active at once. */
-      warm(src, "high").finally(function(){
-        activeWorkBackground -= 1;
-        pumpWorkQueue();
-      });
-    }
-  }
-
-  function buildFairWorkQueue(){
-    const links = Array.from(document.querySelectorAll(".site-nav a[data-harri-gallery]"))
-      .filter(function(link){ return !isHarrilanpuistoLink(link); });
-
-    const galleries = links.map(function(link){ return assetsFor(link); });
-
-    /* Round-robin by visible depth: every project's first image gets a head
-       start before any project's second, then every second before any third. */
-    for(let depth=0; depth<WORK_INITIAL_COUNT; depth++){
-      galleries.forEach(function(assets){
-        if(assets[depth]) enqueueWorkSrc(assets[depth]);
-      });
-    }
-    pumpWorkQueue();
+  function startAllWorkFirstThreeImmediately(){
+    document.querySelectorAll(".site-nav a[data-harri-gallery]").forEach(function(link){
+      if(isWorkLink(link)) warmFirstThree(link);
+    });
   }
 
   function linkFromEvent(event){
@@ -959,27 +947,27 @@
       const link = linkFromEvent(event);
       if(!link) return;
       if(isHarrilanpuistoLink(link)) warmHarrilanpuisto(link);
-      else warmTargetWork(link);
+      else if(isWorkLink(link)) warmFirstThree(link);
     }, {passive:true});
   });
 
-  function startBackgroundWarm(){
-    buildFairWorkQueue();
+  /* The navigation markup is already above this script, so begin all Work
+     first-three requests now on every page visit. No DOMContentLoaded, idle,
+     hover or menu-open gate is involved. */
+  startAllWorkFirstThreeImmediately();
 
-    /* Harrilanpuisto is small and keeps its separate first-six policy. */
+  /* Keep Harrilanpuisto's existing separate first-six warm-up timing. */
+  function startHarrilanpuistoWarm(){
     document.querySelectorAll(".site-nav a[data-harri-gallery]").forEach(function(link){
       if(isHarrilanpuistoLink(link)) warmHarrilanpuisto(link);
     });
   }
-
-  /* Start early enough to help the first click, but yield one turn so current
-     page parsing/rendering is not blocked. */
   if(document.readyState === "loading"){
     document.addEventListener("DOMContentLoaded", function(){
-      setTimeout(startBackgroundWarm, 0);
+      setTimeout(startHarrilanpuistoWarm, 0);
     }, {once:true});
   }else{
-    setTimeout(startBackgroundWarm, 0);
+    setTimeout(startHarrilanpuistoWarm, 0);
   }
 })();
 </script>
