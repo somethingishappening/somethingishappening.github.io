@@ -76,12 +76,16 @@
   {% if page.gallery %}
     {% for slide in page.gallery limit:3 %}
       {% assign work_preload_src = slide.image %}
-      {% if slide.type == "video" %}{% assign work_preload_src = slide.poster %}{% endif %}
+      {% assign work_preload_as = "image" %}
+      {% if slide.type == "video" %}
+        {% assign work_preload_src = slide.video %}
+        {% assign work_preload_as = "video" %}
+      {% endif %}
       {% if work_preload_src and work_preload_src != "" %}
         {% if work_preload_src contains "://" or work_preload_src contains "data:" %}
-          <link rel="preload" as="image" href="{{ work_preload_src | escape }}" fetchpriority="high">
+          <link rel="preload" as="{{ work_preload_as }}" href="{{ work_preload_src | escape }}" fetchpriority="high">
         {% else %}
-          <link rel="preload" as="image" href="{{ work_preload_src | relative_url }}" fetchpriority="high">
+          <link rel="preload" as="{{ work_preload_as }}" href="{{ work_preload_src | relative_url }}" fetchpriority="high">
         {% endif %}
       {% endif %}
     {% endfor %}
@@ -408,18 +412,21 @@ html.work-theme-transition-active .project-info{
 
 /* PERFORMANCE: never paint a partially downloaded/decoded project image.
    Once decoding is complete, reveal the image with a soft opacity fade only. */
-.media-stack .media-item img{
+.media-stack .media-item img,
+.media-stack .media-item video{
   visibility:hidden;
   opacity:0;
   transition:opacity .35s ease;
 }
-.media-stack .media-item img.media-ready{
+.media-stack .media-item img.media-ready,
+.media-stack .media-item video.media-ready{
   visibility:visible;
   opacity:1;
 }
 /* When entering an inverted Work project, decoded media joins the exact same
    black/white transition window as the page theme. */
-html.work-theme-transition-active .media-stack .media-item img{
+html.work-theme-transition-active .media-stack .media-item img,
+html.work-theme-transition-active .media-stack .media-item video{
   transition:opacity var(--work-theme-ease);
 }
 
@@ -428,7 +435,9 @@ html.work-theme-transition-active .media-stack .media-item img{
    safeguard, but remove the opacity animation. */
 @media (max-width:900px){
   .media-stack .media-item img,
-  html.work-theme-transition-active .media-stack .media-item img{
+  .media-stack .media-item video,
+  html.work-theme-transition-active .media-stack .media-item img,
+  html.work-theme-transition-active .media-stack .media-item video{
     transition:none !important;
   }
 }
@@ -1044,6 +1053,15 @@ html.work-theme-transition-active .media-stack .media-item img{
   object-position:center center !important;
 }
 
+.media-item video{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+}
+
 .media-placeholder-label{
   position:absolute;
   left:10px;
@@ -1195,36 +1213,25 @@ html.work-theme-transition-active .media-stack .media-item img{
 }
 
 
-/* MIXED IMAGE + VIDEO GALLERY */
+/* MIXED IMAGE + VIDEO GALLERY
+   Inline Work videos behave like moving images: preserve the uploaded video's
+   intrinsic proportions and autoplay muted/looped without controls. */
 .media-item.has-video{
-  cursor:pointer !important;
-  background:#000 !important;
+  cursor:zoom-in !important;
+  background:transparent !important;
 }
 
-.media-item.has-video img{
-  object-fit:cover !important;
+.media-item.has-video video{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  display:block !important;
+  z-index:1;
+  cursor:zoom-in !important;
 }
-
-.media-play{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  z-index:4;
-  width:58px;
-  height:58px;
-  border:0;
-  border-radius:50%;
-  padding:0 0 0 4px;
-  background:rgba(255,255,255,.93);
-  color:#111;
-  font-size:25px;
-  line-height:58px;
-  text-align:center;
-  cursor:pointer;
-}
-
-.media-play:hover{background:#FFFFFF}
 
 .lightbox video{
   display:none;
@@ -2077,6 +2084,94 @@ function buildMediaStack(){
     const fallbackRatio = slide.type === "video" ? "16 / 9" : "4 / 5";
     item.style.setProperty("--media-ratio", fallbackRatio);
 
+    if(slide.type === "video"){
+      item.classList.add("has-video", "media-loading");
+
+      const video = document.createElement("video");
+      video.muted = true;
+      video.defaultMuted = true;
+      video.autoplay = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.preload = "auto";
+      video.controls = false;
+      video.setAttribute("muted", "");
+      video.setAttribute("autoplay", "");
+      video.setAttribute("loop", "");
+      video.setAttribute("playsinline", "");
+      video.setAttribute("webkit-playsinline", "");
+      video.setAttribute("aria-label", slide.alt || "Project video");
+      if(slide.poster) video.poster = slide.poster;
+
+      let revealed = false;
+      const show = ()=>{
+        video.classList.add("media-ready");
+        item.classList.remove("media-loading");
+        item.classList.add("has-image");
+        const playPromise = video.play();
+        if(playPromise && typeof playPromise.catch === "function"){
+          playPromise.catch(()=>{});
+        }
+      };
+
+      const revealReadyVideo = ()=>{
+        if(revealed) return;
+        revealed = true;
+
+        if(video.videoWidth && video.videoHeight){
+          item.style.setProperty("--media-ratio", `${video.videoWidth} / ${video.videoHeight}`);
+        }
+
+        if(document.documentElement.dataset.workThemeSyncMedia === "1" &&
+           !document.documentElement.classList.contains("work-theme-transition-active")){
+          window.addEventListener("harri:work-theme-transition-start", show, {once:true});
+          if(index === 0){
+            window.__harriWorkFirstMediaReady = true;
+            document.dispatchEvent(new CustomEvent("harri:work-first-media-ready"));
+          }
+        }else if(index === 0 && window.innerWidth > 900 && !document.documentElement.dataset.workThemeFrom){
+          window.__harriWorkFirstMediaDecoded = true;
+          window.__harriWorkFirstMediaShow = show;
+          if(typeof window.__harriWorkTryEntryReveal === "function")
+            window.__harriWorkTryEntryReveal();
+        }else{
+          show();
+        }
+      };
+
+      video.addEventListener("loadedmetadata", ()=>{
+        if(video.videoWidth && video.videoHeight){
+          item.style.setProperty("--media-ratio", `${video.videoWidth} / ${video.videoHeight}`);
+        }
+      });
+      video.addEventListener("loadeddata", revealReadyVideo, {once:true});
+      video.addEventListener("canplay", revealReadyVideo, {once:true});
+      video.addEventListener("error", ()=>{
+        item.classList.remove("media-loading");
+        if(index === 0){
+          if(document.documentElement.dataset.workThemeSyncMedia === "1"){
+            window.__harriWorkFirstMediaReady = true;
+            document.dispatchEvent(new CustomEvent("harri:work-first-media-ready"));
+          }else if(window.innerWidth > 900 && !document.documentElement.dataset.workThemeFrom){
+            window.__harriWorkFirstMediaDecoded = true;
+            window.__harriWorkFirstMediaShow = null;
+            if(typeof window.__harriWorkTryEntryReveal === "function")
+              window.__harriWorkTryEntryReveal();
+          }
+        }
+      }, {once:true});
+
+      video.src = slide.src;
+      item.appendChild(video);
+      mediaStack.appendChild(item);
+      video.load();
+      const playPromise = video.play();
+      if(playPromise && typeof playPromise.catch === "function"){
+        playPromise.catch(()=>{});
+      }
+      return;
+    }
+
     const img = document.createElement("img");
     img.alt = slide.alt || "";
     img.decoding = "async";
@@ -2085,7 +2180,7 @@ function buildMediaStack(){
       img.fetchPriority = index < 3 ? "high" : "auto";
     }
 
-    const previewSrc = slide.type === "video" ? slide.poster : slide.src;
+    const previewSrc = slide.src;
 
     if(previewSrc){
       item.classList.add("media-loading");
@@ -2152,17 +2247,6 @@ function buildMediaStack(){
     }
 
     item.appendChild(img);
-
-    if(slide.type === "video"){
-      item.classList.add("has-video");
-      const play = document.createElement("button");
-      play.className = "media-play";
-      play.type = "button";
-      play.setAttribute("aria-label", "Play video");
-      play.textContent = "▶";
-      item.appendChild(play);
-    }
-
     mediaStack.appendChild(item);
   });
 }
@@ -2325,10 +2409,18 @@ lightbox.addEventListener("touchend", e=>{
       document.body.classList.remove("lightbox-open");
     }
 
-    document.querySelectorAll("video").forEach(function(video){
+    document.querySelectorAll(".lightbox video").forEach(function(video){
       try{
         video.pause();
         video.currentTime = 0;
+      }catch(e){}
+    });
+
+    document.querySelectorAll(".media-item.has-video video").forEach(function(video){
+      try{
+        video.currentTime = 0;
+        const playPromise = video.play();
+        if(playPromise && typeof playPromise.catch === "function") playPromise.catch(function(){});
       }catch(e){}
     });
 
