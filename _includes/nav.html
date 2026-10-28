@@ -931,9 +931,20 @@
   }
 
   function startAllWorkFirstThreeImmediately(){
-    document.querySelectorAll(".site-nav a[data-harri-gallery]").forEach(function(link){
-      if(isWorkLink(link)) warmFirstThree(link);
-    });
+    const workLinks = Array.from(
+      document.querySelectorAll(".site-nav a[data-harri-gallery]")
+    ).filter(isWorkLink);
+
+    /* Queue by image position, not project. This keeps the original rule that
+       the first three images of every Work project begin immediately, while
+       ensuring every project's first image is offered to the browser before
+       any project's second or third image. */
+    for(let mediaIndex = 0; mediaIndex < WORK_INITIAL_COUNT; mediaIndex++){
+      workLinks.forEach(function(link){
+        const src = assetsFor(link)[mediaIndex];
+        if(src) warm(src, "high");
+      });
+    }
   }
 
   function linkFromEvent(event){
