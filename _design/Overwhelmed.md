@@ -41,7 +41,7 @@ description: >-
   publication.
 gallery:
   - type: image
-    image: /assets/uploads/p-2.gif
+    image: /assets/uploads/p-3.gif
   - type: image
     image: /assets/uploads/alpha-protected-intensity-default-v2.jpg
   - type: image
