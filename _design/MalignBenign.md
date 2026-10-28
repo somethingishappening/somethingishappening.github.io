@@ -18,7 +18,7 @@ description: >-
   Domain)
 gallery:
   - type: image
-    image: /assets/uploads/malignbenignalbumart-protected-intensity-default-v2.jpg
+    image: /assets/uploads/malignbenignalbumartmain-1.jpg
   - type: image
     image: /assets/uploads/malignbenigncell-1.jpg
   - type: image
