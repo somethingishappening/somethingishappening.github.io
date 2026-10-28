@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <script id="harri-research-typography-init">
-  document.documentElement.classList.add("research-typography-pending");
+  document.documentElement.classList.add("research-typography-pending", "research-entry-pending");
   </script>
   <script id="harri-light-page-theme-handoff">
   (function(){
@@ -85,7 +85,18 @@
   </script>
   {% endif %}
 
+  {% assign harri_research_first_figure = page.figures | first %}
+  {% if harri_research_first_figure and harri_research_first_figure.image %}
+    {% if harri_research_first_figure.image contains "://" or harri_research_first_figure.image contains "data:" %}
+      <link rel="preload" as="image" href="{{ harri_research_first_figure.image | escape }}" fetchpriority="high">
+    {% else %}
+      <link rel="preload" as="image" href="{{ harri_research_first_figure.image | relative_url }}" fetchpriority="high">
+    {% endif %}
+  {% endif %}
+
   <script>
+    window.__harriResearchExpectFirstFigure = {% if harri_research_first_figure and harri_research_first_figure.image %}true{% else %}false{% endif %};
+    window.__harriResearchFirstFigureReady = false;
     /*
       Research opens from a deterministic top position.
       On desktop the Abstract is withheld optically until its baseline has
@@ -128,6 +139,21 @@
       }
     }
 
+    /* DESKTOP ENTRY REVEAL — match Work/Design: keep the Research reading
+       area and right rail fully laid out but optically hidden until the same
+       bounded font/first-media readiness gate has settled. Opacity only. */
+    @media (min-width:901px){
+      .paper,
+      .right{
+        opacity:1;
+        transition:opacity .35s ease;
+      }
+      html.research-entry-pending .paper,
+      html.research-entry-pending .right{
+        opacity:0;
+      }
+    }
+
     /* TYPOGRAPHY REVEAL — opacity only. This does not change widths, heights,
        flow, alignment, scrolling or figure geometry. */
     .project-title,
@@ -149,6 +175,13 @@
     }
     /* Mobile: Research typography is immediate — no reveal fade. */
     @media (max-width:900px){
+      .paper,
+      .right,
+      html.research-entry-pending .paper,
+      html.research-entry-pending .right{
+        opacity:1 !important;
+        transition:none !important;
+      }
       .project-title,
       .research-abstract-panel > h1,
       .paper > section > h1,
@@ -3077,41 +3110,67 @@ min-width:0}
 (function(){
   const root = document.documentElement;
   let released = false;
+  let typographyReady = false;
 
-  function showTypography(){
+  function showResearchEntry(){
     if(released) return;
     released = true;
-    root.classList.remove("research-typography-pending");
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        root.classList.remove("research-typography-pending", "research-entry-pending");
+      });
+    });
   }
 
-  function waitForResearchReady(){
-    if(!root.classList.contains("research-initializing")){
-      showTypography();
+  function tryResearchEntryReveal(){
+    if(released) return;
+    if(window.innerWidth <= 900){
+      showResearchEntry();
       return;
     }
-    const observer = new MutationObserver(function(){
-      if(!root.classList.contains("research-initializing")){
-        observer.disconnect();
-        showTypography();
-      }
-    });
-    observer.observe(root, {attributes:true, attributeFilter:["class"]});
+    if(!typographyReady) return;
+    if(root.classList.contains("research-initializing")) return;
+    if(window.__harriResearchExpectFirstFigure && !window.__harriResearchFirstFigureReady) return;
+    showResearchEntry();
   }
+
+  window.__harriResearchTryEntryReveal = tryResearchEntryReveal;
 
   function release(){
-    const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-    fonts.catch(()=>{}).finally(function(){
-      requestAnimationFrame(waitForResearchReady);
+    if(window.innerWidth <= 900){
+      typographyReady = true;
+      tryResearchEntryReveal();
+      return;
+    }
+
+    /* Match Work/Design: wait briefly for Geist, not the browser's entire
+       font queue. This keeps Research entry timing bounded and consistent. */
+    let fontGate = Promise.resolve();
+    if(document.fonts && typeof document.fonts.load === "function"){
+      const geist = document.fonts.load('16px "Geist"').catch(()=>{});
+      const timeout = new Promise(resolve=>window.setTimeout(resolve, 320));
+      fontGate = Promise.race([geist, timeout]);
+    }
+
+    fontGate.finally(function(){
+      requestAnimationFrame(function(){
+        typographyReady = true;
+        tryResearchEntryReveal();
+      });
     });
   }
 
-  if(document.readyState === "loading"){
+  if(document.readyState === "loading")
     document.addEventListener("DOMContentLoaded", release, {once:true});
-  }else{
-    release();
-  }
+  else release();
 
-  window.setTimeout(showTypography, 1800);
+  /* Same safety principle as Work: a broken/unusually slow first figure must
+     never leave the Research content invisible indefinitely. */
+  window.setTimeout(function(){
+    typographyReady = true;
+    window.__harriResearchFirstFigureReady = true;
+    showResearchEntry();
+  }, 5000);
 })();
 </script>
 
@@ -3746,6 +3805,14 @@ min-width:0}
     }
   }
 
+  function markResearchFirstFigureReady(){
+    if(window.__harriResearchFirstFigureReady) return;
+    window.__harriResearchFirstFigureReady = true;
+    if(typeof window.__harriResearchTryEntryReveal === "function"){
+      window.__harriResearchTryEntryReveal();
+    }
+  }
+
   function applyFigureImmediately(key, fig){
     label.textContent = fig.label;
     caption.textContent = fig.caption;
@@ -3764,6 +3831,7 @@ min-width:0}
     stage.dataset.currentFigure = key;
     stage.classList.add("visible");
     stage.classList.remove("figure-changing");
+    markResearchFirstFigureReady();
 
     if(typeof window.fitDesktopResearchFigureNow === "function"){
       window.fitDesktopResearchFigureNow();
@@ -3811,6 +3879,7 @@ min-width:0}
         image.style.display = "block";
         stage.dataset.currentFigure = key;
         stage.classList.add("visible");
+        markResearchFirstFigureReady();
 
         /* Resize the new image while it is invisible, then fade it in.
            This avoids showing the aspect-ratio change as a jump. */
@@ -6153,6 +6222,9 @@ min-width:0}
 
     requestAnimationFrame(function(){
       document.documentElement.classList.remove('research-initializing');
+      if(typeof window.__harriResearchTryEntryReveal === 'function'){
+        window.__harriResearchTryEntryReveal();
+      }
     });
   }
 
@@ -6176,19 +6248,17 @@ min-width:0}
     });
   }
 
-  const fallback = setTimeout(function(){
-    initialRun();
-  },1400);
-
   function fontsReady(){
-    clearTimeout(fallback);
     initialRun();
   }
 
   if(window.innerWidth < DESKTOP_MIN){
     initialRun();
-  }else if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(fontsReady).catch(fontsReady);
+  }else if(document.fonts && typeof document.fonts.load === 'function'){
+    /* Match Work/Design entry timing: Geist readiness with a 320ms ceiling. */
+    const geist = document.fonts.load('16px "Geist"').catch(()=>{});
+    const timeout = new Promise(resolve=>window.setTimeout(resolve,320));
+    Promise.race([geist, timeout]).then(fontsReady).catch(fontsReady);
   }else{
     initialRun();
   }
