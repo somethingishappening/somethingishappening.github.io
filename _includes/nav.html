@@ -846,7 +846,7 @@
     const seen = new Set();
     return gallery.map(function(slide){
       if(!slide || typeof slide !== "object") return "";
-      const raw = slide.type === "video" ? slide.poster : slide.image;
+      const raw = slide.type === "video" ? slide.video : slide.image;
       return assetUrl(raw);
     }).filter(function(src){
       if(!src || seen.has(src)) return false;
@@ -855,11 +855,15 @@
     });
   }
 
+  function isVideoAsset(src){
+    return /\.(?:mp4|webm|mov|m4v|ogv)(?:[?#].*)?$/i.test(src || "");
+  }
+
   function ensurePreloadHint(src){
     if(!src || !document.head || preloadHints.has(src)) return;
     const link = document.createElement("link");
     link.rel = "preload";
-    link.as = "image";
+    link.as = isVideoAsset(src) ? "video" : "image";
     link.href = src;
     link.setAttribute("fetchpriority", "high");
     if("fetchPriority" in link) link.fetchPriority = "high";
@@ -874,10 +878,35 @@
 
     if(warmed.has(src)){
       const existing = warmed.get(src);
-      if(priority === "high" && existing && existing.img && "fetchPriority" in existing.img){
-        existing.img.fetchPriority = "high";
+      if(priority === "high" && existing && existing.media && "fetchPriority" in existing.media){
+        existing.media.fetchPriority = "high";
       }
       return existing.promise;
+    }
+
+    if(isVideoAsset(src)){
+      const video = document.createElement("video");
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      video.preload = "auto";
+
+      const promise = new Promise(function(resolve){
+        let settled = false;
+        function finish(){
+          if(settled) return;
+          settled = true;
+          resolve();
+        }
+        video.addEventListener("loadeddata", finish, {once:true});
+        video.addEventListener("canplay", finish, {once:true});
+        video.addEventListener("error", finish, {once:true});
+        video.src = src;
+        video.load();
+      });
+
+      warmed.set(src, {media:video, promise:promise});
+      return promise;
     }
 
     const img = new Image();
@@ -901,7 +930,7 @@
       if(img.complete && img.naturalWidth) finish();
     });
 
-    warmed.set(src, {img:img, promise:promise});
+    warmed.set(src, {media:img, promise:promise});
     return promise;
   }
 
