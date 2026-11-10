@@ -16,7 +16,7 @@ morning_greeting_messages:
   - صباحو!
   - Godmorgon!
   - Bonjour!
-  - Huamenta!
+  - Huomenta!
 ascii_click_count: 6
 ascii_messages:
   - text: (╯°□°)╯︵ ┻━┻
